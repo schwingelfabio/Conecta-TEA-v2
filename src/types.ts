@@ -12,6 +12,23 @@ export interface UserProfile {
   role?: 'parent' | 'professional' | 'autistic' | 'other' | 'admin';
 }
 
+export interface SosCard {
+  id?: string;
+  userId: string;
+  childName: string;
+  birthDate: string;
+  bloodType: string;
+  allergies: string;
+  observations: string;
+  contact1Name: string;
+  contact1Phone: string;
+  contact2Name: string;
+  contact2Phone: string;
+  homeAddress: string;
+  workAddress: string;
+  createdAt: any;
+}
+
 export interface Post {
   id: string;
   text: string;

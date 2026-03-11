@@ -25,6 +25,8 @@ import AuthForm from './components/AuthForm';
 import Feed from './components/Feed';
 import PlanosVip from './components/PlanosVip';
 import AreaVip from './components/AreaVip';
+import SosPage from './components/SosPage';
+import EmergencyPage from './components/EmergencyPage';
 import AiAssistant from './components/AiAssistant';
 import { TermosDeUso, Privacidade, Contato } from './components/LegalPages';
 
@@ -37,8 +39,20 @@ const App: React.FC = () => {
   const [showAuth, setShowAuth] = useState(false);
   const [currentPage, setCurrentPage] = useState<Page>('home');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [emergencyId, setEmergencyId] = useState<string | null>(null);
 
   useEffect(() => {
+    // Check for emergency route
+    const path = window.location.pathname;
+    if (path.startsWith('/emergencia/')) {
+      const id = path.split('/')[2];
+      if (id) {
+        setEmergencyId(id);
+        setLoading(false);
+        return;
+      }
+    }
+
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       setUser(firebaseUser);
       if (firebaseUser) {
@@ -85,6 +99,10 @@ const App: React.FC = () => {
     await signOut(auth);
     setIsMenuOpen(false);
   };
+
+  if (emergencyId) {
+    return <EmergencyPage id={emergencyId} />;
+  }
 
   if (loading) {
     return (
@@ -134,7 +152,7 @@ const App: React.FC = () => {
     switch (currentPage) {
       case 'feed': return <Feed userProfile={userProfile} />;
       case 'vip': return <AreaVip userProfile={userProfile} />;
-      case 'sos': return requireVip(<PlaceholderPage title="SOS Sensorial" icon={<Activity size={48} />} />);
+      case 'sos': return <SosPage userProfile={userProfile} />;
       case 'log': return requireVip(<PlaceholderPage title="Diário de Bordo" icon={<Heart size={48} />} />);
       case 'videos': return requireVip(<PlaceholderPage title="Galeria de Vídeos" icon={<Video size={48} />} />);
       case 'settings': return <PlaceholderPage title="Configurações" icon={<SettingsIcon size={48} />} />;
