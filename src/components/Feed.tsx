@@ -190,7 +190,9 @@ const Feed: React.FC<FeedProps> = ({ userProfile }) => {
                   className="bg-slate-50 text-slate-600 text-sm px-3 py-2 rounded-xl border-none focus:ring-0 cursor-pointer"
                 >
                   {topics.map(t => (
-                    <option key={t.id} value={t.id}>{t.label}</option>
+                    (t.id !== 'noticias' || isAdmin) && (
+                      <option key={t.id} value={t.id}>{t.label}</option>
+                    )
                   ))}
                 </select>
               </div>

@@ -17,21 +17,30 @@ const PlanosVip: React.FC<PlanosVipProps> = ({ userProfile }) => {
     
     setLoading(planType);
     try {
-      // Links do PagSeguro (Substitua pelos links reais gerados no seu painel)
-      const linksPagSeguro = {
-        mensal: '[COLE AQUI O LINK DO PAGSEGURO]',
-        anual: '[COLE AQUI O LINK DO PAGSEGURO]'
-      };
+      const response = await fetch('/api/create-checkout', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          planType,
+          userId: userProfile.uid,
+          userEmail: userProfile.email,
+          userName: userProfile.displayName
+        }),
+      });
 
-      const checkoutUrl = linksPagSeguro[planType];
-
-      if (checkoutUrl && checkoutUrl !== '[COLE AQUI O LINK DO PAGSEGURO]') {
-        // Redireciona para o PagSeguro em uma nova aba
-        window.open(checkoutUrl, '_blank');
-      } else {
-        alert('Por favor, configure os links do PagSeguro no código (PlanosVip.tsx).');
+      if (!response.ok) {
+        throw new Error('Falha ao criar sessão de checkout');
       }
+
+      const data = await response.json();
       
+      if (data.url) {
+        window.open(data.url, '_blank');
+      } else {
+        throw new Error('URL de checkout não recebida');
+      }
     } catch (err) {
       console.error(err);
       alert('Erro ao iniciar checkout. Tente novamente mais tarde.');

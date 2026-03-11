@@ -30,52 +30,50 @@ async function startServer() {
   // API Route: Create PagSeguro Checkout
   app.post("/api/create-checkout", async (req, res) => {
     try {
-      const { planType, userId, userEmail } = req.body;
+      const { planType, userId, userEmail, userName } = req.body;
 
-      const email = process.env.VITE_PAGSEGURO_EMAIL || '';
-      const token = process.env.VITE_PAGSEGURO_TOKEN || '';
-
-      if (!email || !token) {
-        console.warn("PagSeguro credentials not configured (VITE_PAGSEGURO_EMAIL or VITE_PAGSEGURO_TOKEN). Using mock checkout URL.");
-        return res.json({ url: "/payment-success" });
-      }
+      const token = process.env.VITE_PAGSEGURO_TOKEN || process.env.PAGBANK_TOKEN || 'aa75da37-a368-4f6c-a7e9-6d819c8ad0cc0ee89bfb41d9bd1fdab25ef33af844e65ea2-c25b-492d-8c4e-2ed40cf90cc3';
 
       const planDetails = {
-        mensal: { id: "0001", description: "Plano Mensal Conecta TEA", amount: "29.90" },
-        anual: { id: "0002", description: "Plano Anual Conecta TEA", amount: "299.00" }
+        mensal: { id: "0001", name: "Plano Mensal Conecta TEA", amount: 2990 }, // in cents
+        anual: { id: "0002", name: "Plano Anual Conecta TEA", amount: 29900 }
       };
 
       const plan = planDetails[planType as keyof typeof planDetails];
 
-      // Constructing the XML for PagSeguro Checkout API (v2/v3)
-      // Note: This is the standard redirect checkout
-      const params = new URLSearchParams();
-      params.append("email", email);
-      params.append("token", token);
-      params.append("currency", "BRL");
-      params.append("itemId1", plan.id);
-      params.append("itemDescription1", plan.description);
-      params.append("itemAmount1", plan.amount);
-      params.append("itemQuantity1", "1");
-      params.append("reference", userId); // Critical: Store userId in reference
-      params.append("senderEmail", userEmail);
-      params.append("redirectURL", `${process.env.APP_URL || 'http://localhost:3000'}/payment-success`);
-      params.append("notificationURL", `${process.env.APP_URL || 'http://localhost:3000'}/api/pagseguro-webhook`);
+      const payload = {
+        reference_id: userId,
+        items: [
+          {
+            reference_id: plan.id,
+            name: plan.name,
+            quantity: 1,
+            unit_amount: plan.amount
+          }
+        ],
+        payment_methods: [
+          { type: "CREDIT_CARD" },
+          { type: "PIX" },
+          { type: "BOLETO" }
+        ],
+        redirect_url: `${process.env.APP_URL || 'http://localhost:3000'}/payment-success`,
+        notification_urls: [
+          `${process.env.APP_URL || 'http://localhost:3000'}/api/pagseguro-webhook`
+        ]
+      };
 
       const response = await axios.post(
-        "https://ws.pagseguro.uol.com.br/v2/checkout",
-        params.toString(),
+        "https://api.pagseguro.com/checkouts",
+        payload,
         {
           headers: {
-            "Content-Type": "application/x-www-form-urlencoded; charset=ISO-8859-1"
+            "Authorization": `Bearer ${token}`,
+            "Content-Type": "application/json"
           }
         }
       );
 
-      const result = await parseStringPromise(response.data);
-      const checkoutCode = result.checkout.code[0];
-      const checkoutUrl = `https://pagseguro.uol.com.br/v2/checkout/payment.html?code=${checkoutCode}`;
-
+      const checkoutUrl = response.data.links.find((link: any) => link.rel === "PAY").href;
       res.json({ url: checkoutUrl });
     } catch (error: any) {
       console.error("Error creating PagSeguro checkout:", error.response?.data || error.message);

@@ -30,8 +30,8 @@ service cloud.firestore {
     
     // Users can create and edit posts
     match /posts/{postId} {
-      allow create: if isAuthenticated();
-      allow update, delete: if isAuthenticated() && request.auth.uid == resource.data.authorId;
+      allow create: if isAuthenticated() && (request.resource.data.topic != 'noticias' || isAdmin());
+      allow update, delete: if isAuthenticated() && request.auth.uid == resource.data.authorId && (resource.data.topic != 'noticias' || isAdmin());
     }
     
     // Users can create and edit their own SOS cards
