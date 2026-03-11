@@ -9,7 +9,7 @@ export interface UserProfile {
   state?: string;
   city?: string;
   bio?: string;
-  role?: 'parent' | 'professional' | 'autistic' | 'other';
+  role?: 'parent' | 'professional' | 'autistic' | 'other' | 'admin';
 }
 
 export interface Post {

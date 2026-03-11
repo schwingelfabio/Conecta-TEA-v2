@@ -4,9 +4,10 @@ import { Heart, Users, Brain, ShieldCheck, ArrowRight, Star, MapPin } from 'luci
 
 interface LandingPageProps {
   onStart: () => void;
+  onNavigate: (page: 'termos' | 'privacidade' | 'contato') => void;
 }
 
-const LandingPage: React.FC<LandingPageProps> = ({ onStart }) => {
+const LandingPage: React.FC<LandingPageProps> = ({ onStart, onNavigate }) => {
   return (
     <div className="min-h-screen bg-white overflow-hidden">
       {/* Hero Section */}
@@ -144,9 +145,9 @@ const LandingPage: React.FC<LandingPageProps> = ({ onStart }) => {
         <div className="max-w-7xl mx-auto px-4 text-center">
           <p className="text-slate-500 text-sm">© 2026 Conecta TEA. Todos os direitos reservados.</p>
           <div className="mt-4 flex justify-center space-x-6">
-            <a href="#" className="text-slate-400 hover:text-brand-primary transition-colors">Termos de Uso</a>
-            <a href="#" className="text-slate-400 hover:text-brand-primary transition-colors">Privacidade</a>
-            <a href="mailto:fabiopalacioschwingel@gmail.com" className="text-slate-400 hover:text-brand-primary transition-colors">Contato</a>
+            <button onClick={() => onNavigate('termos')} className="text-slate-400 hover:text-brand-primary transition-colors">Termos de Uso</button>
+            <button onClick={() => onNavigate('privacidade')} className="text-slate-400 hover:text-brand-primary transition-colors">Privacidade</button>
+            <button onClick={() => onNavigate('contato')} className="text-slate-400 hover:text-brand-primary transition-colors">Contato</button>
           </div>
         </div>
       </footer>

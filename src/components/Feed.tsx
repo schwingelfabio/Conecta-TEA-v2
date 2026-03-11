@@ -7,6 +7,8 @@ import {
   limit, 
   onSnapshot, 
   addDoc, 
+  deleteDoc,
+  doc,
   serverTimestamp,
   where
 } from 'firebase/firestore';
@@ -21,7 +23,10 @@ import {
   Filter, 
   MapPin, 
   Tag,
-  Sparkles
+  Sparkles,
+  Trash2,
+  RefreshCw,
+  Shield
 } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 
@@ -34,6 +39,7 @@ const Feed: React.FC<FeedProps> = ({ userProfile }) => {
   const [newPost, setNewPost] = useState('');
   const [topic, setTopic] = useState<string>('geral');
   const [loading, setLoading] = useState(true);
+  const [generatingNews, setGeneratingNews] = useState(false);
 
   useEffect(() => {
     let q = query(
@@ -91,6 +97,31 @@ const Feed: React.FC<FeedProps> = ({ userProfile }) => {
     }
   };
 
+  const handleDeletePost = async (postId: string) => {
+    if (window.confirm('Tem certeza que deseja apagar este post?')) {
+      try {
+        await deleteDoc(doc(db, 'posts', postId));
+      } catch (err) {
+        console.error("Error deleting post:", err);
+      }
+    }
+  };
+
+  const handleGenerateNews = async () => {
+    setGeneratingNews(true);
+    try {
+      const res = await fetch('/api/trigger-news');
+      if (!res.ok) throw new Error('Falha ao gerar notícia');
+      alert('Notícia gerada com sucesso! Ela aparecerá no feed em instantes.');
+      setTopic('noticias');
+    } catch (err) {
+      console.error(err);
+      alert('Erro ao gerar notícia. Verifique os logs do servidor.');
+    } finally {
+      setGeneratingNews(false);
+    }
+  };
+
   const topics = [
     { id: 'geral', label: 'Geral', icon: <Tag size={16} /> },
     { id: 'noticias', label: 'Notícias', icon: <Sparkles size={16} /> },
@@ -99,8 +130,32 @@ const Feed: React.FC<FeedProps> = ({ userProfile }) => {
     { id: 'eventos', label: 'Eventos', icon: <MapPin size={16} /> },
   ];
 
+  const isAdmin = userProfile?.role === 'admin';
+
   return (
     <div className="max-w-2xl mx-auto py-8 px-4">
+      {/* Admin Panel */}
+      {isAdmin && (
+        <div className="bg-slate-900 rounded-3xl p-6 mb-8 text-white shadow-lg">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="font-bold flex items-center space-x-2">
+              <Shield size={20} className="text-brand-primary" />
+              <span>Painel do Administrador</span>
+            </h3>
+          </div>
+          <div className="flex space-x-4">
+            <button
+              onClick={handleGenerateNews}
+              disabled={generatingNews}
+              className="bg-brand-primary hover:bg-brand-primary/90 text-white px-4 py-2 rounded-xl text-sm font-medium flex items-center space-x-2 transition-colors disabled:opacity-50"
+            >
+              {generatingNews ? <RefreshCw size={16} className="animate-spin" /> : <Sparkles size={16} />}
+              <span>Gerar Notícia IA Agora</span>
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Post Creation */}
       <div className="bg-white rounded-3xl shadow-sm border border-slate-100 p-6 mb-8">
         <div className="flex items-start space-x-4">
@@ -202,13 +257,24 @@ const Feed: React.FC<FeedProps> = ({ userProfile }) => {
                           <MapPin size={10} />
                           <span>{post.location}</span>
                           <span>•</span>
-                          <span>{post.timestamp?.toDate().toLocaleDateString('pt-BR')}</span>
+                          <span>{post.timestamp?.toDate ? post.timestamp.toDate().toLocaleDateString('pt-BR') : 'Agora'}</span>
                         </p>
                       </div>
                     </div>
-                    <button className="text-slate-300 hover:text-slate-600 transition-colors">
-                      <MoreHorizontal size={20} />
-                    </button>
+                    <div className="flex items-center space-x-2">
+                      {isAdmin && (
+                        <button 
+                          onClick={() => handleDeletePost(post.id)}
+                          className="text-red-400 hover:text-red-600 transition-colors p-2"
+                          title="Apagar Post"
+                        >
+                          <Trash2 size={18} />
+                        </button>
+                      )}
+                      <button className="text-slate-300 hover:text-slate-600 transition-colors">
+                        <MoreHorizontal size={20} />
+                      </button>
+                    </div>
                   </div>
 
                   <div className="markdown-body text-slate-700 mb-6">

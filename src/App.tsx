@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { auth, db } from './lib/firebase';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
-import { doc, getDoc, onSnapshot } from 'firebase/firestore';
+import { doc, getDoc, onSnapshot, updateDoc } from 'firebase/firestore';
 import { UserProfile } from './types';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
@@ -15,7 +15,8 @@ import {
   Heart,
   Brain,
   Activity,
-  Video
+  Video,
+  Lock
 } from 'lucide-react';
 
 // Components
@@ -24,8 +25,9 @@ import AuthForm from './components/AuthForm';
 import Feed from './components/Feed';
 import PlanosVip from './components/PlanosVip';
 import AiAssistant from './components/AiAssistant';
+import { TermosDeUso, Privacidade, Contato } from './components/LegalPages';
 
-type Page = 'home' | 'feed' | 'vip' | 'settings' | 'sos' | 'log' | 'videos';
+type Page = 'home' | 'feed' | 'vip' | 'settings' | 'sos' | 'log' | 'videos' | 'termos' | 'privacidade' | 'contato';
 
 const App: React.FC = () => {
   const [user, setUser] = useState<any>(null);
@@ -41,9 +43,29 @@ const App: React.FC = () => {
       if (firebaseUser) {
         // Real-time listener for user profile
         const userRef = doc(db, 'users', firebaseUser.uid);
-        const unsubProfile = onSnapshot(userRef, (docSnap) => {
+        const unsubProfile = onSnapshot(userRef, async (docSnap) => {
           if (docSnap.exists()) {
-            setUserProfile(docSnap.data() as UserProfile);
+            const profileData = docSnap.data() as UserProfile;
+            
+            // Auto-assign roles based on email
+            let needsUpdate = false;
+            let updates: any = {};
+            
+            if (firebaseUser.email === 'fabiopalacioschwingel@gmail.com' && profileData.role !== 'admin') {
+              updates.role = 'admin';
+              updates.isVip = true;
+              needsUpdate = true;
+            }
+            if (firebaseUser.email === 'fabiparadox2@gmail.com' && !profileData.isVip) {
+              updates.isVip = true;
+              needsUpdate = true;
+            }
+            
+            if (needsUpdate) {
+              await updateDoc(userRef, updates);
+            } else {
+              setUserProfile(profileData);
+            }
           }
         });
         setCurrentPage('feed');
@@ -75,15 +97,49 @@ const App: React.FC = () => {
   }
 
   const renderPage = () => {
-    if (!user) return <LandingPage onStart={() => setShowAuth(true)} />;
+    if (!user) {
+      switch (currentPage) {
+        case 'termos': return <TermosDeUso onBack={() => setCurrentPage('home')} />;
+        case 'privacidade': return <Privacidade onBack={() => setCurrentPage('home')} />;
+        case 'contato': return <Contato onBack={() => setCurrentPage('home')} />;
+        default: return <LandingPage onStart={() => setShowAuth(true)} onNavigate={setCurrentPage} />;
+      }
+    }
+
+    // VIP Protection Wrapper
+    const requireVip = (Component: React.ReactNode) => {
+      if (userProfile?.isVip || userProfile?.role === 'admin') {
+        return Component;
+      }
+      return (
+        <div className="max-w-2xl mx-auto py-20 px-4 text-center">
+          <div className="w-24 h-24 bg-amber-50 text-amber-500 rounded-full flex items-center justify-center mx-auto mb-6">
+            <Lock size={48} />
+          </div>
+          <h2 className="text-3xl font-serif font-bold text-slate-900 mb-4">Conteúdo Exclusivo VIP</h2>
+          <p className="text-slate-500 max-w-md mx-auto mb-8">
+            Este recurso é reservado para assinantes VIP. Assine agora para desbloquear acesso total a ferramentas avançadas e conteúdos exclusivos.
+          </p>
+          <button 
+            onClick={() => setCurrentPage('vip')}
+            className="px-8 py-4 bg-slate-900 text-white rounded-full font-bold hover:bg-slate-800 transition-all shadow-lg"
+          >
+            Conhecer Planos VIP
+          </button>
+        </div>
+      );
+    };
 
     switch (currentPage) {
       case 'feed': return <Feed userProfile={userProfile} />;
       case 'vip': return <PlanosVip userProfile={userProfile} />;
-      case 'sos': return <PlaceholderPage title="SOS Sensorial" icon={<Activity size={48} />} />;
-      case 'log': return <PlaceholderPage title="Diário de Bordo" icon={<Heart size={48} />} />;
-      case 'videos': return <PlaceholderPage title="Galeria de Vídeos" icon={<Video size={48} />} />;
+      case 'sos': return requireVip(<PlaceholderPage title="SOS Sensorial" icon={<Activity size={48} />} />);
+      case 'log': return requireVip(<PlaceholderPage title="Diário de Bordo" icon={<Heart size={48} />} />);
+      case 'videos': return requireVip(<PlaceholderPage title="Galeria de Vídeos" icon={<Video size={48} />} />);
       case 'settings': return <PlaceholderPage title="Configurações" icon={<SettingsIcon size={48} />} />;
+      case 'termos': return <TermosDeUso onBack={() => setCurrentPage('feed')} />;
+      case 'privacidade': return <Privacidade onBack={() => setCurrentPage('feed')} />;
+      case 'contato': return <Contato onBack={() => setCurrentPage('feed')} />;
       default: return <Feed userProfile={userProfile} />;
     }
   };
