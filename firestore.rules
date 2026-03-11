@@ -1,0 +1,43 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper function to check if user is admin
+    function isAdmin() {
+      return request.auth != null && (
+        request.auth.token.email == 'fabiopalacioschwingel@gmail.com' || 
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin'
+      );
+    }
+    
+    // Helper function to check if user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    match /{document=**} {
+      // Admin has full read/write access
+      allow read, write: if isAdmin();
+      
+      // Authenticated users have read access to everything
+      allow read: if isAuthenticated();
+    }
+    
+    // Users can write their own data
+    match /users/{userId} {
+      allow write: if request.auth != null && request.auth.uid == userId;
+    }
+    
+    // Users can create and edit posts
+    match /posts/{postId} {
+      allow create: if isAuthenticated();
+      allow update, delete: if isAuthenticated() && request.auth.uid == resource.data.authorId;
+    }
+    
+    // Users can create and edit their own SOS cards
+    match /sos_cards/{cardId} {
+      allow create: if isAuthenticated();
+      allow update, delete: if isAuthenticated() && request.auth.uid == resource.data.userId;
+    }
+  }
+}

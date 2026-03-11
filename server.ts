@@ -175,7 +175,6 @@ async function startServer() {
         location: 'Brasil',
         timestamp: admin.firestore.FieldValue.serverTimestamp(),
         createdAt: admin.firestore.FieldValue.serverTimestamp(),
-        isVip: true,
         isGlobal: true
       });
       console.log("AI News posted successfully.");

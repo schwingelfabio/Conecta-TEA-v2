@@ -142,6 +142,26 @@ const SosPage: React.FC<SosPageProps> = ({ userProfile, onLoginClick }) => {
     );
   }
 
+  if (!userProfile.isVip && userProfile.role !== 'admin') {
+    return (
+      <div className="max-w-2xl mx-auto py-20 px-4 text-center">
+        <div className="w-24 h-24 bg-amber-50 text-amber-500 rounded-full flex items-center justify-center mx-auto mb-6">
+          <AlertTriangle size={48} />
+        </div>
+        <h2 className="text-3xl font-serif font-bold text-slate-900 mb-4">Conteúdo Exclusivo VIP</h2>
+        <p className="text-slate-500 max-w-md mx-auto mb-8">
+          A Carteirinha SOS é um recurso exclusivo para assinantes VIP.
+        </p>
+        <button 
+          onClick={() => window.location.reload()}
+          className="px-8 py-4 bg-slate-900 text-white rounded-full font-bold hover:bg-slate-800 transition-all shadow-lg"
+        >
+          Conhecer Planos VIP
+        </button>
+      </div>
+    );
+  }
+
   if (error) {
     return (
       <div className="max-w-2xl mx-auto py-20 px-4 text-center">

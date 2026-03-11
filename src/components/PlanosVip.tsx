@@ -17,14 +17,21 @@ const PlanosVip: React.FC<PlanosVipProps> = ({ userProfile }) => {
     
     setLoading(planType);
     try {
-      alert('Redirecionando para o PagSeguro...');
+      // Links do PagSeguro (Substitua pelos links reais gerados no seu painel)
+      const linksPagSeguro = {
+        mensal: '[COLE AQUI O LINK DO PAGSEGURO]',
+        anual: '[COLE AQUI O LINK DO PAGSEGURO]'
+      };
+
+      const checkoutUrl = linksPagSeguro[planType];
+
+      if (checkoutUrl && checkoutUrl !== '[COLE AQUI O LINK DO PAGSEGURO]') {
+        // Redireciona para o PagSeguro em uma nova aba
+        window.open(checkoutUrl, '_blank');
+      } else {
+        alert('Por favor, configure os links do PagSeguro no código (PlanosVip.tsx).');
+      }
       
-      // Simulação de liberação VIP
-      const userRef = doc(db, 'users', userProfile.uid);
-      await updateDoc(userRef, { isVip: true });
-      
-      alert('Simulação: Acesso VIP liberado com sucesso!');
-      window.location.reload();
     } catch (err) {
       console.error(err);
       alert('Erro ao iniciar checkout. Tente novamente mais tarde.');
@@ -134,7 +141,10 @@ const PlanosVip: React.FC<PlanosVipProps> = ({ userProfile }) => {
               } disabled:opacity-50`}
             >
               {loading === plan.id ? (
-                <Loader2 className="animate-spin" size={20} />
+                <>
+                  <Loader2 className="animate-spin" size={20} />
+                  <span>Processando Assinatura...</span>
+                </>
               ) : (
                 <>
                   <span>{plan.buttonText}</span>

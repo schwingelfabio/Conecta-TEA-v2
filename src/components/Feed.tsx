@@ -62,7 +62,17 @@ const Feed: React.FC<FeedProps> = ({ userProfile }) => {
         id: doc.id,
         ...doc.data()
       })) as Post[];
-      setPosts(fetchedPosts);
+      
+      // Limpeza Automática: Ignorar postagens antigas/malformadas e normalizar dados
+      const validPosts = fetchedPosts
+        .filter(post => (post.text || post.content) && (post.authorId || post.userId) && post.topic)
+        .map(post => ({
+          ...post,
+          authorId: post.authorId || post.userId,
+          text: post.text || post.content
+        }));
+      
+      setPosts(validPosts);
       setLoading(false);
     });
 
@@ -88,7 +98,7 @@ const Feed: React.FC<FeedProps> = ({ userProfile }) => {
         location: userProfile.city ? `${userProfile.city}, ${userProfile.state}` : 'Brasil',
         timestamp: serverTimestamp(),
         createdAt: serverTimestamp(),
-        isVip: userProfile.isVip,
+        isVip: userProfile.isVip || userProfile.role === 'admin',
         isGlobal: true
       });
       setNewPost('');
@@ -262,7 +272,7 @@ const Feed: React.FC<FeedProps> = ({ userProfile }) => {
                       </div>
                     </div>
                     <div className="flex items-center space-x-2">
-                      {isAdmin && (
+                      {(isAdmin || userProfile?.uid === post.authorId) && (
                         <button 
                           onClick={() => handleDeletePost(post.id)}
                           className="text-red-400 hover:text-red-600 transition-colors p-2"

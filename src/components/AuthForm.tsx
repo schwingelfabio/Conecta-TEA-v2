@@ -30,21 +30,39 @@ const AuthForm: React.FC<AuthFormProps> = ({ onSuccess, onClose }) => {
 
     try {
       if (isLogin) {
-        await signInWithEmailAndPassword(auth, email, password);
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+        const isAdmin = user.email === 'fabiopalacioschwingel@gmail.com';
+        
+        if (isAdmin) {
+          const userDoc = await getDoc(doc(db, 'users', user.uid));
+          if (userDoc.exists()) {
+            const data = userDoc.data();
+            if (data.role !== 'admin' || !data.isVip) {
+              await setDoc(doc(db, 'users', user.uid), {
+                ...data,
+                role: 'admin',
+                isVip: true
+              });
+            }
+          }
+        }
       } else {
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
         
         await updateProfile(user, { displayName: name });
         
+        const isAdmin = user.email === 'fabiopalacioschwingel@gmail.com';
+        
         // Create user profile in Firestore
         await setDoc(doc(db, 'users', user.uid), {
           uid: user.uid,
           email: user.email,
           displayName: name,
-          isVip: false,
+          isVip: isAdmin,
           createdAt: new Date(),
-          role: 'parent'
+          role: isAdmin ? 'admin' : 'parent'
         });
       }
       onSuccess();
@@ -65,16 +83,28 @@ const AuthForm: React.FC<AuthFormProps> = ({ onSuccess, onClose }) => {
       
       // Check if user exists in Firestore
       const userDoc = await getDoc(doc(db, 'users', user.uid));
+      const isAdmin = user.email === 'fabiopalacioschwingel@gmail.com';
+      
       if (!userDoc.exists()) {
         await setDoc(doc(db, 'users', user.uid), {
           uid: user.uid,
           email: user.email,
           displayName: user.displayName,
           photoURL: user.photoURL,
-          isVip: false,
+          isVip: isAdmin,
           createdAt: new Date(),
-          role: 'parent'
+          role: isAdmin ? 'admin' : 'parent'
         });
+      } else if (isAdmin) {
+        // Ensure admin fields are set if they login and already exist but missing fields
+        const data = userDoc.data();
+        if (data.role !== 'admin' || !data.isVip) {
+          await setDoc(doc(db, 'users', user.uid), {
+            ...data,
+            role: 'admin',
+            isVip: true
+          });
+        }
       }
       onSuccess();
     } catch (err: any) {
