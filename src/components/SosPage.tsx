@@ -8,13 +8,15 @@ import QRCode from 'react-qr-code';
 
 interface SosPageProps {
   userProfile: UserProfile | null;
+  onLoginClick?: () => void;
 }
 
-const SosPage: React.FC<SosPageProps> = ({ userProfile }) => {
+const SosPage: React.FC<SosPageProps> = ({ userProfile, onLoginClick }) => {
   const [sosCard, setSosCard] = useState<SosCard | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   // Form State
   const [formData, setFormData] = useState({
@@ -33,8 +35,13 @@ const SosPage: React.FC<SosPageProps> = ({ userProfile }) => {
 
   useEffect(() => {
     const fetchSosCard = async () => {
-      if (!userProfile) return;
+      if (!userProfile) {
+        setLoading(false);
+        return;
+      }
+      
       try {
+        setError(null);
         const q = query(collection(db, 'sos_cards'), where('userId', '==', userProfile.uid));
         const querySnapshot = await getDocs(q);
         if (!querySnapshot.empty) {
@@ -57,8 +64,9 @@ const SosPage: React.FC<SosPageProps> = ({ userProfile }) => {
         } else {
           setIsEditing(true);
         }
-      } catch (error) {
-        console.error("Error fetching SOS card:", error);
+      } catch (err) {
+        console.error("Error fetching SOS card:", err);
+        setError("Ocorreu um erro de rede ao carregar os dados. Tente novamente mais tarde.");
       } finally {
         setLoading(false);
       }
@@ -110,6 +118,46 @@ const SosPage: React.FC<SosPageProps> = ({ userProfile }) => {
     return (
       <div className="flex justify-center items-center py-20">
         <div className="w-10 h-10 border-4 border-slate-200 border-t-red-500 rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  if (!userProfile) {
+    return (
+      <div className="max-w-2xl mx-auto py-20 px-4 text-center">
+        <div className="w-24 h-24 bg-red-50 text-red-500 rounded-full flex items-center justify-center mx-auto mb-6">
+          <AlertTriangle size={48} />
+        </div>
+        <h2 className="text-3xl font-serif font-bold text-slate-900 mb-4">Acesso Restrito</h2>
+        <p className="text-slate-500 max-w-md mx-auto mb-8">
+          Você precisa fazer login para acessar a Carteirinha SOS.
+        </p>
+        <button 
+          onClick={onLoginClick}
+          className="px-8 py-4 bg-red-500 text-white rounded-full font-bold hover:bg-red-600 transition-all shadow-lg"
+        >
+          Fazer Login
+        </button>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="max-w-2xl mx-auto py-20 px-4 text-center">
+        <div className="w-24 h-24 bg-red-50 text-red-500 rounded-full flex items-center justify-center mx-auto mb-6">
+          <AlertTriangle size={48} />
+        </div>
+        <h2 className="text-3xl font-serif font-bold text-slate-900 mb-4">Erro de Conexão</h2>
+        <p className="text-slate-500 max-w-md mx-auto mb-8">
+          {error}
+        </p>
+        <button 
+          onClick={() => window.location.reload()}
+          className="px-8 py-4 bg-slate-900 text-white rounded-full font-bold hover:bg-slate-800 transition-all shadow-lg"
+        >
+          Tentar Novamente
+        </button>
       </div>
     );
   }

@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Check, Star, Zap, Shield, ArrowRight, Loader2 } from 'lucide-react';
 import { UserProfile } from '../types';
+import { db } from '../lib/firebase';
+import { doc, updateDoc } from 'firebase/firestore';
 
 interface PlanosVipProps {
   userProfile: UserProfile | null;
@@ -15,22 +17,14 @@ const PlanosVip: React.FC<PlanosVipProps> = ({ userProfile }) => {
     
     setLoading(planType);
     try {
-      const response = await fetch('/api/create-checkout', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          planType,
-          userId: userProfile.uid,
-          userEmail: userProfile.email
-        })
-      });
-
-      const data = await response.json();
-      if (data.url) {
-        window.location.href = data.url;
-      } else {
-        throw new Error('Failed to get checkout URL');
-      }
+      alert('Redirecionando para o PagSeguro...');
+      
+      // Simulação de liberação VIP
+      const userRef = doc(db, 'users', userProfile.uid);
+      await updateDoc(userRef, { isVip: true });
+      
+      alert('Simulação: Acesso VIP liberado com sucesso!');
+      window.location.reload();
     } catch (err) {
       console.error(err);
       alert('Erro ao iniciar checkout. Tente novamente mais tarde.');

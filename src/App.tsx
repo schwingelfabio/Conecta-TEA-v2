@@ -66,7 +66,7 @@ const App: React.FC = () => {
             let needsUpdate = false;
             let updates: any = {};
             
-            if (firebaseUser.email === 'fabiopalacioschwingel@gmail.com' && profileData.role !== 'admin') {
+            if (firebaseUser.email === 'fabiopalacioschwingel@gmail.com' && (profileData.role !== 'admin' || !profileData.isVip)) {
               updates.role = 'admin';
               updates.isVip = true;
               needsUpdate = true;
@@ -152,7 +152,7 @@ const App: React.FC = () => {
     switch (currentPage) {
       case 'feed': return <Feed userProfile={userProfile} />;
       case 'vip': return <AreaVip userProfile={userProfile} />;
-      case 'sos': return <SosPage userProfile={userProfile} />;
+      case 'sos': return <SosPage userProfile={userProfile} onLoginClick={() => setShowAuth(true)} />;
       case 'log': return requireVip(<PlaceholderPage title="Diário de Bordo" icon={<Heart size={48} />} />);
       case 'videos': return requireVip(<PlaceholderPage title="Galeria de Vídeos" icon={<Video size={48} />} />);
       case 'settings': return <PlaceholderPage title="Configurações" icon={<SettingsIcon size={48} />} />;
