@@ -24,6 +24,7 @@ import LandingPage from './components/LandingPage';
 import AuthForm from './components/AuthForm';
 import Feed from './components/Feed';
 import PlanosVip from './components/PlanosVip';
+import AreaVip from './components/AreaVip';
 import AiAssistant from './components/AiAssistant';
 import { TermosDeUso, Privacidade, Contato } from './components/LegalPages';
 
@@ -132,7 +133,7 @@ const App: React.FC = () => {
 
     switch (currentPage) {
       case 'feed': return <Feed userProfile={userProfile} />;
-      case 'vip': return <PlanosVip userProfile={userProfile} />;
+      case 'vip': return <AreaVip userProfile={userProfile} />;
       case 'sos': return requireVip(<PlaceholderPage title="SOS Sensorial" icon={<Activity size={48} />} />);
       case 'log': return requireVip(<PlaceholderPage title="Diário de Bordo" icon={<Heart size={48} />} />);
       case 'videos': return requireVip(<PlaceholderPage title="Galeria de Vídeos" icon={<Video size={48} />} />);
