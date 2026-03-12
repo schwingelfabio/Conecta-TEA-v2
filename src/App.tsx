@@ -1,340 +1,242 @@
 import React, { useState, useEffect } from 'react';
-import { auth, db } from './lib/firebase';
-import { onAuthStateChanged, signOut } from 'firebase/auth';
-import { doc, getDoc, onSnapshot, updateDoc } from 'firebase/firestore';
-import { UserProfile } from './types';
-import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Home, 
-  Shield, 
-  Settings as SettingsIcon, 
-  LogOut, 
-  Menu, 
-  X, 
-  Bell,
-  Heart,
-  Brain,
-  Activity,
-  Video,
-  Lock
+import {
+  Home,
+  User,
+  Crown,
+  LogOut,
+  LogIn,
+  Users,
+  MessageCircle,
+  ShieldCheck,
+  FileText,
+  Shield,
+  Mail
 } from 'lucide-react';
-
-// Components
-import LandingPage from './components/LandingPage';
-import AuthForm from './components/AuthForm';
 import Feed from './components/Feed';
-import PlanosVip from './components/PlanosVip';
 import AreaVip from './components/AreaVip';
+import Settings from './components/Settings';
 import SosPage from './components/SosPage';
 import EmergencyPage from './components/EmergencyPage';
-import AiAssistant from './components/AiAssistant';
-import Settings from './components/Settings';
+import LandingPage from './components/LandingPage';
 import { TermosDeUso, Privacidade, Contato } from './components/LegalPages';
+import AiAssistant from './components/AiAssistant';
+import AuthForm from './components/AuthForm';
+import { auth, googleProvider, db } from './lib/firebase';
+import { signInWithPopup, signOut, onAuthStateChanged, User as FirebaseUser } from 'firebase/auth';
+import { doc, getDoc, setDoc, collection, query, where, getDocs, onSnapshot } from 'firebase/firestore';
+import { initializeAdmins, checkIsAdmin } from './lib/admin';
 
-type Page = 'home' | 'feed' | 'vip' | 'settings' | 'sos' | 'log' | 'videos' | 'termos' | 'privacidade' | 'contato';
+async function initializeDefaultTopic() {
+  try {
+    const topicsRef = collection(db, 'topics');
+    const q = query(topicsRef, where('titulo', '==', 'Bem-vindos à Comunidade!'));
+    const querySnapshot = await getDocs(q);
 
-const App: React.FC = () => {
-  const [user, setUser] = useState<any>(null);
-  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+    if (querySnapshot.empty) {
+      await setDoc(doc(topicsRef), {
+        titulo: 'Bem-vindos à Comunidade!',
+        cidade: 'Geral',
+        estado: 'Geral',
+        autor: 'Sistema',
+        createdAt: new Date()
+      });
+      console.log('Tópico inicial criado com sucesso.');
+    }
+  } catch (error) {
+    console.error('Erro ao inicializar tópico padrão:', error);
+  }
+}
+
+export default function App() {
+  const [activeTab, setActiveTab] = useState<'feed' | 'vip' | 'settings' | 'sos' | 'termos' | 'privacidade' | 'contato'>('feed');
+  const [user, setUser] = useState<FirebaseUser | null>(null);
+  const [isAdmin, setIsAdmin] = useState(() => localStorage.getItem('isAdmin') === 'true');
+  const [isVip, setIsVip] = useState(() => localStorage.getItem('isVip') === 'true');
   const [loading, setLoading] = useState(true);
+  const [emergencyUserId, setEmergencyUserId] = useState<string | null>(null);
   const [showAuth, setShowAuth] = useState(false);
-  const [currentPage, setCurrentPage] = useState<Page>('home');
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [emergencyId, setEmergencyId] = useState<string | null>(null);
 
   useEffect(() => {
-    // Check for emergency route
+    initializeAdmins();
+    initializeDefaultTopic();
+
     const path = window.location.pathname;
     if (path.startsWith('/emergencia/')) {
-      const id = path.split('/')[2];
-      if (id) {
-        setEmergencyId(id);
+      const userId = path.split('/emergencia/')[1];
+      if (userId) {
+        setEmergencyUserId(userId);
         setLoading(false);
         return;
       }
     }
 
-    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-      setUser(firebaseUser);
-      if (firebaseUser) {
-        // Real-time listener for user profile
-        const userRef = doc(db, 'users', firebaseUser.uid);
-        const unsubProfile = onSnapshot(userRef, async (docSnap) => {
+    const unsubscribe = onAuthStateChanged(auth, async (u) => {
+      setUser(u);
+
+      if (u) {
+        const normalizedEmail = u.email?.toLowerCase().trim() || '';
+
+        let adminStatus = await checkIsAdmin(normalizedEmail);
+        let vipStatus = false;
+
+        if (normalizedEmail === 'fabiopalacioschwingel@gmail.com') {
+          adminStatus = true;
+          vipStatus = true;
+        } else if (normalizedEmail === 'fabiparadox2@gmail.com') {
+          adminStatus = true;
+          vipStatus = true;
+        } else {
+          vipStatus = adminStatus;
+        }
+
+        setIsAdmin(adminStatus);
+        setIsVip(vipStatus);
+
+        localStorage.setItem('isAdmin', String(adminStatus));
+        localStorage.setItem('isVip', String(vipStatus));
+
+        const userDocRef = doc(db, 'users', u.uid);
+
+        const unsubscribeUser = onSnapshot(userDocRef, (docSnap) => {
           if (docSnap.exists()) {
-            const profileData = docSnap.data() as UserProfile;
-            
-            // Auto-assign roles based on email
-            let needsUpdate = false;
-            let updates: any = {};
-            
-            const normalizedEmail = firebaseUser.email?.toLowerCase().trim();
-            const adminDoc = normalizedEmail ? await getDoc(doc(db, 'admins', normalizedEmail)) : null;
-            const isAdmin = adminDoc?.exists() || normalizedEmail === 'fabiopalacioschwingel@gmail.com' || normalizedEmail === 'fabiparadox2@gmail.com';
-            
-            if (isAdmin && (profileData.role !== 'admin' || !profileData.isVip)) {
-              updates.role = 'admin';
-              updates.isVip = true;
-              needsUpdate = true;
-            }
-            
-            if (needsUpdate) {
-              await updateDoc(userRef, updates);
-            } else {
-              setUserProfile(profileData);
-            }
+            const data = docSnap.data();
+            const isUserVip = data.isVip === true || adminStatus || vipStatus;
+
+            setIsVip(isUserVip);
+            localStorage.setItem('isVip', String(isUserVip));
+          } else {
+            const fallbackVip = adminStatus || vipStatus;
+            setIsVip(fallbackVip);
+            localStorage.setItem('isVip', String(fallbackVip));
           }
         });
-        setCurrentPage('feed');
-        return () => unsubProfile();
+
+        (window as any)._unsubscribeUser = unsubscribeUser;
       } else {
-        setUserProfile(null);
-        setCurrentPage('home');
+        if ((window as any)._unsubscribeUser) {
+          (window as any)._unsubscribeUser();
+          (window as any)._unsubscribeUser = null;
+        }
+
+        setIsAdmin(false);
+        setIsVip(false);
+
+        localStorage.removeItem('isAdmin');
+        localStorage.removeItem('isVip');
       }
+
       setLoading(false);
     });
 
-    return () => unsubscribe();
+    return () => {
+      unsubscribe();
+      if ((window as any)._unsubscribeUser) {
+        (window as any)._unsubscribeUser();
+      }
+    };
   }, []);
 
-  const handleLogout = async () => {
-    await signOut(auth);
-    setIsMenuOpen(false);
+  const handleLogin = async () => {
+    try {
+      await signInWithPopup(auth, googleProvider);
+    } catch (error) {
+      console.error('Erro ao fazer login', error);
+    }
   };
 
-  if (emergencyId) {
-    return <EmergencyPage id={emergencyId} />;
-  }
+  const handleLogout = () => signOut(auth);
+
+  const renderContent = () => {
+    switch (activeTab) {
+      case 'feed':
+        return <Feed isAdmin={isAdmin} isVip={isVip} />;
+      case 'vip':
+        return <AreaVip isAdmin={isAdmin} isVip={isVip} />;
+      case 'settings':
+        return <Settings isAdmin={isAdmin} isVip={isVip} onNavigate={(tab) => setActiveTab(tab as any)} />;
+      case 'sos':
+        return <SosPage />;
+      case 'termos':
+        return <TermosDeUso onBack={() => setActiveTab('settings')} />;
+      case 'privacidade':
+        return <Privacidade onBack={() => setActiveTab('settings')} />;
+      case 'contato':
+        return <Contato onBack={() => setActiveTab('settings')} />;
+      default:
+        return <Feed isAdmin={isAdmin} isVip={isVip} />;
+    }
+  };
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
-        <div className="flex flex-col items-center space-y-4">
-          <div className="w-16 h-16 border-4 border-slate-200 border-t-brand-primary rounded-full animate-spin" />
-          <p className="text-slate-400 font-serif font-bold text-xl animate-pulse">Conecta TEA</p>
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="flex flex-col items-center">
+          <div className="w-24 h-24 bg-sky-500 rounded-[2rem] flex items-center justify-center text-white mb-6 animate-bounce shadow-xl shadow-sky-100">
+            <Users size={48} />
+          </div>
         </div>
       </div>
     );
   }
 
-  const renderPage = () => {
-    if (!user) {
-      switch (currentPage) {
-        case 'termos': return <TermosDeUso onBack={() => setCurrentPage('home')} />;
-        case 'privacidade': return <Privacidade onBack={() => setCurrentPage('home')} />;
-        case 'contato': return <Contato onBack={() => setCurrentPage('home')} />;
-        default: return <LandingPage onStart={() => setShowAuth(true)} onNavigate={setCurrentPage} />;
-      }
-    }
-
-    // VIP Protection Wrapper
-    const requireVip = (Component: React.ReactNode) => {
-      if (userProfile?.isVip || userProfile?.role === 'admin') {
-        return Component;
-      }
-      return (
-        <div className="max-w-2xl mx-auto py-20 px-4 text-center">
-          <div className="w-24 h-24 bg-amber-50 text-amber-500 rounded-full flex items-center justify-center mx-auto mb-6">
-            <Lock size={48} />
-          </div>
-          <h2 className="text-3xl font-serif font-bold text-slate-900 mb-4">Conteúdo Exclusivo VIP</h2>
-          <p className="text-slate-500 max-w-md mx-auto mb-8">
-            Este recurso é reservado para assinantes VIP. Assine agora para desbloquear acesso total a ferramentas avançadas e conteúdos exclusivos.
-          </p>
-          <button 
-            onClick={() => setCurrentPage('vip')}
-            className="px-8 py-4 bg-slate-900 text-white rounded-full font-bold hover:bg-slate-800 transition-all shadow-lg"
-          >
-            Conhecer Planos VIP
-          </button>
-        </div>
-      );
-    };
-
-    switch (currentPage) {
-      case 'feed': return <Feed userProfile={userProfile} />;
-      case 'vip': return <AreaVip userProfile={userProfile} />;
-      case 'sos': return <SosPage userProfile={userProfile} onLoginClick={() => setShowAuth(true)} />;
-      case 'log': return requireVip(<PlaceholderPage title="Diário de Bordo" icon={<Heart size={48} />} />);
-      case 'videos': return requireVip(<PlaceholderPage title="Galeria de Vídeos" icon={<Video size={48} />} />);
-      case 'settings': return <Settings />;
-      case 'termos': return <TermosDeUso onBack={() => setCurrentPage('feed')} />;
-      case 'privacidade': return <Privacidade onBack={() => setCurrentPage('feed')} />;
-      case 'contato': return <Contato onBack={() => setCurrentPage('feed')} />;
-      default: return <Feed userProfile={userProfile} />;
-    }
-  };
+  if (emergencyUserId) {
+    return <EmergencyPage userId={emergencyUserId} />;
+  }
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      {/* Navigation */}
+    <div className="min-h-screen bg-gradient-to-b from-sky-50 to-white font-sans text-gray-900">
       {user && (
-        <nav className="sticky top-0 z-30 bg-white/80 backdrop-blur-md border-b border-slate-100 px-4 py-3">
-          <div className="max-w-7xl mx-auto flex items-center justify-between">
-            <div className="flex items-center space-x-8">
-              <button 
-                onClick={() => setCurrentPage('feed')}
-                className="text-2xl font-serif font-bold text-slate-900 flex items-center space-x-2"
-              >
-                <span className="text-brand-primary italic">Conecta</span>
-                <span>TEA</span>
-              </button>
-
-              <div className="hidden md:flex items-center space-x-1">
-                <NavButton 
-                  active={currentPage === 'feed'} 
-                  onClick={() => setCurrentPage('feed')} 
-                  icon={<Home size={20} />} 
-                  label="Feed" 
-                />
-                <NavButton 
-                  active={currentPage === 'sos'} 
-                  onClick={() => setCurrentPage('sos')} 
-                  icon={<Activity size={20} />} 
-                  label="SOS" 
-                />
-                <NavButton 
-                  active={currentPage === 'log'} 
-                  onClick={() => setCurrentPage('log')} 
-                  icon={<Heart size={20} />} 
-                  label="Diário" 
-                />
-                <NavButton 
-                  active={currentPage === 'vip'} 
-                  onClick={() => setCurrentPage('vip')} 
-                  icon={<Shield size={20} />} 
-                  label="VIP" 
-                  highlight
-                />
+        <nav className="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-gray-100">
+          <div className="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
+            <div className="flex items-center gap-2 cursor-pointer" onClick={() => setActiveTab('feed')}>
+              <div className="w-10 h-10 bg-sky-500 rounded-xl flex items-center justify-center text-white shadow-sm">
+                <Users size={24} />
               </div>
+              <h1 className="text-xl font-bold tracking-tight hidden sm:block">
+                Conecta <span className="text-sky-500">TEA</span>
+              </h1>
             </div>
 
-            <div className="flex items-center space-x-4">
-              <button className="p-2 text-slate-400 hover:text-slate-600 transition-colors relative">
-                <Bell size={22} />
-                <div className="absolute top-2 right-2 w-2 h-2 bg-brand-secondary rounded-full border-2 border-white" />
+            <div className="flex items-center gap-1 sm:gap-4">
+              <button onClick={() => setActiveTab('feed')} className={`p-2 sm:px-4 sm:py-2 rounded-full flex items-center gap-2 transition-all ${activeTab === 'feed' ? 'bg-sky-100 text-sky-700 font-bold' : 'hover:bg-gray-100 text-gray-600'}`}>
+                <Home size={20} />
+                <span className="hidden sm:inline">Início</span>
               </button>
-              
-              <div className="hidden md:flex items-center space-x-3 pl-4 border-l border-slate-100">
-                <div className="text-right">
-                  <p className="text-sm font-bold text-slate-900">{userProfile?.displayName}</p>
-                  <p className="text-[10px] text-slate-400 uppercase tracking-widest font-bold">
-                    {userProfile?.isVip ? 'Membro VIP' : 'Membro Gratuito'}
-                  </p>
-                </div>
-                <button 
-                  onClick={() => setIsMenuOpen(!isMenuOpen)}
-                  className="w-10 h-10 rounded-full border-2 border-slate-100 overflow-hidden hover:border-brand-primary transition-all"
-                >
-                  <img 
-                    src={userProfile?.photoURL || `https://api.dicebear.com/7.x/avataaars/svg?seed=${userProfile?.uid}`} 
-                    alt="Profile" 
-                  />
-                </button>
-              </div>
+              <button onClick={() => setActiveTab('sos')} className={`p-2 sm:px-4 sm:py-2 rounded-full flex items-center gap-2 transition-all ${activeTab === 'sos' ? 'bg-red-100 text-red-700 font-bold' : 'hover:bg-gray-100 text-gray-600'}`}>
+                <ShieldCheck size={20} />
+                <span className="hidden sm:inline">SOS</span>
+              </button>
+              <button onClick={() => setActiveTab('vip')} className={`p-2 sm:px-4 sm:py-2 rounded-full flex items-center gap-2 transition-all ${activeTab === 'vip' ? 'bg-amber-100 text-amber-700 font-bold' : 'hover:bg-gray-100 text-gray-600'}`}>
+                <Crown size={20} />
+                <span className="hidden sm:inline">VIP</span>
+              </button>
+            </div>
 
-              <button 
-                onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className="md:hidden p-2 text-slate-600"
-              >
-                {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            <div className="flex items-center gap-3">
+              <button onClick={() => setActiveTab('settings')} className={`w-10 h-10 rounded-full border-2 overflow-hidden hidden sm:block transition-all ${activeTab === 'settings' ? 'border-sky-500' : 'border-sky-100'}`}>
+                {user.photoURL ? <img src={user.photoURL} alt="Perfil" className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center bg-sky-100 text-sky-600 font-bold">{user.displayName?.charAt(0) || 'U'}</div>}
+              </button>
+              <button onClick={handleLogout} className="p-2 text-gray-400 hover:text-red-500 transition-colors">
+                <LogOut size={20} />
               </button>
             </div>
           </div>
         </nav>
       )}
 
-      {/* Mobile Menu */}
-      <AnimatePresence>
-        {isMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0, x: '100%' }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: '100%' }}
-            className="fixed inset-0 z-40 bg-white md:hidden pt-20 px-6"
-          >
-            <div className="space-y-6">
-              <MobileNavButton onClick={() => {setCurrentPage('feed'); setIsMenuOpen(false)}} icon={<Home />} label="Início" />
-              <MobileNavButton onClick={() => {setCurrentPage('sos'); setIsMenuOpen(false)}} icon={<Activity />} label="SOS Sensorial" />
-              <MobileNavButton onClick={() => {setCurrentPage('log'); setIsMenuOpen(false)}} icon={<Heart />} label="Diário de Bordo" />
-              <MobileNavButton onClick={() => {setCurrentPage('vip'); setIsMenuOpen(false)}} icon={<Shield />} label="Área VIP" highlight />
-              <MobileNavButton onClick={() => {setCurrentPage('settings'); setIsMenuOpen(false)}} icon={<SettingsIcon />} label="Configurações" />
-              <hr className="border-slate-100" />
-              <button 
-                onClick={handleLogout}
-                className="w-full flex items-center space-x-4 p-4 text-red-500 font-bold"
-              >
-                <LogOut />
-                <span>Sair da Conta</span>
-              </button>
-            </div>
-          </motion.div>
+      <main className={!user ? '' : 'max-w-5xl mx-auto px-4 py-8'}>
+        {!user ? (
+          <LandingPage onLogin={handleLogin} />
+        ) : (
+          renderContent()
         )}
-      </AnimatePresence>
-
-      {/* Main Content */}
-      <main className={`${user ? 'pt-4 pb-24' : ''}`}>
-        {renderPage()}
       </main>
 
-      {/* AI Assistant */}
       {user && <AiAssistant />}
-
-      {/* Auth Modal */}
-      <AnimatePresence>
-        {showAuth && (
-          <AuthForm 
-            onSuccess={() => setShowAuth(false)} 
-            onClose={() => setShowAuth(false)} 
-          />
-        )}
-      </AnimatePresence>
+      
+      {!user && showAuth && (
+        <AuthForm onSuccess={() => setShowAuth(false)} onClose={() => setShowAuth(false)} />
+      )}
     </div>
   );
-};
-
-const NavButton: React.FC<{ active: boolean; onClick: () => void; icon: React.ReactNode; label: string; highlight?: boolean }> = ({ active, onClick, icon, label, highlight }) => (
-  <button
-    onClick={onClick}
-    className={`flex items-center space-x-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all ${
-      active 
-        ? highlight ? 'bg-brand-primary text-white shadow-lg shadow-brand-primary/20' : 'bg-slate-900 text-white' 
-        : highlight ? 'text-brand-primary hover:bg-brand-primary/10' : 'text-slate-500 hover:bg-slate-50'
-    }`}
-  >
-    {icon}
-    <span>{label}</span>
-  </button>
-);
-
-const MobileNavButton: React.FC<{ onClick: () => void; icon: React.ReactNode; label: string; highlight?: boolean }> = ({ onClick, icon, label, highlight }) => (
-  <button
-    onClick={onClick}
-    className={`w-full flex items-center space-x-4 p-4 rounded-2xl text-lg font-bold ${
-      highlight ? 'bg-brand-primary/10 text-brand-primary' : 'text-slate-700'
-    }`}
-  >
-    {icon}
-    <span>{label}</span>
-  </button>
-);
-
-const PlaceholderPage: React.FC<{ title: string; icon: React.ReactNode }> = ({ title, icon }) => (
-  <div className="max-w-4xl mx-auto py-20 px-4 text-center">
-    <div className="w-24 h-24 bg-slate-100 text-slate-300 rounded-full flex items-center justify-center mx-auto mb-6">
-      {icon}
-    </div>
-    <h2 className="text-3xl font-serif font-bold text-slate-900 mb-4">{title}</h2>
-    <p className="text-slate-500 max-w-md mx-auto">
-      Este recurso está sendo reconstruído para oferecer a melhor experiência possível. 
-      Em breve você terá acesso completo a esta funcionalidade.
-    </p>
-    <button 
-      onClick={() => window.location.reload()}
-      className="mt-8 px-6 py-3 bg-slate-900 text-white rounded-full font-bold hover:bg-slate-800 transition-all"
-    >
-      Voltar ao Feed
-    </button>
-  </div>
-);
-
-export default App;
+}

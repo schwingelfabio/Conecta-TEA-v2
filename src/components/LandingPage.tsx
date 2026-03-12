@@ -51,7 +51,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onStart, onNavigate }) => {
               rel="noopener noreferrer"
               className="px-8 py-4 bg-white border-2 border-slate-200 text-slate-900 rounded-full font-semibold text-lg hover:bg-slate-50 transition-all"
             >
-              Triagem TEA IA
+              ACESSE TRIAGEM TEA IA
             </a>
           </div>
         </motion.div>
