@@ -27,8 +27,10 @@ import { auth, googleProvider, db } from './lib/firebase';
 import { signInWithPopup, signOut, onAuthStateChanged, User as FirebaseUser } from 'firebase/auth';
 import { doc, getDoc, setDoc, collection, query, where, getDocs, onSnapshot } from 'firebase/firestore';
 import { checkIsAdmin } from './lib/admin';
+import { useTranslation } from 'react-i18next';
 
 export default function App() {
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<'feed' | 'vip' | 'settings' | 'sos' | 'termos' | 'privacidade' | 'contato'>('feed');
   const [user, setUser] = useState<FirebaseUser | null>(null);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
@@ -196,15 +198,15 @@ export default function App() {
             <div className="flex items-center gap-1 sm:gap-4">
               <button onClick={() => setActiveTab('feed')} className={`p-2 sm:px-4 sm:py-2 rounded-full flex items-center gap-2 transition-all ${activeTab === 'feed' ? 'bg-sky-100 text-sky-700 font-bold' : 'hover:bg-gray-100 text-gray-600'}`}>
                 <Home size={20} />
-                <span className="hidden sm:inline">Início</span>
+                <span className="hidden sm:inline">{t('nav.feed')}</span>
               </button>
               <button onClick={() => setActiveTab('sos')} className={`p-2 sm:px-4 sm:py-2 rounded-full flex items-center gap-2 transition-all ${activeTab === 'sos' ? 'bg-red-100 text-red-700 font-bold' : 'hover:bg-gray-100 text-gray-600'}`}>
                 <ShieldCheck size={20} />
-                <span className="hidden sm:inline">SOS</span>
+                <span className="hidden sm:inline">{t('nav.sos')}</span>
               </button>
               <button onClick={() => setActiveTab('vip')} className={`p-2 sm:px-4 sm:py-2 rounded-full flex items-center gap-2 transition-all ${activeTab === 'vip' ? 'bg-amber-100 text-amber-700 font-bold' : 'hover:bg-gray-100 text-gray-600'}`}>
                 <Crown size={20} />
-                <span className="hidden sm:inline">VIP</span>
+                <span className="hidden sm:inline">{t('nav.vip')}</span>
               </button>
             </div>
 

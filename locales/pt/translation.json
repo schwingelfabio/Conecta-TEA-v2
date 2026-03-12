@@ -1,0 +1,82 @@
+{
+  "nav": {
+    "feed": "Feed",
+    "communities": "Comunidades",
+    "profile": "Perfil",
+    "settings": "Configurações",
+    "sos": "SOS",
+    "vip": "Área VIP",
+    "termos": "Termos de Uso",
+    "privacidade": "Privacidade",
+    "contato": "Contato"
+  },
+  "auth": {
+    "login": "Entrar",
+    "logout": "Sair",
+    "welcome": "Bem-vindo ao Conecta TEA",
+    "google": "Entrar com Google",
+    "orContinue": "ou continue com",
+    "phone": "Celular",
+    "email": "E-mail",
+    "phoneLabel": "Número de Celular (com DDD)",
+    "phonePlaceholder": "(11) 99999-9999",
+    "sendSms": "Enviar SMS",
+    "codeLabel": "Código de 6 dígitos",
+    "codePlaceholder": "000000",
+    "verifyCode": "Verificar Código",
+    "passwordLabel": "Senha",
+    "passwordPlaceholder": "••••••••",
+    "createAccount": "Criar Conta",
+    "alreadyHaveAccount": "Já tenho uma conta. Entrar.",
+    "noAccount": "Não tem conta? Criar agora.",
+    "errors": {
+      "popupClosed": "O login com Google foi fechado antes de concluir.",
+      "popupBlocked": "O navegador bloqueou a janela de login. Tente novamente.",
+      "invalidEmail": "O e-mail informado é inválido.",
+      "userNotFound": "Nenhuma conta foi encontrada com este e-mail.",
+      "wrongPassword": "E-mail ou senha incorretos.",
+      "emailAlreadyInUse": "Este e-mail já está em uso.",
+      "weakPassword": "A senha é muito fraca. Use pelo menos 6 caracteres.",
+      "tooManyRequests": "Muitas tentativas. Aguarde um pouco e tente novamente.",
+      "missingPhone": "Informe um número de celular válido.",
+      "invalidPhone": "O número de celular informado é inválido.",
+      "codeExpired": "O código expirou. Solicite um novo SMS.",
+      "invalidCode": "Código inválido. Verifique e tente novamente.",
+      "default": "Não foi possível concluir a autenticação. Tente novamente."
+    }
+  },
+  "feed": {
+    "placeholder": "O que você está pensando?",
+    "post": "Postar",
+    "loadMore": "Carregar mais",
+    "endOfFeed": "Você chegou ao final.",
+    "loading": "Carregando feed...",
+    "pin": "Post fixado",
+    "delete": "Apagar Post",
+    "pinPost": "Fixar Post",
+    "unpinPost": "Desfixar Post"
+  },
+  "settings": {
+    "title": "Configurações de Perfil",
+    "name": "Nome",
+    "state": "Estado",
+    "city": "Cidade",
+    "save": "Salvar Alterações",
+    "vipStatus": "Status da Conta",
+    "freePlan": "Plano Gratuito",
+    "vipMember": "Membro VIP",
+    "accessFull": "Acesso total liberado",
+    "accessLimited": "Acesso limitado ao feed"
+  },
+  "communities": {
+    "title": "Comunidades Ativas"
+  },
+  "vip": {
+    "title": "Área VIP",
+    "plans": "Nossos Planos"
+  },
+  "sos": {
+    "title": "SOS",
+    "description": "Precisa de ajuda imediata?"
+  }
+}

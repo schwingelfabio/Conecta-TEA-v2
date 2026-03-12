@@ -15,6 +15,8 @@ import {
   MapPin
 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import LanguageSelector from './LanguageSelector';
+import { useTranslation } from 'react-i18next';
 
 export default function Settings({
   isAdmin,
@@ -27,6 +29,7 @@ export default function Settings({
   isDeveloper?: boolean,
   onNavigate: (tab: string) => void
 }) {
+  const { t } = useTranslation();
   const [isVip, setIsVip] = useState(isVipProp || isAdmin || false);
   const user = auth.currentUser;
   
@@ -69,11 +72,14 @@ export default function Settings({
       className="max-w-2xl mx-auto space-y-6 pb-24"
     >
       <div className="bg-white rounded-3xl p-8 shadow-sm border border-gray-100">
-        <h2 className="text-2xl font-bold text-gray-900 mb-6">Configurações de Perfil</h2>
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-2xl font-bold text-gray-900">{t('settings.title')}</h2>
+          <LanguageSelector />
+        </div>
         
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Nome</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{t('settings.name')}</label>
             <input 
               type="text" 
               value={name} 
@@ -83,7 +89,7 @@ export default function Settings({
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Estado</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('settings.state')}</label>
               <input 
                 type="text" 
                 value={state} 
@@ -92,7 +98,7 @@ export default function Settings({
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Cidade</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('settings.city')}</label>
               <input 
                 type="text" 
                 value={city} 
@@ -106,7 +112,7 @@ export default function Settings({
             className="w-full bg-sky-500 text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2"
           >
             <Save size={20} />
-            Salvar Alterações
+            {t('settings.save')}
           </button>
         </div>
       </div>
@@ -114,7 +120,7 @@ export default function Settings({
       <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100">
         <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
           <Crown size={20} className={isVip ? 'text-amber-500' : 'text-gray-400'} />
-          Status da Conta
+          {t('settings.vipStatus')}
         </h3>
         
         <div className="flex gap-2 mb-4">
@@ -129,8 +135,8 @@ export default function Settings({
               <ShieldCheck size={24} />
             </div>
             <div>
-              <p className="font-bold text-gray-900">{isVip ? 'Membro VIP' : 'Plano Gratuito'}</p>
-              <p className="text-sm text-gray-500">{isVip ? 'Acesso total liberado' : 'Acesso limitado ao feed'}</p>
+              <p className="font-bold text-gray-900">{isVip ? t('settings.vipMember') : t('settings.freePlan')}</p>
+              <p className="text-sm text-gray-500">{isVip ? t('settings.accessFull') : t('settings.accessLimited')}</p>
             </div>
           </div>
         </div>
@@ -142,7 +148,7 @@ export default function Settings({
           className="w-full bg-red-50 hover:bg-red-100 text-red-600 font-bold py-5 rounded-3xl flex items-center justify-center gap-3 transition-all active:scale-95 border border-red-100 shadow-sm"
         >
           <LogOut size={24} />
-          Sair da Conta
+          {t('auth.logout')}
         </button>
       </div>
     </motion.div>

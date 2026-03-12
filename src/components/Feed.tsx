@@ -35,6 +35,7 @@ import {
 } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import ActiveCommunities from './ActiveCommunities';
+import { useTranslation } from 'react-i18next';
 
 interface FeedProps {
   userProfile: UserProfile | null;
@@ -43,11 +44,12 @@ interface FeedProps {
 }
 
 const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip }) => {
+  const { t } = useTranslation();
   const [posts, setPosts] = useState<Post[]>([]);
   const [newPost, setNewPost] = useState('');
   const [topic, setTopic] = useState<string>('geral');
   const [loading, setLoading] = useState(true);
-  const [loadingMessage, setLoadingMessage] = useState('Carregando feed...');
+  const [loadingMessage, setLoadingMessage] = useState(t('feed.loading'));
   const [generatingNews, setGeneratingNews] = useState(false);
   const [generationError, setGenerationError] = useState<string | null>(null);
   const [lastVisible, setLastVisible] = useState<QueryDocumentSnapshot<DocumentData> | null>(null);
@@ -299,7 +301,7 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip }) => {
                 disabled={!newPost.trim()}
                 className="bg-brand-primary text-white px-6 py-2 rounded-full font-semibold flex items-center space-x-2 hover:bg-brand-primary/90 transition-all disabled:opacity-50"
               >
-                <span>Postar</span>
+                <span>{t('feed.post')}</span>
                 <Send size={16} />
               </button>
             </div>
@@ -372,7 +374,7 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip }) => {
                           {post.isPinned && (
                             <span className="bg-sky-100 text-sky-700 text-[10px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider flex items-center gap-1">
                               <Pin size={10} />
-                              Post fixado
+                              {t('feed.pin')}
                             </span>
                           )}
                         </div>
@@ -389,7 +391,7 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip }) => {
                         <button 
                           onClick={() => togglePinPost(post.id, !!post.isPinned)}
                           className={`transition-colors p-2 ${post.isPinned ? 'text-sky-600' : 'text-slate-400 hover:text-sky-600'}`}
-                          title={post.isPinned ? "Desfixar Post" : "Fixar Post"}
+                          title={post.isPinned ? t('feed.unpinPost') : t('feed.pinPost')}
                         >
                           <Pin size={18} />
                         </button>
@@ -398,7 +400,7 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip }) => {
                         <button 
                           onClick={() => handleDeletePost(post.id)}
                           className="text-red-400 hover:text-red-600 transition-colors p-2"
-                          title="Apagar Post"
+                          title={t('feed.delete')}
                         >
                           <Trash2 size={18} />
                         </button>
@@ -451,12 +453,12 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip }) => {
             disabled={loadingMore}
             className="w-full py-4 text-center text-brand-primary font-bold hover:bg-slate-50 rounded-2xl transition-all"
           >
-            {loadingMore ? 'Carregando mais posts...' : 'Carregar mais'}
+            {loadingMore ? t('feed.loading') : t('feed.loadMore')}
           </button>
         )}
 
         {!loading && posts.length > 0 && !hasMore && (
-          <p className="text-center text-slate-400 py-4">Você chegou ao final.</p>
+          <p className="text-center text-slate-400 py-4">{t('feed.endOfFeed')}</p>
         )}
 
         {!loading && posts.length === 0 && (

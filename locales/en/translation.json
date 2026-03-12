@@ -1,0 +1,82 @@
+{
+  "nav": {
+    "feed": "Feed",
+    "communities": "Communities",
+    "profile": "Profile",
+    "settings": "Settings",
+    "sos": "SOS",
+    "vip": "VIP Area",
+    "termos": "Terms of Use",
+    "privacidade": "Privacy",
+    "contato": "Contact"
+  },
+  "auth": {
+    "login": "Login",
+    "logout": "Logout",
+    "welcome": "Welcome to Conecta TEA",
+    "google": "Sign in with Google",
+    "orContinue": "or continue with",
+    "phone": "Phone",
+    "email": "Email",
+    "phoneLabel": "Phone Number (with area code)",
+    "phonePlaceholder": "(11) 99999-9999",
+    "sendSms": "Send SMS",
+    "codeLabel": "6-digit code",
+    "codePlaceholder": "000000",
+    "verifyCode": "Verify Code",
+    "passwordLabel": "Password",
+    "passwordPlaceholder": "••••••••",
+    "createAccount": "Create Account",
+    "alreadyHaveAccount": "Already have an account? Login.",
+    "noAccount": "Don't have an account? Create now.",
+    "errors": {
+      "popupClosed": "Google login was closed before completion.",
+      "popupBlocked": "The browser blocked the login window. Try again.",
+      "invalidEmail": "The email provided is invalid.",
+      "userNotFound": "No account was found with this email.",
+      "wrongPassword": "Incorrect email or password.",
+      "emailAlreadyInUse": "This email is already in use.",
+      "weakPassword": "The password is too weak. Use at least 6 characters.",
+      "tooManyRequests": "Too many attempts. Wait a bit and try again.",
+      "missingPhone": "Provide a valid mobile number.",
+      "invalidPhone": "The mobile number provided is invalid.",
+      "codeExpired": "The code has expired. Request a new SMS.",
+      "invalidCode": "Invalid code. Check and try again.",
+      "default": "Could not complete authentication. Try again."
+    }
+  },
+  "feed": {
+    "placeholder": "What are you thinking?",
+    "post": "Post",
+    "loadMore": "Load more",
+    "endOfFeed": "You have reached the end.",
+    "loading": "Loading feed...",
+    "pin": "Pinned post",
+    "delete": "Delete Post",
+    "pinPost": "Pin Post",
+    "unpinPost": "Unpin Post"
+  },
+  "settings": {
+    "title": "Profile Settings",
+    "name": "Name",
+    "state": "State",
+    "city": "City",
+    "save": "Save Changes",
+    "vipStatus": "Account Status",
+    "freePlan": "Free Plan",
+    "vipMember": "VIP Member",
+    "accessFull": "Full access granted",
+    "accessLimited": "Limited feed access"
+  },
+  "communities": {
+    "title": "Active Communities"
+  },
+  "vip": {
+    "title": "VIP Area",
+    "plans": "Our Plans"
+  },
+  "sos": {
+    "title": "SOS",
+    "description": "Need immediate help?"
+  }
+}

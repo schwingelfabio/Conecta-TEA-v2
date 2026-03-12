@@ -10,46 +10,48 @@ import {
   signInWithPhoneNumber,
   ConfirmationResult
 } from 'firebase/auth';
+import { useTranslation } from 'react-i18next';
 
 interface AuthFormProps {
   onSuccess: () => void;
 }
 
-function getFriendlyErrorMessage(err: any): string {
+function getFriendlyErrorMessage(err: any, t: any): string {
   const code = err?.code || '';
 
   switch (code) {
     case 'auth/popup-closed-by-user':
-      return 'O login com Google foi fechado antes de concluir.';
+      return t('auth.errors.popupClosed');
     case 'auth/popup-blocked':
-      return 'O navegador bloqueou a janela de login. Tente novamente.';
+      return t('auth.errors.popupBlocked');
     case 'auth/invalid-email':
-      return 'O e-mail informado é inválido.';
+      return t('auth.errors.invalidEmail');
     case 'auth/user-not-found':
-      return 'Nenhuma conta foi encontrada com este e-mail.';
+      return t('auth.errors.userNotFound');
     case 'auth/wrong-password':
     case 'auth/invalid-credential':
-      return 'E-mail ou senha incorretos.';
+      return t('auth.errors.wrongPassword');
     case 'auth/email-already-in-use':
-      return 'Este e-mail já está em uso.';
+      return t('auth.errors.emailAlreadyInUse');
     case 'auth/weak-password':
-      return 'A senha é muito fraca. Use pelo menos 6 caracteres.';
+      return t('auth.errors.weakPassword');
     case 'auth/too-many-requests':
-      return 'Muitas tentativas. Aguarde um pouco e tente novamente.';
+      return t('auth.errors.tooManyRequests');
     case 'auth/missing-phone-number':
-      return 'Informe um número de celular válido.';
+      return t('auth.errors.missingPhone');
     case 'auth/invalid-phone-number':
-      return 'O número de celular informado é inválido.';
+      return t('auth.errors.invalidPhone');
     case 'auth/code-expired':
-      return 'O código expirou. Solicite um novo SMS.';
+      return t('auth.errors.codeExpired');
     case 'auth/invalid-verification-code':
-      return 'Código inválido. Verifique e tente novamente.';
+      return t('auth.errors.invalidCode');
     default:
-      return 'Não foi possível concluir a autenticação. Tente novamente.';
+      return t('auth.errors.default');
   }
 }
 
 export default function AuthForm({ onSuccess }: AuthFormProps) {
+  const { t } = useTranslation();
   const [method, setMethod] = useState<'google' | 'email' | 'phone'>('google');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -82,7 +84,7 @@ export default function AuthForm({ onSuccess }: AuthFormProps) {
       await signInWithPopup(auth, googleProvider);
       onSuccess();
     } catch (err: any) {
-      setError(getFriendlyErrorMessage(err));
+      setError(getFriendlyErrorMessage(err, t));
     } finally {
       setLoading(false);
     }
@@ -103,7 +105,7 @@ export default function AuthForm({ onSuccess }: AuthFormProps) {
 
       onSuccess();
     } catch (err: any) {
-      setError(getFriendlyErrorMessage(err));
+      setError(getFriendlyErrorMessage(err, t));
     } finally {
       setLoading(false);
     }
@@ -121,7 +123,7 @@ export default function AuthForm({ onSuccess }: AuthFormProps) {
       const confirmation = await signInWithPhoneNumber(auth, formattedPhone, appVerifier);
       setConfirmationResult(confirmation);
     } catch (err: any) {
-      setError(getFriendlyErrorMessage(err));
+      setError(getFriendlyErrorMessage(err, t));
     } finally {
       setLoading(false);
     }
@@ -137,7 +139,7 @@ export default function AuthForm({ onSuccess }: AuthFormProps) {
       await confirmationResult.confirm(verificationCode);
       onSuccess();
     } catch (err: any) {
-      setError(getFriendlyErrorMessage(err));
+      setError(getFriendlyErrorMessage(err, t));
     } finally {
       setLoading(false);
     }
@@ -146,7 +148,7 @@ export default function AuthForm({ onSuccess }: AuthFormProps) {
   return (
     <div className="w-full max-w-md mx-auto bg-white p-8 rounded-[2rem] shadow-xl border border-gray-100">
       <h2 className="text-2xl font-bold text-center text-gray-900 mb-6">
-        Acesse sua conta
+        {t('auth.welcome')}
       </h2>
 
       {error && (
@@ -171,7 +173,7 @@ export default function AuthForm({ onSuccess }: AuthFormProps) {
 
       <div className="relative flex items-center py-2 mb-6">
         <div className="flex-grow border-t border-gray-200"></div>
-        <span className="flex-shrink-0 mx-4 text-gray-400 text-sm font-medium">ou continue com</span>
+        <span className="flex-shrink-0 mx-4 text-gray-400 text-sm font-medium">{t('auth.orContinue')}</span>
         <div className="flex-grow border-t border-gray-200"></div>
       </div>
 
@@ -186,7 +188,7 @@ export default function AuthForm({ onSuccess }: AuthFormProps) {
         >
           <div className="flex items-center justify-center gap-2">
             <Phone size={16} />
-            Celular
+            {t('auth.phone')}
           </div>
         </button>
 
@@ -200,7 +202,7 @@ export default function AuthForm({ onSuccess }: AuthFormProps) {
         >
           <div className="flex items-center justify-center gap-2">
             <Mail size={16} />
-            E-mail
+            {t('auth.email')}
           </div>
         </button>
       </div>
@@ -211,11 +213,11 @@ export default function AuthForm({ onSuccess }: AuthFormProps) {
             <form onSubmit={handleSendSMS} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Número de Celular (com DDD)
+                  {t('auth.phoneLabel')}
                 </label>
                 <input
                   type="tel"
-                  placeholder="(11) 99999-9999"
+                  placeholder={t('auth.phonePlaceholder')}
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   className="w-full p-4 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-transparent outline-none transition-all"
@@ -228,18 +230,18 @@ export default function AuthForm({ onSuccess }: AuthFormProps) {
                 disabled={loading || !phone}
                 className="w-full bg-sky-500 text-white font-bold py-4 rounded-xl hover:bg-sky-600 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
               >
-                {loading ? <Loader2 className="animate-spin" size={20} /> : 'Enviar SMS'}
+                {loading ? <Loader2 className="animate-spin" size={20} /> : t('auth.sendSms')}
               </button>
             </form>
           ) : (
             <form onSubmit={handleVerifyCode} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Código de 6 dígitos
+                  {t('auth.codeLabel')}
                 </label>
                 <input
                   type="text"
-                  placeholder="000000"
+                  placeholder={t('auth.codePlaceholder')}
                   value={verificationCode}
                   onChange={(e) => setVerificationCode(e.target.value)}
                   className="w-full p-4 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-transparent outline-none transition-all text-center tracking-widest text-xl"
@@ -253,7 +255,7 @@ export default function AuthForm({ onSuccess }: AuthFormProps) {
                 disabled={loading || verificationCode.length < 6}
                 className="w-full bg-sky-500 text-white font-bold py-4 rounded-xl hover:bg-sky-600 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
               >
-                {loading ? <Loader2 className="animate-spin" size={20} /> : 'Verificar Código'}
+                {loading ? <Loader2 className="animate-spin" size={20} /> : t('auth.verifyCode')}
               </button>
             </form>
           )}
@@ -265,7 +267,7 @@ export default function AuthForm({ onSuccess }: AuthFormProps) {
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
           <form onSubmit={handleEmailAuth} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">E-mail</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('auth.email')}</label>
               <input
                 type="email"
                 placeholder="seu@email.com"
@@ -277,10 +279,10 @@ export default function AuthForm({ onSuccess }: AuthFormProps) {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Senha</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('auth.passwordLabel')}</label>
               <input
                 type="password"
-                placeholder="••••••••"
+                placeholder={t('auth.passwordPlaceholder')}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full p-4 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-transparent outline-none transition-all"
@@ -293,7 +295,7 @@ export default function AuthForm({ onSuccess }: AuthFormProps) {
               disabled={loading || !email || !password}
               className="w-full bg-sky-500 text-white font-bold py-4 rounded-xl hover:bg-sky-600 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
             >
-              {loading ? <Loader2 className="animate-spin" size={20} /> : (isSignUp ? 'Criar Conta' : 'Entrar')}
+              {loading ? <Loader2 className="animate-spin" size={20} /> : (isSignUp ? t('auth.createAccount') : t('auth.login'))}
             </button>
 
             <div className="text-center mt-4">
@@ -302,7 +304,7 @@ export default function AuthForm({ onSuccess }: AuthFormProps) {
                 onClick={() => setIsSignUp(!isSignUp)}
                 className="text-sm text-sky-600 hover:underline font-medium"
               >
-                {isSignUp ? 'Já tenho uma conta. Entrar.' : 'Não tem conta? Criar agora.'}
+                {isSignUp ? t('auth.alreadyHaveAccount') : t('auth.noAccount')}
               </button>
             </div>
           </form>
