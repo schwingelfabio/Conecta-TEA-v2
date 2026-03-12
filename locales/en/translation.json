@@ -112,5 +112,44 @@
     "button": "Donate with PayPal",
     "scanToDonate": "Scan to donate",
     "footerLink": "Support the Mission"
+  },
+  "landing": {
+    "title": "Your autism support and connection network.",
+    "subtitle": "A platform dedicated to uniting families, professionals, and local communities. Transforming the autism journey through technology, affection, and quality information.",
+    "login": "Login now",
+    "createAccount": "Create free account",
+    "triagemLink": "Triagem TEA IA",
+    "termsAlert": "Please accept the Terms of Use and Privacy to continue.",
+    "termsAlertTop": "Please accept the Terms of Use and Privacy at the top of the page to continue.",
+    "readAndAccept": "I have read and accept the",
+    "termsLink": "Terms of Use and Privacy",
+    "features": {
+      "communities": {
+        "title": "Local Communities",
+        "desc": "Connect with families and professionals in your own city. Exchange experiences and find support near you."
+      },
+      "vip": {
+        "title": "Exclusive VIP Area",
+        "desc": "Access to premium content, mentoring, and specialized resources to boost development."
+      },
+      "triagem": {
+        "title": "Triagem TEA IA",
+        "desc": "Use our artificial intelligence technology to assist in the screening and monitoring process."
+      }
+    },
+    "network": {
+      "badge": "BUILDING A SUPPORT NETWORK FOR ASD FAMILIES",
+      "title": "Together we are stronger."
+    },
+    "cta": {
+      "title": "Ready to start?",
+      "subtitle": "Join other families and be part of a support network made with welcoming, information, and technology.",
+      "button": "Start Now for Free",
+      "triagemButton": "Meet Triagem TEA IA",
+      "termsHint": "Check the terms of use box above to continue."
+    },
+    "footer": {
+      "rights": "© 2026 Conecta TEA. All rights reserved."
+    }
   }
 }

@@ -105,5 +105,51 @@
     "shareText": "Participe da comunidade TEA de {{city}} no Conecta TEA e conecte-se com famílias da nossa região.",
     "copyLink": "Copiar Link",
     "linkCopied": "Link copiado!"
+  },
+  "donation": {
+    "title": "Apoie o Conecta TEA",
+    "description": "Ajude-nos a expandir as comunidades de apoio ao autismo e a tecnologia de impacto social.",
+    "button": "Doar com PayPal",
+    "scanToDonate": "Escaneie para doar",
+    "footerLink": "Apoie a Missão"
+  },
+  "landing": {
+    "title": "A sua rede de apoio e conexão autista.",
+    "subtitle": "Uma plataforma dedicada a unir famílias, profissionais e comunidades locais. Transformando a jornada do autismo através de tecnologia, afeto e informação de qualidade.",
+    "login": "Entrar agora",
+    "createAccount": "Criar conta gratuita",
+    "triagemLink": "Triagem TEA IA",
+    "termsAlert": "Por favor, aceite os Termos de Uso e Privacidade para continuar.",
+    "termsAlertTop": "Por favor, aceite os Termos de Uso e Privacidade no topo da página para continuar.",
+    "readAndAccept": "Eu li e aceito os",
+    "termsLink": "Termos de Uso e Privacidade",
+    "features": {
+      "communities": {
+        "title": "Comunidades Locais",
+        "desc": "Conecte-se com famílias e profissionais da sua própria cidade. Troque experiências e encontre apoio perto de você."
+      },
+      "vip": {
+        "title": "Área VIP Exclusiva",
+        "desc": "Acesso a conteúdos premium, mentorias e recursos especializados para potencializar o desenvolvimento."
+      },
+      "triagem": {
+        "title": "Triagem TEA IA",
+        "desc": "Utilize nossa tecnologia de inteligência artificial para auxiliar no processo de triagem e acompanhamento."
+      }
+    },
+    "network": {
+      "badge": "CONSTRUINDO UMA REDE DE APOIO PARA FAMÍLIAS TEA",
+      "title": "Juntos somos mais fortes."
+    },
+    "cta": {
+      "title": "Pronto para começar?",
+      "subtitle": "Junte-se a outras famílias e faça parte de uma rede de apoio feita com acolhimento, informação e tecnologia.",
+      "button": "Começar Agora Gratuitamente",
+      "triagemButton": "Conhecer Triagem TEA IA",
+      "termsHint": "Marque a caixa de termos de uso acima para continuar."
+    },
+    "footer": {
+      "rights": "© 2026 Conecta TEA. Todos os direitos reservados."
+    }
   }
 }

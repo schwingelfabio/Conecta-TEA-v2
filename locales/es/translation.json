@@ -112,5 +112,44 @@
     "button": "Donar con PayPal",
     "scanToDonate": "Escanea para donar",
     "footerLink": "Apoya la misión"
+  },
+  "landing": {
+    "title": "Tu red de apoyo y conexión autista.",
+    "subtitle": "Una plataforma dedicada a unir familias, profesionales y comunidades locales. Transformando el viaje del autismo a través de la tecnología, el afecto y la información de calidad.",
+    "login": "Entrar ahora",
+    "createAccount": "Crear cuenta gratis",
+    "triagemLink": "Triagem TEA IA",
+    "termsAlert": "Por favor, acepta los Términos de Uso y Privacidad para continuar.",
+    "termsAlertTop": "Por favor, acepta los Términos de Uso y Privacidad en la parte superior de la página para continuar.",
+    "readAndAccept": "He leído y acepto los",
+    "termsLink": "Términos de Uso y Privacidad",
+    "features": {
+      "communities": {
+        "title": "Comunidades Locales",
+        "desc": "Conéctate con familias y profesionales de tu propia ciudad. Intercambia experiencias y encuentra apoyo cerca de ti."
+      },
+      "vip": {
+        "title": "Área VIP Exclusiva",
+        "desc": "Acceso a contenido premium, mentorías y recursos especializados para potenciar el desarrollo."
+      },
+      "triagem": {
+        "title": "Triagem TEA IA",
+        "desc": "Utiliza nuestra tecnología de inteligencia artificial para ayudar en el proceso de detección y seguimiento."
+      }
+    },
+    "network": {
+      "badge": "CONSTRUYENDO UNA RED DE APOYO PARA FAMILIAS TEA",
+      "title": "Juntos somos más fuertes."
+    },
+    "cta": {
+      "title": "¿Listo para empezar?",
+      "subtitle": "Únete a otras familias y sé parte de una red de apoyo hecha con acogida, información y tecnología.",
+      "button": "Empezar Ahora Gratis",
+      "triagemButton": "Conocer Triagem TEA IA",
+      "termsHint": "Marca la casilla de términos de uso arriba para continuar."
+    },
+    "footer": {
+      "rights": "© 2026 Conecta TEA. Todos los derechos reservados."
+    }
   }
 }
