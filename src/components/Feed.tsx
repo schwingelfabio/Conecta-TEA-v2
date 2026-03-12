@@ -74,74 +74,85 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip }) => {
       setLoadingMore(true);
     }
 
-    // 1. Fetch Pinned Posts (only on initial load)
-    let pinnedPosts: Post[] = [];
-    if (!isLoadMore) {
-      let pinnedQuery = query(collection(db, 'posts'), where('isPinned', '==', true));
-      
-      if (topic === 'cidade') {
-        pinnedQuery = query(collection(db, 'posts'), where('isPinned', '==', true), where('city', '==', userProfile?.city || ''));
-      } else if (topic === 'estado') {
-        pinnedQuery = query(collection(db, 'posts'), where('isPinned', '==', true), where('state', '==', userProfile?.state || ''));
-      } else if (topic !== 'geral') {
-        pinnedQuery = query(collection(db, 'posts'), where('isPinned', '==', true), where('topic', '==', topic));
+    const fetchTimeout = setTimeout(() => {
+      if (loading) setLoading(false);
+      if (loadingMore) setLoadingMore(false);
+    }, 8000); // 8 seconds safety timeout
+
+    try {
+      // 1. Fetch Pinned Posts (only on initial load)
+      let pinnedPosts: Post[] = [];
+      if (!isLoadMore) {
+        let pinnedQuery = query(collection(db, 'posts'), where('isPinned', '==', true));
+        
+        if (topic === 'cidade') {
+          pinnedQuery = query(collection(db, 'posts'), where('isPinned', '==', true), where('city', '==', userProfile?.city || ''));
+        } else if (topic === 'estado') {
+          pinnedQuery = query(collection(db, 'posts'), where('isPinned', '==', true), where('state', '==', userProfile?.state || ''));
+        } else if (topic !== 'geral') {
+          pinnedQuery = query(collection(db, 'posts'), where('isPinned', '==', true), where('topic', '==', topic));
+        }
+        
+        const pinnedSnapshot = await getDocs(pinnedQuery);
+        pinnedPosts = pinnedSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as Post[];
       }
-      
-      const pinnedSnapshot = await getDocs(pinnedQuery);
-      pinnedPosts = pinnedSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as Post[];
-    }
 
-    // 2. Fetch Normal Posts (paginated)
-    let q = query(
-      collection(db, 'posts'),
-      where('isPinned', '!=', true), // Requires index
-      orderBy('timestamp', 'desc'),
-      limit(10)
-    );
-
-    if (topic === 'cidade') {
-        q = query(collection(db, 'posts'), where('city', '==', userProfile?.city || ''), where('isPinned', '!=', true), orderBy('timestamp', 'desc'), limit(10));
-    } else if (topic === 'estado') {
-        q = query(collection(db, 'posts'), where('state', '==', userProfile?.state || ''), where('isPinned', '!=', true), orderBy('timestamp', 'desc'), limit(10));
-    } else if (topic !== 'geral') {
-      q = query(
+      // 2. Fetch Normal Posts (paginated)
+      let q = query(
         collection(db, 'posts'),
-        where('topic', '==', topic),
-        where('isPinned', '!=', true),
+        where('isPinned', '!=', true), // Requires index
         orderBy('timestamp', 'desc'),
         limit(10)
       );
-    }
 
-    if (isLoadMore && lastVisible) {
-      q = query(q, startAfter(lastVisible));
-    }
+      if (topic === 'cidade') {
+          q = query(collection(db, 'posts'), where('city', '==', userProfile?.city || ''), where('isPinned', '!=', true), orderBy('timestamp', 'desc'), limit(10));
+      } else if (topic === 'estado') {
+          q = query(collection(db, 'posts'), where('state', '==', userProfile?.state || ''), where('isPinned', '!=', true), orderBy('timestamp', 'desc'), limit(10));
+      } else if (topic !== 'geral') {
+        q = query(
+          collection(db, 'posts'),
+          where('topic', '==', topic),
+          where('isPinned', '!=', true),
+          orderBy('timestamp', 'desc'),
+          limit(10)
+        );
+      }
 
-    const snapshot = await getDocs(q);
-    
-    const fetchedPosts = snapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data()
-    })) as Post[];
-    
-    const validPosts = [...pinnedPosts, ...fetchedPosts]
-      .filter(post => (post.text || post.content) && (post.authorId || post.userId) && post.topic)
-      .map(post => ({
-        ...post,
-        authorId: post.authorId || post.userId,
-        text: post.text || post.content
-      }));
-    
-    if (isLoadMore) {
-      setPosts(prev => [...prev, ...validPosts]);
-    } else {
-      setPosts(validPosts);
+      if (isLoadMore && lastVisible) {
+        q = query(q, startAfter(lastVisible));
+      }
+
+      const snapshot = await getDocs(q);
+      
+      const fetchedPosts = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      })) as Post[];
+      
+      const validPosts = [...pinnedPosts, ...fetchedPosts]
+        .filter(post => (post.text || post.content) && (post.authorId || post.userId) && post.topic)
+        .map(post => ({
+          ...post,
+          authorId: post.authorId || post.userId,
+          text: post.text || post.content
+        }));
+      
+      if (isLoadMore) {
+        setPosts(prev => [...prev, ...validPosts]);
+      } else {
+        setPosts(validPosts);
+      }
+      
+      setLastVisible(snapshot.docs[snapshot.docs.length - 1] || null);
+      setHasMore(snapshot.docs.length === 10);
+    } catch (err) {
+      console.error("Error fetching posts:", err);
+    } finally {
+      clearTimeout(fetchTimeout);
+      setLoading(false);
+      setLoadingMore(false);
     }
-    
-    setLastVisible(snapshot.docs[snapshot.docs.length - 1] || null);
-    setHasMore(snapshot.docs.length === 10);
-    setLoading(false);
-    setLoadingMore(false);
   };
 
   useEffect(() => {
@@ -195,14 +206,24 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip }) => {
   const handleGenerateNews = async () => {
     setGeneratingNews(true);
     setGenerationError(null);
+    
+    const genTimeout = setTimeout(() => {
+      if (generatingNews) {
+        setGeneratingNews(false);
+        setGenerationError('A geração de notícias está demorando muito. Tente novamente.');
+      }
+    }, 15000); // 15 seconds timeout for AI generation
+
     try {
       const res = await fetch('/api/trigger-news');
       if (!res.ok) throw new Error('Falha ao gerar notícia');
-      // Success: do not set topic, just let the snapshot update the posts
+      // After generating, fetch again to show the new post
+      await fetchPosts();
     } catch (err) {
       console.error(err);
       setGenerationError('Não foi possível carregar notícias agora. Tente novamente em instantes.');
     } finally {
+      clearTimeout(genTimeout);
       setGeneratingNews(false);
     }
   };
@@ -484,8 +505,12 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip }) => {
                 <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-300">
                   <MessageCircle size={32} />
                 </div>
-                <h3 className="text-xl font-bold text-slate-900 mb-2">Nenhum post ainda</h3>
-                <p className="text-slate-500">Seja o primeiro a compartilhar algo com a comunidade!</p>
+                <h3 className="text-xl font-bold text-slate-900 mb-2">
+                  {topic === 'noticias' ? t('feed.noNews') : 'Nenhum post ainda'}
+                </h3>
+                <p className="text-slate-500">
+                  {topic === 'noticias' ? '' : 'Seja o primeiro a compartilhar algo com a comunidade!'}
+                </p>
               </>
             )}
           </div>

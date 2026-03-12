@@ -56,7 +56,8 @@
     "pin": "Post fixado",
     "delete": "Apagar Post",
     "pinPost": "Fixar Post",
-    "unpinPost": "Desfixar Post"
+    "unpinPost": "Desfixar Post",
+    "noNews": "Nenhuma notícia disponível no momento."
   },
   "settings": {
     "title": "Configurações de Perfil",

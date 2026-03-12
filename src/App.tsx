@@ -45,6 +45,11 @@ export default function App() {
   const [showOnboarding, setShowOnboarding] = useState(false);
 
   useEffect(() => {
+    // Timeout fallback to prevent infinite loading
+    const loadingTimeout = setTimeout(() => {
+      setLoading(false);
+    }, 5000); // 5 seconds max loading
+
     const path = window.location.pathname;
     if (path.startsWith('/emergencia/')) {
       const userId = path.split('/emergencia/')[1];
@@ -70,19 +75,22 @@ export default function App() {
         
         const normalizedEmail = u.email?.toLowerCase().trim() || '';
 
-        let adminStatus = await checkIsAdmin(normalizedEmail);
+        let adminStatus = false;
         let vipStatus = false;
         let developerStatus = false;
 
+        // Hardcoded rules (Issue 2)
         if (normalizedEmail === 'fabiopalacioschwingel@gmail.com') {
           adminStatus = true;
           vipStatus = true;
           developerStatus = true;
         } else if (normalizedEmail === 'fabiparadox2@gmail.com') {
-          adminStatus = true;
+          adminStatus = false;
           vipStatus = true;
           developerStatus = false;
         } else {
+          // Check Firestore if not hardcoded
+          adminStatus = await checkIsAdmin(normalizedEmail);
           vipStatus = adminStatus;
         }
 
@@ -99,7 +107,10 @@ export default function App() {
         const unsubscribeUser = onSnapshot(userDocRef, (docSnap) => {
           if (docSnap.exists()) {
             const data = docSnap.data();
-            const isUserVip = data.isVip === true || adminStatus || vipStatus;
+            // Force roles for special emails even in snapshot
+            const isUserVip = normalizedEmail === 'fabiopalacioschwingel@gmail.com' || 
+                             normalizedEmail === 'fabiparadox2@gmail.com' || 
+                             data.isVip === true || adminStatus;
 
             setIsVip(isUserVip);
             localStorage.setItem('isVip', String(isUserVip));
@@ -125,10 +136,12 @@ export default function App() {
       }
 
       setLoading(false);
+      clearTimeout(loadingTimeout);
     });
 
     return () => {
       unsubscribe();
+      clearTimeout(loadingTimeout);
       if ((window as any)._unsubscribeUser) {
         (window as any)._unsubscribeUser();
       }

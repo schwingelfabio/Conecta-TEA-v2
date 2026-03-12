@@ -2,8 +2,7 @@ import { db } from './firebase';
 import { doc, getDoc } from 'firebase/firestore';
 
 const ADMIN_EMAILS = [
-  'fabiopalacioschwingel@gmail.com',
-  'fabiparadox2@gmail.com'
+  'fabiopalacioschwingel@gmail.com'
 ];
 
 export async function checkIsAdmin(email: string | null | undefined): Promise<boolean> {

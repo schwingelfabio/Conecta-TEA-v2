@@ -56,7 +56,8 @@
     "pin": "Publicación fijada",
     "delete": "Eliminar publicación",
     "pinPost": "Fijar publicación",
-    "unpinPost": "Desfijar publicación"
+    "unpinPost": "Desfijar publicación",
+    "noNews": "No hay noticias disponibles en este momento."
   },
   "settings": {
     "title": "Ajustes de perfil",

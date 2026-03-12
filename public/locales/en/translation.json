@@ -56,7 +56,8 @@
     "pin": "Pinned post",
     "delete": "Delete Post",
     "pinPost": "Pin Post",
-    "unpinPost": "Unpin Post"
+    "unpinPost": "Unpin Post",
+    "noNews": "No news available at the moment."
   },
   "settings": {
     "title": "Profile Settings",
