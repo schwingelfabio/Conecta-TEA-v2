@@ -90,6 +90,14 @@
     "postsShared": "Posts Compartilhados",
     "fastestGrowing": "Comunidades que mais crescem",
     "thisWeek": "esta semana",
-    "loading": "Carregando mapa das comunidades..."
+    "loading": "Carregando mapa das comunidades...",
+    "backToMap": "Voltar para o mapa",
+    "citiesIn": "Cidades em",
+    "communityOf": "Comunidade de",
+    "growing": "Esta comunidade está crescendo",
+    "shareTitle": "Compartilhar Comunidade",
+    "shareText": "Participe da comunidade TEA de {{city}} no Conecta TEA e conecte-se com famílias da nossa região.",
+    "copyLink": "Copiar Link",
+    "linkCopied": "Link copiado!"
   }
 }

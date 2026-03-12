@@ -90,6 +90,14 @@
     "postsShared": "Posts Shared",
     "fastestGrowing": "Fastest growing communities",
     "thisWeek": "this week",
-    "loading": "Loading community map..."
+    "loading": "Loading community map...",
+    "backToMap": "Back to map",
+    "citiesIn": "Cities in",
+    "communityOf": "Community of",
+    "growing": "This community is growing",
+    "shareTitle": "Share Community",
+    "shareText": "Join the autism community of {{city}} on Conecta TEA and connect with families in your region.",
+    "copyLink": "Copy Link",
+    "linkCopied": "Link copied!"
   }
 }

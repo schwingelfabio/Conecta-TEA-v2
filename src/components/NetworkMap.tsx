@@ -5,7 +5,8 @@ import { ComposableMap, Geographies, Geography } from 'react-simple-maps';
 import { scaleLinear } from 'd3-scale';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../lib/firebase';
-import { Users, MapPin, Map as MapIcon, MessageCircle, TrendingUp } from 'lucide-react';
+import { Users, MapPin, Map as MapIcon, MessageCircle, TrendingUp, ChevronRight } from 'lucide-react';
+import CityPage from './CityPage';
 
 const geoUrl = "https://raw.githubusercontent.com/codeforamerica/click_that_hood/master/public/data/brazil-states.geojson";
 
@@ -31,8 +32,10 @@ export default function NetworkMap() {
     totalPosts: 0
   });
   const [stateData, setStateData] = useState<Record<string, number>>({});
+  const [cityData, setCityData] = useState<Record<string, CityData[]>>({});
   const [topCities, setTopCities] = useState<CityData[]>([]);
   const [selectedState, setSelectedState] = useState<string | null>(null);
+  const [selectedCity, setSelectedCity] = useState<CityData | null>(null);
 
   useEffect(() => {
     async function fetchData() {
@@ -47,16 +50,21 @@ export default function NetworkMap() {
 
         const stateCounts: Record<string, number> = {};
         const cityCounts: Record<string, number> = {};
-        const stateNames: Record<string, string> = {};
+        const stateCities: Record<string, Record<string, number>> = {};
 
         users.forEach(user => {
           if (user.state) {
             const state = user.state.toUpperCase();
             stateCounts[state] = (stateCounts[state] || 0) + 1;
             
+            if (!stateCities[state]) {
+              stateCities[state] = {};
+            }
+
             if (user.city) {
               const cityKey = `${user.city}, ${state}`;
               cityCounts[cityKey] = (cityCounts[cityKey] || 0) + 1;
+              stateCities[state][user.city] = (stateCities[state][user.city] || 0) + 1;
             }
           }
         });
@@ -73,6 +81,13 @@ export default function NetworkMap() {
           .sort((a, b) => b.users - a.users)
           .slice(0, 3);
 
+        const formattedCityData: Record<string, CityData[]> = {};
+        Object.entries(stateCities).forEach(([state, cities]) => {
+          formattedCityData[state] = Object.entries(cities)
+            .map(([name, users]) => ({ name, state, users }))
+            .sort((a, b) => b.users - a.users);
+        });
+
         setStats({
           totalUsers: users.length,
           totalCities: citiesCount,
@@ -81,6 +96,7 @@ export default function NetworkMap() {
         });
 
         setStateData(stateCounts);
+        setCityData(formattedCityData);
         setTopCities(sortedCities);
         setLoading(false);
       } catch (error) {
@@ -106,6 +122,16 @@ export default function NetworkMap() {
         </div>
         <p className="text-gray-500 font-medium">{t('map.loading')}</p>
       </div>
+    );
+  }
+
+  if (selectedCity) {
+    return (
+      <CityPage 
+        city={selectedCity.name} 
+        state={selectedCity.state} 
+        onBack={() => setSelectedCity(null)} 
+      />
     );
   }
 
@@ -230,22 +256,57 @@ export default function NetworkMap() {
           </div>
 
           <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100">
-            <h3 className="text-lg font-bold text-gray-900 mb-4">{t('map.activeCommunities')}</h3>
+            <h3 className="text-lg font-bold text-gray-900 mb-4">
+              {selectedState ? `${t('map.citiesIn')} ${selectedState}` : t('map.activeCommunities')}
+            </h3>
+            
+            {selectedState && (
+              <button 
+                onClick={() => setSelectedState(null)}
+                className="text-sm text-sky-600 font-medium mb-4 hover:underline"
+              >
+                ← {t('map.backToMap')}
+              </button>
+            )}
+
             <div className="space-y-3 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
-              {Object.entries(stateData)
-                .sort((a, b) => b[1] - a[1])
-                .map(([state, count]) => (
-                <div key={state} className="flex items-center justify-between p-3 hover:bg-gray-50 rounded-xl transition-colors cursor-pointer border border-transparent hover:border-gray-100" onClick={() => setSelectedState(state)}>
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-sky-100 text-sky-600 flex items-center justify-center font-bold text-sm">
-                      {state}
+              {!selectedState ? (
+                Object.entries(stateData)
+                  .sort((a, b) => b[1] - a[1])
+                  .map(([state, count]) => (
+                  <div key={state} className="flex items-center justify-between p-3 hover:bg-gray-50 rounded-xl transition-colors cursor-pointer border border-transparent hover:border-gray-100" onClick={() => setSelectedState(state)}>
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-full bg-sky-100 text-sky-600 flex items-center justify-center font-bold text-sm">
+                        {state}
+                      </div>
+                    </div>
+                    <span className="text-sm font-medium text-gray-600 bg-gray-100 px-2 py-1 rounded-lg">
+                      {count} {t('map.families')}
+                    </span>
+                  </div>
+                ))
+              ) : (
+                cityData[selectedState]?.map((city, index) => (
+                  <div 
+                    key={index} 
+                    className="flex items-center justify-between p-3 hover:bg-gray-50 rounded-xl transition-colors cursor-pointer border border-transparent hover:border-gray-100 group" 
+                    onClick={() => setSelectedCity(city)}
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center">
+                        <MapPin size={16} />
+                      </div>
+                      <span className="font-medium text-gray-900">{city.name}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-medium text-gray-600 bg-gray-100 px-2 py-1 rounded-lg">
+                        {city.users} {t('map.families')}
+                      </span>
+                      <ChevronRight size={16} className="text-gray-400 group-hover:text-sky-500 transition-colors" />
                     </div>
                   </div>
-                  <span className="text-sm font-medium text-gray-600 bg-gray-100 px-2 py-1 rounded-lg">
-                    {count} {t('map.families')}
-                  </span>
-                </div>
-              ))}
+                ))
+              )}
             </div>
           </div>
         </div>

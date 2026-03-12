@@ -90,6 +90,14 @@
     "postsShared": "Publicaciones Compartidas",
     "fastestGrowing": "Comunidades de más rápido crecimiento",
     "thisWeek": "esta semana",
-    "loading": "Cargando mapa de comunidades..."
+    "loading": "Cargando mapa de comunidades...",
+    "backToMap": "Volver al mapa",
+    "citiesIn": "Ciudades en",
+    "communityOf": "Comunidad de",
+    "growing": "Esta comunidad está creciendo",
+    "shareTitle": "Compartir Comunidad",
+    "shareText": "Únete a la comunidad de autismo de {{city}} en Conecta TEA y conecta con familias de tu región.",
+    "copyLink": "Copiar Enlace",
+    "linkCopied": "¡Enlace copiado!"
   }
 }
