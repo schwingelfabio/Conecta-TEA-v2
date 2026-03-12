@@ -16,6 +16,7 @@
     "logout": "Sair",
     "welcome": "Bem-vindo ao Conecta TEA",
     "google": "Entrar com Google",
+    "emailPlaceholder": "seu@email.com",
     "orContinue": "ou continue com",
     "phone": "Celular",
     "email": "E-mail",
@@ -113,12 +114,15 @@
     "scanToDonate": "Escaneie para doar",
     "footerLink": "Apoie a Missão"
   },
+  "common": {
+    "back": "Voltar"
+  },
   "landing": {
     "title": "A sua rede de apoio e conexão autista.",
-    "subtitle": "Uma plataforma dedicada a unir famílias, profissionais e comunidades locais. Transformando a jornada do autismo através de tecnologia, afeto e informação de qualidade.",
-    "login": "Entrar agora",
+    "subtitle": "Conecte famílias, comunidades e tecnologia para transformar vidas.",
+    "login": "Entrar",
     "createAccount": "Criar conta gratuita",
-    "triagemLink": "Triagem TEA IA",
+    "triagemLink": "Conheça o Triagem TEA IA",
     "termsAlert": "Por favor, aceite os Termos de Uso e Privacidade para continuar.",
     "termsAlertTop": "Por favor, aceite os Termos de Uso e Privacidade no topo da página para continuar.",
     "readAndAccept": "Eu li e aceito os",

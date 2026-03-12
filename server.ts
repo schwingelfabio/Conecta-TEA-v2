@@ -11,15 +11,24 @@ dotenv.config();
 
 // Initialize Firebase Admin
 // If running in a Google Cloud environment, it will automatically use the service account
+const projectId = process.env.FIREBASE_PROJECT_ID || process.env.VITE_FIREBASE_PROJECT_ID;
+
 if (!admin.apps.length) {
-  admin.initializeApp({
-    projectId: process.env.FIREBASE_PROJECT_ID || process.env.VITE_FIREBASE_PROJECT_ID
-  });
+  if (projectId) {
+    admin.initializeApp({
+      projectId: projectId
+    });
+    console.log(`Firebase Admin initialized with Project ID: ${projectId}`);
+  } else {
+    console.warn("FIREBASE_PROJECT_ID not set. Firebase Admin features may not work.");
+  }
 }
 
 const db = admin.firestore();
 
 async function initializeSystemData() {
+  if (!projectId) return;
+
   try {
     // Initialize Admins
     const ADMIN_EMAILS = [
@@ -27,7 +36,19 @@ async function initializeSystemData() {
       'fabiparadox2@gmail.com'
     ];
     const adminsRef = db.collection('admins');
-    const snapshot = await adminsRef.get();
+    
+    // Use a try-catch specifically for the get() to handle PERMISSION_DENIED gracefully
+    let snapshot;
+    try {
+      snapshot = await adminsRef.get();
+    } catch (e: any) {
+      if (e.code === 7 || e.message?.includes('PERMISSION_DENIED')) {
+        console.warn('Firebase Admin: Permission denied when accessing Firestore. Please ensure the service account has "Cloud Datastore User" role.');
+        return;
+      }
+      throw e;
+    }
+
     if (snapshot.empty) {
       for (const rawEmail of ADMIN_EMAILS) {
         const email = rawEmail.toLowerCase().trim();

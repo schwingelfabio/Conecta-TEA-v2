@@ -16,6 +16,7 @@
     "logout": "Logout",
     "welcome": "Welcome to Conecta TEA",
     "google": "Sign in with Google",
+    "emailPlaceholder": "your@email.com",
     "orContinue": "or continue with",
     "phone": "Phone",
     "email": "Email",
@@ -113,16 +114,19 @@
     "scanToDonate": "Scan to donate",
     "footerLink": "Support the Mission"
   },
+  "common": {
+    "back": "Back"
+  },
   "landing": {
     "title": "Your autism support and connection network.",
-    "subtitle": "A platform dedicated to uniting families, professionals, and local communities. Transforming the autism journey through technology, affection, and quality information.",
-    "login": "Login now",
+    "subtitle": "Connecting families, communities, and technology to transform lives.",
+    "login": "Login",
     "createAccount": "Create free account",
-    "triagemLink": "Triagem TEA IA",
+    "triagemLink": "Discover Triagem TEA IA",
     "termsAlert": "Please accept the Terms of Use and Privacy to continue.",
     "termsAlertTop": "Please accept the Terms of Use and Privacy at the top of the page to continue.",
     "readAndAccept": "I have read and accept the",
-    "termsLink": "Terms of Use and Privacy",
+    "termsLink": "Terms of Use and Privacy Policy",
     "features": {
       "communities": {
         "title": "Local Communities",

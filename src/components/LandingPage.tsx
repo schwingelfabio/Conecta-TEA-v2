@@ -74,7 +74,7 @@ export default function LandingPage({ onLogin, onShowTerms }: LandingPageProps) 
                   onClick={() => setShowAuthForm(false)}
                   className="mt-6 text-gray-500 hover:text-gray-700 font-medium"
                 >
-                  Voltar
+                  {t('common.back')}
                 </button>
               </motion.div>
             ) : (

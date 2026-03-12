@@ -168,7 +168,7 @@ export default function AuthForm({ onSuccess }: AuthFormProps) {
           className="w-6 h-6"
         />
         {loading && method === 'google' ? <Loader2 className="animate-spin" size={18} /> : null}
-        Entrar com Google
+        {t('auth.google')}
       </button>
 
       <div className="relative flex items-center py-2 mb-6">
@@ -270,7 +270,7 @@ export default function AuthForm({ onSuccess }: AuthFormProps) {
               <label className="block text-sm font-medium text-gray-700 mb-1">{t('auth.email')}</label>
               <input
                 type="email"
-                placeholder="seu@email.com"
+                placeholder={t('auth.emailPlaceholder')}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full p-4 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-transparent outline-none transition-all"
