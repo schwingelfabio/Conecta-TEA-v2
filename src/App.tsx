@@ -36,6 +36,7 @@ export default function App() {
   const [showAuth, setShowAuth] = useState(false);
 
   useEffect(() => {
+    const path = window.location.pathname;
     if (path.startsWith('/emergencia/')) {
       const userId = path.split('/emergencia/')[1];
       if (userId) {
