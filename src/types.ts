@@ -47,6 +47,7 @@ export interface Post {
   createdAt: any;
   isVip: boolean;
   isGlobal: boolean;
+  isPinned?: boolean;
   likes?: string[];
   commentsCount?: number;
 }

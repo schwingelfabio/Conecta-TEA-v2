@@ -13,7 +13,8 @@ import {
   where,
   startAfter,
   QueryDocumentSnapshot,
-  DocumentData
+  DocumentData,
+  updateDoc
 } from 'firebase/firestore';
 import { Post, UserProfile } from '../types';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -29,7 +30,8 @@ import {
   Sparkles,
   Trash2,
   RefreshCw,
-  Shield
+  Shield,
+  Pin
 } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import ActiveCommunities from './ActiveCommunities';
@@ -52,6 +54,14 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip }) => {
   const [hasMore, setHasMore] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
 
+  const togglePinPost = async (postId: string, isPinned: boolean) => {
+    try {
+      await updateDoc(doc(db, 'posts', postId), { isPinned: !isPinned });
+    } catch (err) {
+      console.error("Error pinning post:", err);
+    }
+  };
+
   const fetchPosts = async (isLoadMore = false) => {
     if (!isLoadMore) {
       setLoading(true);
@@ -62,20 +72,40 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip }) => {
       setLoadingMore(true);
     }
 
+    // 1. Fetch Pinned Posts (only on initial load)
+    let pinnedPosts: Post[] = [];
+    if (!isLoadMore) {
+      let pinnedQuery = query(collection(db, 'posts'), where('isPinned', '==', true));
+      
+      if (topic === 'cidade') {
+        pinnedQuery = query(collection(db, 'posts'), where('isPinned', '==', true), where('city', '==', userProfile?.city || ''));
+      } else if (topic === 'estado') {
+        pinnedQuery = query(collection(db, 'posts'), where('isPinned', '==', true), where('state', '==', userProfile?.state || ''));
+      } else if (topic !== 'geral') {
+        pinnedQuery = query(collection(db, 'posts'), where('isPinned', '==', true), where('topic', '==', topic));
+      }
+      
+      const pinnedSnapshot = await getDocs(pinnedQuery);
+      pinnedPosts = pinnedSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as Post[];
+    }
+
+    // 2. Fetch Normal Posts (paginated)
     let q = query(
       collection(db, 'posts'),
+      where('isPinned', '!=', true), // Requires index
       orderBy('timestamp', 'desc'),
       limit(10)
     );
 
     if (topic === 'cidade') {
-        q = query(collection(db, 'posts'), where('city', '==', userProfile?.city || ''), orderBy('timestamp', 'desc'), limit(10));
+        q = query(collection(db, 'posts'), where('city', '==', userProfile?.city || ''), where('isPinned', '!=', true), orderBy('timestamp', 'desc'), limit(10));
     } else if (topic === 'estado') {
-        q = query(collection(db, 'posts'), where('state', '==', userProfile?.state || ''), orderBy('timestamp', 'desc'), limit(10));
+        q = query(collection(db, 'posts'), where('state', '==', userProfile?.state || ''), where('isPinned', '!=', true), orderBy('timestamp', 'desc'), limit(10));
     } else if (topic !== 'geral') {
       q = query(
         collection(db, 'posts'),
         where('topic', '==', topic),
+        where('isPinned', '!=', true),
         orderBy('timestamp', 'desc'),
         limit(10)
       );
@@ -92,7 +122,7 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip }) => {
       ...doc.data()
     })) as Post[];
     
-    const validPosts = fetchedPosts
+    const validPosts = [...pinnedPosts, ...fetchedPosts]
       .filter(post => (post.text || post.content) && (post.authorId || post.userId) && post.topic)
       .map(post => ({
         ...post,
@@ -339,6 +369,12 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip }) => {
                           {post.authorId === 'ai-bot' && (
                             <span className="bg-brand-primary/10 text-brand-primary text-[10px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider">IA</span>
                           )}
+                          {post.isPinned && (
+                            <span className="bg-sky-100 text-sky-700 text-[10px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider flex items-center gap-1">
+                              <Pin size={10} />
+                              Post fixado
+                            </span>
+                          )}
                         </div>
                         <p className="text-xs text-slate-400 flex items-center space-x-1">
                           <MapPin size={10} />
@@ -349,6 +385,15 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip }) => {
                       </div>
                     </div>
                     <div className="flex items-center space-x-2">
+                      {isAdmin && (
+                        <button 
+                          onClick={() => togglePinPost(post.id, !!post.isPinned)}
+                          className={`transition-colors p-2 ${post.isPinned ? 'text-sky-600' : 'text-slate-400 hover:text-sky-600'}`}
+                          title={post.isPinned ? "Desfixar Post" : "Fixar Post"}
+                        >
+                          <Pin size={18} />
+                        </button>
+                      )}
                       {(isAdmin || userProfile?.uid === post.authorId) && (
                         <button 
                           onClick={() => handleDeletePost(post.id)}
