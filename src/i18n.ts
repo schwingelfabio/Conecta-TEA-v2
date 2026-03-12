@@ -9,7 +9,8 @@ i18n
   .use(initReactI18next)
   .init({
     fallbackLng: 'pt',
-    lng: localStorage.getItem('i18nextLng') || 'pt',
+    supportedLngs: ['pt', 'en', 'es'],
+    load: 'languageOnly',
     interpolation: {
       escapeValue: false,
     },

@@ -2,6 +2,7 @@
   "nav": {
     "feed": "Feed",
     "communities": "Comunidades",
+    "map": "Mapa do Brasil do Autismo",
     "profile": "Perfil",
     "settings": "Configurações",
     "sos": "SOS",
@@ -78,5 +79,17 @@
   "sos": {
     "title": "SOS",
     "description": "Precisa de ajuda imediata?"
+  },
+  "map": {
+    "title": "Mapa do Brasil do Autismo",
+    "activeCommunities": "Comunidades Ativas",
+    "families": "famílias",
+    "connectedFamilies": "Famílias Conectadas",
+    "activeCities": "Cidades Ativas",
+    "activeStates": "Estados Ativos",
+    "postsShared": "Posts Compartilhados",
+    "fastestGrowing": "Comunidades que mais crescem",
+    "thisWeek": "esta semana",
+    "loading": "Carregando mapa das comunidades..."
   }
 }

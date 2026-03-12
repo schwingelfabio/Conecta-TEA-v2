@@ -1,0 +1,95 @@
+{
+  "nav": {
+    "feed": "Feed",
+    "communities": "Comunidades",
+    "map": "Mapa de la Comunidad del Autismo en Brasil",
+    "profile": "Perfil",
+    "settings": "Ajustes",
+    "sos": "SOS",
+    "vip": "Área VIP",
+    "termos": "Términos de Uso",
+    "privacidade": "Privacidad",
+    "contato": "Contacto"
+  },
+  "auth": {
+    "login": "Iniciar sesión",
+    "logout": "Cerrar sesión",
+    "welcome": "Bienvenido a Conecta TEA",
+    "google": "Continuar con Google",
+    "orContinue": "o continúa con",
+    "phone": "Celular",
+    "email": "Correo electrónico",
+    "phoneLabel": "Número de celular (con código de área)",
+    "phonePlaceholder": "(11) 99999-9999",
+    "sendSms": "Enviar SMS",
+    "codeLabel": "Código de 6 dígitos",
+    "codePlaceholder": "000000",
+    "verifyCode": "Verificar código",
+    "passwordLabel": "Contraseña",
+    "passwordPlaceholder": "••••••••",
+    "createAccount": "Crear cuenta",
+    "alreadyHaveAccount": "¿Ya tienes una cuenta? Iniciar sesión.",
+    "noAccount": "¿No tienes cuenta? Crear ahora.",
+    "errors": {
+      "popupClosed": "El inicio de sesión con Google se cerró antes de completarse.",
+      "popupBlocked": "El navegador bloqueó la ventana de inicio de sesión. Inténtalo de nuevo.",
+      "invalidEmail": "El correo electrónico proporcionado no es válido.",
+      "userNotFound": "No se encontró ninguna cuenta con este correo electrónico.",
+      "wrongPassword": "Correo electrónico o contraseña incorrectos.",
+      "emailAlreadyInUse": "Este correo electrónico ya está en uso.",
+      "weakPassword": "La contraseña es muy débil. Usa al menos 6 caracteres.",
+      "tooManyRequests": "Demasiados intentos. Espera un poco e inténtalo de nuevo.",
+      "missingPhone": "Proporciona un número de celular válido.",
+      "invalidPhone": "El número de celular proporcionado no es válido.",
+      "codeExpired": "El código ha caducado. Solicita un nuevo SMS.",
+      "invalidCode": "Código no válido. Comprueba e inténtalo de nuevo.",
+      "default": "No se pudo completar la autenticación. Inténtalo de nuevo."
+    }
+  },
+  "feed": {
+    "placeholder": "¿Qué estás pensando?",
+    "post": "Publicar",
+    "loadMore": "Cargar más",
+    "endOfFeed": "Has llegado al final.",
+    "loading": "Cargando feed...",
+    "pin": "Publicación fijada",
+    "delete": "Eliminar publicación",
+    "pinPost": "Fijar publicación",
+    "unpinPost": "Desfijar publicación"
+  },
+  "settings": {
+    "title": "Ajustes de perfil",
+    "name": "Nombre",
+    "state": "Estado",
+    "city": "Ciudad",
+    "save": "Guardar cambios",
+    "vipStatus": "Estado de la cuenta",
+    "freePlan": "Plan gratuito",
+    "vipMember": "Miembro VIP",
+    "accessFull": "Acceso total desbloqueado",
+    "accessLimited": "Acceso limitado al feed"
+  },
+  "communities": {
+    "title": "Comunidades activas"
+  },
+  "vip": {
+    "title": "Área VIP",
+    "plans": "Nuestros planes"
+  },
+  "sos": {
+    "title": "SOS",
+    "description": "¿Necesitas ayuda inmediata?"
+  },
+  "map": {
+    "title": "Mapa de la Comunidad del Autismo en Brasil",
+    "activeCommunities": "Comunidades Activas",
+    "families": "familias",
+    "connectedFamilies": "Familias Conectadas",
+    "activeCities": "Ciudades Activas",
+    "activeStates": "Estados Activos",
+    "postsShared": "Publicaciones Compartidas",
+    "fastestGrowing": "Comunidades de más rápido crecimiento",
+    "thisWeek": "esta semana",
+    "loading": "Cargando mapa de comunidades..."
+  }
+}
