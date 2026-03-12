@@ -1,11 +1,13 @@
-import {StrictMode} from 'react';
+import {StrictMode, Suspense} from 'react';
 import {createRoot} from 'react-dom/client';
+import './i18n';
 import App from './App.tsx';
 import './index.css';
-import './i18n';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <App />
+    <Suspense fallback={<div className="min-h-screen bg-white flex items-center justify-center">Carregando...</div>}>
+      <App />
+    </Suspense>
   </StrictMode>,
 );
