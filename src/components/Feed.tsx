@@ -141,6 +141,29 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip }) => {
     }
   };
 
+  const handleShareCommunity = async () => {
+    const city = userProfile?.city || 'sua cidade';
+    const text = `Participe da comunidade TEA de ${city} no Conecta TEA. Uma rede de apoio para famílias, profissionais e cuidadores. Acesse: https://conecta-tea-liard.vercel.app/`;
+
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: 'Conecta TEA',
+          text: text,
+        });
+      } catch (err) {
+        console.error('Erro ao compartilhar:', err);
+      }
+    } else {
+      try {
+        await navigator.clipboard.writeText(text);
+        alert('Mensagem copiada! Compartilhe com outras famílias da sua cidade.');
+      } catch (err) {
+        console.error('Erro ao copiar:', err);
+      }
+    }
+  };
+
   const topics = [
     { id: 'geral', label: 'Geral', icon: <Tag size={16} /> },
     { id: 'cidade', label: 'Minha Cidade', icon: <MapPin size={16} /> },
@@ -223,6 +246,13 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip }) => {
         <div className="p-2 bg-white rounded-xl border border-slate-100 text-slate-400">
           <Filter size={18} />
         </div>
+        <button
+          onClick={handleShareCommunity}
+          className="flex items-center space-x-2 px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap bg-brand-primary text-white hover:bg-brand-primary/90 transition-all shadow-md"
+        >
+          <Share2 size={16} />
+          <span>Compartilhar Comunidade</span>
+        </button>
         {topics.map(t => (
           <button
             key={t.id}

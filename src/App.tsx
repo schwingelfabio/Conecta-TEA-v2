@@ -150,7 +150,7 @@ export default function App() {
       case 'settings':
         return <Settings isAdmin={isAdmin} isVip={isVip} isDeveloper={isDeveloper} onNavigate={(tab) => setActiveTab(tab as any)} />;
       case 'sos':
-        return <SosPage />;
+        return <SosPage userProfile={userProfile} />;
       case 'termos':
         return <TermosDeUso onBack={() => setActiveTab('settings')} />;
       case 'privacidade':
@@ -158,7 +158,7 @@ export default function App() {
       case 'contato':
         return <Contato onBack={() => setActiveTab('settings')} />;
       default:
-        return <Feed isAdmin={isAdmin} isVip={isVip} />;
+        return <Feed userProfile={userProfile} isAdmin={isAdmin} isVip={isVip} />;
     }
   };
 
@@ -175,7 +175,7 @@ export default function App() {
   }
 
   if (emergencyUserId) {
-    return <EmergencyPage userId={emergencyUserId} />;
+    return <EmergencyPage id={emergencyUserId} />;
   }
 
   return (
@@ -222,7 +222,7 @@ export default function App() {
 
       <main className={!user ? '' : 'max-w-5xl mx-auto px-4 py-8'}>
         {!user ? (
-          <LandingPage onLogin={handleLogin} />
+          <LandingPage onLogin={handleLogin} onShowTerms={() => setActiveTab('termos')} />
         ) : (
           renderContent()
         )}
@@ -231,7 +231,7 @@ export default function App() {
       {user && <AiAssistant />}
       
       {!user && showAuth && (
-        <AuthForm onSuccess={() => setShowAuth(false)} onClose={() => setShowAuth(false)} />
+        <AuthForm onSuccess={() => setShowAuth(false)} />
       )}
     </div>
   );
