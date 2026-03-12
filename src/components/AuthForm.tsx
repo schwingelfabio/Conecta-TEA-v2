@@ -1,252 +1,313 @@
-import React, { useState } from 'react';
-import { auth, googleProvider, db } from '../lib/firebase';
-import { 
-  signInWithEmailAndPassword, 
-  createUserWithEmailAndPassword, 
+import React, { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
+import { Mail, Phone, Loader2 } from 'lucide-react';
+import { auth, googleProvider } from '../lib/firebase';
+import {
   signInWithPopup,
-  updateProfile
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  RecaptchaVerifier,
+  signInWithPhoneNumber,
+  ConfirmationResult
 } from 'firebase/auth';
-import { doc, setDoc, getDoc } from 'firebase/firestore';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Mail, Lock, User, LogIn, UserPlus, Chrome, AlertCircle, X } from 'lucide-react';
 
 interface AuthFormProps {
   onSuccess: () => void;
-  onClose: () => void;
 }
 
-const AuthForm: React.FC<AuthFormProps> = ({ onSuccess, onClose }) => {
-  const [isLogin, setIsLogin] = useState(true);
+function getFriendlyErrorMessage(err: any): string {
+  const code = err?.code || '';
+
+  switch (code) {
+    case 'auth/popup-closed-by-user':
+      return 'O login com Google foi fechado antes de concluir.';
+    case 'auth/popup-blocked':
+      return 'O navegador bloqueou a janela de login. Tente novamente.';
+    case 'auth/invalid-email':
+      return 'O e-mail informado é inválido.';
+    case 'auth/user-not-found':
+      return 'Nenhuma conta foi encontrada com este e-mail.';
+    case 'auth/wrong-password':
+    case 'auth/invalid-credential':
+      return 'E-mail ou senha incorretos.';
+    case 'auth/email-already-in-use':
+      return 'Este e-mail já está em uso.';
+    case 'auth/weak-password':
+      return 'A senha é muito fraca. Use pelo menos 6 caracteres.';
+    case 'auth/too-many-requests':
+      return 'Muitas tentativas. Aguarde um pouco e tente novamente.';
+    case 'auth/missing-phone-number':
+      return 'Informe um número de celular válido.';
+    case 'auth/invalid-phone-number':
+      return 'O número de celular informado é inválido.';
+    case 'auth/code-expired':
+      return 'O código expirou. Solicite um novo SMS.';
+    case 'auth/invalid-verification-code':
+      return 'Código inválido. Verifique e tente novamente.';
+    default:
+      return 'Não foi possível concluir a autenticação. Tente novamente.';
+  }
+}
+
+export default function AuthForm({ onSuccess }: AuthFormProps) {
+  const [method, setMethod] = useState<'google' | 'email' | 'phone'>('google');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [name, setName] = useState('');
-  const [error, setError] = useState('');
+  const [phone, setPhone] = useState('');
+  const [verificationCode, setVerificationCode] = useState('');
+  const [confirmationResult, setConfirmationResult] = useState<ConfirmationResult | null>(null);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [isSignUp, setIsSignUp] = useState(false);
 
-  const handleAuth = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError('');
-    setLoading(true);
-
+  useEffect(() => {
     try {
-      if (isLogin) {
-        const userCredential = await signInWithEmailAndPassword(auth, email, password);
-        const user = userCredential.user;
-        const normalizedEmail = user.email?.toLowerCase().trim();
-        const adminDoc = normalizedEmail ? await getDoc(doc(db, 'admins', normalizedEmail)) : null;
-        const isAdmin = adminDoc?.exists() || normalizedEmail === 'fabiopalacioschwingel@gmail.com' || normalizedEmail === 'fabiparadox2@gmail.com';
-        
-        if (isAdmin) {
-          const userDoc = await getDoc(doc(db, 'users', user.uid));
-          if (userDoc.exists()) {
-            const data = userDoc.data();
-            if (data.role !== 'admin' || !data.isVip) {
-              await setDoc(doc(db, 'users', user.uid), {
-                ...data,
-                role: 'admin',
-                isVip: true
-              });
-            }
-          }
-        }
-      } else {
-        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-        const user = userCredential.user;
-        
-        await updateProfile(user, { displayName: name });
-        
-        const normalizedEmail = user.email?.toLowerCase().trim();
-        const adminDoc = normalizedEmail ? await getDoc(doc(db, 'admins', normalizedEmail)) : null;
-        const isAdmin = adminDoc?.exists() || normalizedEmail === 'fabiopalacioschwingel@gmail.com' || normalizedEmail === 'fabiparadox2@gmail.com';
-        
-        // Create user profile in Firestore
-        await setDoc(doc(db, 'users', user.uid), {
-          uid: user.uid,
-          email: user.email,
-          displayName: name,
-          isVip: isAdmin,
-          createdAt: new Date(),
-          role: isAdmin ? 'admin' : 'parent'
+      // @ts-ignore
+      if (!window.recaptchaVerifier) {
+        // @ts-ignore
+        window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
+          size: 'invisible',
+          callback: () => {}
         });
       }
+    } catch (err) {
+      console.error('Erro ao inicializar reCAPTCHA:', err);
+    }
+  }, []);
+
+  const handleGoogleLogin = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      await signInWithPopup(auth, googleProvider);
       onSuccess();
     } catch (err: any) {
-      console.error(err);
-      setError(err.message || 'Ocorreu um erro na autenticação.');
+      setError(getFriendlyErrorMessage(err));
     } finally {
       setLoading(false);
     }
   };
 
-  const handleGoogleSignIn = async () => {
-    setError('');
-    setLoading(true);
+  const handleEmailAuth = async (e: React.FormEvent) => {
+    e.preventDefault();
+
     try {
-      const result = await signInWithPopup(auth, googleProvider);
-      const user = result.user;
-      
-      const normalizedEmail = user.email?.toLowerCase().trim();
-      const adminDoc = normalizedEmail ? await getDoc(doc(db, 'admins', normalizedEmail)) : null;
-      const isAdmin = adminDoc?.exists() || normalizedEmail === 'fabiopalacioschwingel@gmail.com' || normalizedEmail === 'fabiparadox2@gmail.com';
-      
-      // Check if user exists in Firestore
-      const userDoc = await getDoc(doc(db, 'users', user.uid));
-      
-      if (!userDoc.exists()) {
-        await setDoc(doc(db, 'users', user.uid), {
-          uid: user.uid,
-          email: user.email,
-          displayName: user.displayName,
-          photoURL: user.photoURL,
-          isVip: isAdmin,
-          createdAt: new Date(),
-          role: isAdmin ? 'admin' : 'parent'
-        });
-      } else if (isAdmin) {
-        // Ensure admin fields are set if they login and already exist but missing fields
-        const data = userDoc.data();
-        if (data.role !== 'admin' || !data.isVip) {
-          await setDoc(doc(db, 'users', user.uid), {
-            ...data,
-            role: 'admin',
-            isVip: true
-          });
-        }
+      setLoading(true);
+      setError(null);
+
+      if (isSignUp) {
+        await createUserWithEmailAndPassword(auth, email.trim(), password);
+      } else {
+        await signInWithEmailAndPassword(auth, email.trim(), password);
       }
+
       onSuccess();
     } catch (err: any) {
-      console.error(err);
-      setError(err.message || 'Erro ao entrar com Google.');
+      setError(getFriendlyErrorMessage(err));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSendSMS = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    try {
+      setLoading(true);
+      setError(null);
+      const formattedPhone = phone.startsWith('+') ? phone : `+55${phone.replace(/\D/g, '')}`;
+      // @ts-ignore
+      const appVerifier = window.recaptchaVerifier;
+      const confirmation = await signInWithPhoneNumber(auth, formattedPhone, appVerifier);
+      setConfirmationResult(confirmation);
+    } catch (err: any) {
+      setError(getFriendlyErrorMessage(err));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleVerifyCode = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!confirmationResult) return;
+
+    try {
+      setLoading(true);
+      setError(null);
+      await confirmationResult.confirm(verificationCode);
+      onSuccess();
+    } catch (err: any) {
+      setError(getFriendlyErrorMessage(err));
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
-      <motion.div
-        initial={{ scale: 0.9, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        exit={{ scale: 0.9, opacity: 0 }}
-        className="relative w-full max-w-md bg-white rounded-3xl shadow-2xl overflow-hidden"
+    <div className="w-full max-w-md mx-auto bg-white p-8 rounded-[2rem] shadow-xl border border-gray-100">
+      <h2 className="text-2xl font-bold text-center text-gray-900 mb-6">
+        Acesse sua conta
+      </h2>
+
+      {error && (
+        <div className="mb-4 p-3 bg-red-50 text-red-600 rounded-xl text-sm text-center">
+          {error}
+        </div>
+      )}
+
+      <button
+        onClick={handleGoogleLogin}
+        disabled={loading}
+        className="w-full flex items-center justify-center gap-3 bg-white border-2 border-gray-200 text-gray-700 font-bold py-4 rounded-2xl hover:bg-gray-50 hover:border-gray-300 transition-all active:scale-95 mb-6 disabled:opacity-50"
       >
-        <button 
-          onClick={onClose}
-          className="absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-600 transition-colors"
+        <img
+          src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
+          alt="Google"
+          className="w-6 h-6"
+        />
+        {loading && method === 'google' ? <Loader2 className="animate-spin" size={18} /> : null}
+        Entrar com Google
+      </button>
+
+      <div className="relative flex items-center py-2 mb-6">
+        <div className="flex-grow border-t border-gray-200"></div>
+        <span className="flex-shrink-0 mx-4 text-gray-400 text-sm font-medium">ou continue com</span>
+        <div className="flex-grow border-t border-gray-200"></div>
+      </div>
+
+      <div className="flex gap-2 mb-6 p-1 bg-gray-100 rounded-xl">
+        <button
+          onClick={() => {
+            setMethod('phone');
+            setConfirmationResult(null);
+            setError(null);
+          }}
+          className={`flex-1 py-2 text-sm font-bold rounded-lg transition-all ${method === 'phone' ? 'bg-white text-sky-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
         >
-          <X size={24} />
+          <div className="flex items-center justify-center gap-2">
+            <Phone size={16} />
+            Celular
+          </div>
         </button>
 
-        <div className="p-8">
-          <div className="text-center mb-8">
-            <h2 className="text-3xl font-serif font-bold text-slate-900 mb-2">
-              {isLogin ? 'Bem-vindo de volta' : 'Crie sua conta'}
-            </h2>
-            <p className="text-slate-500">
-              {isLogin ? 'Acesse sua rede de apoio' : 'Junte-se à nossa comunidade'}
-            </p>
+        <button
+          onClick={() => {
+            setMethod('email');
+            setConfirmationResult(null);
+            setError(null);
+          }}
+          className={`flex-1 py-2 text-sm font-bold rounded-lg transition-all ${method === 'email' ? 'bg-white text-sky-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+        >
+          <div className="flex items-center justify-center gap-2">
+            <Mail size={16} />
+            E-mail
           </div>
+        </button>
+      </div>
 
-          <AnimatePresence mode="wait">
-            {error && (
-              <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                className="mb-6 p-4 bg-red-50 border border-red-100 rounded-2xl flex items-start space-x-3 text-red-600 text-sm"
-              >
-                <AlertCircle size={18} className="shrink-0 mt-0.5" />
-                <span>{error}</span>
-              </motion.div>
-            )}
-          </AnimatePresence>
-
-          <form onSubmit={handleAuth} className="space-y-4">
-            {!isLogin && (
-              <div className="relative">
-                <User className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
+      {method === 'phone' && (
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+          {!confirmationResult ? (
+            <form onSubmit={handleSendSMS} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Número de Celular (com DDD)
+                </label>
                 <input
-                  type="text"
-                  placeholder="Nome completo"
+                  type="tel"
+                  placeholder="(11) 99999-9999"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  className="w-full p-4 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-transparent outline-none transition-all"
                   required
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-2 focus:ring-brand-primary focus:border-transparent outline-none transition-all"
                 />
               </div>
-            )}
 
-            <div className="relative">
-              <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
+              <button
+                type="submit"
+                disabled={loading || !phone}
+                className="w-full bg-sky-500 text-white font-bold py-4 rounded-xl hover:bg-sky-600 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+              >
+                {loading ? <Loader2 className="animate-spin" size={20} /> : 'Enviar SMS'}
+              </button>
+            </form>
+          ) : (
+            <form onSubmit={handleVerifyCode} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Código de 6 dígitos
+                </label>
+                <input
+                  type="text"
+                  placeholder="000000"
+                  value={verificationCode}
+                  onChange={(e) => setVerificationCode(e.target.value)}
+                  className="w-full p-4 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-transparent outline-none transition-all text-center tracking-widest text-xl"
+                  maxLength={6}
+                  required
+                />
+              </div>
+
+              <button
+                type="submit"
+                disabled={loading || verificationCode.length < 6}
+                className="w-full bg-sky-500 text-white font-bold py-4 rounded-xl hover:bg-sky-600 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+              >
+                {loading ? <Loader2 className="animate-spin" size={20} /> : 'Verificar Código'}
+              </button>
+            </form>
+          )}
+          <div id="recaptcha-container"></div>
+        </motion.div>
+      )}
+
+      {method === 'email' && (
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+          <form onSubmit={handleEmailAuth} className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">E-mail</label>
               <input
                 type="email"
-                placeholder="E-mail"
-                required
+                placeholder="seu@email.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-2 focus:ring-brand-primary focus:border-transparent outline-none transition-all"
+                className="w-full p-4 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-transparent outline-none transition-all"
+                required
               />
             </div>
 
-            <div className="relative">
-              <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Senha</label>
               <input
                 type="password"
-                placeholder="Senha"
-                required
+                placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-2 focus:ring-brand-primary focus:border-transparent outline-none transition-all"
+                className="w-full p-4 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-transparent outline-none transition-all"
+                required
               />
             </div>
 
             <button
               type="submit"
-              disabled={loading}
-              className="w-full py-4 bg-slate-900 text-white rounded-2xl font-semibold flex items-center justify-center space-x-2 hover:bg-slate-800 transition-all disabled:opacity-50"
+              disabled={loading || !email || !password}
+              className="w-full bg-sky-500 text-white font-bold py-4 rounded-xl hover:bg-sky-600 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
             >
-              {loading ? (
-                <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-              ) : (
-                <>
-                  {isLogin ? <LogIn size={20} /> : <UserPlus size={20} />}
-                  <span>{isLogin ? 'Entrar' : 'Cadastrar'}</span>
-                </>
-              )}
+              {loading ? <Loader2 className="animate-spin" size={20} /> : (isSignUp ? 'Criar Conta' : 'Entrar')}
             </button>
+
+            <div className="text-center mt-4">
+              <button
+                type="button"
+                onClick={() => setIsSignUp(!isSignUp)}
+                className="text-sm text-sky-600 hover:underline font-medium"
+              >
+                {isSignUp ? 'Já tenho uma conta. Entrar.' : 'Não tem conta? Criar agora.'}
+              </button>
+            </div>
           </form>
-
-          <div className="relative my-8">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-slate-100"></div>
-            </div>
-            <div className="relative flex justify-center text-sm">
-              <span className="px-4 bg-white text-slate-400">ou continue com</span>
-            </div>
-          </div>
-
-          <button
-            onClick={handleGoogleSignIn}
-            disabled={loading}
-            className="w-full py-4 bg-white border border-slate-200 text-slate-700 rounded-2xl font-semibold flex items-center justify-center space-x-3 hover:bg-slate-50 transition-all"
-          >
-            <Chrome size={20} className="text-brand-primary" />
-            <span>Google</span>
-          </button>
-
-          <p className="mt-8 text-center text-slate-500">
-            {isLogin ? 'Não tem uma conta?' : 'Já tem uma conta?'}
-            <button
-              onClick={() => setIsLogin(!isLogin)}
-              className="ml-2 font-bold text-brand-primary hover:underline"
-            >
-              {isLogin ? 'Cadastre-se' : 'Faça login'}
-            </button>
-          </p>
-        </div>
-      </motion.div>
+        </motion.div>
+      )}
     </div>
   );
-};
-
-export default AuthForm;
+}
