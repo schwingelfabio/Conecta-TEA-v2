@@ -21,6 +21,8 @@ import LandingPage from './components/LandingPage';
 import { TermosDeUso, Privacidade, Contato } from './components/LegalPages';
 import AiAssistant from './components/AiAssistant';
 import AuthForm from './components/AuthForm';
+import Onboarding from './components/Onboarding';
+import { UserProfile } from './types';
 import { auth, googleProvider, db } from './lib/firebase';
 import { signInWithPopup, signOut, onAuthStateChanged, User as FirebaseUser } from 'firebase/auth';
 import { doc, getDoc, setDoc, collection, query, where, getDocs, onSnapshot } from 'firebase/firestore';
@@ -29,11 +31,14 @@ import { checkIsAdmin } from './lib/admin';
 export default function App() {
   const [activeTab, setActiveTab] = useState<'feed' | 'vip' | 'settings' | 'sos' | 'termos' | 'privacidade' | 'contato'>('feed');
   const [user, setUser] = useState<FirebaseUser | null>(null);
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [isAdmin, setIsAdmin] = useState(() => localStorage.getItem('isAdmin') === 'true');
   const [isVip, setIsVip] = useState(() => localStorage.getItem('isVip') === 'true');
+  const [isDeveloper, setIsDeveloper] = useState(() => localStorage.getItem('isDeveloper') === 'true');
   const [loading, setLoading] = useState(true);
   const [emergencyUserId, setEmergencyUserId] = useState<string | null>(null);
   const [showAuth, setShowAuth] = useState(false);
+  const [showOnboarding, setShowOnboarding] = useState(false);
 
   useEffect(() => {
     const path = window.location.pathname;
@@ -50,26 +55,40 @@ export default function App() {
       setUser(u);
 
       if (u) {
+        const userDoc = await getDoc(doc(db, 'users', u.uid));
+        if (userDoc.exists()) {
+          const data = userDoc.data() as UserProfile;
+          setUserProfile(data);
+          if (!data.state || !data.city) {
+            setShowOnboarding(true);
+          }
+        }
+        
         const normalizedEmail = u.email?.toLowerCase().trim() || '';
 
         let adminStatus = await checkIsAdmin(normalizedEmail);
         let vipStatus = false;
+        let developerStatus = false;
 
         if (normalizedEmail === 'fabiopalacioschwingel@gmail.com') {
           adminStatus = true;
           vipStatus = true;
+          developerStatus = true;
         } else if (normalizedEmail === 'fabiparadox2@gmail.com') {
           adminStatus = true;
           vipStatus = true;
+          developerStatus = false;
         } else {
           vipStatus = adminStatus;
         }
 
         setIsAdmin(adminStatus);
         setIsVip(vipStatus);
+        setIsDeveloper(developerStatus);
 
         localStorage.setItem('isAdmin', String(adminStatus));
         localStorage.setItem('isVip', String(vipStatus));
+        localStorage.setItem('isDeveloper', String(developerStatus));
 
         const userDocRef = doc(db, 'users', u.uid);
 
@@ -125,11 +144,11 @@ export default function App() {
   const renderContent = () => {
     switch (activeTab) {
       case 'feed':
-        return <Feed isAdmin={isAdmin} isVip={isVip} />;
+        return <Feed userProfile={userProfile} isAdmin={isAdmin} isVip={isVip} />;
       case 'vip':
         return <AreaVip isAdmin={isAdmin} isVip={isVip} />;
       case 'settings':
-        return <Settings isAdmin={isAdmin} isVip={isVip} onNavigate={(tab) => setActiveTab(tab as any)} />;
+        return <Settings isAdmin={isAdmin} isVip={isVip} isDeveloper={isDeveloper} onNavigate={(tab) => setActiveTab(tab as any)} />;
       case 'sos':
         return <SosPage />;
       case 'termos':
@@ -161,6 +180,7 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-sky-50 to-white font-sans text-gray-900">
+      {showOnboarding && <Onboarding onComplete={() => setShowOnboarding(false)} />}
       {user && (
         <nav className="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-gray-100">
           <div className="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">

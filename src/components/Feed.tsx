@@ -32,23 +32,33 @@ import ReactMarkdown from 'react-markdown';
 
 interface FeedProps {
   userProfile: UserProfile | null;
+  isAdmin: boolean;
+  isVip: boolean;
 }
 
-const Feed: React.FC<FeedProps> = ({ userProfile }) => {
+const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip }) => {
   const [posts, setPosts] = useState<Post[]>([]);
   const [newPost, setNewPost] = useState('');
   const [topic, setTopic] = useState<string>('geral');
   const [loading, setLoading] = useState(true);
+  const [loadingMessage, setLoadingMessage] = useState('Carregando feed...');
   const [generatingNews, setGeneratingNews] = useState(false);
 
   useEffect(() => {
+    setLoading(true);
+    setLoadingMessage('Buscando tópicos da sua cidade e do seu estado...');
+    
     let q = query(
       collection(db, 'posts'),
       orderBy('timestamp', 'desc'),
       limit(50)
     );
 
-    if (topic !== 'geral') {
+    if (topic === 'cidade') {
+        q = query(collection(db, 'posts'), where('city', '==', userProfile?.city || ''), orderBy('timestamp', 'desc'), limit(50));
+    } else if (topic === 'estado') {
+        q = query(collection(db, 'posts'), where('state', '==', userProfile?.state || ''), orderBy('timestamp', 'desc'), limit(50));
+    } else if (topic !== 'geral') {
       q = query(
         collection(db, 'posts'),
         where('topic', '==', topic),
@@ -63,7 +73,6 @@ const Feed: React.FC<FeedProps> = ({ userProfile }) => {
         ...doc.data()
       })) as Post[];
       
-      // Limpeza Automática: Ignorar postagens antigas/malformadas e normalizar dados
       const validPosts = fetchedPosts
         .filter(post => (post.text || post.content) && (post.authorId || post.userId) && post.topic)
         .map(post => ({
@@ -77,7 +86,7 @@ const Feed: React.FC<FeedProps> = ({ userProfile }) => {
     });
 
     return () => unsubscribe();
-  }, [topic]);
+  }, [topic, userProfile]);
 
   const handlePost = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -134,13 +143,13 @@ const Feed: React.FC<FeedProps> = ({ userProfile }) => {
 
   const topics = [
     { id: 'geral', label: 'Geral', icon: <Tag size={16} /> },
+    { id: 'cidade', label: 'Minha Cidade', icon: <MapPin size={16} /> },
+    { id: 'estado', label: 'Meu Estado', icon: <MapPin size={16} /> },
     { id: 'noticias', label: 'Notícias', icon: <Sparkles size={16} /> },
     { id: 'duvidas', label: 'Dúvidas', icon: <MessageCircle size={16} /> },
     { id: 'conquistas', label: 'Conquistas', icon: <Heart size={16} /> },
     { id: 'eventos', label: 'Eventos', icon: <MapPin size={16} /> },
   ];
-
-  const isAdmin = userProfile?.role === 'admin';
 
   return (
     <div className="max-w-2xl mx-auto py-8 px-4">
@@ -235,7 +244,7 @@ const Feed: React.FC<FeedProps> = ({ userProfile }) => {
         {loading ? (
           <div className="flex flex-col items-center py-20 space-y-4">
             <div className="w-10 h-10 border-4 border-slate-200 border-t-brand-primary rounded-full animate-spin" />
-            <p className="text-slate-400 font-medium">Carregando feed...</p>
+            <p className="text-slate-400 font-medium">{loadingMessage}</p>
           </div>
         ) : (
           <AnimatePresence mode="popLayout">
