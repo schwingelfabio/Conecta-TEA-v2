@@ -13,7 +13,7 @@ dotenv.config();
 // If running in a Google Cloud environment, it will automatically use the service account
 if (!admin.apps.length) {
   admin.initializeApp({
-    projectId: process.env.VITE_FIREBASE_PROJECT_ID
+    projectId: process.env.FIREBASE_PROJECT_ID || process.env.VITE_FIREBASE_PROJECT_ID
   });
 }
 
@@ -32,7 +32,7 @@ async function startServer() {
     try {
       const { planType, userId, userEmail, userName } = req.body;
 
-      const token = process.env.VITE_PAGSEGURO_TOKEN || process.env.PAGBANK_TOKEN || 'aa75da37-a368-4f6c-a7e9-6d819c8ad0cc0ee89bfb41d9bd1fdab25ef33af844e65ea2-c25b-492d-8c4e-2ed40cf90cc3';
+      const token = process.env.PAGSEGURO_TOKEN || process.env.VITE_PAGSEGURO_TOKEN || process.env.PAGBANK_TOKEN || 'aa75da37-a368-4f6c-a7e9-6d819c8ad0cc0ee89bfb41d9bd1fdab25ef33af844e65ea2-c25b-492d-8c4e-2ed40cf90cc3';
 
       const planDetails = {
         mensal: { id: "0001", name: "Plano Mensal Conecta TEA", amount: 2990 }, // in cents
@@ -40,6 +40,9 @@ async function startServer() {
       };
 
       const plan = planDetails[planType as keyof typeof planDetails];
+      if (!plan) {
+        return res.status(400).json({ error: "Invalid plan type" });
+      }
 
       const payload = {
         reference_id: userId,
@@ -56,9 +59,9 @@ async function startServer() {
           { type: "PIX" },
           { type: "BOLETO" }
         ],
-        redirect_url: `${process.env.APP_URL || 'http://localhost:3000'}/payment-success`,
+        redirect_url: `${process.env.APP_URL}/payment-success`,
         notification_urls: [
-          `${process.env.APP_URL || 'http://localhost:3000'}/api/pagseguro-webhook`
+          `${process.env.APP_URL}/api/pagseguro-webhook`
         ]
       };
 
@@ -87,11 +90,11 @@ async function startServer() {
       const { notificationCode, notificationType } = req.body;
 
       if (notificationType === "transaction") {
-        const email = process.env.VITE_PAGSEGURO_EMAIL || '';
-        const token = process.env.VITE_PAGSEGURO_TOKEN || '';
+        const email = process.env.PAGSEGURO_EMAIL || process.env.VITE_PAGSEGURO_EMAIL || '';
+        const token = process.env.PAGSEGURO_TOKEN || process.env.VITE_PAGSEGURO_TOKEN || '';
 
         if (!email || !token) {
-          console.warn("PagSeguro credentials not configured (VITE_PAGSEGURO_EMAIL or VITE_PAGSEGURO_TOKEN). Ignoring webhook.");
+          console.warn("PagSeguro credentials not configured. Ignoring webhook.");
           return res.status(200).send("OK");
         }
         const response = await axios.get(
@@ -107,11 +110,11 @@ async function startServer() {
 
         // Status 3: Paga, Status 4: Disponível
         if (status === 3 || status === 4) {
-          await db.collection("users").doc(reference).update({
+          await db.collection("users").doc(reference).set({
             isVip: true,
             vipSince: admin.firestore.FieldValue.serverTimestamp(),
             lastPaymentStatus: "paid"
-          });
+          }, { merge: true });
           console.log(`User ${reference} promoted to VIP`);
         }
       }
