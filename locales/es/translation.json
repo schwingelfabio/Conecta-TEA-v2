@@ -105,5 +105,12 @@
     "shareText": "Únete a la comunidad de autismo de {{city}} en Conecta TEA y conecta con familias de tu región.",
     "copyLink": "Copiar Enlace",
     "linkCopied": "¡Enlace copiado!"
+  },
+  "donation": {
+    "title": "Apoya a Conecta TEA",
+    "description": "Ayúdanos a expandir las comunidades de apoyo al autismo y la tecnología de impacto social.",
+    "button": "Donar con PayPal",
+    "scanToDonate": "Escanea para donar",
+    "footerLink": "Apoya la misión"
   }
 }

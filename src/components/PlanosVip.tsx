@@ -4,6 +4,7 @@ import { auth } from '../lib/firebase';
 import { useTranslation } from 'react-i18next';
 import { PayPalScriptProvider } from '@paypal/react-paypal-js';
 import PayPalSubscriptionButton from './PayPalSubscriptionButton';
+import DonationSupportCard from './DonationSupportCard';
 
 const PAYPAL_CLIENT_ID = "ASX2fdt9OoW_vzYFtOU18lrGbkLSsR_mIxrVB2tjswOG7W5ZayY9Df39wW-TVGNo0jQia67yGMPgq4uf";
 
@@ -125,6 +126,8 @@ export default function PlanosVip({ isVip }: { isVip?: boolean }) {
             )}
           </div>
         </div>
+
+        <DonationSupportCard />
       </div>
     </PayPalScriptProvider>
   );

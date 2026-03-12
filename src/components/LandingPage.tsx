@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Users, LogIn, ShieldCheck, MessageCircle, Crown, Heart, Zap, ExternalLink } from 'lucide-react';
 import AuthForm from './AuthForm';
+import DonationSupportCard from './DonationSupportCard';
+import { useTranslation } from 'react-i18next';
 
 interface LandingPageProps {
   onLogin: () => void;
@@ -9,6 +11,7 @@ interface LandingPageProps {
 }
 
 export default function LandingPage({ onLogin, onShowTerms }: LandingPageProps) {
+  const { t, i18n } = useTranslation();
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [showAuthForm, setShowAuthForm] = useState(false);
 
@@ -172,6 +175,10 @@ export default function LandingPage({ onLogin, onShowTerms }: LandingPageProps) 
         </div>
       </section>
 
+      <div className="px-4">
+        <DonationSupportCard />
+      </div>
+
       <section className="py-24">
         <div className="max-w-5xl mx-auto px-4">
           <div className="bg-gradient-to-r from-sky-500 to-indigo-600 rounded-[3rem] p-12 md:p-20 text-center text-white shadow-2xl shadow-sky-200">
@@ -219,9 +226,24 @@ export default function LandingPage({ onLogin, onShowTerms }: LandingPageProps) 
       <footer className="py-12 border-t border-gray-100">
         <div className="max-w-7xl mx-auto px-4 flex flex-col items-center gap-4 text-gray-500">
           <p>© 2026 Conecta TEA. Todos os direitos reservados.</p>
-          <button onClick={onShowTerms} className="text-sm hover:text-sky-500 transition-colors">
-            Termos de Uso e Privacidade
-          </button>
+          <div className="flex items-center gap-4">
+            <button onClick={onShowTerms} className="text-sm hover:text-sky-500 transition-colors">
+              Termos de Uso e Privacidade
+            </button>
+            {(i18n.language === 'en' || i18n.language === 'es') && (
+              <>
+                <span>•</span>
+                <a 
+                  href="https://www.paypal.com/donate/?hosted_button_id=QFNBCLB7HH3QE" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-sm hover:text-sky-500 transition-colors"
+                >
+                  {t('donation.footerLink')}
+                </a>
+              </>
+            )}
+          </div>
         </div>
       </footer>
     </div>

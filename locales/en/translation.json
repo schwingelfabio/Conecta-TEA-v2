@@ -105,5 +105,12 @@
     "shareText": "Join the autism community of {{city}} on Conecta TEA and connect with families in your region.",
     "copyLink": "Copy Link",
     "linkCopied": "Link copied!"
+  },
+  "donation": {
+    "title": "Support Conecta TEA",
+    "description": "Help us expand autism support communities and social impact technology.",
+    "button": "Donate with PayPal",
+    "scanToDonate": "Scan to donate",
+    "footerLink": "Support the Mission"
   }
 }
