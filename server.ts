@@ -19,7 +19,48 @@ if (!admin.apps.length) {
 
 const db = admin.firestore();
 
+async function initializeSystemData() {
+  try {
+    // Initialize Admins
+    const ADMIN_EMAILS = [
+      'fabiopalacioschwingel@gmail.com',
+      'fabiparadox2@gmail.com'
+    ];
+    const adminsRef = db.collection('admins');
+    const snapshot = await adminsRef.get();
+    if (snapshot.empty) {
+      for (const rawEmail of ADMIN_EMAILS) {
+        const email = rawEmail.toLowerCase().trim();
+        await adminsRef.doc(email).set({
+          email,
+          role: 'admin',
+          createdAt: admin.firestore.FieldValue.serverTimestamp()
+        });
+      }
+      console.log('Admins initialized.');
+    }
+
+    // Initialize Default Topic
+    const topicsRef = db.collection('topics');
+    const q = topicsRef.where('titulo', '==', 'Bem-vindos à Comunidade!');
+    const querySnapshot = await q.get();
+    if (querySnapshot.empty) {
+      await topicsRef.add({
+        titulo: 'Bem-vindos à Comunidade!',
+        cidade: 'Geral',
+        estado: 'Geral',
+        autor: 'Sistema',
+        createdAt: admin.firestore.FieldValue.serverTimestamp()
+      });
+      console.log('Default topic initialized.');
+    }
+  } catch (error) {
+    console.error('Error initializing system data:', error);
+  }
+}
+
 async function startServer() {
+  await initializeSystemData();
   const app = express();
   const PORT = 3000;
 

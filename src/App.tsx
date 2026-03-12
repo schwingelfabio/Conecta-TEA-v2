@@ -24,28 +24,7 @@ import AuthForm from './components/AuthForm';
 import { auth, googleProvider, db } from './lib/firebase';
 import { signInWithPopup, signOut, onAuthStateChanged, User as FirebaseUser } from 'firebase/auth';
 import { doc, getDoc, setDoc, collection, query, where, getDocs, onSnapshot } from 'firebase/firestore';
-import { initializeAdmins, checkIsAdmin } from './lib/admin';
-
-async function initializeDefaultTopic() {
-  try {
-    const topicsRef = collection(db, 'topics');
-    const q = query(topicsRef, where('titulo', '==', 'Bem-vindos à Comunidade!'));
-    const querySnapshot = await getDocs(q);
-
-    if (querySnapshot.empty) {
-      await setDoc(doc(topicsRef), {
-        titulo: 'Bem-vindos à Comunidade!',
-        cidade: 'Geral',
-        estado: 'Geral',
-        autor: 'Sistema',
-        createdAt: new Date()
-      });
-      console.log('Tópico inicial criado com sucesso.');
-    }
-  } catch (error) {
-    console.error('Erro ao inicializar tópico padrão:', error);
-  }
-}
+import { checkIsAdmin } from './lib/admin';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<'feed' | 'vip' | 'settings' | 'sos' | 'termos' | 'privacidade' | 'contato'>('feed');
@@ -57,10 +36,6 @@ export default function App() {
   const [showAuth, setShowAuth] = useState(false);
 
   useEffect(() => {
-    initializeAdmins();
-    initializeDefaultTopic();
-
-    const path = window.location.pathname;
     if (path.startsWith('/emergencia/')) {
       const userId = path.split('/emergencia/')[1];
       if (userId) {
