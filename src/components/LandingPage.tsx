@@ -1,169 +1,229 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Heart, Users, Brain, ShieldCheck, ArrowRight, Star, MapPin } from 'lucide-react';
+import { Users, LogIn, ShieldCheck, MessageCircle, Crown, Heart, Zap, ExternalLink } from 'lucide-react';
+import AuthForm from './AuthForm';
 
 interface LandingPageProps {
-  onStart: () => void;
-  onNavigate: (page: 'termos' | 'privacidade' | 'contato') => void;
+  onLogin: () => void;
+  onShowTerms: () => void;
 }
 
-const LandingPage: React.FC<LandingPageProps> = ({ onStart, onNavigate }) => {
+export default function LandingPage({ onLogin, onShowTerms }: LandingPageProps) {
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
+  const [showAuthForm, setShowAuthForm] = useState(false);
+
+  const handleLoginClick = () => {
+    if (!acceptedTerms) {
+      alert('Por favor, aceite os Termos de Uso e Privacidade para continuar.');
+      return;
+    }
+    setShowAuthForm(true);
+  };
+
   return (
-    <div className="min-h-screen bg-white overflow-hidden">
-      {/* Hero Section */}
-      <section className="relative pt-20 pb-32 flex flex-col items-center justify-center text-center px-4">
-        <div className="absolute top-0 left-0 w-full h-full overflow-hidden -z-10 opacity-10">
-          <div className="absolute top-10 left-10 w-64 h-64 bg-brand-primary rounded-full blur-3xl animate-pulse" />
-          <div className="absolute bottom-10 right-10 w-96 h-96 bg-brand-secondary rounded-full blur-3xl animate-pulse delay-700" />
+    <div className="min-h-screen bg-white">
+      <section className="relative pt-20 pb-32 overflow-hidden">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full -z-10 opacity-10">
+          <div className="absolute top-0 left-1/4 w-96 h-96 bg-sky-400 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-indigo-400 rounded-full blur-3xl animate-pulse delay-700"></div>
         </div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          className="max-w-4xl mx-auto"
-        >
-          <div className="inline-flex items-center space-x-2 bg-brand-primary/10 text-brand-primary px-4 py-2 rounded-full mb-8">
-            <Star size={16} className="fill-brand-primary" />
-            <span className="text-sm font-semibold uppercase tracking-wider">A maior rede de apoio autista do Brasil</span>
-          </div>
-          
-          <h1 className="text-6xl md:text-8xl font-serif font-bold text-slate-900 mb-6 leading-tight">
-            Conecta <span className="text-brand-primary italic">TEA</span>
-          </h1>
-          
-          <p className="text-xl md:text-2xl text-slate-600 mb-10 max-w-2xl mx-auto leading-relaxed">
-            Uma plataforma dedicada a unir famílias, profissionais e comunidades locais. 
-            Transformando a jornada do autismo através de tecnologia, afeto e informação.
-          </p>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+          >
+            <div className="flex justify-center mb-8">
+              <div className="relative group">
+                <div className="absolute -inset-1 bg-gradient-to-r from-sky-400 to-indigo-500 rounded-[2.5rem] blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
+                <div className="relative w-24 h-24 bg-white rounded-[2rem] shadow-xl flex items-center justify-center text-sky-500 border border-sky-50">
+                  <Users size={48} />
+                </div>
+              </div>
+            </div>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <button
-              onClick={onStart}
-              className="group relative px-8 py-4 bg-slate-900 text-white rounded-full font-semibold text-lg overflow-hidden transition-all hover:pr-12"
-            >
-              <span className="relative z-10">Começar Agora</span>
-              <ArrowRight className="absolute right-4 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-all" size={20} />
-            </button>
-            <a
-              href="https://sites.google.com/view/triagemteaia/portugu%C3%AAs"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="px-8 py-4 bg-white border-2 border-slate-200 text-slate-900 rounded-full font-semibold text-lg hover:bg-slate-50 transition-all"
-            >
-              ACESSE TRIAGEM TEA IA
-            </a>
-          </div>
-        </motion.div>
-      </section>
+            <h1 className="text-5xl md:text-7xl font-black text-gray-900 mb-6 tracking-tight">
+              Conecta <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-500 to-indigo-600">TEA</span>
+            </h1>
 
-      {/* Features Section */}
-      <section className="py-24 bg-slate-50">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-serif font-bold mb-4">Recursos Pensados para Você</h2>
-            <p className="text-slate-600 max-w-2xl mx-auto">Tudo o que você precisa para uma jornada mais conectada e informada.</p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <FeatureCard
-              icon={<Users className="text-brand-primary" size={32} />}
-              title="Comunidades Locais"
-              description="Conecte-se com famílias e profissionais da sua própria cidade. Troque experiências e encontre apoio perto de você."
-            />
-            <FeatureCard
-              icon={<ShieldCheck className="text-brand-accent" size={32} />}
-              title="Área VIP Exclusiva"
-              description="Acesso a conteúdos premium, mentorias e recursos especializados para potencializar o desenvolvimento."
-            />
-            <FeatureCard
-              icon={<Brain className="text-brand-secondary" size={32} />}
-              title="IA de Apoio"
-              description="Utilize nossa tecnologia de inteligência artificial para auxiliar no processo de triagem e acompanhamento."
-            />
-          </div>
-        </div>
-      </section>
-
-      {/* Social Proof Section */}
-      <section className="py-24">
-        <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center gap-12">
-          <div className="flex-1">
-            <h2 className="text-5xl font-serif font-bold mb-6 leading-tight">Juntos somos mais fortes.</h2>
-            <p className="text-xl text-slate-600 mb-8">
-              Acreditamos que a informação e a conexão são as chaves para um futuro melhor. 
-              Nossa plataforma foi construída por quem entende os desafios e as belezas do autismo.
+            <p className="text-2xl md:text-3xl font-bold text-gray-700 mb-8">
+              A sua rede de apoio e conexão autista.
             </p>
-            <div className="space-y-4">
-              <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 rounded-full bg-brand-primary/10 flex items-center justify-center text-brand-primary">
-                  <MapPin size={20} />
+
+            <p className="max-w-2xl mx-auto text-xl text-gray-600 mb-12 leading-relaxed">
+              Uma plataforma dedicada a unir famílias, profissionais e comunidades locais.
+              Transformando a jornada do autismo através de tecnologia, afeto e informação de qualidade.
+            </p>
+
+            {showAuthForm ? (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="mt-8"
+              >
+                <AuthForm onSuccess={onLogin} />
+                <button
+                  onClick={() => setShowAuthForm(false)}
+                  className="mt-6 text-gray-500 hover:text-gray-700 font-medium"
+                >
+                  Voltar
+                </button>
+              </motion.div>
+            ) : (
+              <div className="flex flex-col items-center justify-center gap-6">
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full">
+                  <button
+                    onClick={handleLoginClick}
+                    className={`w-full sm:w-auto px-10 py-5 rounded-2xl font-bold text-xl shadow-lg hover:-translate-y-1 transition-all active:scale-95 flex items-center justify-center gap-3 ${acceptedTerms ? 'bg-sky-500 text-white shadow-sky-200 hover:bg-sky-600' : 'bg-gray-300 text-gray-500 cursor-not-allowed'}`}
+                  >
+                    <LogIn size={24} />
+                    Entrar agora
+                  </button>
+
+                  <button
+                    onClick={handleLoginClick}
+                    className={`w-full sm:w-auto px-10 py-5 bg-white text-gray-900 border-2 border-gray-100 rounded-2xl font-bold text-xl shadow-md hover:bg-gray-50 hover:border-sky-100 hover:-translate-y-1 transition-all active:scale-95 flex items-center justify-center gap-3 ${!acceptedTerms ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  >
+                    Criar conta gratuita
+                  </button>
+
+                  <a
+                    href="https://sites.google.com/view/triagemteaia/portugu%C3%AAs"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full sm:w-auto px-10 py-5 bg-emerald-500 text-white rounded-2xl font-bold text-xl shadow-lg hover:bg-emerald-600 hover:-translate-y-1 transition-all active:scale-95 flex items-center justify-center gap-3"
+                  >
+                    <ExternalLink size={22} />
+                    Triagem TEA IA
+                  </a>
                 </div>
-                <span className="font-medium text-slate-700">Presença em todo o Brasil</span>
-              </div>
-              <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 rounded-full bg-brand-secondary/10 flex items-center justify-center text-brand-secondary">
-                  <Heart size={20} />
+
+                <div className="flex items-center gap-2 text-sm text-gray-600 bg-white/50 p-3 rounded-xl border border-gray-100">
+                  <input
+                    type="checkbox"
+                    id="terms"
+                    checked={acceptedTerms}
+                    onChange={(e) => setAcceptedTerms(e.target.checked)}
+                    className="w-5 h-5 rounded border-gray-300 text-sky-500 focus:ring-sky-500"
+                  />
+                  <label htmlFor="terms" className="cursor-pointer">
+                    Eu li e aceito os{' '}
+                    <button onClick={onShowTerms} className="text-sky-500 font-bold hover:underline">
+                      Termos de Uso e Privacidade
+                    </button>
+                  </label>
                 </div>
-                <span className="font-medium text-slate-700">Comunidade acolhedora e segura</span>
               </div>
+            )}
+          </motion.div>
+        </div>
+      </section>
+
+      <section className="py-24 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+            <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 hover:shadow-xl transition-shadow">
+              <div className="w-14 h-14 bg-sky-100 text-sky-600 rounded-2xl flex items-center justify-center mb-6">
+                <Users size={28} />
+              </div>
+              <h3 className="text-2xl font-bold mb-4">Comunidades Locais</h3>
+              <p className="text-gray-600 leading-relaxed">
+                Conecte-se com famílias e profissionais da sua própria cidade. Troque experiências e encontre apoio perto de você.
+              </p>
             </div>
-          </div>
-          <div className="flex-1 relative">
-            <div className="aspect-square rounded-3xl overflow-hidden shadow-2xl rotate-3">
-              <img 
-                src="https://picsum.photos/seed/autism-support/800/800" 
-                alt="Comunidade Conecta TEA" 
-                className="w-full h-full object-cover"
-                referrerPolicy="no-referrer"
-              />
-            </div>
-            <div className="absolute -bottom-6 -left-6 bg-white p-6 rounded-2xl shadow-xl -rotate-3 border border-slate-100">
-              <div className="flex items-center space-x-4">
-                <div className="flex -space-x-2">
-                  {[1,2,3].map(i => (
-                    <img 
-                      key={i}
-                      src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${i}`} 
-                      className="w-10 h-10 rounded-full border-2 border-white"
-                      alt="User"
-                    />
-                  ))}
-                </div>
-                <div>
-                  <p className="font-bold text-slate-900">+5.000</p>
-                  <p className="text-xs text-slate-500 uppercase tracking-wider">Membros Ativos</p>
-                </div>
+
+            <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 hover:shadow-xl transition-shadow">
+              <div className="w-14 h-14 bg-amber-100 text-amber-600 rounded-2xl flex items-center justify-center mb-6">
+                <Crown size={28} />
               </div>
+              <h3 className="text-2xl font-bold mb-4">Área VIP Exclusiva</h3>
+              <p className="text-gray-600 leading-relaxed">
+                Acesso a conteúdos premium, mentorias e recursos especializados para potencializar o desenvolvimento.
+              </p>
+            </div>
+
+            <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 hover:shadow-xl transition-shadow">
+              <div className="w-14 h-14 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center mb-6">
+                <ShieldCheck size={28} />
+              </div>
+              <h3 className="text-2xl font-bold mb-4">Triagem TEA IA</h3>
+              <p className="text-gray-600 leading-relaxed">
+                Utilize nossa tecnologia de inteligência artificial para auxiliar no processo de triagem e acompanhamento.
+              </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="py-12 border-t border-slate-100 bg-slate-50">
+      <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 text-center">
-          <p className="text-slate-500 text-sm">© 2026 Conecta TEA. Todos os direitos reservados.</p>
-          <div className="mt-4 flex justify-center space-x-6">
-            <button onClick={() => onNavigate('termos')} className="text-slate-400 hover:text-brand-primary transition-colors">Termos de Uso</button>
-            <button onClick={() => onNavigate('privacidade')} className="text-slate-400 hover:text-brand-primary transition-colors">Privacidade</button>
-            <button onClick={() => onNavigate('contato')} className="text-slate-400 hover:text-brand-primary transition-colors">Contato</button>
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-sky-50 text-sky-700 rounded-full font-bold text-sm mb-8">
+            <Zap size={16} />
+            CONSTRUINDO UMA REDE DE APOIO PARA FAMÍLIAS TEA
           </div>
+          <h2 className="text-3xl md:text-5xl font-black mb-12">Juntos somos mais fortes.</h2>
+          <div className="flex flex-wrap justify-center gap-12 opacity-50 grayscale hover:grayscale-0 transition-all duration-500">
+            <Users size={40} />
+            <Heart size={40} />
+            <ShieldCheck size={40} />
+            <MessageCircle size={40} />
+          </div>
+        </div>
+      </section>
+
+      <section className="py-24">
+        <div className="max-w-5xl mx-auto px-4">
+          <div className="bg-gradient-to-r from-sky-500 to-indigo-600 rounded-[3rem] p-12 md:p-20 text-center text-white shadow-2xl shadow-sky-200">
+            <h2 className="text-4xl md:text-5xl font-black mb-8">Pronto para começar?</h2>
+            <p className="text-xl text-sky-50 mb-12 max-w-2xl mx-auto">
+              Junte-se a outras famílias e faça parte de uma rede de apoio feita com acolhimento, informação e tecnologia.
+            </p>
+
+            <div className="flex flex-col sm:flex-row justify-center gap-4">
+              <button
+                onClick={() => {
+                  if (!acceptedTerms) {
+                    alert('Por favor, aceite os Termos de Uso e Privacidade no topo da página para continuar.');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                    return;
+                  }
+                  setShowAuthForm(true);
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+                className={`px-12 py-5 rounded-2xl font-bold text-xl transition-colors shadow-xl ${acceptedTerms ? 'bg-white text-sky-600 hover:bg-sky-50' : 'bg-white/50 text-white cursor-not-allowed'}`}
+              >
+                Começar Agora Gratuitamente
+              </button>
+
+              <a
+                href="https://sites.google.com/view/triagemteaia/portugu%C3%AAs"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-12 py-5 rounded-2xl font-bold text-xl transition-colors shadow-xl bg-emerald-500 text-white hover:bg-emerald-600 inline-flex items-center justify-center gap-3"
+              >
+                <ExternalLink size={22} />
+                Conhecer Triagem TEA IA
+              </a>
+            </div>
+
+            {!acceptedTerms && (
+              <p className="mt-4 text-sm text-sky-100 opacity-80">
+                Marque a caixa de termos de uso acima para continuar.
+              </p>
+            )}
+          </div>
+        </div>
+      </section>
+
+      <footer className="py-12 border-t border-gray-100">
+        <div className="max-w-7xl mx-auto px-4 flex flex-col items-center gap-4 text-gray-500">
+          <p>© 2026 Conecta TEA. Todos os direitos reservados.</p>
+          <button onClick={onShowTerms} className="text-sm hover:text-sky-500 transition-colors">
+            Termos de Uso e Privacidade
+          </button>
         </div>
       </footer>
     </div>
   );
-};
-
-const FeatureCard: React.FC<{ icon: React.ReactNode; title: string; description: string }> = ({ icon, title, description }) => (
-  <motion.div 
-    whileHover={{ y: -5 }}
-    className="p-8 bg-white rounded-3xl shadow-sm border border-slate-100 card-hover"
-  >
-    <div className="mb-6">{icon}</div>
-    <h3 className="text-2xl font-serif font-bold mb-4">{title}</h3>
-    <p className="text-slate-600 leading-relaxed">{description}</p>
-  </motion.div>
-);
-
-export default LandingPage;
+}
