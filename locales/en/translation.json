@@ -74,7 +74,13 @@
   },
   "vip": {
     "title": "VIP Area",
-    "plans": "Our Plans"
+    "plans": "Our Plans",
+    "subscribeMonthly": "Subscribe Monthly",
+    "subscribeAnnual": "Subscribe Annual",
+    "subscribePayPal": "Subscribe with PayPal",
+    "internationalPayment": "International payment",
+    "loginToSubscribe": "Please log in to subscribe",
+    "subscriptionSuccess": "Subscription created successfully"
   },
   "sos": {
     "title": "SOS",

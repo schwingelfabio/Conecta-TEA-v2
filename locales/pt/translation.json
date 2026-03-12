@@ -74,7 +74,13 @@
   },
   "vip": {
     "title": "Área VIP",
-    "plans": "Nossos Planos"
+    "plans": "Nossos Planos",
+    "subscribeMonthly": "Assinar Mensal",
+    "subscribeAnnual": "Assinar Anual",
+    "subscribePayPal": "Assinar com PayPal",
+    "internationalPayment": "Pagamento internacional",
+    "loginToSubscribe": "Faça login para assinar",
+    "subscriptionSuccess": "Assinatura criada com sucesso"
   },
   "sos": {
     "title": "SOS",
