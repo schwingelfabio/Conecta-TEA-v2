@@ -29,6 +29,7 @@ import {
   Shield
 } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
+import ActiveCommunities from './ActiveCommunities';
 
 interface FeedProps {
   userProfile: UserProfile | null;
@@ -204,6 +205,8 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip }) => {
           </div>
         </div>
       )}
+
+      <ActiveCommunities />
 
       {/* Post Creation */}
       <div className="bg-white rounded-3xl shadow-sm border border-slate-100 p-6 mb-8">
