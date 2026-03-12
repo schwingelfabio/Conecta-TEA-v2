@@ -5,12 +5,15 @@ import {
   query, 
   orderBy, 
   limit, 
-  onSnapshot, 
+  getDocs, 
   addDoc, 
   deleteDoc,
   doc,
   serverTimestamp,
-  where
+  where,
+  startAfter,
+  QueryDocumentSnapshot,
+  DocumentData
 } from 'firebase/firestore';
 import { Post, UserProfile } from '../types';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -45,49 +48,72 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip }) => {
   const [loadingMessage, setLoadingMessage] = useState('Carregando feed...');
   const [generatingNews, setGeneratingNews] = useState(false);
   const [generationError, setGenerationError] = useState<string | null>(null);
+  const [lastVisible, setLastVisible] = useState<QueryDocumentSnapshot<DocumentData> | null>(null);
+  const [hasMore, setHasMore] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
 
-  useEffect(() => {
-    setLoading(true);
-    setLoadingMessage('Buscando tópicos da sua cidade e do seu estado...');
-    
+  const fetchPosts = async (isLoadMore = false) => {
+    if (!isLoadMore) {
+      setLoading(true);
+      setPosts([]);
+      setLastVisible(null);
+      setHasMore(true);
+    } else {
+      setLoadingMore(true);
+    }
+
     let q = query(
       collection(db, 'posts'),
       orderBy('timestamp', 'desc'),
-      limit(50)
+      limit(10)
     );
 
     if (topic === 'cidade') {
-        q = query(collection(db, 'posts'), where('city', '==', userProfile?.city || ''), orderBy('timestamp', 'desc'), limit(50));
+        q = query(collection(db, 'posts'), where('city', '==', userProfile?.city || ''), orderBy('timestamp', 'desc'), limit(10));
     } else if (topic === 'estado') {
-        q = query(collection(db, 'posts'), where('state', '==', userProfile?.state || ''), orderBy('timestamp', 'desc'), limit(50));
+        q = query(collection(db, 'posts'), where('state', '==', userProfile?.state || ''), orderBy('timestamp', 'desc'), limit(10));
     } else if (topic !== 'geral') {
       q = query(
         collection(db, 'posts'),
         where('topic', '==', topic),
         orderBy('timestamp', 'desc'),
-        limit(50)
+        limit(10)
       );
     }
 
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const fetchedPosts = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      })) as Post[];
-      
-      const validPosts = fetchedPosts
-        .filter(post => (post.text || post.content) && (post.authorId || post.userId) && post.topic)
-        .map(post => ({
-          ...post,
-          authorId: post.authorId || post.userId,
-          text: post.text || post.content
-        }));
-      
-      setPosts(validPosts);
-      setLoading(false);
-    });
+    if (isLoadMore && lastVisible) {
+      q = query(q, startAfter(lastVisible));
+    }
 
-    return () => unsubscribe();
+    const snapshot = await getDocs(q);
+    
+    const fetchedPosts = snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    })) as Post[];
+    
+    const validPosts = fetchedPosts
+      .filter(post => (post.text || post.content) && (post.authorId || post.userId) && post.topic)
+      .map(post => ({
+        ...post,
+        authorId: post.authorId || post.userId,
+        text: post.text || post.content
+      }));
+    
+    if (isLoadMore) {
+      setPosts(prev => [...prev, ...validPosts]);
+    } else {
+      setPosts(validPosts);
+    }
+    
+    setLastVisible(snapshot.docs[snapshot.docs.length - 1] || null);
+    setHasMore(snapshot.docs.length === 10);
+    setLoading(false);
+    setLoadingMore(false);
+  };
+
+  useEffect(() => {
+    fetchPosts();
   }, [topic, userProfile]);
 
   useEffect(() => {
@@ -372,6 +398,20 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip }) => {
               </motion.div>
             ))}
           </AnimatePresence>
+        )}
+
+        {!loading && posts.length > 0 && hasMore && (
+          <button
+            onClick={() => fetchPosts(true)}
+            disabled={loadingMore}
+            className="w-full py-4 text-center text-brand-primary font-bold hover:bg-slate-50 rounded-2xl transition-all"
+          >
+            {loadingMore ? 'Carregando mais posts...' : 'Carregar mais'}
+          </button>
+        )}
+
+        {!loading && posts.length > 0 && !hasMore && (
+          <p className="text-center text-slate-400 py-4">Você chegou ao final.</p>
         )}
 
         {!loading && posts.length === 0 && (
