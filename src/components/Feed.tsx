@@ -43,6 +43,7 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip }) => {
   const [loading, setLoading] = useState(true);
   const [loadingMessage, setLoadingMessage] = useState('Carregando feed...');
   const [generatingNews, setGeneratingNews] = useState(false);
+  const [generationError, setGenerationError] = useState<string | null>(null);
 
   useEffect(() => {
     setLoading(true);
@@ -88,6 +89,12 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip }) => {
     return () => unsubscribe();
   }, [topic, userProfile]);
 
+  useEffect(() => {
+    if (topic === 'noticias' && posts.length === 0 && !loading && !generatingNews && !generationError) {
+      handleGenerateNews();
+    }
+  }, [topic, posts.length, loading, generatingNews, generationError]);
+
   const handlePost = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newPost.trim() || !userProfile) return;
@@ -128,14 +135,14 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip }) => {
 
   const handleGenerateNews = async () => {
     setGeneratingNews(true);
+    setGenerationError(null);
     try {
       const res = await fetch('/api/trigger-news');
       if (!res.ok) throw new Error('Falha ao gerar notícia');
-      alert('Notícia gerada com sucesso! Ela aparecerá no feed em instantes.');
-      setTopic('noticias');
+      // Success: do not set topic, just let the snapshot update the posts
     } catch (err) {
       console.error(err);
-      alert('Erro ao gerar notícia. Verifique os logs do servidor.');
+      setGenerationError('Não foi possível carregar notícias agora. Tente novamente em instantes.');
     } finally {
       setGeneratingNews(false);
     }
@@ -366,11 +373,31 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip }) => {
 
         {!loading && posts.length === 0 && (
           <div className="text-center py-20 bg-white rounded-3xl border border-dashed border-slate-200">
-            <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-300">
-              <MessageCircle size={32} />
-            </div>
-            <h3 className="text-xl font-bold text-slate-900 mb-2">Nenhum post ainda</h3>
-            <p className="text-slate-500">Seja o primeiro a compartilhar algo com a comunidade!</p>
+            {topic === 'noticias' && (generatingNews || generationError) ? (
+              <div className="space-y-4">
+                {generatingNews ? (
+                  <p className="text-slate-500">Gerando notícias sobre autismo...</p>
+                ) : (
+                  <>
+                    <p className="text-red-500">{generationError}</p>
+                    <button 
+                      onClick={handleGenerateNews} 
+                      className="bg-brand-primary text-white px-6 py-2 rounded-full hover:bg-brand-primary/90 transition-all"
+                    >
+                      Tentar novamente
+                    </button>
+                  </>
+                )}
+              </div>
+            ) : (
+              <>
+                <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-300">
+                  <MessageCircle size={32} />
+                </div>
+                <h3 className="text-xl font-bold text-slate-900 mb-2">Nenhum post ainda</h3>
+                <p className="text-slate-500">Seja o primeiro a compartilhar algo com a comunidade!</p>
+              </>
+            )}
           </div>
         )}
       </div>
