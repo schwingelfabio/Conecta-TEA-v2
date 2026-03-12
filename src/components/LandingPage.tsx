@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Users, LogIn, ShieldCheck, MessageCircle, Crown, Heart, Zap, ExternalLink } from 'lucide-react';
 import AuthForm from './AuthForm';
 import DonationSupportCard from './DonationSupportCard';
+import LanguageSelector from './LanguageSelector';
 import { useTranslation } from 'react-i18next';
 
 interface LandingPageProps {
@@ -25,6 +26,10 @@ export default function LandingPage({ onLogin, onShowTerms }: LandingPageProps) 
 
   return (
     <div className="min-h-screen bg-white">
+      <div className="absolute top-4 right-4 z-50">
+        <LanguageSelector />
+      </div>
+
       <section className="relative pt-20 pb-32 overflow-hidden">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full -z-10 opacity-10">
           <div className="absolute top-0 left-1/4 w-96 h-96 bg-sky-400 rounded-full blur-3xl animate-pulse"></div>
