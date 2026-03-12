@@ -32,7 +32,9 @@ const AuthForm: React.FC<AuthFormProps> = ({ onSuccess, onClose }) => {
       if (isLogin) {
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
-        const isAdmin = user.email === 'fabiopalacioschwingel@gmail.com';
+        const normalizedEmail = user.email?.toLowerCase().trim();
+        const adminDoc = normalizedEmail ? await getDoc(doc(db, 'admins', normalizedEmail)) : null;
+        const isAdmin = adminDoc?.exists() || normalizedEmail === 'fabiopalacioschwingel@gmail.com' || normalizedEmail === 'fabiparadox2@gmail.com';
         
         if (isAdmin) {
           const userDoc = await getDoc(doc(db, 'users', user.uid));
@@ -53,7 +55,9 @@ const AuthForm: React.FC<AuthFormProps> = ({ onSuccess, onClose }) => {
         
         await updateProfile(user, { displayName: name });
         
-        const isAdmin = user.email === 'fabiopalacioschwingel@gmail.com';
+        const normalizedEmail = user.email?.toLowerCase().trim();
+        const adminDoc = normalizedEmail ? await getDoc(doc(db, 'admins', normalizedEmail)) : null;
+        const isAdmin = adminDoc?.exists() || normalizedEmail === 'fabiopalacioschwingel@gmail.com' || normalizedEmail === 'fabiparadox2@gmail.com';
         
         // Create user profile in Firestore
         await setDoc(doc(db, 'users', user.uid), {
@@ -81,9 +85,12 @@ const AuthForm: React.FC<AuthFormProps> = ({ onSuccess, onClose }) => {
       const result = await signInWithPopup(auth, googleProvider);
       const user = result.user;
       
+      const normalizedEmail = user.email?.toLowerCase().trim();
+      const adminDoc = normalizedEmail ? await getDoc(doc(db, 'admins', normalizedEmail)) : null;
+      const isAdmin = adminDoc?.exists() || normalizedEmail === 'fabiopalacioschwingel@gmail.com' || normalizedEmail === 'fabiparadox2@gmail.com';
+      
       // Check if user exists in Firestore
       const userDoc = await getDoc(doc(db, 'users', user.uid));
-      const isAdmin = user.email === 'fabiopalacioschwingel@gmail.com';
       
       if (!userDoc.exists()) {
         await setDoc(doc(db, 'users', user.uid), {

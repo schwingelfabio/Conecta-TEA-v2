@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Book, PlayCircle, Download, ExternalLink, Crown } from 'lucide-react';
+import { Book, PlayCircle, Download, ExternalLink, Crown, Smartphone } from 'lucide-react';
 import { UserProfile } from '../types';
 import PlanosVip from './PlanosVip';
+import { auth, db } from '../lib/firebase';
+import { doc, getDoc } from 'firebase/firestore';
 
 interface AreaVipProps {
   userProfile: UserProfile | null;
@@ -28,19 +30,79 @@ const videos = [
 ];
 
 const AreaVip: React.FC<AreaVipProps> = ({ userProfile }) => {
-  if (!userProfile?.isVip && userProfile?.role !== 'admin') {
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [isVip, setIsVip] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const checkPrivileges = async () => {
+      const user = auth.currentUser;
+      if (user) {
+        const normalizedEmail = user.email?.toLowerCase().trim();
+        
+        // Verifique admin
+        const adminDoc = normalizedEmail ? await getDoc(doc(db, 'admins', normalizedEmail)) : null;
+        const isManualAdmin = normalizedEmail === 'fabiopalacioschwingel@gmail.com' || normalizedEmail === 'fabiparadox2@gmail.com';
+        const userIsAdmin = adminDoc?.exists() || isManualAdmin;
+        
+        // Mantenha a verificação de users por uid
+        const userDoc = await getDoc(doc(db, 'users', user.uid));
+        const userData = userDoc.data();
+        
+        setIsAdmin(userIsAdmin || userData?.role === 'admin');
+        setIsVip(userIsAdmin || userData?.isVip || false);
+      }
+      setLoading(false);
+    };
+
+    checkPrivileges();
+  }, []);
+
+  if (loading) {
+    return <div className="flex justify-center items-center h-64">Carregando...</div>;
+  }
+
+  if (!isVip && !isAdmin) {
     return <PlanosVip userProfile={userProfile} />;
   }
 
+  // URL configurável para o app (deixe vazio se não houver link ainda)
+  const appDownloadUrl = ""; // Ex: "https://play.google.com/store/apps/details?id=com.conectatea"
+
   return (
     <div className="max-w-6xl mx-auto py-12 px-4">
-      <div className="flex items-center space-x-4 mb-12">
-        <div className="w-16 h-16 bg-amber-100 text-amber-500 rounded-2xl flex items-center justify-center">
-          <Crown size={32} />
+      <div className="flex flex-col md:flex-row md:items-center justify-between space-y-6 md:space-y-0 mb-12">
+        <div className="flex items-center space-x-4">
+          <div className="w-16 h-16 bg-amber-100 text-amber-500 rounded-2xl flex items-center justify-center">
+            <Crown size={32} />
+          </div>
+          <div>
+            <h1 className="text-4xl font-serif font-bold text-slate-900">Área VIP</h1>
+            <p className="text-slate-500">Conteúdos exclusivos para assinantes</p>
+          </div>
         </div>
-        <div>
-          <h1 className="text-4xl font-serif font-bold text-slate-900">Área VIP</h1>
-          <p className="text-slate-500">Conteúdos exclusivos para assinantes</p>
+        
+        {/* Botão Baixar App */}
+        <div className="flex items-center">
+          {appDownloadUrl ? (
+            <a 
+              href={appDownloadUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center space-x-2 bg-slate-900 text-white px-6 py-3 rounded-xl font-bold hover:bg-slate-800 transition-colors shadow-lg"
+            >
+              <Smartphone size={20} />
+              <span>Baixar App</span>
+            </a>
+          ) : (
+            <button 
+              disabled
+              className="flex items-center space-x-2 bg-slate-200 text-slate-500 px-6 py-3 rounded-xl font-bold cursor-not-allowed"
+            >
+              <Smartphone size={20} />
+              <span>App em breve</span>
+            </button>
+          )}
         </div>
       </div>
 

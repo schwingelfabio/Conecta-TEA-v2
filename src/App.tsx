@@ -28,6 +28,7 @@ import AreaVip from './components/AreaVip';
 import SosPage from './components/SosPage';
 import EmergencyPage from './components/EmergencyPage';
 import AiAssistant from './components/AiAssistant';
+import Settings from './components/Settings';
 import { TermosDeUso, Privacidade, Contato } from './components/LegalPages';
 
 type Page = 'home' | 'feed' | 'vip' | 'settings' | 'sos' | 'log' | 'videos' | 'termos' | 'privacidade' | 'contato';
@@ -66,12 +67,12 @@ const App: React.FC = () => {
             let needsUpdate = false;
             let updates: any = {};
             
-            if (firebaseUser.email === 'fabiopalacioschwingel@gmail.com' && (profileData.role !== 'admin' || !profileData.isVip)) {
+            const normalizedEmail = firebaseUser.email?.toLowerCase().trim();
+            const adminDoc = normalizedEmail ? await getDoc(doc(db, 'admins', normalizedEmail)) : null;
+            const isAdmin = adminDoc?.exists() || normalizedEmail === 'fabiopalacioschwingel@gmail.com' || normalizedEmail === 'fabiparadox2@gmail.com';
+            
+            if (isAdmin && (profileData.role !== 'admin' || !profileData.isVip)) {
               updates.role = 'admin';
-              updates.isVip = true;
-              needsUpdate = true;
-            }
-            if (firebaseUser.email === 'fabiparadox2@gmail.com' && !profileData.isVip) {
               updates.isVip = true;
               needsUpdate = true;
             }
@@ -155,7 +156,7 @@ const App: React.FC = () => {
       case 'sos': return <SosPage userProfile={userProfile} onLoginClick={() => setShowAuth(true)} />;
       case 'log': return requireVip(<PlaceholderPage title="Diário de Bordo" icon={<Heart size={48} />} />);
       case 'videos': return requireVip(<PlaceholderPage title="Galeria de Vídeos" icon={<Video size={48} />} />);
-      case 'settings': return <PlaceholderPage title="Configurações" icon={<SettingsIcon size={48} />} />;
+      case 'settings': return <Settings />;
       case 'termos': return <TermosDeUso onBack={() => setCurrentPage('feed')} />;
       case 'privacidade': return <Privacidade onBack={() => setCurrentPage('feed')} />;
       case 'contato': return <Contato onBack={() => setCurrentPage('feed')} />;
