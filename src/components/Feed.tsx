@@ -99,9 +99,10 @@ interface FeedProps {
   userProfile: UserProfile | null;
   isAdmin: boolean;
   isVip: boolean;
+  authReady?: boolean;
 }
 
-const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip }) => {
+const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady }) => {
   const { t } = useTranslation();
   const [posts, setPosts] = useState<Post[]>([]);
   const [newPost, setNewPost] = useState('');
@@ -244,7 +245,13 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip }) => {
 
   const handlePost = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('[Feed] Post submit clicked');
+    console.log('[Feed] Post submit clicked. authReady:', authReady, 'userProfile:', !!userProfile);
+    
+    if (!authReady) {
+      alert('Aguarde o carregamento do sistema...');
+      return;
+    }
+
     if (!newPost.trim() || !userProfile) {
       console.warn('[Feed] Cannot post: empty text or no user profile');
       return;
@@ -294,7 +301,11 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip }) => {
   };
 
   const handleGenerateNews = async () => {
-    console.log('[Feed] handleGenerateNews started');
+    console.log('[Feed] handleGenerateNews started. authReady:', authReady);
+    if (!authReady) {
+      console.warn('[Feed] Cannot generate news: auth not ready');
+      return;
+    }
     setGeneratingNews(true);
     setGenerationError(null);
     

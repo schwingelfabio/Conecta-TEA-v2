@@ -9,18 +9,21 @@ import VideoGallery from './VideoGallery';
 export default function AreaVip({
   isAdmin,
   isVip: isVipProp,
+  authReady,
   onNavigate
 }: {
   isAdmin?: boolean,
   isVip?: boolean,
+  authReady?: boolean,
   onNavigate?: (tab: string) => void
 }) {
-  const [isVip, setIsVip] = useState<boolean | null>(isVipProp || isAdmin || null);
-  const [loading, setLoading] = useState(isVipProp === undefined && isAdmin === undefined);
   const [suggestionText, setSuggestionText] = useState('');
   const [isSending, setIsSending] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const user = auth.currentUser;
+
+  const isVip = Boolean(isVipProp || isAdmin);
+  const loading = !authReady;
 
   const handleSubmitSuggestion = async () => {
     if (!suggestionText.trim() || !user) return;
@@ -45,57 +48,8 @@ export default function AreaVip({
   };
 
   useEffect(() => {
-    if (isVipProp !== undefined || isAdmin !== undefined) {
-      setIsVip(Boolean(isVipProp || isAdmin));
-      setLoading(false);
-      return;
-    }
-
-    async function checkVipStatus() {
-      if (!user) {
-        setIsVip(false);
-        setLoading(false);
-        return;
-      }
-
-      const normalizedEmail = user.email?.toLowerCase().trim();
-      const adminEmails = [
-        'fabiopalacioschwingel@gmail.com',
-        'fabiparadox2@gmail.com'
-      ];
-
-      try {
-        if (normalizedEmail && adminEmails.includes(normalizedEmail)) {
-          setIsVip(true);
-          setLoading(false);
-          return;
-        }
-
-        if (normalizedEmail) {
-          const adminDoc = await getDoc(doc(db, 'admins', normalizedEmail));
-          if (adminDoc.exists()) {
-            setIsVip(true);
-            setLoading(false);
-            return;
-          }
-        }
-
-        const userDoc = await getDoc(doc(db, 'users', user.uid));
-        if (userDoc.exists()) {
-          setIsVip(userDoc.data().isVip === true);
-        } else {
-          setIsVip(false);
-        }
-      } catch (error) {
-        console.error('Erro ao verificar status VIP:', error);
-        setIsVip(false);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    checkVipStatus();
-  }, [user, isVipProp, isAdmin]);
+    console.log(`[AreaVip] Auth status: ready=${authReady}, isVipProp=${isVipProp}, isAdmin=${isAdmin}`);
+  }, [authReady, isVipProp, isAdmin]);
 
   if (loading) {
     return (

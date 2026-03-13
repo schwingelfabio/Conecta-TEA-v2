@@ -8,10 +8,11 @@ import QRCode from 'react-qr-code';
 
 interface SosPageProps {
   userProfile: UserProfile | null;
+  authReady?: boolean;
   onLoginClick?: () => void;
 }
 
-const SosPage: React.FC<SosPageProps> = ({ userProfile, onLoginClick }) => {
+const SosPage: React.FC<SosPageProps> = ({ userProfile, authReady, onLoginClick }) => {
   const [sosCard, setSosCard] = useState<SosCard | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -35,11 +36,18 @@ const SosPage: React.FC<SosPageProps> = ({ userProfile, onLoginClick }) => {
 
   useEffect(() => {
     const fetchSosCard = async () => {
+      if (!authReady) {
+        console.log('[SosPage] Auth not ready yet...');
+        return;
+      }
+
       if (!userProfile) {
+        console.log('[SosPage] No user profile, stopping fetch');
         setLoading(false);
         return;
       }
       
+      console.log('[SosPage] Fetching SOS card for user:', userProfile.uid);
       try {
         setError(null);
         const q = query(collection(db, 'sos_cards'), where('userId', '==', userProfile.uid));
@@ -114,7 +122,7 @@ const SosPage: React.FC<SosPageProps> = ({ userProfile, onLoginClick }) => {
     window.print();
   };
 
-  if (loading) {
+  if (!authReady || loading) {
     return (
       <div className="flex justify-center items-center py-20">
         <div className="w-10 h-10 border-4 border-slate-200 border-t-red-500 rounded-full animate-spin" />
@@ -123,6 +131,7 @@ const SosPage: React.FC<SosPageProps> = ({ userProfile, onLoginClick }) => {
   }
 
   if (!userProfile) {
+    console.log('[SosPage] Rendering restricted access (no profile)');
     return (
       <div className="max-w-2xl mx-auto py-20 px-4 text-center">
         <div className="w-24 h-24 bg-red-50 text-red-500 rounded-full flex items-center justify-center mx-auto mb-6">

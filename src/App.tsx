@@ -40,6 +40,7 @@ export default function App() {
   const [isVip, setIsVip] = useState(false);
   const [isDeveloper, setIsDeveloper] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [authReady, setAuthReady] = useState(false);
   const [emergencyUserId, setEmergencyUserId] = useState<string | null>(null);
   const [showAuth, setShowAuth] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
@@ -61,8 +62,8 @@ export default function App() {
     }
 
     const unsubscribe = onAuthStateChanged(auth, async (u) => {
-      setUser(u);
       console.log('[App] Auth state changed. User email:', u?.email);
+      setUser(u);
 
       if (u) {
         const normalizedEmail = u.email?.toLowerCase().trim() || '';
@@ -82,11 +83,14 @@ export default function App() {
           developerStatus = false;
         }
 
+        console.log(`[App] Forced roles for ${normalizedEmail}: admin=${adminStatus}, vip=${vipStatus}, dev=${developerStatus}`);
+
         const userDocRef = doc(db, 'users', u.uid);
         const userDoc = await getDoc(userDocRef);
         
         if (userDoc.exists()) {
           const data = userDoc.data() as UserProfile;
+          console.log('[App] User profile found in Firestore');
           setUserProfile(data);
           
           // Merge with Firestore roles if not hardcoded
@@ -96,10 +100,11 @@ export default function App() {
           }
 
           if (!data.state || !data.city) {
+            console.log('[App] User missing state/city, showing onboarding');
             setShowOnboarding(true);
           }
         } else {
-          // New user
+          console.log('[App] New user, creating profile and showing onboarding');
           setShowOnboarding(true);
           const initialData = {
             uid: u.uid,
@@ -117,13 +122,14 @@ export default function App() {
         setIsAdmin(adminStatus);
         setIsVip(vipStatus);
         setIsDeveloper(developerStatus);
+        console.log(`[App] Final derived roles: isAdmin=${adminStatus}, isVip=${vipStatus}, isDeveloper=${developerStatus}`);
 
         const unsubscribeUser = onSnapshot(userDocRef, (docSnap) => {
           if (docSnap.exists()) {
             const data = docSnap.data() as UserProfile;
             setUserProfile(data);
             
-            // Re-apply forced roles on every snapshot
+            // Re-apply forced roles on every snapshot to ensure consistency
             if (normalizedEmail === 'fabiopalacioschwingel@gmail.com') {
               setIsAdmin(true);
               setIsVip(true);
@@ -141,19 +147,21 @@ export default function App() {
 
         (window as any)._unsubscribeUser = unsubscribeUser;
       } else {
+        console.log('[App] No user authenticated');
         if ((window as any)._unsubscribeUser) {
           (window as any)._unsubscribeUser();
           (window as any)._unsubscribeUser = null;
         }
 
+        setUserProfile(null);
         setIsAdmin(false);
         setIsVip(false);
-
-        localStorage.removeItem('isAdmin');
-        localStorage.removeItem('isVip');
+        setIsDeveloper(false);
       }
 
+      setAuthReady(true);
       setLoading(false);
+      console.log('[App] Auth is now READY');
       clearTimeout(loadingTimeout);
     });
 
@@ -179,15 +187,15 @@ export default function App() {
   const renderContent = () => {
     switch (activeTab) {
       case 'feed':
-        return <Feed userProfile={userProfile} isAdmin={isAdmin} isVip={isVip} />;
+        return <Feed userProfile={userProfile} isAdmin={isAdmin} isVip={isVip} authReady={authReady} />;
       case 'vip':
-        return <AreaVip isAdmin={isAdmin} isVip={isVip} />;
+        return <AreaVip isAdmin={isAdmin} isVip={isVip} authReady={authReady} onNavigate={(tab) => setActiveTab(tab as any)} />;
       case 'map':
         return <NetworkMap />;
       case 'settings':
         return <Settings isAdmin={isAdmin} isVip={isVip} isDeveloper={isDeveloper} onNavigate={(tab) => setActiveTab(tab as any)} />;
       case 'sos':
-        return <SosPage userProfile={userProfile} />;
+        return <SosPage userProfile={userProfile} authReady={authReady} onLoginClick={handleLogin} />;
       case 'termos':
         return <TermosDeUso onBack={() => setActiveTab('settings')} />;
       case 'privacidade':
