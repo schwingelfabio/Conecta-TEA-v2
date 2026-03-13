@@ -62,12 +62,27 @@ export default function App() {
     }
 
     const unsubscribe = onAuthStateChanged(auth, async (u) => {
-      console.log('[App] Auth state changed. User email:', u?.email);
-      setUser(u);
+      console.log('[App/Auth] onAuthStateChanged fired. User:', u?.email || 'null');
+      
+      // Reset states while fetching
+      if (!u) {
+        console.log('[App/Auth] No user detected, clearing state');
+        setUser(null);
+        setUserProfile(null);
+        setIsAdmin(false);
+        setIsVip(false);
+        setIsDeveloper(false);
+        setAuthReady(true);
+        setLoading(false);
+        clearTimeout(loadingTimeout);
+        return;
+      }
 
-      if (u) {
-        const normalizedEmail = u.email?.toLowerCase().trim() || '';
-        
+      setUser(u);
+      const normalizedEmail = u.email?.toLowerCase().trim() || '';
+      console.log('[App/Auth] User detected:', normalizedEmail);
+
+      try {
         // 1. Force Roles (Issue A)
         let adminStatus = false;
         let vipStatus = false;
@@ -83,14 +98,14 @@ export default function App() {
           developerStatus = false;
         }
 
-        console.log(`[App] Forced roles for ${normalizedEmail}: admin=${adminStatus}, vip=${vipStatus}, dev=${developerStatus}`);
+        console.log(`[App/Auth] Forced roles for ${normalizedEmail}: admin=${adminStatus}, vip=${vipStatus}, dev=${developerStatus}`);
 
         const userDocRef = doc(db, 'users', u.uid);
         const userDoc = await getDoc(userDocRef);
         
         if (userDoc.exists()) {
           const data = userDoc.data() as UserProfile;
-          console.log('[App] User profile found in Firestore');
+          console.log('[App/Auth] User profile found in Firestore');
           setUserProfile(data);
           
           // Merge with Firestore roles if not hardcoded
@@ -100,11 +115,13 @@ export default function App() {
           }
 
           if (!data.state || !data.city) {
-            console.log('[App] User missing state/city, showing onboarding');
+            console.log('[App/Auth] User missing state/city, showing onboarding');
             setShowOnboarding(true);
+          } else {
+            setShowOnboarding(false);
           }
         } else {
-          console.log('[App] New user, creating profile and showing onboarding');
+          console.log('[App/Auth] New user, creating profile and showing onboarding');
           setShowOnboarding(true);
           const initialData = {
             uid: u.uid,
@@ -122,11 +139,13 @@ export default function App() {
         setIsAdmin(adminStatus);
         setIsVip(vipStatus);
         setIsDeveloper(developerStatus);
-        console.log(`[App] Final derived roles: isAdmin=${adminStatus}, isVip=${vipStatus}, isDeveloper=${developerStatus}`);
+        console.log(`[App/Auth] Final derived roles: isAdmin=${adminStatus}, isVip=${vipStatus}, isDeveloper=${developerStatus}`);
 
+        // Setup real-time listener
         const unsubscribeUser = onSnapshot(userDocRef, (docSnap) => {
           if (docSnap.exists()) {
             const data = docSnap.data() as UserProfile;
+            console.log('[App/Auth] User profile snapshot update');
             setUserProfile(data);
             
             // Re-apply forced roles on every snapshot to ensure consistency
@@ -143,26 +162,19 @@ export default function App() {
               setIsVip(data.isVip || data.role === 'admin');
             }
           }
+        }, (err) => {
+          console.error('[App/Auth] Snapshot error:', err);
         });
 
         (window as any)._unsubscribeUser = unsubscribeUser;
-      } else {
-        console.log('[App] No user authenticated');
-        if ((window as any)._unsubscribeUser) {
-          (window as any)._unsubscribeUser();
-          (window as any)._unsubscribeUser = null;
-        }
-
-        setUserProfile(null);
-        setIsAdmin(false);
-        setIsVip(false);
-        setIsDeveloper(false);
+      } catch (err) {
+        console.error('[App/Auth] Error in auth flow:', err);
+      } finally {
+        setAuthReady(true);
+        setLoading(false);
+        console.log('[App/Auth] Auth is now READY');
+        clearTimeout(loadingTimeout);
       }
-
-      setAuthReady(true);
-      setLoading(false);
-      console.log('[App] Auth is now READY');
-      clearTimeout(loadingTimeout);
     });
 
     return () => {
@@ -173,6 +185,18 @@ export default function App() {
       }
     };
   }, []);
+
+  useEffect(() => {
+    console.log('[App/State] Current Global State:', {
+      authReady,
+      userEmail: user?.email,
+      hasProfile: !!userProfile,
+      isAdmin,
+      isVip,
+      isDeveloper,
+      showOnboarding
+    });
+  }, [authReady, user, userProfile, isAdmin, isVip, isDeveloper, showOnboarding]);
 
   const handleLogin = async () => {
     try {

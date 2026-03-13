@@ -245,15 +245,21 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady }) =
 
   const handlePost = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('[Feed] Post submit clicked. authReady:', authReady, 'userProfile:', !!userProfile);
+    console.log('[Feed/Post] Post submit clicked. authReady:', authReady, 'userProfile:', !!userProfile, 'newPost:', !!newPost.trim());
     
     if (!authReady) {
       alert('Aguarde o carregamento do sistema...');
       return;
     }
 
-    if (!newPost.trim() || !userProfile) {
-      console.warn('[Feed] Cannot post: empty text or no user profile');
+    if (!newPost.trim()) {
+      console.warn('[Feed/Post] Cannot post: empty text');
+      return;
+    }
+
+    if (!userProfile) {
+      console.error('[Feed/Post] CRITICAL: No user profile found even though auth is ready.');
+      alert('Erro: Perfil de usuário não encontrado. Tente fazer login novamente.');
       return;
     }
 
@@ -275,17 +281,16 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady }) =
       isGlobal: true
     };
 
-    console.log('[Feed] Payload generated:', payload);
+    console.log('[Feed/Post] Attempting to save payload:', payload);
 
     try {
-      console.log('[Feed] Attempting addDoc to posts collection...');
       const docRef = await addDoc(collection(db, 'posts'), payload);
-      console.log('[Feed] Firestore write success. Doc ID:', docRef.id);
+      console.log('[Feed/Post] SUCCESS! Doc ID:', docRef.id);
       setNewPost('');
       // Refresh feed immediately
       await fetchPosts();
     } catch (err: any) {
-      console.error("[Feed] Firestore write failed. Full error:", err);
+      console.error("[Feed/Post] FAILED to save post:", err);
       alert(`Erro ao publicar post: ${err.message || 'Erro desconhecido'}`);
     }
   };
