@@ -259,9 +259,9 @@ async function startServer() {
   app.get("/api/trigger-news", async (req, res) => {
     try {
       await fetchAndPostAutismNews();
-      res.send("News fetch triggered.");
+      res.json({ success: true, message: "News fetch triggered." });
     } catch (error: any) {
-      res.status(500).json({ error: error.message || "Failed to generate news" });
+      res.status(500).json({ success: false, error: error.message || "Failed to generate news" });
     }
   });
 
