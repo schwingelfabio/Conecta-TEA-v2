@@ -24,40 +24,50 @@ export default function Onboarding({ onComplete }: { onComplete: () => void }) {
   }, [selectedState]);
 
   const handleSave = async () => {
-    if (!selectedState || !selectedCity || !auth.currentUser) return;
+    if (!selectedState || !selectedCity || !auth.currentUser) {
+      console.warn('[Onboarding] Missing data for save:', { selectedState, selectedCity, user: auth.currentUser?.uid });
+      return;
+    }
     setLoading(true);
     
     try {
+      console.log('[Onboarding] Saving state/city for user:', auth.currentUser.uid);
       const userRef = doc(db, 'users', auth.currentUser.uid);
       await updateDoc(userRef, {
         state: selectedState,
-        city: selectedCity
+        city: selectedCity,
+        updatedAt: serverTimestamp()
       });
 
-      // Criar tópicos gerais
+      // Criar tópicos de comunidade se não existirem
       const topicsRef = collection(db, 'topics');
       
-      const createTopic = async (title: string, location: string) => {
-        const q = query(topicsRef, where('titulo', '==', title), where('cidade', '==', location));
+      const ensureTopic = async (title: string, location: string, type: 'state' | 'city') => {
+        const q = query(topicsRef, where('titulo', '==', title), where('location', '==', location));
         const snapshot = await getDocs(q);
         if (snapshot.empty) {
+          console.log(`[Onboarding] Creating new topic: ${title}`);
           await addDoc(topicsRef, {
             titulo: title,
-            cidade: location,
-            autor: 'Sistema',
+            location: location,
+            type: type,
+            author: 'Sistema',
             createdAt: serverTimestamp()
           });
         }
       };
 
-      await createTopic(`Tópico Geral - ${selectedState}`, selectedState);
-      await createTopic(`Tópico Geral - ${selectedCity}`, selectedCity);
-    } catch (err) {
-      console.error("Error saving onboarding:", err);
+      await ensureTopic(`Comunidade ${selectedState}`, selectedState, 'state');
+      await ensureTopic(`Comunidade ${selectedCity}`, selectedCity, 'city');
+      
+      console.log('[Onboarding] Save success');
+      onComplete();
+    } catch (err: any) {
+      console.error("[Onboarding] Error saving onboarding:", err);
+      alert(`Erro ao salvar localização: ${err.message}`);
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
-    onComplete();
   };
 
   return (

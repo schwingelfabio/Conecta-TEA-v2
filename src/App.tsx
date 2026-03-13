@@ -27,7 +27,7 @@ import Onboarding from './components/Onboarding';
 import { UserProfile } from './types';
 import { auth, googleProvider, db } from './lib/firebase';
 import { signInWithPopup, signOut, onAuthStateChanged, User as FirebaseUser } from 'firebase/auth';
-import { doc, getDoc, setDoc, collection, query, where, getDocs, onSnapshot } from 'firebase/firestore';
+import { doc, getDoc, setDoc, collection, query, where, getDocs, onSnapshot, serverTimestamp } from 'firebase/firestore';
 import { checkIsAdmin } from './lib/admin';
 import { useTranslation } from 'react-i18next';
 
@@ -36,9 +36,9 @@ export default function App() {
   const [activeTab, setActiveTab] = useState<'feed' | 'vip' | 'settings' | 'sos' | 'termos' | 'privacidade' | 'contato' | 'map'>('feed');
   const [user, setUser] = useState<FirebaseUser | null>(null);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
-  const [isAdmin, setIsAdmin] = useState(() => localStorage.getItem('isAdmin') === 'true');
-  const [isVip, setIsVip] = useState(() => localStorage.getItem('isVip') === 'true');
-  const [isDeveloper, setIsDeveloper] = useState(() => localStorage.getItem('isDeveloper') === 'true');
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [isVip, setIsVip] = useState(false);
+  const [isDeveloper, setIsDeveloper] = useState(false);
   const [loading, setLoading] = useState(true);
   const [emergencyUserId, setEmergencyUserId] = useState<string | null>(null);
   const [showAuth, setShowAuth] = useState(false);
@@ -65,16 +65,13 @@ export default function App() {
       console.log('[App] Auth state changed. User email:', u?.email);
 
       if (u) {
-        const userDocRef = doc(db, 'users', u.uid);
-        const userDoc = await getDoc(userDocRef);
-        
         const normalizedEmail = u.email?.toLowerCase().trim() || '';
-
+        
+        // 1. Force Roles (Issue A)
         let adminStatus = false;
         let vipStatus = false;
         let developerStatus = false;
 
-        // Hardcoded rules (Issue 1)
         if (normalizedEmail === 'fabiopalacioschwingel@gmail.com') {
           adminStatus = true;
           vipStatus = true;
@@ -83,70 +80,62 @@ export default function App() {
           adminStatus = false;
           vipStatus = true;
           developerStatus = false;
-        } else {
-          // Check Firestore if not hardcoded
-          adminStatus = await checkIsAdmin(normalizedEmail);
-          vipStatus = adminStatus;
         }
 
+        const userDocRef = doc(db, 'users', u.uid);
+        const userDoc = await getDoc(userDocRef);
+        
         if (userDoc.exists()) {
           const data = userDoc.data() as UserProfile;
           setUserProfile(data);
+          
+          // Merge with Firestore roles if not hardcoded
+          if (normalizedEmail !== 'fabiopalacioschwingel@gmail.com' && normalizedEmail !== 'fabiparadox2@gmail.com') {
+            adminStatus = data.role === 'admin';
+            vipStatus = data.isVip || adminStatus;
+          }
+
           if (!data.state || !data.city) {
             setShowOnboarding(true);
           }
         } else {
-          // New user or missing doc
+          // New user
           setShowOnboarding(true);
-          // Create initial doc
-          await setDoc(userDocRef, {
+          const initialData = {
             uid: u.uid,
             email: normalizedEmail,
             displayName: u.displayName || 'Usuário',
             photoURL: u.photoURL || '',
             isVip: vipStatus,
             role: adminStatus ? 'admin' : 'parent',
-            createdAt: new Date()
-          }, { merge: true });
+            createdAt: serverTimestamp()
+          };
+          await setDoc(userDocRef, initialData, { merge: true });
+          setUserProfile(initialData as any);
         }
-
-        console.log(`[App] Derived roles for ${normalizedEmail}: isAdmin=${adminStatus}, isVip=${vipStatus}, isDeveloper=${developerStatus}`);
 
         setIsAdmin(adminStatus);
         setIsVip(vipStatus);
         setIsDeveloper(developerStatus);
-
-        localStorage.setItem('isAdmin', String(adminStatus));
-        localStorage.setItem('isVip', String(vipStatus));
-        localStorage.setItem('isDeveloper', String(developerStatus));
 
         const unsubscribeUser = onSnapshot(userDocRef, (docSnap) => {
           if (docSnap.exists()) {
             const data = docSnap.data() as UserProfile;
             setUserProfile(data);
             
-            // Force roles for special emails even in snapshot (Issue 1)
-            const isUserVip = normalizedEmail === 'fabiopalacioschwingel@gmail.com' || 
-                             normalizedEmail === 'fabiparadox2@gmail.com' || 
-                             data.isVip === true || adminStatus || vipStatus;
-            
-            const isUserAdmin = normalizedEmail === 'fabiopalacioschwingel@gmail.com' || data.role === 'admin' || adminStatus;
-            const isUserDev = normalizedEmail === 'fabiopalacioschwingel@gmail.com' || developerStatus;
-
-            console.log(`[App] Snapshot roles for ${normalizedEmail}: VIP=${isUserVip}, Admin=${isUserAdmin}, Dev=${isUserDev}`);
-            
-            setIsVip(isUserVip);
-            setIsAdmin(isUserAdmin);
-            setIsDeveloper(isUserDev);
-            
-            localStorage.setItem('isVip', String(isUserVip));
-            localStorage.setItem('isAdmin', String(isUserAdmin));
-            localStorage.setItem('isDeveloper', String(isUserDev));
-          } else {
-            const fallbackVip = adminStatus || vipStatus;
-            console.log(`[App] VIP UI check result (fallback) for ${normalizedEmail}: ${fallbackVip}`);
-            setIsVip(fallbackVip);
-            localStorage.setItem('isVip', String(fallbackVip));
+            // Re-apply forced roles on every snapshot
+            if (normalizedEmail === 'fabiopalacioschwingel@gmail.com') {
+              setIsAdmin(true);
+              setIsVip(true);
+              setIsDeveloper(true);
+            } else if (normalizedEmail === 'fabiparadox2@gmail.com') {
+              setIsAdmin(false);
+              setIsVip(true);
+              setIsDeveloper(false);
+            } else {
+              setIsAdmin(data.role === 'admin');
+              setIsVip(data.isVip || data.role === 'admin');
+            }
           }
         });
 

@@ -271,14 +271,15 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip }) => {
     console.log('[Feed] Payload generated:', payload);
 
     try {
-      await addDoc(collection(db, 'posts'), payload);
-      console.log('[Feed] Firestore write success');
+      console.log('[Feed] Attempting addDoc to posts collection...');
+      const docRef = await addDoc(collection(db, 'posts'), payload);
+      console.log('[Feed] Firestore write success. Doc ID:', docRef.id);
       setNewPost('');
       // Refresh feed immediately
-      fetchPosts();
-    } catch (err) {
-      console.error("[Feed] Firestore write failed:", err);
-      alert('Erro ao publicar post. Verifique sua conexão ou permissões.');
+      await fetchPosts();
+    } catch (err: any) {
+      console.error("[Feed] Firestore write failed. Full error:", err);
+      alert(`Erro ao publicar post: ${err.message || 'Erro desconhecido'}`);
     }
   };
 
@@ -297,23 +298,24 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip }) => {
     setGeneratingNews(true);
     setGenerationError(null);
     
+    const controller = new AbortController();
     const genTimeout = setTimeout(() => {
-      if (generatingNews) {
-        console.warn('[Feed] handleGenerateNews timeout reached');
-        setGeneratingNews(false);
-        setGenerationError('A geração de notícias está demorando muito. Tente novamente.');
-      }
-    }, 15000); // 15 seconds timeout for AI generation
+      controller.abort();
+      console.warn('[Feed] handleGenerateNews fetch timeout');
+    }, 20000);
 
     try {
-      const res = await fetch('/api/trigger-news');
-      if (!res.ok) throw new Error('Falha ao gerar notícia');
-      console.log('[Feed] handleGenerateNews success');
+      const res = await fetch('/api/trigger-news', { signal: controller.signal });
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        throw new Error(errorData.error || 'Falha ao gerar notícia');
+      }
+      console.log('[Feed] handleGenerateNews API success');
       // After generating, fetch again to show the new post
       await fetchPosts();
-    } catch (err) {
+    } catch (err: any) {
       console.error("[Feed] handleGenerateNews failed:", err);
-      setGenerationError('Não foi possível carregar notícias agora. Tente novamente em instantes.');
+      setGenerationError(err.name === 'AbortError' ? 'A geração demorou muito. Tente novamente.' : err.message);
     } finally {
       clearTimeout(genTimeout);
       setGeneratingNews(false);
