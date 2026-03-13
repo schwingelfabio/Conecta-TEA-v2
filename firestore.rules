@@ -52,5 +52,11 @@ service cloud.firestore {
       allow create: if isAuthenticated();
       allow update, delete: if isAuthenticated() && request.auth.uid == resource.data.userId;
     }
+
+    // Allow authenticated users to submit suggestions
+    match /suggestions/{suggestionId} {
+      allow create: if isAuthenticated();
+      allow read, update, delete: if isAdmin();
+    }
   }
 }
