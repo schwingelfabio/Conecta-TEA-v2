@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { db } from '../lib/firebase';
-import { doc, updateDoc, collection, query, where, getDocs, setDoc } from 'firebase/firestore';
-import { auth } from '../lib/firebase';
+import { db, auth } from '../lib/firebase';
+import { doc, updateDoc, collection, query, where, getDocs, setDoc, serverTimestamp, addDoc } from 'firebase/firestore';
 
 export default function Onboarding({ onComplete }: { onComplete: () => void }) {
   const [states, setStates] = useState<{ id: number, sigla: string, nome: string }[]>([]);
@@ -28,30 +27,34 @@ export default function Onboarding({ onComplete }: { onComplete: () => void }) {
     if (!selectedState || !selectedCity || !auth.currentUser) return;
     setLoading(true);
     
-    const userRef = doc(db, 'users', auth.currentUser.uid);
-    await updateDoc(userRef, {
-      state: selectedState,
-      city: selectedCity
-    });
+    try {
+      const userRef = doc(db, 'users', auth.currentUser.uid);
+      await updateDoc(userRef, {
+        state: selectedState,
+        city: selectedCity
+      });
 
-    // Criar tópicos gerais
-    const topicsRef = collection(db, 'topics');
-    
-    const createTopic = async (title: string, location: string) => {
-      const q = query(topicsRef, where('titulo', '==', title), where('cidade', '==', location));
-      const snapshot = await getDocs(q);
-      if (snapshot.empty) {
-        await setDoc(doc(topicsRef), {
-          titulo: title,
-          cidade: location,
-          autor: 'Sistema',
-          createdAt: new Date()
-        });
-      }
-    };
+      // Criar tópicos gerais
+      const topicsRef = collection(db, 'topics');
+      
+      const createTopic = async (title: string, location: string) => {
+        const q = query(topicsRef, where('titulo', '==', title), where('cidade', '==', location));
+        const snapshot = await getDocs(q);
+        if (snapshot.empty) {
+          await addDoc(topicsRef, {
+            titulo: title,
+            cidade: location,
+            autor: 'Sistema',
+            createdAt: serverTimestamp()
+          });
+        }
+      };
 
-    await createTopic(`Tópico Geral - ${selectedState}`, selectedState);
-    await createTopic(`Tópico Geral - ${selectedCity}`, selectedCity);
+      await createTopic(`Tópico Geral - ${selectedState}`, selectedState);
+      await createTopic(`Tópico Geral - ${selectedCity}`, selectedCity);
+    } catch (err) {
+      console.error("Error saving onboarding:", err);
+    }
 
     setLoading(false);
     onComplete();

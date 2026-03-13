@@ -65,14 +65,8 @@ export default function App() {
       console.log('[App] Auth state changed. User email:', u?.email);
 
       if (u) {
-        const userDoc = await getDoc(doc(db, 'users', u.uid));
-        if (userDoc.exists()) {
-          const data = userDoc.data() as UserProfile;
-          setUserProfile(data);
-          if (!data.state || !data.city) {
-            setShowOnboarding(true);
-          }
-        }
+        const userDocRef = doc(db, 'users', u.uid);
+        const userDoc = await getDoc(userDocRef);
         
         const normalizedEmail = u.email?.toLowerCase().trim() || '';
 
@@ -80,7 +74,7 @@ export default function App() {
         let vipStatus = false;
         let developerStatus = false;
 
-        // Hardcoded rules (Issue 3)
+        // Hardcoded rules (Issue 1)
         if (normalizedEmail === 'fabiopalacioschwingel@gmail.com') {
           adminStatus = true;
           vipStatus = true;
@@ -95,6 +89,27 @@ export default function App() {
           vipStatus = adminStatus;
         }
 
+        if (userDoc.exists()) {
+          const data = userDoc.data() as UserProfile;
+          setUserProfile(data);
+          if (!data.state || !data.city) {
+            setShowOnboarding(true);
+          }
+        } else {
+          // New user or missing doc
+          setShowOnboarding(true);
+          // Create initial doc
+          await setDoc(userDocRef, {
+            uid: u.uid,
+            email: normalizedEmail,
+            displayName: u.displayName || 'Usuário',
+            photoURL: u.photoURL || '',
+            isVip: vipStatus,
+            role: adminStatus ? 'admin' : 'parent',
+            createdAt: new Date()
+          }, { merge: true });
+        }
+
         console.log(`[App] Derived roles for ${normalizedEmail}: isAdmin=${adminStatus}, isVip=${vipStatus}, isDeveloper=${developerStatus}`);
 
         setIsAdmin(adminStatus);
@@ -105,19 +120,28 @@ export default function App() {
         localStorage.setItem('isVip', String(vipStatus));
         localStorage.setItem('isDeveloper', String(developerStatus));
 
-        const userDocRef = doc(db, 'users', u.uid);
-
         const unsubscribeUser = onSnapshot(userDocRef, (docSnap) => {
           if (docSnap.exists()) {
-            const data = docSnap.data();
-            // Force roles for special emails even in snapshot
+            const data = docSnap.data() as UserProfile;
+            setUserProfile(data);
+            
+            // Force roles for special emails even in snapshot (Issue 1)
             const isUserVip = normalizedEmail === 'fabiopalacioschwingel@gmail.com' || 
                              normalizedEmail === 'fabiparadox2@gmail.com' || 
                              data.isVip === true || adminStatus || vipStatus;
+            
+            const isUserAdmin = normalizedEmail === 'fabiopalacioschwingel@gmail.com' || data.role === 'admin' || adminStatus;
+            const isUserDev = normalizedEmail === 'fabiopalacioschwingel@gmail.com' || developerStatus;
 
-            console.log(`[App] VIP UI check result for ${normalizedEmail}: ${isUserVip}`);
+            console.log(`[App] Snapshot roles for ${normalizedEmail}: VIP=${isUserVip}, Admin=${isUserAdmin}, Dev=${isUserDev}`);
+            
             setIsVip(isUserVip);
+            setIsAdmin(isUserAdmin);
+            setIsDeveloper(isUserDev);
+            
             localStorage.setItem('isVip', String(isUserVip));
+            localStorage.setItem('isAdmin', String(isUserAdmin));
+            localStorage.setItem('isDeveloper', String(isUserDev));
           } else {
             const fallbackVip = adminStatus || vipStatus;
             console.log(`[App] VIP UI check result (fallback) for ${normalizedEmail}: ${fallbackVip}`);

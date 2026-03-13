@@ -31,8 +31,66 @@ import {
   Trash2,
   RefreshCw,
   Shield,
-  Pin
+  Pin,
+  Loader2,
+  Coffee,
+  Users
 } from 'lucide-react';
+
+const LogoLoader = () => (
+  <div className="flex flex-col items-center justify-center py-20 space-y-6">
+    <div className="relative">
+      <motion.div 
+        animate={{ 
+          scale: [1, 1.1, 1],
+          opacity: [1, 0.8, 1],
+          rotate: [0, 5, -5, 0]
+        }}
+        transition={{ 
+          duration: 3, 
+          repeat: Infinity,
+          ease: "easeInOut"
+        }}
+        className="w-24 h-24 bg-gradient-to-br from-sky-400 to-indigo-500 rounded-[2rem] flex items-center justify-center shadow-xl shadow-sky-200/50"
+      >
+        <Users size={48} className="text-white" />
+      </motion.div>
+      <motion.div 
+        animate={{ rotate: 360 }}
+        transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+        className="absolute -inset-4 border-2 border-dashed border-sky-200 rounded-full"
+      />
+    </div>
+    <div className="text-center space-y-2">
+      <h3 className="text-lg font-bold text-slate-900 animate-pulse">Conectando Comunidade...</h3>
+      <p className="text-sm text-slate-400">Buscando os melhores posts para você</p>
+    </div>
+  </div>
+);
+
+const PostSkeleton = () => (
+  <div className="bg-white rounded-3xl shadow-sm border border-slate-100 p-6 overflow-hidden relative">
+    <div className="flex items-center space-x-3 mb-4">
+      <div className="w-10 h-10 rounded-full shimmer" />
+      <div className="flex-1 space-y-2">
+        <div className="h-4 rounded w-1/4 shimmer" />
+        <div className="h-3 rounded w-1/3 shimmer" />
+      </div>
+    </div>
+    <div className="space-y-3 mb-6">
+      <div className="h-4 rounded w-full shimmer" />
+      <div className="h-4 rounded w-5/6 shimmer" />
+      <div className="h-4 rounded w-4/6 shimmer" />
+    </div>
+    <div className="flex justify-between pt-4 border-t border-slate-50">
+      <div className="flex space-x-6">
+        <div className="h-4 rounded w-12 shimmer" />
+        <div className="h-4 rounded w-12 shimmer" />
+      </div>
+      <div className="h-4 rounded w-8 shimmer" />
+    </div>
+  </div>
+);
 import ReactMarkdown from 'react-markdown';
 import ActiveCommunities from './ActiveCommunities';
 import { useTranslation } from 'react-i18next';
@@ -395,10 +453,7 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip }) => {
       {/* Post List */}
       <div className="space-y-6">
         {loading ? (
-          <div className="flex flex-col items-center py-20 space-y-4">
-            <div className="w-10 h-10 border-4 border-slate-200 border-t-brand-primary rounded-full animate-spin" />
-            <p className="text-slate-400 font-medium">{loadingMessage}</p>
-          </div>
+          <LogoLoader />
         ) : (
           <AnimatePresence mode="popLayout">
             {posts.map((post) => (
@@ -503,13 +558,47 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip }) => {
         )}
 
         {!loading && posts.length > 0 && hasMore && (
-          <button
-            onClick={() => fetchPosts(true)}
-            disabled={loadingMore}
-            className="w-full py-4 text-center text-brand-primary font-bold hover:bg-slate-50 rounded-2xl transition-all"
-          >
-            {loadingMore ? t('feed.loading') : t('feed.loadMore')}
-          </button>
+          <div className="flex justify-center py-8">
+            <button
+              onClick={() => fetchPosts(true)}
+              disabled={loadingMore}
+              className={`
+                group relative flex items-center justify-center space-x-3 
+                px-10 py-5 bg-white border border-slate-100 rounded-[2rem] 
+                text-brand-primary font-bold shadow-lg shadow-sky-100/50 hover:shadow-xl 
+                hover:bg-slate-50 transition-all active:scale-95
+                disabled:opacity-70 disabled:active:scale-100 overflow-hidden
+              `}
+            >
+              {loadingMore ? (
+                <>
+                  <motion.div 
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                    className="w-6 h-6 bg-brand-primary rounded-lg flex items-center justify-center"
+                  >
+                    <Users size={14} className="text-white" />
+                  </motion.div>
+                  <span className="animate-pulse">{t('feed.loading')}</span>
+                </>
+              ) : (
+                <>
+                  <div className="w-6 h-6 bg-brand-primary/10 rounded-lg flex items-center justify-center group-hover:bg-brand-primary group-hover:text-white transition-colors">
+                    <Users size={14} />
+                  </div>
+                  <span>{t('feed.loadMore')}</span>
+                </>
+              )}
+              {loadingMore && (
+                <motion.div 
+                  initial={{ x: "-100%" }}
+                  animate={{ x: "100%" }}
+                  transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
+                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent pointer-events-none"
+                />
+              )}
+            </button>
+          </div>
         )}
 
         {!loading && posts.length > 0 && !hasMore && (
@@ -517,37 +606,82 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip }) => {
         )}
 
         {!loading && posts.length === 0 && (
-          <div className="text-center py-20 bg-white rounded-3xl border border-dashed border-slate-200">
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="text-center py-20 bg-white rounded-[3rem] border border-dashed border-slate-200 shadow-inner"
+          >
             {topic === 'noticias' && (generatingNews || generationError) ? (
-              <div className="space-y-4">
+              <div className="space-y-6 px-6">
                 {generatingNews ? (
-                  <p className="text-slate-500">Gerando notícias sobre autismo...</p>
+                  <div className="flex flex-col items-center space-y-4">
+                    <div className="relative">
+                      <div className="w-20 h-20 bg-brand-primary/10 rounded-full flex items-center justify-center">
+                        <Sparkles size={40} className="text-brand-primary animate-pulse" />
+                      </div>
+                      <div className="absolute -top-1 -right-1">
+                        <Loader2 size={24} className="text-brand-secondary animate-spin" />
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <h3 className="text-lg font-bold text-slate-900">Gerando Notícias com IA</h3>
+                      <p className="text-slate-500 max-w-xs mx-auto">Estamos buscando as informações mais recentes e relevantes sobre autismo para você.</p>
+                    </div>
+                  </div>
                 ) : (
-                  <>
-                    <p className="text-red-500">{generationError}</p>
+                  <div className="flex flex-col items-center space-y-4">
+                    <div className="w-20 h-20 bg-red-50 rounded-full flex items-center justify-center">
+                      <RefreshCw size={40} className="text-red-400" />
+                    </div>
+                    <div className="space-y-2">
+                      <h3 className="text-lg font-bold text-slate-900">Ops! Algo deu errado</h3>
+                      <p className="text-red-500 max-w-xs mx-auto">{generationError}</p>
+                    </div>
                     <button 
                       onClick={handleGenerateNews} 
-                      className="bg-brand-primary text-white px-6 py-2 rounded-full hover:bg-brand-primary/90 transition-all"
+                      className="bg-brand-primary text-white px-8 py-3 rounded-full font-bold hover:bg-brand-primary/90 transition-all shadow-lg shadow-brand-primary/20 active:scale-95"
                     >
                       Tentar novamente
                     </button>
-                  </>
+                  </div>
                 )}
               </div>
             ) : (
-              <>
-                <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-300">
-                  <MessageCircle size={32} />
+              <div className="flex flex-col items-center space-y-6 px-6">
+                <div className="relative">
+                  <div className="w-24 h-24 bg-slate-50 rounded-full flex items-center justify-center text-slate-200">
+                    <Coffee size={48} />
+                  </div>
+                  <motion.div 
+                    animate={{ y: [0, -10, 0] }}
+                    transition={{ repeat: Infinity, duration: 2 }}
+                    className="absolute -top-2 -right-2 w-10 h-10 bg-brand-secondary/10 rounded-full flex items-center justify-center text-brand-secondary"
+                  >
+                    <MessageCircle size={20} />
+                  </motion.div>
                 </div>
-                <h3 className="text-xl font-bold text-slate-900 mb-2">
-                  {topic === 'noticias' ? t('feed.noNews') : 'Nenhum post ainda'}
-                </h3>
-                <p className="text-slate-500">
-                  {topic === 'noticias' ? '' : 'Seja o primeiro a compartilhar algo com a comunidade!'}
-                </p>
-              </>
+                <div className="space-y-2">
+                  <h3 className="text-2xl font-black text-slate-900">
+                    {topic === 'noticias' ? t('feed.noNews') : 'Silêncio por aqui...'}
+                  </h3>
+                  <p className="text-slate-500 max-w-xs mx-auto">
+                    {topic === 'noticias' 
+                      ? 'Ainda não temos notícias para este tópico. Que tal voltar mais tarde?' 
+                      : 'Parece que ainda não há posts neste tópico. Seja a primeira pessoa a quebrar o gelo!'}
+                  </p>
+                </div>
+                {topic !== 'noticias' && (
+                  <button 
+                    onClick={() => document.querySelector('textarea')?.focus()}
+                    className="text-brand-primary font-bold hover:underline flex items-center space-x-2"
+                  >
+                    <span>Começar uma conversa</span>
+                    <Send size={16} />
+                  </button>
+                )}
+              </div>
             )}
-          </div>
+          </motion.div>
         )}
       </div>
     </div>
