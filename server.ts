@@ -208,7 +208,10 @@ async function startServer() {
       });
 
       const newsText = response.text;
-      if (!newsText) return;
+      if (!newsText) {
+        console.warn("[News] AI returned empty text");
+        return;
+      }
 
       // Extract grounding URLs if available
       let finalContent = newsText;
@@ -222,7 +225,7 @@ async function startServer() {
         });
       }
 
-      await db.collection('posts').add({
+      const payload = {
         text: finalContent,
         content: finalContent,
         authorId: 'ai-bot',
@@ -237,10 +240,15 @@ async function startServer() {
         timestamp: admin.firestore.FieldValue.serverTimestamp(),
         createdAt: admin.firestore.FieldValue.serverTimestamp(),
         isGlobal: true
-      });
-      console.log("AI News posted successfully.");
-    } catch (error) {
-      console.error("Error fetching AI news:", error);
+      };
+
+      console.log("[News] payload created:", JSON.stringify(payload));
+
+      await db.collection('posts').add(payload);
+      console.log("[News] Firestore write success");
+    } catch (error: any) {
+      console.error("[News] generation failed:", error.message || error);
+      throw error;
     }
   }
 
@@ -249,8 +257,12 @@ async function startServer() {
 
   // Manual trigger for testing
   app.get("/api/trigger-news", async (req, res) => {
-    await fetchAndPostAutismNews();
-    res.send("News fetch triggered.");
+    try {
+      await fetchAndPostAutismNews();
+      res.send("News fetch triggered.");
+    } catch (error: any) {
+      res.status(500).json({ error: error.message || "Failed to generate news" });
+    }
   });
 
   // Vite middleware for development

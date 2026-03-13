@@ -17,6 +17,10 @@ export default function AreaVip({
   authReady?: boolean,
   onNavigate?: (tab: string) => void
 }) {
+  useEffect(() => {
+    console.log('[VIP] props received by AreaVip:', { isAdmin, isVip: isVipProp, authReady });
+  }, [isAdmin, isVipProp, authReady]);
+
   const [suggestionText, setSuggestionText] = useState('');
   const [isSending, setIsSending] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);

@@ -79,8 +79,10 @@ export default function App() {
       }
 
       setUser(u);
-      const normalizedEmail = u.email?.toLowerCase().trim() || '';
-      console.log('[App/Auth] User detected:', normalizedEmail);
+      const rawEmail = u.email || '';
+      const normalizedEmail = rawEmail.toLowerCase().trim();
+      console.log('[VIP] logged email:', rawEmail);
+      console.log('[VIP] normalized email:', normalizedEmail);
 
       try {
         // 1. Force Roles (Issue A)
@@ -98,7 +100,7 @@ export default function App() {
           developerStatus = false;
         }
 
-        console.log(`[App/Auth] Forced roles for ${normalizedEmail}: admin=${adminStatus}, vip=${vipStatus}, dev=${developerStatus}`);
+        console.log(`[VIP] derived flags for ${normalizedEmail}: isAdmin=${adminStatus}, isVip=${vipStatus}, isDeveloper=${developerStatus}`);
 
         const userDocRef = doc(db, 'users', u.uid);
         const userDoc = await getDoc(userDocRef);
@@ -139,7 +141,7 @@ export default function App() {
         setIsAdmin(adminStatus);
         setIsVip(vipStatus);
         setIsDeveloper(developerStatus);
-        console.log(`[App/Auth] Final derived roles: isAdmin=${adminStatus}, isVip=${vipStatus}, isDeveloper=${developerStatus}`);
+        console.log(`[VIP] Final derived flags: isAdmin=${adminStatus}, isVip=${vipStatus}, isDeveloper=${developerStatus}`);
 
         // Setup real-time listener
         const unsubscribeUser = onSnapshot(userDocRef, (docSnap) => {
@@ -160,6 +162,7 @@ export default function App() {
             } else {
               setIsAdmin(data.role === 'admin');
               setIsVip(data.isVip || data.role === 'admin');
+              setIsDeveloper(false);
             }
           }
         }, (err) => {

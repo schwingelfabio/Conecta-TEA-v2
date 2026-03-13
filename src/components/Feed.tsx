@@ -188,6 +188,7 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady }) =
       }
 
       const snapshot = await getDocs(q);
+      console.log(`[News] read query result count for topic ${topic}: ${snapshot.size}`);
       
       const fetchedPosts = snapshot.docs.map(doc => ({
         id: doc.id,
@@ -306,9 +307,9 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady }) =
   };
 
   const handleGenerateNews = async () => {
-    console.log('[Feed] handleGenerateNews started. authReady:', authReady);
+    console.log('[News] generation started. authReady:', authReady);
     if (!authReady) {
-      console.warn('[Feed] Cannot generate news: auth not ready');
+      console.warn('[News] Cannot generate news: auth not ready');
       return;
     }
     setGeneratingNews(true);
@@ -317,7 +318,7 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady }) =
     const controller = new AbortController();
     const genTimeout = setTimeout(() => {
       controller.abort();
-      console.warn('[Feed] handleGenerateNews fetch timeout');
+      console.warn('[News] handleGenerateNews fetch timeout');
     }, 20000);
 
     try {
@@ -326,11 +327,11 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady }) =
         const errorData = await res.json().catch(() => ({}));
         throw new Error(errorData.error || 'Falha ao gerar notícia');
       }
-      console.log('[Feed] handleGenerateNews API success');
+      console.log('[News] handleGenerateNews API success');
       // After generating, fetch again to show the new post
       await fetchPosts();
     } catch (err: any) {
-      console.error("[Feed] handleGenerateNews failed:", err);
+      console.error("[News] handleGenerateNews failed:", err);
       setGenerationError(err.name === 'AbortError' ? 'A geração demorou muito. Tente novamente.' : err.message);
     } finally {
       clearTimeout(genTimeout);

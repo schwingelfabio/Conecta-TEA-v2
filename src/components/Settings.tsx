@@ -30,7 +30,7 @@ export default function Settings({
   onNavigate: (tab: string) => void
 }) {
   const { t } = useTranslation();
-  const [isVip, setIsVip] = useState(isVipProp || isAdmin || false);
+  const isVip = isVipProp || isAdmin || false;
   const user = auth.currentUser;
   
   const [name, setName] = useState(user?.displayName || '');
