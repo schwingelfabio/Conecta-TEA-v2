@@ -65,6 +65,7 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip }) => {
   };
 
   const fetchPosts = async (isLoadMore = false) => {
+    console.log(`[Feed] fetchPosts started. Topic: ${topic}, isLoadMore: ${isLoadMore}`);
     if (!isLoadMore) {
       setLoading(true);
       setPosts([]);
@@ -75,7 +76,10 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip }) => {
     }
 
     const fetchTimeout = setTimeout(() => {
-      if (loading) setLoading(false);
+      if (loading) {
+        console.warn('[Feed] fetchPosts timeout reached.');
+        setLoading(false);
+      }
       if (loadingMore) setLoadingMore(false);
     }, 8000); // 8 seconds safety timeout
 
@@ -94,17 +98,15 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip }) => {
         }
         
         const pinnedSnapshot = await getDocs(pinnedQuery);
-        pinnedPosts = pinnedSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as Post[];
+        pinnedPosts = pinnedSnapshot.docs.map(doc => ({ id: doc.id, ...(doc.data() as any) })) as Post[];
+        console.log(`[Feed] Pinned posts fetched: ${pinnedPosts.length}`);
       }
 
       // 2. Fetch Normal Posts (paginated)
-      let q = query(
-        collection(db, 'posts'),
-        where('isPinned', '!=', true), // Requires index
-        orderBy('timestamp', 'desc'),
-        limit(10)
-      );
-
+      let q;
+      
+      // Note: where('isPinned', '!=', true) with orderBy('timestamp', 'desc') requires a composite index.
+      // If it fails, we might need to adjust the query or ensure the index exists.
       if (topic === 'cidade') {
           q = query(collection(db, 'posts'), where('city', '==', userProfile?.city || ''), where('isPinned', '!=', true), orderBy('timestamp', 'desc'), limit(10));
       } else if (topic === 'estado') {
@@ -113,6 +115,13 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip }) => {
         q = query(
           collection(db, 'posts'),
           where('topic', '==', topic),
+          where('isPinned', '!=', true),
+          orderBy('timestamp', 'desc'),
+          limit(10)
+        );
+      } else {
+        q = query(
+          collection(db, 'posts'),
           where('isPinned', '!=', true),
           orderBy('timestamp', 'desc'),
           limit(10)
@@ -127,9 +136,11 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip }) => {
       
       const fetchedPosts = snapshot.docs.map(doc => ({
         id: doc.id,
-        ...doc.data()
+        ...(doc.data() as any)
       })) as Post[];
       
+      console.log(`[Feed] Normal posts fetched: ${fetchedPosts.length}`);
+
       const validPosts = [...pinnedPosts, ...fetchedPosts]
         .filter(post => (post.text || post.content) && (post.authorId || post.userId) && post.topic)
         .map(post => ({
@@ -144,10 +155,16 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip }) => {
         setPosts(validPosts);
       }
       
+      if (validPosts.length === 0 && !isLoadMore) {
+        console.log('[Feed] News fetch empty');
+      } else {
+        console.log(`[Feed] News fetch success. Total posts: ${validPosts.length}`);
+      }
+
       setLastVisible(snapshot.docs[snapshot.docs.length - 1] || null);
       setHasMore(snapshot.docs.length === 10);
     } catch (err) {
-      console.error("Error fetching posts:", err);
+      console.error("[Feed] News fetch failed:", err);
     } finally {
       clearTimeout(fetchTimeout);
       setLoading(false);
@@ -167,29 +184,41 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip }) => {
 
   const handlePost = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newPost.trim() || !userProfile) return;
+    console.log('[Feed] Post submit clicked');
+    if (!newPost.trim() || !userProfile) {
+      console.warn('[Feed] Cannot post: empty text or no user profile');
+      return;
+    }
+
+    const payload = {
+      text: newPost,
+      content: newPost,
+      authorId: userProfile.uid,
+      userId: userProfile.uid,
+      authorName: userProfile.displayName,
+      authorPhoto: userProfile.photoURL || `https://api.dicebear.com/7.x/avataaars/svg?seed=${userProfile.uid}`,
+      mediaType: 'text',
+      topic: topic === 'geral' ? 'geral' : topic,
+      state: userProfile.state || 'Geral',
+      city: userProfile.city || 'Geral',
+      location: userProfile.city ? `${userProfile.city}, ${userProfile.state}` : 'Brasil',
+      timestamp: serverTimestamp(),
+      createdAt: serverTimestamp(),
+      isVip: userProfile.isVip || isAdmin || isVip,
+      isGlobal: true
+    };
+
+    console.log('[Feed] Payload generated:', payload);
 
     try {
-      await addDoc(collection(db, 'posts'), {
-        text: newPost,
-        content: newPost,
-        authorId: userProfile.uid,
-        userId: userProfile.uid,
-        authorName: userProfile.displayName,
-        authorPhoto: userProfile.photoURL || `https://api.dicebear.com/7.x/avataaars/svg?seed=${userProfile.uid}`,
-        mediaType: 'text',
-        topic: topic === 'geral' ? 'geral' : topic,
-        state: userProfile.state || 'Geral',
-        city: userProfile.city || 'Geral',
-        location: userProfile.city ? `${userProfile.city}, ${userProfile.state}` : 'Brasil',
-        timestamp: serverTimestamp(),
-        createdAt: serverTimestamp(),
-        isVip: userProfile.isVip || userProfile.role === 'admin',
-        isGlobal: true
-      });
+      await addDoc(collection(db, 'posts'), payload);
+      console.log('[Feed] Firestore write success');
       setNewPost('');
+      // Refresh feed immediately
+      fetchPosts();
     } catch (err) {
-      console.error("Error adding post:", err);
+      console.error("[Feed] Firestore write failed:", err);
+      alert('Erro ao publicar post. Verifique sua conexão ou permissões.');
     }
   };
 
@@ -204,11 +233,13 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip }) => {
   };
 
   const handleGenerateNews = async () => {
+    console.log('[Feed] handleGenerateNews started');
     setGeneratingNews(true);
     setGenerationError(null);
     
     const genTimeout = setTimeout(() => {
       if (generatingNews) {
+        console.warn('[Feed] handleGenerateNews timeout reached');
         setGeneratingNews(false);
         setGenerationError('A geração de notícias está demorando muito. Tente novamente.');
       }
@@ -217,10 +248,11 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip }) => {
     try {
       const res = await fetch('/api/trigger-news');
       if (!res.ok) throw new Error('Falha ao gerar notícia');
+      console.log('[Feed] handleGenerateNews success');
       // After generating, fetch again to show the new post
       await fetchPosts();
     } catch (err) {
-      console.error(err);
+      console.error("[Feed] handleGenerateNews failed:", err);
       setGenerationError('Não foi possível carregar notícias agora. Tente novamente em instantes.');
     } finally {
       clearTimeout(genTimeout);

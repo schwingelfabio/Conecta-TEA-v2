@@ -62,6 +62,7 @@ export default function App() {
 
     const unsubscribe = onAuthStateChanged(auth, async (u) => {
       setUser(u);
+      console.log('[App] Auth state changed. User email:', u?.email);
 
       if (u) {
         const userDoc = await getDoc(doc(db, 'users', u.uid));
@@ -79,7 +80,7 @@ export default function App() {
         let vipStatus = false;
         let developerStatus = false;
 
-        // Hardcoded rules (Issue 2)
+        // Hardcoded rules (Issue 3)
         if (normalizedEmail === 'fabiopalacioschwingel@gmail.com') {
           adminStatus = true;
           vipStatus = true;
@@ -93,6 +94,8 @@ export default function App() {
           adminStatus = await checkIsAdmin(normalizedEmail);
           vipStatus = adminStatus;
         }
+
+        console.log(`[App] Derived roles for ${normalizedEmail}: isAdmin=${adminStatus}, isVip=${vipStatus}, isDeveloper=${developerStatus}`);
 
         setIsAdmin(adminStatus);
         setIsVip(vipStatus);
@@ -110,12 +113,14 @@ export default function App() {
             // Force roles for special emails even in snapshot
             const isUserVip = normalizedEmail === 'fabiopalacioschwingel@gmail.com' || 
                              normalizedEmail === 'fabiparadox2@gmail.com' || 
-                             data.isVip === true || adminStatus;
+                             data.isVip === true || adminStatus || vipStatus;
 
+            console.log(`[App] VIP UI check result for ${normalizedEmail}: ${isUserVip}`);
             setIsVip(isUserVip);
             localStorage.setItem('isVip', String(isUserVip));
           } else {
             const fallbackVip = adminStatus || vipStatus;
+            console.log(`[App] VIP UI check result (fallback) for ${normalizedEmail}: ${fallbackVip}`);
             setIsVip(fallbackVip);
             localStorage.setItem('isVip', String(fallbackVip));
           }
