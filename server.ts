@@ -68,9 +68,9 @@ async function initializeSystemData() {
     if (querySnapshot.empty) {
       await topicsRef.add({
         titulo: 'Bem-vindos à Comunidade!',
-        cidade: 'Geral',
-        estado: 'Geral',
-        autor: 'Sistema',
+        city: 'Geral',
+        state: 'Geral',
+        author: 'Sistema',
         createdAt: admin.firestore.FieldValue.serverTimestamp()
       });
       console.log('Default topic initialized.');
@@ -232,8 +232,6 @@ async function startServer() {
         mediaType: 'text',
         state: 'Geral',
         city: 'Geral',
-        estado: 'Geral',
-        cidade: 'Geral',
         topic: 'noticias',
         location: 'Brasil',
         timestamp: admin.firestore.FieldValue.serverTimestamp(),

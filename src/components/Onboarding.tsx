@@ -42,14 +42,19 @@ export default function Onboarding({ onComplete }: { onComplete: () => void }) {
       // Criar tópicos de comunidade se não existirem
       const topicsRef = collection(db, 'topics');
       
-      const ensureTopic = async (title: string, location: string, type: 'state' | 'city') => {
-        const q = query(topicsRef, where('titulo', '==', title), where('location', '==', location));
+      const ensureTopic = async (title: string, locationValue: string, type: 'state' | 'city') => {
+        const q = query(
+          topicsRef, 
+          where('titulo', '==', title), 
+          where(type === 'state' ? 'state' : 'city', '==', locationValue)
+        );
         const snapshot = await getDocs(q);
         if (snapshot.empty) {
           console.log(`[Onboarding] Creating new topic: ${title}`);
           await addDoc(topicsRef, {
             titulo: title,
-            location: location,
+            state: type === 'state' ? locationValue : selectedState,
+            city: type === 'city' ? locationValue : '',
             type: type,
             author: 'Sistema',
             createdAt: serverTimestamp()
