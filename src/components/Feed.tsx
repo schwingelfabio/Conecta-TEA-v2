@@ -105,24 +105,20 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip }) => {
       // 2. Fetch Normal Posts (paginated)
       let q;
       
-      // Note: where('isPinned', '!=', true) with orderBy('timestamp', 'desc') requires a composite index.
-      // If it fails, we might need to adjust the query or ensure the index exists.
       if (topic === 'cidade') {
-          q = query(collection(db, 'posts'), where('city', '==', userProfile?.city || ''), where('isPinned', '!=', true), orderBy('timestamp', 'desc'), limit(10));
+          q = query(collection(db, 'posts'), where('city', '==', userProfile?.city || ''), orderBy('timestamp', 'desc'), limit(10));
       } else if (topic === 'estado') {
-          q = query(collection(db, 'posts'), where('state', '==', userProfile?.state || ''), where('isPinned', '!=', true), orderBy('timestamp', 'desc'), limit(10));
+          q = query(collection(db, 'posts'), where('state', '==', userProfile?.state || ''), orderBy('timestamp', 'desc'), limit(10));
       } else if (topic !== 'geral') {
         q = query(
           collection(db, 'posts'),
           where('topic', '==', topic),
-          where('isPinned', '!=', true),
           orderBy('timestamp', 'desc'),
           limit(10)
         );
       } else {
         q = query(
           collection(db, 'posts'),
-          where('isPinned', '!=', true),
           orderBy('timestamp', 'desc'),
           limit(10)
         );
@@ -141,7 +137,13 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip }) => {
       
       console.log(`[Feed] Normal posts fetched: ${fetchedPosts.length}`);
 
-      const validPosts = [...pinnedPosts, ...fetchedPosts]
+      // Combine and deduplicate (in case a pinned post was also fetched in the normal query)
+      const allPosts = [...pinnedPosts, ...fetchedPosts];
+      const uniquePosts = allPosts.filter((post, index, self) => 
+        index === self.findIndex((p) => p.id === post.id)
+      );
+
+      const validPosts = uniquePosts
         .filter(post => (post.text || post.content) && (post.authorId || post.userId) && post.topic)
         .map(post => ({
           ...post,
