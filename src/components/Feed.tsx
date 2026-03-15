@@ -323,12 +323,15 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady }) =
 
     try {
       const res = await fetch('/api/trigger-news', { signal: controller.signal });
+      
       if (!res.ok) {
+        // Parse returned JSON and show exact error
         const errorData = await res.json().catch(() => ({}));
-        throw new Error(errorData.error || 'Falha ao gerar notícia');
+        throw new Error(errorData.error || `Erro HTTP: ${res.status}`);
       }
+      
       console.log('[News] handleGenerateNews API success');
-      // After generating, fetch again to show the new post
+      // After success, re-fetch posts
       await fetchPosts();
     } catch (err: any) {
       console.error("[News] handleGenerateNews failed:", err);
