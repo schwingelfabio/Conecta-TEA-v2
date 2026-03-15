@@ -6,12 +6,12 @@ import ReactPlayer from 'react-player';
 const Player = ReactPlayer as any;
 
 const videos = [
-  { id: 1, title: 'Vídeo 1', url: 'https://youtube.com/shorts/NwxAkaOBFho?si=Bui2iwlfHTXWdQLQ' },
-  { id: 2, title: 'Vídeo 2', url: 'https://youtube.com/shorts/B5rIqICOJro?feature=shared' },
-  { id: 3, title: 'Vídeo 3', url: 'https://youtube.com/shorts/vowGqn1_Fbs?si=7IGFZzs7_oJTETER' },
-  { id: 4, title: 'Vídeo 4', url: 'https://youtube.com/shorts/_Rf-ROpUMeY?si=gpKxjj6K7YRBMVJi' },
-  { id: 5, title: 'Vídeo 5', url: 'https://youtube.com/shorts/BOBEmYWj2b8?si=l86Shq093_l7rr9N' },
-  { id: 6, title: 'Vídeo 6', url: 'https://youtube.com/shorts/a6f8mxS5RZM?si=8bBAVsaSQ2hjwG_t' },
+  { id: 1, title: 'Vídeo 1', url: 'https://www.youtube.com/embed/NwxAkaOBFho' },
+  { id: 2, title: 'Vídeo 2', url: 'https://www.youtube.com/embed/B5rIqICOJro' },
+  { id: 3, title: 'Vídeo 3', url: 'https://www.youtube.com/embed/vowGqn1_Fbs' },
+  { id: 4, title: 'Vídeo 4', url: 'https://www.youtube.com/embed/_Rf-ROpUMeY' },
+  { id: 5, title: 'Vídeo 5', url: 'https://www.youtube.com/embed/BOBEmYWj2b8' },
+  { id: 6, title: 'Vídeo 6', url: 'https://www.youtube.com/embed/a6f8mxS5RZM' },
 ];
 
 export default function VideoGallery() {

@@ -16,17 +16,14 @@ const projectId = process.env.FIREBASE_PROJECT_ID || process.env.VITE_FIREBASE_P
 console.log(`[Server] Project ID: ${projectId}`);
 
 if (!admin.apps.length) {
-  if (projectId) {
-    admin.initializeApp({
-      projectId: projectId
-    });
-    console.log(`Firebase Admin initialized with Project ID: ${projectId}`);
-  } else {
-    console.warn("FIREBASE_PROJECT_ID not set. Firebase Admin features may not work.");
-  }
+  admin.initializeApp({
+    credential: admin.credential.applicationDefault()
+  });
+  console.log('Firebase Admin initialized with default credentials.');
 }
 
 const db = admin.firestore();
+console.log(`Firestore database: ${db.databaseId}`);
 
 async function initializeSystemData() {
   if (!projectId) return;
