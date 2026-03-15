@@ -84,6 +84,7 @@ export default function AuthForm({ onSuccess }: AuthFormProps) {
       await signInWithPopup(auth, googleProvider);
       onSuccess();
     } catch (err: any) {
+      console.error('[AuthForm] Google Auth Error:', err);
       setError(getFriendlyErrorMessage(err, t));
     } finally {
       setLoading(false);
@@ -105,6 +106,7 @@ export default function AuthForm({ onSuccess }: AuthFormProps) {
 
       onSuccess();
     } catch (err: any) {
+      console.error('[AuthForm] Firebase Auth Error:', err);
       setError(getFriendlyErrorMessage(err, t));
     } finally {
       setLoading(false);
