@@ -30,6 +30,7 @@ export interface SosCard {
   state?: string;
   responsibleName?: string;
   emergencyNote?: string;
+  officialId?: string;
   createdAt: any;
 }
 

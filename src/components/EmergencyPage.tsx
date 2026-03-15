@@ -235,10 +235,15 @@ const EmergencyPage: React.FC<EmergencyPageProps> = ({ id }) => {
         )}
 
         <div className="text-center pt-8">
-          <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">
-            Identificação Digital Conecta TEA
-          </p>
-          <p className="text-[8px] text-slate-200 font-mono mt-1">ID: {sosCard.id?.toUpperCase()}</p>
+          <div className="flex flex-col items-center justify-center mb-2">
+            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">
+              ID Oficial Conecta TEA
+            </p>
+            <p className="text-xl font-black text-slate-900 font-mono">
+              {sosCard.officialId || '---'}
+            </p>
+          </div>
+          <p className="text-[7px] text-slate-300 font-mono mt-1 opacity-50">REF: {sosCard.id?.toUpperCase()}</p>
         </div>
       </div>
     </div>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { db } from '../lib/firebase';
-import { collection, query, where, getDocs, addDoc, updateDoc, doc, serverTimestamp } from 'firebase/firestore';
+import { collection, query, where, getDocs, addDoc, updateDoc, doc, serverTimestamp, runTransaction } from 'firebase/firestore';
 import { UserProfile, SosCard } from '../types';
 import { motion } from 'framer-motion';
 import { Activity, Printer, Save, Edit2, Phone, MapPin, AlertTriangle, HeartPulse, ShieldAlert, ShieldCheck, IdCard } from 'lucide-react';
@@ -113,27 +113,68 @@ const SosPage: React.FC<SosPageProps> = ({ userProfile, authReady, onLoginClick 
     setSaving(true);
 
     try {
+      const counterRef = doc(db, 'meta', 'counters');
+      
       if (sosCard?.id) {
         // Update
-        const cardRef = doc(db, 'sos_cards', sosCard.id);
-        await updateDoc(cardRef, { ...formData, updatedAt: serverTimestamp() });
-        setSosCard({ ...sosCard, ...formData });
+        if (!sosCard.officialId) {
+          console.log('[ID] existing card missing officialId, generating via transaction...');
+          const result = await runTransaction(db, async (transaction) => {
+            const counterDoc = await transaction.get(counterRef);
+            let nextId = 1;
+            if (counterDoc.exists()) {
+              nextId = (counterDoc.data().nextCardId || 0) + 1;
+            }
+            const officialId = `CTEA-${String(nextId).padStart(6, '0')}`;
+            
+            const cardRef = doc(db, 'sos_cards', sosCard.id!);
+            const updatePayload = { ...formData, officialId, updatedAt: serverTimestamp() };
+            transaction.update(cardRef, updatePayload);
+            transaction.set(counterRef, { nextCardId: nextId }, { merge: true });
+            return { officialId, ...updatePayload };
+          });
+          setSosCard({ ...sosCard, ...result } as SosCard);
+          console.log('[ID] generated and saved for existing card:', result.officialId);
+        } else {
+          console.log('[ID] existing officialId reused:', sosCard.officialId);
+          const cardRef = doc(db, 'sos_cards', sosCard.id);
+          await updateDoc(cardRef, { ...formData, updatedAt: serverTimestamp() });
+          setSosCard({ ...sosCard, ...formData });
+        }
         console.log('[CARD] save success (update)');
       } else {
         // Create
-        const newCard = {
-          userId: userProfile.uid,
-          ...formData,
-          createdAt: serverTimestamp(),
-          updatedAt: serverTimestamp()
-        };
-        const docRef = await addDoc(collection(db, 'sos_cards'), newCard);
-        setSosCard({ id: docRef.id, ...newCard } as SosCard);
-        console.log('[CARD] save success (create):', docRef.id);
+        console.log('[ID] generation start');
+        const result = await runTransaction(db, async (transaction) => {
+          const counterDoc = await transaction.get(counterRef);
+          let nextId = 1;
+          if (counterDoc.exists()) {
+            nextId = (counterDoc.data().nextCardId || 0) + 1;
+          }
+          const officialId = `CTEA-${String(nextId).padStart(6, '0')}`;
+          console.log('[ID] next counter value:', nextId);
+          console.log('[ID] generated officialId:', officialId);
+          
+          const newCardRef = doc(collection(db, 'sos_cards'));
+          const newCard = {
+            userId: userProfile.uid,
+            ...formData,
+            officialId,
+            createdAt: serverTimestamp(),
+            updatedAt: serverTimestamp()
+          };
+          transaction.set(newCardRef, newCard);
+          transaction.set(counterRef, { nextCardId: nextId }, { merge: true });
+          return { id: newCardRef.id, ...newCard };
+        });
+        setSosCard(result as SosCard);
+        console.log('[ID] save success:', result.officialId);
+        console.log('[CARD] save success (create):', result.id);
       }
       setIsEditing(false);
     } catch (error) {
       console.error("[CARD] save failure:", error);
+      console.error("[ID] save failure:", error);
       alert("Erro ao salvar a carteirinha. Tente novamente.");
     } finally {
       setSaving(false);
@@ -409,11 +450,16 @@ const SosPage: React.FC<SosPageProps> = ({ userProfile, authReady, onLoginClick 
                 </div>
 
                 <div className="mt-8 text-center">
-                  <div className="flex items-center justify-center space-x-1 mb-1">
-                    <ShieldAlert size={12} className="text-brand-primary" />
-                    <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest">Segurança Conecta</span>
+                  <div className="flex flex-col items-center justify-center mb-2">
+                    <div className="flex items-center space-x-1 mb-1">
+                      <ShieldAlert size={12} className="text-brand-primary" />
+                      <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest">ID Oficial Conecta TEA</span>
+                    </div>
+                    <p className="text-sm font-black text-slate-900 font-mono tracking-tighter">
+                      {sosCard?.officialId || 'PROCESSANDO...'}
+                    </p>
                   </div>
-                  <p className="text-[8px] text-slate-300 font-mono">ID: {sosCard?.id?.toUpperCase()}</p>
+                  <p className="text-[7px] text-slate-300 font-mono opacity-50">REF: {sosCard?.id?.toUpperCase()}</p>
                 </div>
               </div>
             </div>
