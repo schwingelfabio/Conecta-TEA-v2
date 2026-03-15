@@ -172,10 +172,12 @@ const SosPage: React.FC<SosPageProps> = ({ userProfile, authReady, onLoginClick 
         console.log('[CARD] save success (create):', result.id);
       }
       setIsEditing(false);
-    } catch (error) {
+    } catch (error: any) {
       console.error("[CARD] save failure:", error);
+      console.error("[CARD] collection path:", "sos_cards");
+      console.error("[CARD] write error exact message:", error.message);
       console.error("[ID] save failure:", error);
-      alert("Erro ao salvar a carteirinha. Tente novamente.");
+      alert(`Erro ao salvar a carteirinha: ${error.message}`);
     } finally {
       setSaving(false);
     }

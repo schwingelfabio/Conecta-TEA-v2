@@ -18,38 +18,35 @@ import { motion } from 'framer-motion';
 import LanguageSelector from './LanguageSelector';
 import { useTranslation } from 'react-i18next';
 
+import { UserProfile } from '../types';
+
 export default function Settings({
+  userProfile,
   isAdmin,
-  isVip: isVipProp,
+  isVip,
   isDeveloper,
   onNavigate
 }: {
+  userProfile: UserProfile | null,
   isAdmin?: boolean,
   isVip?: boolean,
   isDeveloper?: boolean,
   onNavigate: (tab: string) => void
 }) {
   const { t } = useTranslation();
-  const isVip = isVipProp || isAdmin || false;
   const user = auth.currentUser;
   
-  const [name, setName] = useState(user?.displayName || '');
-  const [state, setState] = useState('');
-  const [city, setCity] = useState('');
+  const [name, setName] = useState(userProfile?.displayName || user?.displayName || '');
+  const [state, setState] = useState(userProfile?.state || '');
+  const [city, setCity] = useState(userProfile?.city || '');
 
   useEffect(() => {
-    async function fetchUserData() {
-      if (!user) return;
-      const userDoc = await getDoc(doc(db, 'users', user.uid));
-      if (userDoc.exists()) {
-        const data = userDoc.data();
-        setName(data.displayName || user.displayName || '');
-        setState(data.state || '');
-        setCity(data.city || '');
-      }
+    if (userProfile) {
+      setName(userProfile.displayName || user?.displayName || '');
+      setState(userProfile.state || '');
+      setCity(userProfile.city || '');
     }
-    fetchUserData();
-  }, [user]);
+  }, [userProfile, user]);
 
   const handleSave = async () => {
     if (!user) return;

@@ -53,7 +53,7 @@ service cloud.firestore {
       allow read: if true;
       allow create: if isAuthenticated() && request.resource.data.userId == request.auth.uid;
       allow update: if isAuthenticated() && request.auth.uid == resource.data.userId 
-                    && (!('officialId' in request.resource.data) || request.resource.data.officialId == resource.data.officialId);
+                    && (!('officialId' in resource.data) || request.resource.data.officialId == resource.data.officialId);
       allow delete: if isAuthenticated() && request.auth.uid == resource.data.userId;
     }
 

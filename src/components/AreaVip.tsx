@@ -8,7 +8,7 @@ import VideoGallery from './VideoGallery';
 
 export default function AreaVip({
   isAdmin,
-  isVip: isVipProp,
+  isVip,
   authReady,
   onNavigate
 }: {
@@ -17,7 +17,6 @@ export default function AreaVip({
   authReady?: boolean,
   onNavigate?: (tab: string) => void
 }) {
-  const isVip = Boolean(isVipProp || isAdmin);
   const loading = !authReady;
 
   const [suggestionText, setSuggestionText] = useState('');
@@ -26,10 +25,10 @@ export default function AreaVip({
   const user = auth.currentUser;
 
   useEffect(() => {
-    console.log('[VIP] props received by AreaVip:', { isAdmin, isVip: isVipProp, authReady });
-    console.log('[VIP] badge render decision:', { isAdmin, isVip: isVipProp });
+    console.log('[VIP] props received by AreaVip:', { isAdmin, isVip, authReady });
+    console.log('[VIP] badge render decision:', { isAdmin, isVip });
     console.log('[VIP] ebook access decision:', { isVip, authReady });
-  }, [isAdmin, isVipProp, authReady, isVip]);
+  }, [isAdmin, isVip, authReady]);
 
   const handleSubmitSuggestion = async () => {
     if (!suggestionText.trim() || !user) return;
@@ -54,8 +53,8 @@ export default function AreaVip({
   };
 
   useEffect(() => {
-    console.log(`[AreaVip] Auth status: ready=${authReady}, isVipProp=${isVipProp}, isAdmin=${isAdmin}`);
-  }, [authReady, isVipProp, isAdmin]);
+    console.log(`[AreaVip] Auth status: ready=${authReady}, isVip=${isVip}, isAdmin=${isAdmin}`);
+  }, [authReady, isVip, isAdmin]);
 
   if (loading) {
     return (

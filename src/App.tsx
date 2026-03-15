@@ -231,7 +231,7 @@ export default function App() {
       case 'map':
         return <NetworkMap />;
       case 'settings':
-        return <Settings isAdmin={isAdmin} isVip={isVip} isDeveloper={isDeveloper} onNavigate={(tab) => setActiveTab(tab as any)} />;
+        return <Settings userProfile={userProfile} isAdmin={isAdmin} isVip={isVip} isDeveloper={isDeveloper} onNavigate={(tab) => setActiveTab(tab as any)} />;
       case 'sos':
         console.log('[ACCESS] SOS requested. Decision:', { authReady, user: !!user });
         return <SosPage userProfile={userProfile} authReady={authReady} onLoginClick={handleLogin} />;
