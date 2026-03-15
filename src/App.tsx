@@ -44,6 +44,7 @@ export default function App() {
   const [emergencyUserId, setEmergencyUserId] = useState<string | null>(null);
   const [showAuth, setShowAuth] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
+  const [isGuest, setIsGuest] = useState(false);
 
   useEffect(() => {
     // Timeout fallback to prevent infinite loading
@@ -103,40 +104,66 @@ export default function App() {
         console.log(`[AUTH] derived roles: isAdmin=${adminStatus}, isVip=${vipStatus}, isDeveloper=${developerStatus}`);
 
         const userDocRef = doc(db, 'users', u.uid);
-        const userDoc = await getDoc(userDocRef);
         
-        if (userDoc.exists()) {
-          const data = userDoc.data() as UserProfile;
-          console.log('[App/Auth] User profile found in Firestore');
-          setUserProfile(data);
+        try {
+          const userDoc = await getDoc(userDocRef);
           
-          // Merge with Firestore roles if not hardcoded
-          if (normalizedEmail !== 'fabiopalacioschwingel@gmail.com' && normalizedEmail !== 'fabiparadox2@gmail.com') {
-            adminStatus = data.role === 'admin';
-            vipStatus = data.isVip === true || data.role === 'admin';
-            developerStatus = false;
-          }
+          if (userDoc.exists()) {
+            const data = userDoc.data() as UserProfile;
+            console.log('[App/Auth] User profile found in Firestore');
+            setUserProfile(data);
+            
+            // Merge with Firestore roles if not hardcoded
+            if (normalizedEmail !== 'fabiopalacioschwingel@gmail.com' && normalizedEmail !== 'fabiparadox2@gmail.com') {
+              adminStatus = data.role === 'admin';
+              vipStatus = data.isVip === true || data.role === 'admin';
+              developerStatus = false;
+            }
 
-          if (!data.state || !data.city) {
-            console.log('[App/Auth] User missing state/city, showing onboarding');
-            setShowOnboarding(true);
+            if (!data.state || !data.city) {
+              console.log('[App/Auth] User missing state/city, showing onboarding');
+              setShowOnboarding(true);
+            } else {
+              setShowOnboarding(false);
+            }
           } else {
-            setShowOnboarding(false);
+            console.log('[App/Auth] New user, creating profile and showing onboarding');
+            setShowOnboarding(true);
+            const initialData = {
+              uid: u.uid,
+              email: normalizedEmail,
+              phoneNumber: u.phoneNumber || '',
+              displayName: u.displayName || 'Usuário',
+              photoURL: u.photoURL || '',
+              isVip: vipStatus,
+              role: adminStatus ? 'admin' : 'parent',
+              createdAt: serverTimestamp(),
+              city: '',
+              state: ''
+            };
+            setUserProfile(initialData as any);
+            // Disparar setDoc em background para não travar a UI
+            setDoc(userDocRef, initialData, { merge: true }).catch(err => {
+              console.error('[App/Auth] Error creating profile in background:', err);
+            });
           }
-        } else {
-          console.log('[App/Auth] New user, creating profile and showing onboarding');
+        } catch (err) {
+          console.error('[App/Auth] Error fetching user profile, using fallback:', err);
           setShowOnboarding(true);
-          const initialData = {
+          const fallbackData = {
             uid: u.uid,
             email: normalizedEmail,
+            phoneNumber: u.phoneNumber || '',
             displayName: u.displayName || 'Usuário',
             photoURL: u.photoURL || '',
             isVip: vipStatus,
             role: adminStatus ? 'admin' : 'parent',
-            createdAt: serverTimestamp()
+            createdAt: serverTimestamp(),
+            city: '',
+            state: ''
           };
-          await setDoc(userDocRef, initialData, { merge: true });
-          setUserProfile(initialData as any);
+          setUserProfile(fallbackData as any);
+          setDoc(userDocRef, fallbackData, { merge: true }).catch(e => console.error(e));
         }
 
         setIsAdmin(adminStatus);
@@ -203,18 +230,18 @@ export default function App() {
     });
   }, [authReady, user, userProfile, isAdmin, isVip, isDeveloper, showOnboarding]);
 
-  const handleLogin = async () => {
-    try {
-      await signInWithPopup(auth, googleProvider);
-    } catch (error) {
-      console.error('Erro ao fazer login', error);
-    }
+  const handleLoginSuccess = () => {
+    console.log('[App] Login success triggered');
+    // The onAuthStateChanged listener will handle the state update
   };
 
-  const handleLogout = () => signOut(auth);
+  const handleLogout = () => {
+    setIsGuest(false);
+    signOut(auth);
+  };
 
   const renderContent = () => {
-    console.log('[ACCESS] Rendering content for tab:', activeTab, { authReady, isAdmin, isVip });
+    console.log('[ACCESS] Rendering content for tab:', activeTab, { authReady, isAdmin, isVip, isGuest });
     
     if (!authReady) {
       return (
@@ -226,17 +253,17 @@ export default function App() {
 
     switch (activeTab) {
       case 'feed':
-        return <Feed userProfile={userProfile} isAdmin={isAdmin} isVip={isVip} authReady={authReady} />;
+        return <Feed userProfile={userProfile} isAdmin={isAdmin} isVip={isVip} authReady={authReady} isGuest={isGuest} />;
       case 'vip':
         console.log('[ACCESS] VIP requested. Decision:', { authReady, isVip });
-        return <AreaVip isAdmin={isAdmin} isVip={isVip} authReady={authReady} onNavigate={(tab) => setActiveTab(tab as any)} />;
+        return <AreaVip isAdmin={isAdmin} isVip={isVip} authReady={authReady} onNavigate={(tab) => setActiveTab(tab as any)} isGuest={isGuest} />;
       case 'map':
         return <NetworkMap />;
       case 'settings':
-        return <Settings userProfile={userProfile} isAdmin={isAdmin} isVip={isVip} isDeveloper={isDeveloper} onNavigate={(tab) => setActiveTab(tab as any)} />;
+        return <Settings userProfile={userProfile} isAdmin={isAdmin} isVip={isVip} isDeveloper={isDeveloper} onNavigate={(tab) => setActiveTab(tab as any)} isGuest={isGuest} />;
       case 'sos':
         console.log('[ACCESS] SOS requested. Decision:', { authReady, user: !!user });
-        return <SosPage userProfile={userProfile} authReady={authReady} onLoginClick={handleLogin} />;
+        return <SosPage userProfile={userProfile} authReady={authReady} onLoginClick={() => setIsGuest(false)} isGuest={isGuest} />;
       case 'termos':
         return <TermosDeUso onBack={() => setActiveTab('settings')} />;
       case 'privacidade':
@@ -244,7 +271,7 @@ export default function App() {
       case 'contato':
         return <Contato onBack={() => setActiveTab('settings')} />;
       default:
-        return <Feed userProfile={userProfile} isAdmin={isAdmin} isVip={isVip} />;
+        return <Feed userProfile={userProfile} isAdmin={isAdmin} isVip={isVip} isGuest={isGuest} />;
     }
   };
 
@@ -267,7 +294,7 @@ export default function App() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-sky-50 to-white font-sans text-gray-900">
       {showOnboarding && <Onboarding onComplete={() => setShowOnboarding(false)} />}
-      {user && (
+      {(user || isGuest) && (
         <nav className="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-gray-100">
           <div className="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
             <div className="flex items-center gap-2 cursor-pointer" onClick={() => setActiveTab('feed')}>
@@ -299,9 +326,15 @@ export default function App() {
             </div>
 
             <div className="flex items-center gap-3">
-              <button onClick={() => setActiveTab('settings')} className={`w-10 h-10 rounded-full border-2 overflow-hidden hidden sm:block transition-all ${activeTab === 'settings' ? 'border-sky-500' : 'border-sky-100'}`}>
-                {user.photoURL ? <img src={user.photoURL} alt="Perfil" className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center bg-sky-100 text-sky-600 font-bold">{user.displayName?.charAt(0) || 'U'}</div>}
-              </button>
+              {isGuest ? (
+                <button onClick={() => setIsGuest(false)} className="px-4 py-2 bg-sky-500 text-white rounded-full font-bold text-sm hover:bg-sky-600 transition-colors">
+                  Criar Conta
+                </button>
+              ) : (
+                <button onClick={() => setActiveTab('settings')} className={`w-10 h-10 rounded-full border-2 overflow-hidden hidden sm:block transition-all ${activeTab === 'settings' ? 'border-sky-500' : 'border-sky-100'}`}>
+                  {user?.photoURL ? <img src={user.photoURL} alt="Perfil" className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center bg-sky-100 text-sky-600 font-bold">{user?.displayName?.charAt(0) || 'U'}</div>}
+                </button>
+              )}
               <button onClick={handleLogout} className="p-2 text-gray-400 hover:text-red-500 transition-colors">
                 <LogOut size={20} />
               </button>
@@ -310,17 +343,17 @@ export default function App() {
         </nav>
       )}
 
-      <main className={!user ? '' : 'max-w-5xl mx-auto px-4 py-8'}>
-        {!user ? (
-          <LandingPage onLogin={handleLogin} onShowTerms={() => setActiveTab('termos')} />
+      <main className={(!user && !isGuest) ? '' : 'max-w-5xl mx-auto px-4 py-8'}>
+        {(!user && !isGuest) ? (
+          <LandingPage onLogin={handleLoginSuccess} onShowTerms={() => setActiveTab('termos')} onGuestLogin={() => setIsGuest(true)} />
         ) : (
           renderContent()
         )}
       </main>
 
-      {user && <AiAssistant />}
+      {(user || isGuest) && <AiAssistant />}
       
-      {!user && showAuth && (
+      {!user && !isGuest && showAuth && (
         <AuthForm onSuccess={() => setShowAuth(false)} />
       )}
     </div>

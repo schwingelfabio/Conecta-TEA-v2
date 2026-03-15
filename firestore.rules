@@ -18,13 +18,11 @@ service cloud.firestore {
     match /{document=**} {
       // Admin has full read/write access
       allow read, write: if isAdmin();
-      
-      // Authenticated users have read access to everything
-      allow read: if isAuthenticated();
     }
     
     // Users can write their own data
     match /users/{userId} {
+      allow read: if isAuthenticated();
       allow write: if request.auth != null && request.auth.uid == userId;
     }
     
@@ -34,17 +32,18 @@ service cloud.firestore {
       allow write: if isAdmin();
     }
 
-    // Allow authenticated users to create and read topics
+    // Allow public to read topics
     match /topics/{topicId} {
-      allow read: if isAuthenticated();
+      allow read: if true;
       allow create: if isAuthenticated();
       allow update, delete: if isAdmin();
     }
     
-    // Users can create and edit posts
+    // Allow public to read posts
     match /posts/{postId} {
+      allow read: if true;
       allow create: if isAuthenticated() && (request.resource.data.topic != 'noticias' || isAdmin());
-      allow update, delete: if isAuthenticated() && request.auth.uid == resource.data.authorId && (resource.data.topic != 'noticias' || isAdmin());
+      allow update, delete: if isAdmin() || (isAuthenticated() && request.auth.uid == resource.data.authorId && (request.resource.data.topic != 'noticias' || isAdmin()));
     }
     
     // Users can create and edit their own SOS cards

@@ -25,13 +25,15 @@ export default function Settings({
   isAdmin,
   isVip,
   isDeveloper,
-  onNavigate
+  onNavigate,
+  isGuest
 }: {
   userProfile: UserProfile | null,
   isAdmin?: boolean,
   isVip?: boolean,
   isDeveloper?: boolean,
-  onNavigate: (tab: string) => void
+  onNavigate: (tab: string) => void,
+  isGuest?: boolean
 }) {
   const { t } = useTranslation();
   const user = auth.currentUser;
@@ -86,7 +88,8 @@ export default function Settings({
               type="text" 
               value={name} 
               onChange={(e) => setName(e.target.value)}
-              className="w-full p-3 rounded-xl border border-gray-200"
+              disabled={isGuest}
+              className="w-full p-3 rounded-xl border border-gray-200 disabled:bg-gray-50 disabled:text-gray-500"
             />
           </div>
           <div className="grid grid-cols-2 gap-4">
@@ -96,7 +99,8 @@ export default function Settings({
                 type="text" 
                 value={state} 
                 onChange={(e) => setState(e.target.value)}
-                className="w-full p-3 rounded-xl border border-gray-200"
+                disabled={isGuest}
+                className="w-full p-3 rounded-xl border border-gray-200 disabled:bg-gray-50 disabled:text-gray-500"
               />
             </div>
             <div>
@@ -105,13 +109,15 @@ export default function Settings({
                 type="text" 
                 value={city} 
                 onChange={(e) => setCity(e.target.value)}
-                className="w-full p-3 rounded-xl border border-gray-200"
+                disabled={isGuest}
+                className="w-full p-3 rounded-xl border border-gray-200 disabled:bg-gray-50 disabled:text-gray-500"
               />
             </div>
           </div>
           <button 
             onClick={handleSave}
-            className="w-full bg-sky-500 text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2"
+            disabled={isGuest}
+            className="w-full bg-sky-500 text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Save size={20} />
             {t('settings.save')}

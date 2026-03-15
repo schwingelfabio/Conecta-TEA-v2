@@ -10,9 +10,10 @@ interface SosPageProps {
   userProfile: UserProfile | null;
   authReady?: boolean;
   onLoginClick?: () => void;
+  isGuest?: boolean;
 }
 
-const SosPage: React.FC<SosPageProps> = ({ userProfile, authReady, onLoginClick }) => {
+const SosPage: React.FC<SosPageProps> = ({ userProfile, authReady, onLoginClick, isGuest }) => {
   const [sosCard, setSosCard] = useState<SosCard | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(true);

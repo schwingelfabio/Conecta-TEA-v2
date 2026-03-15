@@ -9,9 +9,10 @@ import { useTranslation } from 'react-i18next';
 interface LandingPageProps {
   onLogin: () => void;
   onShowTerms: () => void;
+  onGuestLogin: () => void;
 }
 
-export default function LandingPage({ onLogin, onShowTerms }: LandingPageProps) {
+export default function LandingPage({ onLogin, onShowTerms, onGuestLogin }: LandingPageProps) {
   const { t, i18n } = useTranslation();
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [showAuthForm, setShowAuthForm] = useState(false);
@@ -93,6 +94,19 @@ export default function LandingPage({ onLogin, onShowTerms }: LandingPageProps) 
                     className={`w-full sm:w-auto px-10 py-5 bg-white text-gray-900 border-2 border-gray-100 rounded-2xl font-bold text-xl shadow-md hover:bg-gray-50 hover:border-sky-100 hover:-translate-y-1 transition-all active:scale-95 flex items-center justify-center gap-3 ${!acceptedTerms ? 'opacity-50 cursor-not-allowed' : ''}`}
                   >
                     {t('landing.createAccount')}
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      if (!acceptedTerms) {
+                        alert(t('landing.termsAlert'));
+                        return;
+                      }
+                      onGuestLogin();
+                    }}
+                    className={`w-full sm:w-auto px-10 py-5 bg-slate-100 text-slate-700 rounded-2xl font-bold text-xl shadow-sm hover:bg-slate-200 hover:-translate-y-1 transition-all active:scale-95 flex items-center justify-center gap-3 ${!acceptedTerms ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  >
+                    Entrar como visitante
                   </button>
 
                   <a

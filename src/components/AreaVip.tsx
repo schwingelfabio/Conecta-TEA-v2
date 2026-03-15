@@ -10,12 +10,14 @@ export default function AreaVip({
   isAdmin,
   isVip,
   authReady,
-  onNavigate
+  onNavigate,
+  isGuest
 }: {
   isAdmin?: boolean,
   isVip?: boolean,
   authReady?: boolean,
-  onNavigate?: (tab: string) => void
+  onNavigate?: (tab: string) => void,
+  isGuest?: boolean
 }) {
   const loading = !authReady;
 

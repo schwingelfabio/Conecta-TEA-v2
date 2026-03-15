@@ -100,9 +100,10 @@ interface FeedProps {
   isAdmin: boolean;
   isVip: boolean;
   authReady?: boolean;
+  isGuest?: boolean;
 }
 
-const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady }) => {
+const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isGuest }) => {
   const { t } = useTranslation();
   const [posts, setPosts] = useState<Post[]>([]);
   const [newPost, setNewPost] = useState('');
@@ -248,6 +249,11 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady }) =
     e.preventDefault();
     console.log('[Feed/Post] Post submit clicked. authReady:', authReady, 'userProfile:', !!userProfile, 'newPost:', !!newPost.trim());
     
+    if (isGuest) {
+      alert('Crie sua conta para liberar este recurso.');
+      return;
+    }
+
     if (!authReady) {
       alert('Aguarde o carregamento do sistema...');
       return;
@@ -420,10 +426,23 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady }) =
       <ActiveCommunities />
 
       {/* Post Creation */}
-      <div className="bg-white rounded-3xl shadow-sm border border-slate-100 p-6 mb-8">
+      <div className="bg-white rounded-3xl shadow-sm border border-slate-100 p-6 mb-8 relative">
+        {isGuest && (
+          <div className="absolute inset-0 bg-white/60 backdrop-blur-[2px] z-10 rounded-3xl flex items-center justify-center">
+            <div className="bg-white px-6 py-3 rounded-full shadow-lg border border-sky-100 flex items-center gap-3">
+              <span className="text-sky-800 font-medium">Crie uma conta para publicar</span>
+              <button 
+                onClick={() => window.location.reload()} 
+                className="bg-sky-500 text-white px-4 py-1.5 rounded-full text-sm font-bold hover:bg-sky-600 transition-colors"
+              >
+                Criar Conta
+              </button>
+            </div>
+          </div>
+        )}
         <div className="flex items-start space-x-4">
           <img 
-            src={userProfile?.photoURL || `https://api.dicebear.com/7.x/avataaars/svg?seed=${userProfile?.uid}`} 
+            src={userProfile?.photoURL || `https://api.dicebear.com/7.x/avataaars/svg?seed=${userProfile?.uid || 'guest'}`} 
             alt="Avatar" 
             className="w-12 h-12 rounded-full border-2 border-slate-50"
           />
@@ -431,6 +450,7 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady }) =
             <textarea
               value={newPost}
               onChange={(e) => setNewPost(e.target.value)}
+              disabled={isGuest}
               placeholder="O que está acontecendo na sua jornada?"
               className="w-full p-4 bg-slate-50 border-none rounded-2xl focus:ring-2 focus:ring-brand-primary/20 outline-none resize-none min-h-[120px] transition-all"
             />
@@ -440,6 +460,7 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady }) =
                 <select 
                   value={topic}
                   onChange={(e) => setTopic(e.target.value)}
+                  disabled={isGuest}
                   className="bg-slate-50 text-slate-600 text-sm px-3 py-2 rounded-xl border-none focus:ring-0 cursor-pointer"
                 >
                   {topics.map(t => (
@@ -451,7 +472,7 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady }) =
               </div>
               <button
                 type="submit"
-                disabled={!newPost.trim()}
+                disabled={!newPost.trim() || isGuest}
                 className="bg-brand-primary text-white px-6 py-2 rounded-full font-semibold flex items-center space-x-2 hover:bg-brand-primary/90 transition-all disabled:opacity-50"
               >
                 <span>{t('feed.post')}</span>
