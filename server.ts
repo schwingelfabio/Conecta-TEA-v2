@@ -6,6 +6,7 @@ import { parseStringPromise } from "xml2js";
 import dotenv from "dotenv";
 import cron from "node-cron";
 import { GoogleGenAI } from "@google/genai";
+import { fetchAndPostAutismNews } from "./src/lib/news.js";
 
 dotenv.config();
 
@@ -189,76 +190,13 @@ async function startServer() {
   });
 
   // AI News Fetching Logic
-  async function fetchAndPostAutismNews() {
-    try {
-      if (!process.env.GEMINI_API_KEY) {
-        console.warn("GEMINI_API_KEY not set. Skipping AI news fetch.");
-        return;
-      }
-
-      const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
-      console.log("Fetching AI news about autism...");
-
-      const response = await ai.models.generateContent({
-        model: "gemini-3-flash-preview",
-        contents: "Busque as notícias mais recentes e relevantes sobre autismo (TEA), benefícios, direitos ou avanços científicos no Brasil. Escreva uma postagem curta e engajadora para uma comunidade de apoio ao autismo. Inclua os links das fontes se possível. Formate como um post de rede social.",
-        config: {
-          tools: [{ googleSearch: {} }],
-        },
-      });
-
-      const newsText = response.text;
-      if (!newsText) {
-        console.warn("[News] AI returned empty text");
-        return;
-      }
-
-      // Extract grounding URLs if available
-      let finalContent = newsText;
-      const chunks = response.candidates?.[0]?.groundingMetadata?.groundingChunks;
-      if (chunks && chunks.length > 0) {
-        finalContent += "\n\nFontes:\n";
-        chunks.forEach((chunk: any) => {
-          if (chunk.web?.uri && chunk.web?.title) {
-            finalContent += `- [${chunk.web.title}](${chunk.web.uri})\n`;
-          }
-        });
-      }
-
-      const payload = {
-        text: finalContent,
-        content: finalContent,
-        authorId: 'ai-bot',
-        userId: 'ai-bot',
-        authorName: 'Conecta TEA IA',
-        authorPhoto: 'https://api.dicebear.com/7.x/bottts/svg?seed=ConectaTEA&backgroundColor=0ea5e9',
-        mediaType: 'text',
-        state: 'Geral',
-        city: 'Geral',
-        topic: 'noticias',
-        location: 'Brasil',
-        timestamp: admin.firestore.FieldValue.serverTimestamp(),
-        createdAt: admin.firestore.FieldValue.serverTimestamp(),
-        isGlobal: true
-      };
-
-      console.log("[News] payload created:", JSON.stringify(payload));
-
-      await db.collection('posts').add(payload);
-      console.log("[News] Firestore write success");
-    } catch (error: any) {
-      console.error("[News] generation failed:", error.message || error);
-      throw error;
-    }
-  }
-
   // Schedule to run every 6 hours
-  cron.schedule("0 */6 * * *", fetchAndPostAutismNews);
+  cron.schedule("0 */6 * * *", () => fetchAndPostAutismNews(db));
 
   // Manual trigger for testing
   app.get("/api/trigger-news", async (req, res) => {
     try {
-      await fetchAndPostAutismNews();
+      await fetchAndPostAutismNews(db);
       res.json({ success: true, message: "News fetch triggered." });
     } catch (error: any) {
       res.status(500).json({ success: false, error: error.message || "Failed to generate news" });

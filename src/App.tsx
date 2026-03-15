@@ -81,8 +81,8 @@ export default function App() {
       setUser(u);
       const rawEmail = u.email || '';
       const normalizedEmail = rawEmail.toLowerCase().trim();
-      console.log('[VIP] logged email:', rawEmail);
-      console.log('[VIP] normalized email:', normalizedEmail);
+      console.log('[AUTH] raw email:', rawEmail);
+      console.log('[AUTH] normalized email:', normalizedEmail);
 
       try {
         // 1. Force Roles (Issue A)
@@ -100,7 +100,7 @@ export default function App() {
           developerStatus = false;
         }
 
-        console.log(`[VIP] derived flags for ${normalizedEmail}: isAdmin=${adminStatus}, isVip=${vipStatus}, isDeveloper=${developerStatus}`);
+        console.log(`[AUTH] derived roles: isAdmin=${adminStatus}, isVip=${vipStatus}, isDeveloper=${developerStatus}`);
 
         const userDocRef = doc(db, 'users', u.uid);
         const userDoc = await getDoc(userDocRef);
@@ -113,7 +113,8 @@ export default function App() {
           // Merge with Firestore roles if not hardcoded
           if (normalizedEmail !== 'fabiopalacioschwingel@gmail.com' && normalizedEmail !== 'fabiparadox2@gmail.com') {
             adminStatus = data.role === 'admin';
-            vipStatus = data.isVip || adminStatus;
+            vipStatus = data.isVip === true || data.role === 'admin';
+            developerStatus = false;
           }
 
           if (!data.state || !data.city) {
@@ -141,7 +142,7 @@ export default function App() {
         setIsAdmin(adminStatus);
         setIsVip(vipStatus);
         setIsDeveloper(developerStatus);
-        console.log(`[VIP] Final derived flags: isAdmin=${adminStatus}, isVip=${vipStatus}, isDeveloper=${developerStatus}`);
+        console.log(`[AUTH] snapshot roles applied: isAdmin=${adminStatus}, isVip=${vipStatus}, isDeveloper=${developerStatus}`);
 
         // Setup real-time listener
         const unsubscribeUser = onSnapshot(userDocRef, (docSnap) => {
@@ -161,9 +162,10 @@ export default function App() {
               setIsDeveloper(false);
             } else {
               setIsAdmin(data.role === 'admin');
-              setIsVip(data.isVip || data.role === 'admin');
+              setIsVip(data.isVip === true || data.role === 'admin');
               setIsDeveloper(false);
             }
+            console.log(`[AUTH] snapshot roles applied (listener): isAdmin=${isAdmin}, isVip=${isVip}, isDeveloper=${isDeveloper}`);
           }
         }, (err) => {
           console.error('[App/Auth] Snapshot error:', err);

@@ -341,6 +341,13 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady }) =
         throw new Error(errorMessage);
       }
       
+      const data = await res.json().catch(() => ({}));
+      if (data.skipped) {
+        console.log('[News] handleGenerateNews skipped:', data.reason);
+        setGenerationError('Já existe uma notícia recente. Atualize novamente mais tarde.');
+        return;
+      }
+      
       console.log('[News] handleGenerateNews API success');
       // After success, re-fetch posts
       await fetchPosts();

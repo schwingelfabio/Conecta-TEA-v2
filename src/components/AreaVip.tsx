@@ -23,12 +23,14 @@ export default function AreaVip({
   const [isSending, setIsSending] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const user = auth.currentUser;
+  
+  const effectiveVip = Boolean(isVip || isAdmin);
 
   useEffect(() => {
-    console.log('[VIP] props received by AreaVip:', { isAdmin, isVip, authReady });
-    console.log('[VIP] badge render decision:', { isAdmin, isVip });
-    console.log('[VIP] ebook access decision:', { isVip, authReady });
-  }, [isAdmin, isVip, authReady]);
+    console.log('[VIP] AreaVip props:', { isAdmin, isVip, authReady });
+    console.log('[VIP] AreaVip effectiveVip:', effectiveVip);
+    console.log('[VIP] ebook access decision:', { effectiveVip, authReady });
+  }, [isAdmin, isVip, authReady, effectiveVip]);
 
   const handleSubmitSuggestion = async () => {
     if (!suggestionText.trim() || !user) return;
@@ -53,8 +55,8 @@ export default function AreaVip({
   };
 
   useEffect(() => {
-    console.log(`[AreaVip] Auth status: ready=${authReady}, isVip=${isVip}, isAdmin=${isAdmin}`);
-  }, [authReady, isVip, isAdmin]);
+    console.log(`[AreaVip] Auth status: ready=${authReady}, effectiveVip=${effectiveVip}, isAdmin=${isAdmin}`);
+  }, [authReady, effectiveVip, isAdmin]);
 
   if (loading) {
     return (
@@ -65,7 +67,7 @@ export default function AreaVip({
     );
   }
 
-  if (!isVip) {
+  if (!effectiveVip) {
     return (
       <div className="min-h-screen bg-lavender-50 py-8 px-4 space-y-8">
         <motion.div
@@ -86,7 +88,7 @@ export default function AreaVip({
           </div>
         </motion.div>
 
-        <PlanosVip isVip={isVip || false} />
+        <PlanosVip isVip={effectiveVip} />
       </div>
     );
   }

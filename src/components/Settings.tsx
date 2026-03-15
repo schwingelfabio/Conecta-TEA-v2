@@ -40,13 +40,18 @@ export default function Settings({
   const [state, setState] = useState(userProfile?.state || '');
   const [city, setCity] = useState(userProfile?.city || '');
 
+  const effectiveVip = Boolean(isVip || isAdmin);
+
   useEffect(() => {
+    console.log('[VIP] Settings props:', { isAdmin, isVip, isDeveloper });
+    console.log('[VIP] Settings effectiveVip:', effectiveVip);
+    
     if (userProfile) {
       setName(userProfile.displayName || user?.displayName || '');
       setState(userProfile.state || '');
       setCity(userProfile.city || '');
     }
-  }, [userProfile, user]);
+  }, [userProfile, user, isAdmin, isVip, isDeveloper, effectiveVip]);
 
   const handleSave = async () => {
     if (!user) return;
@@ -116,24 +121,24 @@ export default function Settings({
 
       <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100">
         <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-          <Crown size={20} className={isVip ? 'text-amber-500' : 'text-gray-400'} />
+          <Crown size={20} className={effectiveVip ? 'text-amber-500' : 'text-gray-400'} />
           {t('settings.vipStatus')}
         </h3>
         
         <div className="flex gap-2 mb-4">
             {isAdmin && <span className="bg-red-100 text-red-800 text-xs font-bold px-2 py-1 rounded">Admin</span>}
             {isDeveloper && <span className="bg-purple-100 text-purple-800 text-xs font-bold px-2 py-1 rounded">Developer</span>}
-            {isVip && <span className="bg-amber-100 text-amber-800 text-xs font-bold px-2 py-1 rounded">VIP</span>}
+            {effectiveVip && <span className="bg-amber-100 text-amber-800 text-xs font-bold px-2 py-1 rounded">VIP</span>}
         </div>
         
-        <div className={`p-4 rounded-2xl flex items-center justify-between ${isVip ? 'bg-amber-50 border border-amber-100' : 'bg-gray-50 border border-gray-100'}`}>
+        <div className={`p-4 rounded-2xl flex items-center justify-between ${effectiveVip ? 'bg-amber-50 border border-amber-100' : 'bg-gray-50 border border-gray-100'}`}>
           <div className="flex items-center gap-3">
-            <div className={`p-2 rounded-full ${isVip ? 'bg-amber-100 text-amber-600' : 'bg-gray-200 text-gray-500'}`}>
+            <div className={`p-2 rounded-full ${effectiveVip ? 'bg-amber-100 text-amber-600' : 'bg-gray-200 text-gray-500'}`}>
               <ShieldCheck size={24} />
             </div>
             <div>
-              <p className="font-bold text-gray-900">{isVip ? t('settings.vipMember') : t('settings.freePlan')}</p>
-              <p className="text-sm text-gray-500">{isVip ? t('settings.accessFull') : t('settings.accessLimited')}</p>
+              <p className="font-bold text-gray-900">{effectiveVip ? t('settings.vipMember') : t('settings.freePlan')}</p>
+              <p className="text-sm text-gray-500">{effectiveVip ? t('settings.accessFull') : t('settings.accessLimited')}</p>
             </div>
           </div>
         </div>
