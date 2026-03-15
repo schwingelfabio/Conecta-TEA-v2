@@ -47,6 +47,7 @@ export default function Settings({
   useEffect(() => {
     console.log('[VIP] Settings props:', { isAdmin, isVip, isDeveloper });
     console.log('[VIP] Settings effectiveVip:', effectiveVip);
+    console.log('[VIP] crown visible:', effectiveVip);
     
     if (userProfile) {
       setName(userProfile.displayName || user?.displayName || '');
@@ -80,6 +81,25 @@ export default function Settings({
           <h2 className="text-2xl font-bold text-gray-900">{t('settings.title')}</h2>
           <LanguageSelector />
         </div>
+
+        {!isGuest && (
+          <div className="flex items-center gap-4 mb-8 p-4 bg-slate-50 rounded-2xl border border-slate-100">
+            <div className="w-16 h-16 rounded-full overflow-hidden bg-sky-100 border-2 border-sky-500 flex items-center justify-center shrink-0">
+              {user?.photoURL ? (
+                <img src={user.photoURL} alt="Perfil" className="w-full h-full object-cover" />
+              ) : (
+                <span className="text-2xl font-bold text-sky-600">{name?.charAt(0) || 'U'}</span>
+              )}
+            </div>
+            <div>
+              <h3 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+                {name || 'Usuário'}
+                {effectiveVip && <Crown size={20} className="text-amber-500" />}
+              </h3>
+              <p className="text-sm text-gray-500">{user?.email || user?.phoneNumber}</p>
+            </div>
+          </div>
+        )}
         
         <div className="space-y-4">
           <div>

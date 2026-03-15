@@ -57,8 +57,13 @@ export default function AreaVip({
   };
 
   useEffect(() => {
-    console.log(`[AreaVip] Auth status: ready=${authReady}, effectiveVip=${effectiveVip}, isAdmin=${isAdmin}`);
-  }, [authReady, effectiveVip, isAdmin]);
+    console.log('[VIP] AreaVip render');
+    console.log('[VIP] authReady:', authReady);
+    console.log('[VIP] authenticated:', !!user);
+    console.log('[VIP] isVip:', isVip);
+    console.log('[VIP] isAdmin:', isAdmin);
+    console.log('[VIP] download allowed:', effectiveVip);
+  }, [authReady, user, isVip, isAdmin, effectiveVip]);
 
   if (loading) {
     return (
@@ -69,7 +74,7 @@ export default function AreaVip({
     );
   }
 
-  if (!effectiveVip) {
+  if (!user && isGuest) {
     return (
       <div className="min-h-screen bg-lavender-50 py-8 px-4 space-y-8">
         <motion.div
@@ -80,17 +85,11 @@ export default function AreaVip({
           <div className="w-20 h-20 bg-lavender-100 rounded-3xl flex items-center justify-center text-lavender-600 mx-auto mb-6">
             <Lock size={40} />
           </div>
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">Área Exclusiva</h2>
+          <h2 className="text-3xl font-bold text-gray-900 mb-4">Acesso Restrito</h2>
           <p className="text-gray-600 text-xl leading-relaxed mb-8">
-            Olá! Esta área é exclusiva para nossos apoiadores VIP. Sua contribuição ajuda a manter o projeto Conecta TEA ativo para milhares de famílias em todo o Brasil.
+            Faça login para acessar esta área.
           </p>
-          <div className="inline-flex items-center gap-2 text-lavender-600 font-bold bg-lavender-50 px-6 py-3 rounded-full">
-            <Heart size={20} fill="currentColor" />
-            Junte-se à nossa causa
-          </div>
         </motion.div>
-
-        <PlanosVip isVip={effectiveVip} />
       </div>
     );
   }
@@ -171,10 +170,12 @@ export default function AreaVip({
               </div>
               <div>
                 <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">
-                  Bem-vindo à Comunidade VIP!
+                  {effectiveVip ? 'Bem-vindo à Comunidade VIP!' : 'Bem-vindo à Biblioteca!'}
                 </h2>
                 <p className="text-gray-600 text-xl leading-relaxed">
-                  Muito obrigado por fazer parte da nossa comunidade VIP! Sua ajuda é fundamental para transformarmos a jornada das famílias TEA.
+                  {effectiveVip 
+                    ? 'Muito obrigado por fazer parte da nossa comunidade VIP! Sua ajuda é fundamental para transformarmos a jornada das famílias TEA.'
+                    : 'Explore nossos materiais e e-books. Torne-se VIP para liberar os downloads e apoiar o projeto Conecta TEA.'}
                 </p>
               </div>
             </div>
@@ -277,19 +278,40 @@ export default function AreaVip({
                   <p className="text-gray-500 text-sm line-clamp-2">{ebook.description}</p>
                 </div>
 
-                <a
-                  href={ebook.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={`flex items-center justify-center gap-2 py-4 rounded-2xl text-white font-bold transition-all shadow-md active:scale-95 ${ebook.btnColor}`}
-                >
-                  <Download size={20} />
-                  Baixar Guia
-                </a>
+                {effectiveVip ? (
+                  <a
+                    href={ebook.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`flex items-center justify-center gap-2 py-4 rounded-2xl text-white font-bold transition-all shadow-md active:scale-95 ${ebook.btnColor}`}
+                  >
+                    <Download size={20} />
+                    Baixar Guia
+                  </a>
+                ) : (
+                  <button
+                    onClick={() => {
+                      console.log('[VIP] download blocked for non-vip');
+                      alert('Assine o VIP para liberar o download dos e-books.');
+                    }}
+                    className="flex items-center justify-center gap-2 py-4 rounded-2xl text-gray-400 bg-gray-100 font-bold transition-all cursor-not-allowed"
+                  >
+                    <Lock size={20} />
+                    Disponível para usuários VIP
+                  </button>
+                )}
               </div>
             ))}
           </div>
         </div>
+
+        {!effectiveVip && (
+          <div className="mt-12 bg-lavender-100/50 border border-lavender-200 rounded-3xl p-8 text-center">
+            <h3 className="text-xl font-bold text-lavender-800 mb-2">Você está vendo a biblioteca.</h3>
+            <p className="text-lavender-600 mb-6">Torne-se VIP para liberar os downloads e acessar todos os recursos exclusivos.</p>
+            <PlanosVip isVip={effectiveVip} />
+          </div>
+        )}
 
         <div className="mt-20 p-12 bg-white rounded-[3rem] border-2 border-dashed border-lavender-200 text-center">
           <h3 className="text-2xl font-bold text-gray-900 mb-4">Tem uma sugestão de conteúdo?</h3>

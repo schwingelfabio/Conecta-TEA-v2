@@ -34,7 +34,8 @@ import {
   Pin,
   Loader2,
   Coffee,
-  Users
+  Users,
+  Crown
 } from 'lucide-react';
 
 const LogoLoader = () => (
@@ -535,7 +536,10 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
                       />
                       <div>
                         <div className="flex items-center space-x-2">
-                          <h4 className="font-bold text-slate-900">{post.authorName}</h4>
+                          <h4 className="font-bold text-slate-900 flex items-center gap-1">
+                            {post.authorName}
+                            {post.isVip && <Crown size={14} className="text-amber-500" />}
+                          </h4>
                           {post.isVip && (
                             <span className="bg-amber-100 text-amber-700 text-[10px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider">VIP</span>
                           )}
