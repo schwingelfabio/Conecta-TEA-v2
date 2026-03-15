@@ -327,7 +327,18 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady }) =
       if (!res.ok) {
         // Parse returned JSON and show exact error
         const errorData = await res.json().catch(() => ({}));
-        throw new Error(errorData.error || `Erro HTTP: ${res.status}`);
+        const errorMessage = errorData.error || `Erro HTTP: ${res.status}`;
+        
+        if (
+          res.status === 429 || 
+          errorMessage.includes('429') || 
+          errorMessage.includes('RESOURCE_EXHAUSTED') || 
+          errorMessage.toLowerCase().includes('quota')
+        ) {
+          throw new Error('As notícias estão temporariamente indisponíveis por limite da API. Tente novamente mais tarde.');
+        }
+        
+        throw new Error(errorMessage);
       }
       
       console.log('[News] handleGenerateNews API success');
