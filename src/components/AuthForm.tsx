@@ -71,10 +71,26 @@ export default function AuthForm({ onSuccess }: AuthFormProps) {
           size: 'invisible',
           callback: () => {}
         });
+        // @ts-ignore
+        window.recaptchaVerifier.render();
       }
     } catch (err) {
       console.error('Erro ao inicializar reCAPTCHA:', err);
     }
+
+    return () => {
+      try {
+        // @ts-ignore
+        if (window.recaptchaVerifier) {
+          // @ts-ignore
+          window.recaptchaVerifier.clear();
+          // @ts-ignore
+          window.recaptchaVerifier = null;
+        }
+      } catch (e) {
+        console.error('Erro ao limpar reCAPTCHA:', e);
+      }
+    };
   }, []);
 
   const handleGoogleLogin = async () => {
@@ -261,7 +277,6 @@ export default function AuthForm({ onSuccess }: AuthFormProps) {
               </button>
             </form>
           )}
-          <div id="recaptcha-container"></div>
         </motion.div>
       )}
 
@@ -312,6 +327,8 @@ export default function AuthForm({ onSuccess }: AuthFormProps) {
           </form>
         </motion.div>
       )}
+      
+      <div id="recaptcha-container"></div>
     </div>
   );
 }
