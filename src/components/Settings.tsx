@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { auth, db } from '../lib/firebase';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
-import { signOut } from 'firebase/auth';
+import { signOut, sendPasswordResetEmail } from 'firebase/auth';
 import {
   User,
   Mail,
@@ -39,31 +39,53 @@ export default function Settings({
   const user = auth.currentUser;
   
   const [name, setName] = useState(userProfile?.displayName || user?.displayName || '');
+  const [firstName, setFirstName] = useState(userProfile?.firstName || '');
+  const [lastName, setLastName] = useState(userProfile?.lastName || '');
+  const [address, setAddress] = useState(userProfile?.address || '');
+  const [phoneNumber, setPhoneNumber] = useState(userProfile?.phoneNumber || '');
+  const [photoURL, setPhotoURL] = useState(userProfile?.photoURL || user?.photoURL || '');
   const [state, setState] = useState(userProfile?.state || '');
   const [city, setCity] = useState(userProfile?.city || '');
 
   const effectiveVip = Boolean(isVip || isAdmin);
 
   useEffect(() => {
-    console.log('[VIP] Settings props:', { isAdmin, isVip, isDeveloper });
-    console.log('[VIP] Settings effectiveVip:', effectiveVip);
-    console.log('[VIP] crown visible:', effectiveVip);
-    
     if (userProfile) {
       setName(userProfile.displayName || user?.displayName || '');
+      setFirstName(userProfile.firstName || '');
+      setLastName(userProfile.lastName || '');
+      setAddress(userProfile.address || '');
+      setPhoneNumber(userProfile.phoneNumber || '');
+      setPhotoURL(userProfile.photoURL || user?.photoURL || '');
       setState(userProfile.state || '');
       setCity(userProfile.city || '');
     }
-  }, [userProfile, user, isAdmin, isVip, isDeveloper, effectiveVip]);
+  }, [userProfile, user]);
 
   const handleSave = async () => {
     if (!user) return;
     await updateDoc(doc(db, 'users', user.uid), {
-      displayName: name,
+      displayName: `${firstName} ${lastName}`.trim() || name,
+      firstName,
+      lastName,
+      address,
+      phoneNumber,
+      photoURL,
       state,
       city
     });
     alert('Perfil salvo com sucesso!');
+  };
+
+  const handlePasswordReset = async () => {
+    if (!user?.email) return;
+    try {
+      await sendPasswordResetEmail(auth, user.email);
+      alert('E-mail de recuperação enviado!');
+    } catch (error) {
+      console.error(error);
+      alert('Erro ao enviar e-mail de recuperação.');
+    }
   };
 
   const handleLogout = () => {
@@ -102,12 +124,54 @@ export default function Settings({
         )}
         
         <div className="space-y-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Nome</label>
+              <input 
+                type="text" 
+                value={firstName} 
+                onChange={(e) => setFirstName(e.target.value)}
+                disabled={isGuest}
+                className="w-full p-3 rounded-xl border border-gray-200 disabled:bg-gray-50 disabled:text-gray-500"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Sobrenome</label>
+              <input 
+                type="text" 
+                value={lastName} 
+                onChange={(e) => setLastName(e.target.value)}
+                disabled={isGuest}
+                className="w-full p-3 rounded-xl border border-gray-200 disabled:bg-gray-50 disabled:text-gray-500"
+              />
+            </div>
+          </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">{t('settings.name')}</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Endereço</label>
             <input 
               type="text" 
-              value={name} 
-              onChange={(e) => setName(e.target.value)}
+              value={address} 
+              onChange={(e) => setAddress(e.target.value)}
+              disabled={isGuest}
+              className="w-full p-3 rounded-xl border border-gray-200 disabled:bg-gray-50 disabled:text-gray-500"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Telefone</label>
+            <input 
+              type="tel" 
+              value={phoneNumber} 
+              onChange={(e) => setPhoneNumber(e.target.value)}
+              disabled={isGuest}
+              className="w-full p-3 rounded-xl border border-gray-200 disabled:bg-gray-50 disabled:text-gray-500"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">URL da Foto</label>
+            <input 
+              type="text" 
+              value={photoURL} 
+              onChange={(e) => setPhotoURL(e.target.value)}
               disabled={isGuest}
               className="w-full p-3 rounded-xl border border-gray-200 disabled:bg-gray-50 disabled:text-gray-500"
             />
@@ -141,6 +205,14 @@ export default function Settings({
           >
             <Save size={20} />
             {t('settings.save')}
+          </button>
+          <button 
+            onClick={handlePasswordReset}
+            disabled={isGuest}
+            className="w-full bg-gray-100 text-gray-700 font-bold py-3 rounded-xl flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <Mail size={20} />
+            Recuperar Senha
           </button>
         </div>
       </div>

@@ -2,6 +2,10 @@ export interface UserProfile {
   uid: string;
   email: string;
   displayName: string;
+  firstName?: string;
+  lastName?: string;
+  address?: string;
+  phoneNumber?: string;
   photoURL?: string;
   isVip: boolean;
   vipSince?: any;
