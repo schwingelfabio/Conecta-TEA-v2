@@ -113,8 +113,6 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
   const [topic, setTopic] = useState<string>('geral');
   const [loading, setLoading] = useState(true);
   const [loadingMessage, setLoadingMessage] = useState(t('feed.loading'));
-  const [generatingNews, setGeneratingNews] = useState(false);
-  const [generationError, setGenerationError] = useState<string | null>(null);
   const [lastVisible, setLastVisible] = useState<QueryDocumentSnapshot<DocumentData> | null>(null);
   const [hasMore, setHasMore] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
@@ -242,12 +240,6 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
     fetchPosts();
   }, [topic, userProfile]);
 
-  useEffect(() => {
-    if (topic === 'noticias' && posts.length === 0 && !loading && !generatingNews && !generationError) {
-      handleGenerateNews();
-    }
-  }, [topic, posts.length, loading, generatingNews, generationError]);
-
   const handlePost = async (e: React.FormEvent) => {
     e.preventDefault();
     console.log('[Feed/Post] Post submit clicked. authReady:', authReady, 'userProfile:', !!userProfile, 'newPost:', !!newPost.trim());
@@ -315,60 +307,6 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
     }
   };
 
-  const handleGenerateNews = async () => {
-    console.log('[News] generation started. authReady:', authReady);
-    if (!authReady) {
-      console.warn('[News] Cannot generate news: auth not ready');
-      return;
-    }
-    setGeneratingNews(true);
-    setGenerationError(null);
-    
-    const controller = new AbortController();
-    const genTimeout = setTimeout(() => {
-      controller.abort();
-      console.warn('[News] handleGenerateNews fetch timeout');
-    }, 20000);
-
-    try {
-      const res = await fetch('/api/trigger-news', { signal: controller.signal });
-      
-      if (!res.ok) {
-        // Parse returned JSON and show exact error
-        const errorData = await res.json().catch(() => ({}));
-        const errorMessage = errorData.error || `Erro HTTP: ${res.status}`;
-        
-        if (
-          res.status === 429 || 
-          errorMessage.includes('429') || 
-          errorMessage.includes('RESOURCE_EXHAUSTED') || 
-          errorMessage.toLowerCase().includes('quota')
-        ) {
-          throw new Error('As notícias estão temporariamente indisponíveis por limite da API. Tente novamente mais tarde.');
-        }
-        
-        throw new Error(errorMessage);
-      }
-      
-      const data = await res.json().catch(() => ({}));
-      if (data.skipped) {
-        console.log('[News] handleGenerateNews skipped:', data.reason);
-        setGenerationError('Já existe uma notícia recente. Atualize novamente mais tarde.');
-        return;
-      }
-      
-      console.log('[News] handleGenerateNews API success');
-      // After success, re-fetch posts
-      await fetchPosts();
-    } catch (err: any) {
-      console.error("[News] handleGenerateNews failed:", err);
-      setGenerationError(err.name === 'AbortError' ? 'A geração demorou muito. Tente novamente.' : err.message);
-    } finally {
-      clearTimeout(genTimeout);
-      setGeneratingNews(false);
-    }
-  };
-
   const handleShareCommunity = async () => {
     const city = userProfile?.city || 'sua cidade';
     const text = `Participe da comunidade TEA de ${city} no Conecta TEA. Uma rede de apoio para famílias, profissionais e cuidadores. Acesse: https://conecta-tea-liard.vercel.app/`;
@@ -396,7 +334,6 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
     { id: 'geral', label: 'Geral', icon: <Tag size={16} /> },
     { id: 'cidade', label: 'Minha Cidade', icon: <MapPin size={16} /> },
     { id: 'estado', label: 'Meu Estado', icon: <MapPin size={16} /> },
-    { id: 'noticias', label: 'Notícias', icon: <Sparkles size={16} /> },
     { id: 'noticias_externas', label: 'Notícias Web', icon: <Globe size={16} /> },
     { id: 'duvidas', label: 'Dúvidas', icon: <MessageCircle size={16} /> },
     { id: 'conquistas', label: 'Conquistas', icon: <Heart size={16} /> },
@@ -405,28 +342,6 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
 
   return (
     <div className="max-w-2xl mx-auto py-8 px-4">
-      {/* Admin Panel */}
-      {isAdmin && (
-        <div className="bg-slate-900 rounded-3xl p-6 mb-8 text-white shadow-lg">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="font-bold flex items-center space-x-2">
-              <Shield size={20} className="text-brand-primary" />
-              <span>Painel do Administrador</span>
-            </h3>
-          </div>
-          <div className="flex space-x-4">
-            <button
-              onClick={handleGenerateNews}
-              disabled={generatingNews}
-              className="bg-brand-primary hover:bg-brand-primary/90 text-white px-4 py-2 rounded-xl text-sm font-medium flex items-center space-x-2 transition-colors disabled:opacity-50"
-            >
-              {generatingNews ? <RefreshCw size={16} className="animate-spin" /> : <Sparkles size={16} />}
-              <span>Gerar Notícia IA Agora</span>
-            </button>
-          </div>
-        </div>
-      )}
-
       <ActiveCommunities />
 
       {/* Post Creation */}
@@ -682,42 +597,92 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
             animate={{ opacity: 1, scale: 1 }}
             className="text-center py-20 bg-white rounded-[3rem] border border-dashed border-slate-200 shadow-inner"
           >
-            {topic === 'noticias' && (generatingNews || generationError) ? (
-              <div className="space-y-6 px-6">
-                {generatingNews ? (
-                  <div className="flex flex-col items-center space-y-4">
-                    <div className="relative">
-                      <div className="w-20 h-20 bg-brand-primary/10 rounded-full flex items-center justify-center">
-                        <Sparkles size={40} className="text-brand-primary animate-pulse" />
-                      </div>
-                      <div className="absolute -top-1 -right-1">
-                        <Loader2 size={24} className="text-brand-secondary animate-spin" />
+            {posts.map((post) => (
+              <motion.div
+                key={post.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                className="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden"
+              >
+                <div className="p-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center space-x-3">
+                      <img 
+                        src={post.authorPhoto} 
+                        alt={post.authorName} 
+                        className="w-10 h-10 rounded-full"
+                      />
+                      <div>
+                        <div className="flex items-center space-x-2">
+                          <h4 className="font-bold text-slate-900 flex items-center gap-1">
+                            {post.authorName}
+                            {post.isVip && <Crown size={14} className="text-amber-500" />}
+                          </h4>
+                          {post.isVip && (
+                            <span className="bg-amber-100 text-amber-700 text-[10px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider">VIP</span>
+                          )}
+                          {post.authorId === 'ai-bot' && (
+                            <span className="bg-brand-primary/10 text-brand-primary text-[10px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider">IA</span>
+                          )}
+                          {post.isPinned && (
+                            <span className="bg-sky-100 text-sky-700 text-[10px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider flex items-center gap-1">
+                              <Pin size={10} />
+                              {t('feed.pin')}
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-xs text-slate-400 flex items-center space-x-1">
+                          <MapPin size={10} />
+                          <span>{post.location}</span>
+                          <span>•</span>
+                          <span>{post.timestamp?.toDate ? post.timestamp.toDate().toLocaleDateString('pt-BR') : 'Agora'}</span>
+                        </p>
                       </div>
                     </div>
-                    <div className="space-y-2">
-                      <h3 className="text-lg font-bold text-slate-900">Gerando Notícias com IA</h3>
-                      <p className="text-slate-500 max-w-xs mx-auto">Estamos buscando as informações mais recentes e relevantes sobre autismo para você.</p>
+                    <div className="flex items-center space-x-2">
+                      {isAdmin && (
+                        <button 
+                          onClick={() => togglePinPost(post.id, !!post.isPinned)}
+                          className={`transition-colors p-2 ${post.isPinned ? 'text-sky-600' : 'text-slate-400 hover:text-sky-600'}`}
+                          title={post.isPinned ? t('feed.unpinPost') : t('feed.pinPost')}
+                        >
+                          <Pin size={18} />
+                        </button>
+                      )}
+                      {(isAdmin || userProfile?.uid === post.authorId) && (
+                        <button 
+                          onClick={() => handleDeletePost(post.id)}
+                          className="text-red-400 hover:text-red-600 transition-colors p-2"
+                          title={t('feed.delete')}
+                        >
+                          <Trash2 size={18} />
+                        </button>
+                      )}
+                      <button className="text-slate-300 hover:text-slate-600 transition-colors">
+                        <MoreHorizontal size={20} />
+                      </button>
                     </div>
                   </div>
-                ) : (
-                  <div className="flex flex-col items-center space-y-4">
-                    <div className="w-20 h-20 bg-red-50 rounded-full flex items-center justify-center">
-                      <RefreshCw size={40} className="text-red-400" />
-                    </div>
-                    <div className="space-y-2">
-                      <h3 className="text-lg font-bold text-slate-900">Ops! Algo deu errado</h3>
-                      <p className="text-red-500 max-w-xs mx-auto">{generationError}</p>
-                    </div>
-                    <button 
-                      onClick={handleGenerateNews} 
-                      className="bg-brand-primary text-white px-8 py-3 rounded-full font-bold hover:bg-brand-primary/90 transition-all shadow-lg shadow-brand-primary/20 active:scale-95"
-                    >
-                      Tentar novamente
-                    </button>
+
+                  <div className="markdown-body text-slate-700 mb-6">
+                    <ReactMarkdown>{post.text}</ReactMarkdown>
                   </div>
-                )}
-              </div>
-            ) : (
+
+                  {post.mediaUrl && post.mediaType === 'image' && (
+                    <div className="mb-6 rounded-2xl overflow-hidden border border-slate-50">
+                      <img 
+                        src={post.mediaUrl} 
+                        alt="Post media" 
+                        className="w-full h-auto"
+                        referrerPolicy="no-referrer"
+                      />
+                    </div>
+                  )}
+                </div>
+              </motion.div>
+            ))}
+            {posts.length === 0 && (
               <div className="flex flex-col items-center space-y-6 px-6">
                 <div className="relative">
                   <div className="w-24 h-24 bg-slate-50 rounded-full flex items-center justify-center text-slate-200">
@@ -733,23 +698,19 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
                 </div>
                 <div className="space-y-2">
                   <h3 className="text-2xl font-black text-slate-900">
-                    {topic === 'noticias' ? t('feed.noNews') : 'Silêncio por aqui...'}
+                    Silêncio por aqui...
                   </h3>
                   <p className="text-slate-500 max-w-xs mx-auto">
-                    {topic === 'noticias' 
-                      ? 'Ainda não temos notícias para este tópico. Que tal voltar mais tarde?' 
-                      : 'Parece que ainda não há posts neste tópico. Seja a primeira pessoa a quebrar o gelo!'}
+                    Parece que ainda não há posts neste tópico. Seja a primeira pessoa a quebrar o gelo!
                   </p>
                 </div>
-                {topic !== 'noticias' && (
-                  <button 
-                    onClick={() => document.querySelector('textarea')?.focus()}
-                    className="text-brand-primary font-bold hover:underline flex items-center space-x-2"
-                  >
-                    <span>Começar uma conversa</span>
-                    <Send size={16} />
-                  </button>
-                )}
+                <button 
+                  onClick={() => document.querySelector('textarea')?.focus()}
+                  className="text-brand-primary font-bold hover:underline flex items-center space-x-2"
+                >
+                  <span>Começar uma conversa</span>
+                  <Send size={16} />
+                </button>
               </div>
             )}
           </motion.div>
