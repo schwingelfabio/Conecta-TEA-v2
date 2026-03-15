@@ -26,6 +26,10 @@ export interface SosCard {
   contact2Phone: string;
   homeAddress: string;
   workAddress: string;
+  city?: string;
+  state?: string;
+  responsibleName?: string;
+  emergencyNote?: string;
   createdAt: any;
 }
 

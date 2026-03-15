@@ -142,6 +142,23 @@ export default function Settings({
         </div>
       </div>
 
+      <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100">
+        <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+          <IdCard size={20} className="text-brand-primary" />
+          Carteirinha Digital
+        </h3>
+        <p className="text-sm text-gray-500 mb-4">
+          Acesse sua identificação digital profissional para suporte e emergências.
+        </p>
+        <button 
+          onClick={() => onNavigate('sos')}
+          className="w-full bg-slate-50 hover:bg-slate-100 text-slate-900 font-bold py-4 rounded-2xl flex items-center justify-center gap-2 border border-slate-200 transition-all"
+        >
+          <IdCard size={20} />
+          Ver Minha Carteirinha
+        </button>
+      </div>
+
       <div className="pt-4">
         <button
           onClick={handleLogout}

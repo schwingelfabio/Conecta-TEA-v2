@@ -5,7 +5,7 @@
     "map": "Mapa do Brasil do Autismo",
     "profile": "Perfil",
     "settings": "Configurações",
-    "sos": "SOS",
+    "sos": "Carteirinha",
     "vip": "Área VIP",
     "termos": "Termos de Uso",
     "privacidade": "Privacidade",
@@ -85,8 +85,8 @@
     "subscriptionSuccess": "Assinatura criada com sucesso"
   },
   "sos": {
-    "title": "SOS",
-    "description": "Precisa de ajuda imediata?"
+    "title": "Carteirinha Digital",
+    "description": "Sua identificação e suporte em qualquer lugar."
   },
   "map": {
     "title": "Mapa do Brasil do Autismo",
