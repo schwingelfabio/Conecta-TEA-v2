@@ -36,7 +36,8 @@ import {
   Coffee,
   Users,
   Crown,
-  Globe
+  Globe,
+  MessageSquare
 } from 'lucide-react';
 
 const LogoLoader = () => (
@@ -94,6 +95,7 @@ const PostSkeleton = () => (
   </div>
 );
 import ReactMarkdown from 'react-markdown';
+import PostComments from './PostComments';
 import ActiveCommunities from './ActiveCommunities';
 import ExternalNews from './ExternalNews';
 import { useTranslation } from 'react-i18next';
@@ -116,6 +118,7 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
   const [lastVisible, setLastVisible] = useState<QueryDocumentSnapshot<DocumentData> | null>(null);
   const [hasMore, setHasMore] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
+  const [expandedComments, setExpandedComments] = useState<string | null>(null);
 
   const togglePinPost = async (postId: string, isPinned: boolean) => {
     try {
@@ -679,6 +682,28 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
                       />
                     </div>
                   )}
+
+                  <div className="flex items-center justify-between pt-4 border-t border-slate-100">
+                    <button 
+                      onClick={() => setExpandedComments(expandedComments === post.id ? null : post.id)}
+                      className="flex items-center space-x-2 text-slate-500 hover:text-brand-primary transition-colors"
+                    >
+                      <MessageSquare size={20} />
+                      <span className="text-sm font-medium">{post.commentsCount || 0} {t('feed.comments')}</span>
+                    </button>
+                  </div>
+
+                  <AnimatePresence>
+                    {expandedComments === post.id && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                      >
+                        <PostComments postId={post.id} userProfile={userProfile} isGuest={isGuest} />
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
               </motion.div>
             ))}

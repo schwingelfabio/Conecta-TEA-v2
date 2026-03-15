@@ -1,6 +1,9 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { PlayCircle, ExternalLink } from 'lucide-react';
+import { PlayCircle } from 'lucide-react';
+import ReactPlayer from 'react-player';
+
+const Player = ReactPlayer as any;
 
 const videos = [
   { id: 1, title: 'Vídeo 1', url: 'https://youtube.com/shorts/NwxAkaOBFho?si=Bui2iwlfHTXWdQLQ' },
@@ -25,19 +28,16 @@ export default function VideoGallery() {
             whileHover={{ y: -5 }}
             className="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 flex flex-col"
           >
-            <div className="w-12 h-12 bg-brand-secondary/10 text-brand-secondary rounded-2xl flex items-center justify-center mb-4">
-              <PlayCircle size={24} />
+            <h3 className="font-bold text-slate-900 mb-4 flex-1">{video.title}</h3>
+            <div className="relative pt-[56.25%] rounded-2xl overflow-hidden bg-slate-100">
+              <Player
+                url={video.url}
+                width="100%"
+                height="100%"
+                controls={true}
+                className="absolute top-0 left-0"
+              />
             </div>
-            <h3 className="font-bold text-slate-900 mb-2 flex-1">{video.title}</h3>
-            <a
-              href={video.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-4 flex items-center justify-center space-x-2 w-full py-3 bg-slate-50 hover:bg-brand-secondary hover:text-white text-slate-700 font-medium rounded-xl transition-colors"
-            >
-              <ExternalLink size={18} />
-              <span>Assistir</span>
-            </a>
           </motion.div>
         ))}
       </div>

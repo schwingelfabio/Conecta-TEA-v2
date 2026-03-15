@@ -28,7 +28,15 @@ export default function ExternalNews() {
       setLoading(true);
       try {
         const query = encodeURIComponent(topic);
-        const url = `https://api.rss2json.com/v1/api.json?rss_url=https://news.google.com/rss/search?q=${query}&hl=pt-BR&gl=BR&ceid=BR:pt-419`;
+        
+        // Detect language and region from browser
+        const lang = navigator.language || 'pt-BR';
+        const [language, region] = lang.split('-');
+        const hl = lang;
+        const gl = region || 'BR';
+        const ceid = `${gl}:${language}`;
+
+        const url = `https://api.rss2json.com/v1/api.json?rss_url=https://news.google.com/rss/search?q=${query}&hl=${hl}&gl=${gl}&ceid=${ceid}`;
         const response = await fetch(url);
         const data = await response.json();
         
