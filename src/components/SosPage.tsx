@@ -3,7 +3,7 @@ import { db } from '../lib/firebase';
 import { collection, query, where, getDocs, addDoc, updateDoc, doc, serverTimestamp, runTransaction } from 'firebase/firestore';
 import { UserProfile, SosCard } from '../types';
 import { motion } from 'framer-motion';
-import { Activity, Printer, Save, Edit2, Phone, MapPin, AlertTriangle, HeartPulse, ShieldAlert, ShieldCheck, IdCard } from 'lucide-react';
+import { Activity, Printer, Save, Edit2, Phone, MapPin, AlertTriangle, HeartPulse, ShieldAlert, ShieldCheck, IdCard, Crown } from 'lucide-react';
 import QRCode from 'react-qr-code';
 
 interface SosPageProps {
@@ -11,9 +11,12 @@ interface SosPageProps {
   authReady?: boolean;
   onLoginClick?: () => void;
   isGuest?: boolean;
+  isAdmin?: boolean;
+  isVip?: boolean;
 }
 
-const SosPage: React.FC<SosPageProps> = ({ userProfile, authReady, onLoginClick, isGuest }) => {
+const SosPage: React.FC<SosPageProps> = ({ userProfile, authReady, onLoginClick, isGuest, isAdmin, isVip }) => {
+  const effectiveVip = Boolean(isVip || isAdmin);
   const [sosCard, setSosCard] = useState<SosCard | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -405,7 +408,10 @@ const SosPage: React.FC<SosPageProps> = ({ userProfile, authReady, onLoginClick,
                   </div>
                   <div>
                     <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Responsável</h3>
-                    <p className="text-lg font-bold text-slate-800">{sosCard?.responsibleName}</p>
+                    <p className="text-lg font-bold text-slate-800 flex items-center gap-1">
+                      {sosCard?.responsibleName}
+                      {effectiveVip && <Crown size={14} className="text-amber-500" />}
+                    </p>
                   </div>
                 </div>
 

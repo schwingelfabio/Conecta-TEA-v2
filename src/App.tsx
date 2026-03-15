@@ -263,7 +263,7 @@ export default function App() {
         return <Settings userProfile={userProfile} isAdmin={isAdmin} isVip={isVip} isDeveloper={isDeveloper} onNavigate={(tab) => setActiveTab(tab as any)} isGuest={isGuest} />;
       case 'sos':
         console.log('[ACCESS] SOS requested. Decision:', { authReady, user: !!user });
-        return <SosPage userProfile={userProfile} authReady={authReady} onLoginClick={() => setIsGuest(false)} isGuest={isGuest} />;
+        return <SosPage userProfile={userProfile} authReady={authReady} onLoginClick={() => setIsGuest(false)} isGuest={isGuest} isAdmin={isAdmin} isVip={isVip} />;
       case 'termos':
         return <TermosDeUso onBack={() => setActiveTab('settings')} />;
       case 'privacidade':
