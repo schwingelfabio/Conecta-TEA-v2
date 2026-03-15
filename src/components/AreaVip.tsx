@@ -17,17 +17,19 @@ export default function AreaVip({
   authReady?: boolean,
   onNavigate?: (tab: string) => void
 }) {
-  useEffect(() => {
-    console.log('[VIP] props received by AreaVip:', { isAdmin, isVip: isVipProp, authReady });
-  }, [isAdmin, isVipProp, authReady]);
+  const isVip = Boolean(isVipProp || isAdmin);
+  const loading = !authReady;
 
   const [suggestionText, setSuggestionText] = useState('');
   const [isSending, setIsSending] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const user = auth.currentUser;
 
-  const isVip = Boolean(isVipProp || isAdmin);
-  const loading = !authReady;
+  useEffect(() => {
+    console.log('[VIP] props received by AreaVip:', { isAdmin, isVip: isVipProp, authReady });
+    console.log('[VIP] badge render decision:', { isAdmin, isVip: isVipProp });
+    console.log('[VIP] ebook access decision:', { isVip, authReady });
+  }, [isAdmin, isVipProp, authReady, isVip]);
 
   const handleSubmitSuggestion = async () => {
     if (!suggestionText.trim() || !user) return;

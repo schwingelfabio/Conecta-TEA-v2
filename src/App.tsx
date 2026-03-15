@@ -212,16 +212,28 @@ export default function App() {
   const handleLogout = () => signOut(auth);
 
   const renderContent = () => {
+    console.log('[ACCESS] Rendering content for tab:', activeTab, { authReady, isAdmin, isVip });
+    
+    if (!authReady) {
+      return (
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <div className="w-12 h-12 border-4 border-sky-200 border-t-sky-500 rounded-full animate-spin" />
+        </div>
+      );
+    }
+
     switch (activeTab) {
       case 'feed':
         return <Feed userProfile={userProfile} isAdmin={isAdmin} isVip={isVip} authReady={authReady} />;
       case 'vip':
+        console.log('[ACCESS] VIP requested. Decision:', { authReady, isVip });
         return <AreaVip isAdmin={isAdmin} isVip={isVip} authReady={authReady} onNavigate={(tab) => setActiveTab(tab as any)} />;
       case 'map':
         return <NetworkMap />;
       case 'settings':
         return <Settings isAdmin={isAdmin} isVip={isVip} isDeveloper={isDeveloper} onNavigate={(tab) => setActiveTab(tab as any)} />;
       case 'sos':
+        console.log('[ACCESS] SOS requested. Decision:', { authReady, user: !!user });
         return <SosPage userProfile={userProfile} authReady={authReady} onLoginClick={handleLogin} />;
       case 'termos':
         return <TermosDeUso onBack={() => setActiveTab('settings')} />;

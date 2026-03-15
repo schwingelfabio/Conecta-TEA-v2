@@ -35,6 +35,7 @@ const SosPage: React.FC<SosPageProps> = ({ userProfile, authReady, onLoginClick 
   });
 
   useEffect(() => {
+    console.log('[SOS] authReady:', authReady, '[SOS] userProfile:', !!userProfile);
     const fetchSosCard = async () => {
       if (!authReady) {
         console.log('[SosPage] Auth not ready yet...');
@@ -55,6 +56,7 @@ const SosPage: React.FC<SosPageProps> = ({ userProfile, authReady, onLoginClick 
         if (!querySnapshot.empty) {
           const docData = querySnapshot.docs[0];
           const data = { id: docData.id, ...docData.data() } as SosCard;
+          console.log('[SOS] Card found:', data.id);
           setSosCard(data);
           setFormData({
             childName: data.childName || '',
@@ -70,6 +72,7 @@ const SosPage: React.FC<SosPageProps> = ({ userProfile, authReady, onLoginClick 
             workAddress: data.workAddress || ''
           });
         } else {
+          console.log('[SOS] No card found, entering edit mode');
           setIsEditing(true);
         }
       } catch (err) {
@@ -81,7 +84,7 @@ const SosPage: React.FC<SosPageProps> = ({ userProfile, authReady, onLoginClick 
     };
 
     fetchSosCard();
-  }, [userProfile]);
+  }, [userProfile, authReady]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -151,25 +154,8 @@ const SosPage: React.FC<SosPageProps> = ({ userProfile, authReady, onLoginClick 
     );
   }
 
-  if (!userProfile.isVip && userProfile.role !== 'admin') {
-    return (
-      <div className="max-w-2xl mx-auto py-20 px-4 text-center">
-        <div className="w-24 h-24 bg-amber-50 text-amber-500 rounded-full flex items-center justify-center mx-auto mb-6">
-          <AlertTriangle size={48} />
-        </div>
-        <h2 className="text-3xl font-serif font-bold text-slate-900 mb-4">Conteúdo Exclusivo VIP</h2>
-        <p className="text-slate-500 max-w-md mx-auto mb-8">
-          A Carteirinha SOS é um recurso exclusivo para assinantes VIP.
-        </p>
-        <button 
-          onClick={() => window.location.reload()}
-          className="px-8 py-4 bg-slate-900 text-white rounded-full font-bold hover:bg-slate-800 transition-all shadow-lg"
-        >
-          Conhecer Planos VIP
-        </button>
-      </div>
-    );
-  }
+  // Removed VIP restriction check to allow all authenticated users
+  console.log('[SOS] Access granted to authenticated user');
 
   if (error) {
     return (
