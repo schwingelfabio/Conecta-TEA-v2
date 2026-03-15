@@ -104,9 +104,10 @@
     "communityOf": "Comunidade de",
     "growing": "Esta comunidade está crescendo",
     "shareTitle": "Compartilhar Comunidade",
-    "shareText": "Participe da comunidade TEA de {{city}} no Conecta TEA e conecte-se com famílias da nossa região.",
+    "shareText": "Participe da comunidade TEA de {{place}} no Conecta TEA e conecte-se com famílias da nossa região.",
     "copyLink": "Copiar Link",
-    "linkCopied": "Link copiado!"
+    "linkCopied": "Link copiado!",
+    "shareNotSupported": "Seu navegador não suporta compartilhamento nativo."
   },
   "donation": {
     "title": "Apoie o Conecta TEA",

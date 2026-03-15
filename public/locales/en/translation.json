@@ -104,9 +104,10 @@
     "communityOf": "Community of",
     "growing": "This community is growing",
     "shareTitle": "Share Community",
-    "shareText": "Join the autism community of {{city}} on Conecta TEA and connect with families in your region.",
+    "shareText": "Join the autism community of {{place}} on Conecta TEA and connect with families in your region.",
     "copyLink": "Copy Link",
-    "linkCopied": "Link copied!"
+    "linkCopied": "Link copied!",
+    "shareNotSupported": "Your browser does not support native sharing."
   },
   "donation": {
     "title": "Support Conecta TEA",

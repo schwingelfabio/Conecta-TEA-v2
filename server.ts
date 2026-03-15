@@ -13,6 +13,7 @@ dotenv.config();
 // Initialize Firebase Admin
 // If running in a Google Cloud environment, it will automatically use the service account
 const projectId = process.env.FIREBASE_PROJECT_ID || process.env.VITE_FIREBASE_PROJECT_ID;
+console.log(`[Server] Project ID: ${projectId}`);
 
 if (!admin.apps.length) {
   if (projectId) {
@@ -190,8 +191,8 @@ async function startServer() {
   });
 
   // AI News Fetching Logic
-  // Schedule to run every 6 hours
-  cron.schedule("0 */6 * * *", () => fetchAndPostAutismNews(db));
+  // Schedule to run every minute for testing
+  cron.schedule("* * * * *", () => fetchAndPostAutismNews(db));
 
   // Manual trigger for testing
   app.get("/api/trigger-news", async (req, res) => {

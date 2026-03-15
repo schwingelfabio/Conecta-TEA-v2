@@ -104,9 +104,10 @@
     "communityOf": "Comunidad de",
     "growing": "Esta comunidad está creciendo",
     "shareTitle": "Compartir Comunidad",
-    "shareText": "Únete a la comunidad de autismo de {{city}} en Conecta TEA y conecta con familias de tu región.",
+    "shareText": "Únete a la comunidad de autismo de {{place}} en Conecta TEA y conecta con familias de tu región.",
     "copyLink": "Copiar Enlace",
-    "linkCopied": "¡Enlace copiado!"
+    "linkCopied": "¡Enlace copiado!",
+    "shareNotSupported": "Tu navegador no admite el uso compartido nativo."
   },
   "donation": {
     "title": "Apoya a Conecta TEA",

@@ -5,7 +5,7 @@ import { ComposableMap, Geographies, Geography } from 'react-simple-maps';
 import { scaleLinear } from 'd3-scale';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../lib/firebase';
-import { Users, MapPin, Map as MapIcon, MessageCircle, TrendingUp, ChevronRight } from 'lucide-react';
+import { Users, MapPin, Map as MapIcon, MessageCircle, TrendingUp, ChevronRight, Share2 } from 'lucide-react';
 import CityPage from './CityPage';
 
 const geoUrl = "https://raw.githubusercontent.com/codeforamerica/click_that_hood/master/public/data/brazil-states.geojson";
@@ -36,6 +36,18 @@ export default function NetworkMap() {
   const [topCities, setTopCities] = useState<CityData[]>([]);
   const [selectedState, setSelectedState] = useState<string | null>(null);
   const [selectedCity, setSelectedCity] = useState<CityData | null>(null);
+
+  const handleShare = (title: string, text: string) => {
+    if (navigator.share) {
+      navigator.share({
+        title,
+        text,
+        url: window.location.href,
+      }).catch((error) => console.log('Error sharing', error));
+    } else {
+      alert(t('map.shareNotSupported'));
+    }
+  };
 
   useEffect(() => {
     async function fetchData() {
@@ -280,9 +292,17 @@ export default function NetworkMap() {
                         {state}
                       </div>
                     </div>
-                    <span className="text-sm font-medium text-gray-600 bg-gray-100 px-2 py-1 rounded-lg">
-                      {count} {t('map.families')}
-                    </span>
+                    <div className="flex items-center gap-2">
+                      <button 
+                        onClick={(e) => { e.stopPropagation(); handleShare(t('map.shareTitle', { place: state }), t('map.shareText', { place: state })); }}
+                        className="p-2 text-gray-400 hover:text-sky-600 transition-colors"
+                      >
+                        <Share2 size={16} />
+                      </button>
+                      <span className="text-sm font-medium text-gray-600 bg-gray-100 px-2 py-1 rounded-lg">
+                        {count} {t('map.families')}
+                      </span>
+                    </div>
                   </div>
                 ))
               ) : (
@@ -299,6 +319,12 @@ export default function NetworkMap() {
                       <span className="font-medium text-gray-900">{city.name}</span>
                     </div>
                     <div className="flex items-center gap-2">
+                      <button 
+                        onClick={(e) => { e.stopPropagation(); handleShare(t('map.shareTitle', { place: city.name }), t('map.shareText', { place: city.name })); }}
+                        className="p-2 text-gray-400 hover:text-emerald-600 transition-colors"
+                      >
+                        <Share2 size={16} />
+                      </button>
                       <span className="text-sm font-medium text-gray-600 bg-gray-100 px-2 py-1 rounded-lg">
                         {city.users} {t('map.families')}
                       </span>

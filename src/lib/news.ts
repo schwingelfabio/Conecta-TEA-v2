@@ -3,12 +3,15 @@ import admin from "firebase-admin";
 
 export async function fetchAndPostAutismNews(db: admin.firestore.Firestore) {
   try {
+    console.log("[News] Starting fetchAndPostAutismNews");
     // Check for recent news first
+    console.log("[News] Querying recent news...");
     const recentNewsQuery = await db.collection('posts')
       .where('topic', '==', 'noticias')
       .orderBy('timestamp', 'desc')
       .limit(1)
       .get();
+    console.log("[News] Recent news query successful");
 
     if (!recentNewsQuery.empty) {
       const latestNews = recentNewsQuery.docs[0].data();
@@ -29,13 +32,15 @@ export async function fetchAndPostAutismNews(db: admin.firestore.Firestore) {
     const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
     console.log("Fetching AI news about autism...");
 
+    console.log("[News] Calling ai.models.generateContent...");
     const response = await ai.models.generateContent({
-      model: "gemini-3-flash-preview",
+      model: "gemini-3.1-flash-preview",
       contents: "Busque as notícias mais recentes e relevantes sobre autismo (TEA), benefícios, direitos ou avanços científicos no Brasil. Escreva uma postagem curta e engajadora para uma comunidade de apoio ao autismo. Inclua os links das fontes se possível. Formate como um post de rede social.",
       config: {
         tools: [{ googleSearch: {} }],
       },
     });
+    console.log("[News] ai.models.generateContent successful");
 
     const newsText = response.text;
     if (!newsText) {
@@ -75,6 +80,7 @@ export async function fetchAndPostAutismNews(db: admin.firestore.Firestore) {
 
     console.log("[News] payload created:", JSON.stringify(payload));
 
+    console.log("[News] Writing to Firestore...");
     await db.collection('posts').add(payload);
     console.log("[News] Firestore write success");
     return { success: true };
