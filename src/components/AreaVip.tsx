@@ -4,7 +4,6 @@ import { doc, getDoc, collection, addDoc, serverTimestamp } from 'firebase/fires
 import { Lock, Crown, Loader2, Download, Heart, BookOpen, ShieldCheck, ExternalLink, ShieldAlert } from 'lucide-react';
 import { motion } from 'framer-motion';
 import PlanosVip from './PlanosVip';
-import VideoGallery from './VideoGallery';
 
 export default function AreaVip({
   isAdmin,
@@ -253,7 +252,6 @@ export default function AreaVip({
         </div>
 
         <div className="mb-16">
-          <VideoGallery />
         </div>
 
         <div>

@@ -1,18 +1,19 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { PlayCircle } from 'lucide-react';
-import ReactPlayer from 'react-player';
-
-const Player = ReactPlayer as any;
 
 const videos = [
-  { id: 1, title: 'Vídeo 1', url: 'https://www.youtube.com/embed/NwxAkaOBFho' },
-  { id: 2, title: 'Vídeo 2', url: 'https://www.youtube.com/embed/B5rIqICOJro' },
-  { id: 3, title: 'Vídeo 3', url: 'https://www.youtube.com/embed/vowGqn1_Fbs' },
-  { id: 4, title: 'Vídeo 4', url: 'https://www.youtube.com/embed/_Rf-ROpUMeY' },
-  { id: 5, title: 'Vídeo 5', url: 'https://www.youtube.com/embed/BOBEmYWj2b8' },
-  { id: 6, title: 'Vídeo 6', url: 'https://www.youtube.com/embed/a6f8mxS5RZM' },
+  { id: 1, title: 'Vídeo 1', url: 'https://youtube.com/shorts/NwxAkaOBFho' },
+  { id: 2, title: 'Vídeo 2', url: 'https://youtube.com/shorts/B5rIqICOJro' },
+  { id: 3, title: 'Vídeo 3', url: 'https://youtube.com/shorts/vowGqn1_Fbs' },
+  { id: 4, title: 'Vídeo 4', url: 'https://youtube.com/shorts/_Rf-ROpUMeY' },
+  { id: 5, title: 'Vídeo 5', url: 'https://youtube.com/shorts/BOBEmYWj2b8' },
+  { id: 6, title: 'Vídeo 6', url: 'https://youtube.com/shorts/a6f8mxS5RZM' },
 ];
+
+function getEmbedUrl(url: string) {
+  return url.replace('youtube.com/shorts/', 'youtube.com/embed/');
+}
 
 export default function VideoGallery() {
   return (
@@ -30,12 +31,14 @@ export default function VideoGallery() {
           >
             <h3 className="font-bold text-slate-900 mb-4 flex-1">{video.title}</h3>
             <div className="relative pt-[56.25%] rounded-2xl overflow-hidden bg-slate-100">
-              <Player
-                url={video.url}
+              <iframe
+                src={getEmbedUrl(video.url)}
+                title={video.title}
                 width="100%"
                 height="100%"
-                controls={true}
-                className="absolute top-0 left-0"
+                className="absolute top-0 left-0 w-full h-full"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
               />
             </div>
           </motion.div>

@@ -98,6 +98,7 @@ import ReactMarkdown from 'react-markdown';
 import PostComments from './PostComments';
 import ActiveCommunities from './ActiveCommunities';
 import ExternalNews from './ExternalNews';
+import VideoGallery from './VideoGallery';
 import { useTranslation } from 'react-i18next';
 
 interface FeedProps {
@@ -346,6 +347,9 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
   return (
     <div className="max-w-2xl mx-auto py-8 px-4">
       <ActiveCommunities />
+      <div className="mb-8">
+        <VideoGallery />
+      </div>
 
       {/* Post Creation */}
       <div className="bg-white rounded-3xl shadow-sm border border-slate-100 p-6 mb-8 relative">
@@ -448,7 +452,7 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95 }}
-                className="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden"
+                className={`bg-white rounded-3xl shadow-sm border ${post.isVip ? 'border-amber-400 ring-1 ring-amber-200' : 'border-slate-100'} overflow-hidden`}
               >
                 <div className="p-6">
                   <div className="flex items-center justify-between mb-4">
