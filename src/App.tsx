@@ -11,7 +11,8 @@ import {
   FileText,
   Shield,
   Mail,
-  Map as MapIcon
+  Map as MapIcon,
+  PlayCircle
 } from 'lucide-react';
 import Feed from './components/Feed';
 import AreaVip from './components/AreaVip';
@@ -20,6 +21,7 @@ import Settings from './components/Settings';
 import SosPage from './components/SosPage';
 import EmergencyPage from './components/EmergencyPage';
 import LandingPage from './components/LandingPage';
+import VideosPage from './components/VideosPage';
 import { TermosDeUso, Privacidade, Contato } from './components/LegalPages';
 import AiAssistant from './components/AiAssistant';
 import AuthForm from './components/AuthForm';
@@ -33,7 +35,7 @@ import { useTranslation } from 'react-i18next';
 
 export default function App() {
   const { t } = useTranslation();
-  const [activeTab, setActiveTab] = useState<'feed' | 'vip' | 'settings' | 'sos' | 'termos' | 'privacidade' | 'contato' | 'map'>('feed');
+  const [activeTab, setActiveTab] = useState<'feed' | 'vip' | 'settings' | 'sos' | 'termos' | 'privacidade' | 'contato' | 'map' | 'videos'>('feed');
   const [user, setUser] = useState<FirebaseUser | null>(null);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -259,6 +261,8 @@ export default function App() {
         return <AreaVip isAdmin={isAdmin} isVip={isVip} authReady={authReady} onNavigate={(tab) => setActiveTab(tab as any)} isGuest={isGuest} />;
       case 'map':
         return <NetworkMap />;
+      case 'videos':
+        return <VideosPage />;
       case 'settings':
         return <Settings userProfile={userProfile} isAdmin={isAdmin} isVip={isVip} isDeveloper={isDeveloper} onNavigate={(tab) => setActiveTab(tab as any)} isGuest={isGuest} />;
       case 'sos':
@@ -318,6 +322,10 @@ export default function App() {
               <button onClick={() => setActiveTab('map')} className={`p-2 sm:px-4 sm:py-2 rounded-full flex items-center gap-2 transition-all ${activeTab === 'map' ? 'bg-emerald-100 text-emerald-700 font-bold' : 'hover:bg-gray-100 text-gray-600'}`}>
                 <MapIcon size={20} />
                 <span className="hidden sm:inline">{t('nav.map')}</span>
+              </button>
+              <button onClick={() => setActiveTab('videos')} className={`p-2 sm:px-4 sm:py-2 rounded-full flex items-center gap-2 transition-all ${activeTab === 'videos' ? 'bg-purple-100 text-purple-700 font-bold' : 'hover:bg-gray-100 text-gray-600'}`}>
+                <PlayCircle size={20} />
+                <span className="hidden sm:inline">Vídeos</span>
               </button>
               <button onClick={() => setActiveTab('vip')} className={`p-2 sm:px-4 sm:py-2 rounded-full flex items-center gap-2 transition-all ${activeTab === 'vip' ? 'bg-amber-100 text-amber-700 font-bold' : 'hover:bg-gray-100 text-gray-600'}`}>
                 <Crown size={20} />

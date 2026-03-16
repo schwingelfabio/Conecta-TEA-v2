@@ -29,12 +29,10 @@ export default function ExternalNews() {
       try {
         const query = encodeURIComponent(topic);
         
-        // Detect language and region from browser
-        const lang = navigator.language || 'pt-BR';
-        const [language, region] = lang.split('-');
-        const hl = lang;
-        const gl = region || 'BR';
-        const ceid = `${gl}:${language}`;
+        // Force Portuguese language and Brazil region
+        const hl = 'pt-BR';
+        const gl = 'BR';
+        const ceid = 'BR:pt';
 
         const url = `https://api.rss2json.com/v1/api.json?rss_url=https://news.google.com/rss/search?q=${query}&hl=${hl}&gl=${gl}&ceid=${ceid}`;
         const response = await fetch(url);

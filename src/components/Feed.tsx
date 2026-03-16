@@ -98,7 +98,6 @@ import ReactMarkdown from 'react-markdown';
 import PostComments from './PostComments';
 import ActiveCommunities from './ActiveCommunities';
 import ExternalNews from './ExternalNews';
-import VideoGallery from './VideoGallery';
 import { useTranslation } from 'react-i18next';
 
 interface FeedProps {
@@ -347,9 +346,6 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
   return (
     <div className="max-w-2xl mx-auto py-8 px-4">
       <ActiveCommunities />
-      <div className="mb-8">
-        <VideoGallery />
-      </div>
 
       {/* Post Creation */}
       <div className="bg-white rounded-3xl shadow-sm border border-slate-100 p-6 mb-8 relative">
