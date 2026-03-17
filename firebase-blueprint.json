@@ -1,0 +1,83 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User profile information",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "displayName": { "type": "string" },
+        "email": { "type": "string" },
+        "photoURL": { "type": "string" },
+        "role": { "type": "string", "enum": ["admin", "user", "vip"] },
+        "city": { "type": "string" },
+        "state": { "type": "string" },
+        "isVip": { "type": "boolean" }
+      },
+      "required": ["uid", "email"]
+    },
+    "Post": {
+      "title": "Post",
+      "description": "Community post",
+      "type": "object",
+      "properties": {
+        "text": { "type": "string" },
+        "authorId": { "type": "string" },
+        "authorName": { "type": "string" },
+        "authorPhoto": { "type": "string" },
+        "topic": { "type": "string" },
+        "location": { "type": "string" },
+        "timestamp": { "type": "object" },
+        "isPinned": { "type": "boolean" },
+        "isVip": { "type": "boolean" },
+        "likes": { "type": "array", "items": { "type": "string" } },
+        "commentsCount": { "type": "number" }
+      },
+      "required": ["text", "authorId", "topic"]
+    },
+    "Video": {
+      "title": "Video",
+      "description": "Educational video",
+      "type": "object",
+      "properties": {
+        "videoId": { "type": "string" },
+        "url": { "type": "string" },
+        "title": { "type": "string" },
+        "thumbnail": { "type": "string" },
+        "createdAt": { "type": "object" }
+      },
+      "required": ["videoId", "url"]
+    },
+    "SosCard": {
+      "title": "SosCard",
+      "description": "Emergency identification card",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "name": { "type": "string" },
+        "condition": { "type": "string" },
+        "emergencyContact": { "type": "string" },
+        "bloodType": { "type": "string" }
+      },
+      "required": ["userId", "name"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "User profiles"
+    },
+    "/posts/{postId}": {
+      "schema": "Post",
+      "description": "Community posts"
+    },
+    "/videos/{videoId}": {
+      "schema": "Video",
+      "description": "Educational videos"
+    },
+    "/sos_cards/{cardId}": {
+      "schema": "SosCard",
+      "description": "Emergency cards"
+    }
+  }
+}

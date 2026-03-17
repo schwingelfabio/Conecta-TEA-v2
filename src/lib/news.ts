@@ -6,7 +6,8 @@ export async function fetchAndPostAutismNews(db: admin.firestore.Firestore) {
     console.log("[News] Starting fetchAndPostAutismNews");
     // Check for recent news first
     console.log("[News] Querying recent news...");
-    const recentNewsQuery = await db.collection('posts')
+    const postsRef = db.collection('posts');
+    const recentNewsQuery = await postsRef
       .where('topic', '==', 'noticias')
       .orderBy('timestamp', 'desc')
       .limit(1)

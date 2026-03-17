@@ -5,25 +5,57 @@ import axios from "axios";
 import { parseStringPromise } from "xml2js";
 import dotenv from "dotenv";
 import cron from "node-cron";
+import path from "path";
 import { GoogleGenAI } from "@google/genai";
+import { getFirestore } from "firebase-admin/firestore";
 import { fetchAndPostAutismNews } from "./src/lib/news.js";
+import firebaseConfig from "./firebase-applet-config.json";
 
 dotenv.config();
 
 // Initialize Firebase Admin
-// If running in a Google Cloud environment, it will automatically use the service account
-const projectId = process.env.FIREBASE_PROJECT_ID || process.env.VITE_FIREBASE_PROJECT_ID;
-console.log(`[Server] Project ID: ${projectId}`);
+const projectId = firebaseConfig.projectId;
+const databaseId = firebaseConfig.firestoreDatabaseId;
+
+console.log(`[Server] Config Project ID: ${projectId}`);
+console.log(`[Server] Config Database ID: ${databaseId}`);
+console.log(`[Server] Env Project ID: ${process.env.FIREBASE_PROJECT_ID}`);
 
 if (!admin.apps.length) {
-  admin.initializeApp({
-    credential: admin.credential.applicationDefault()
-  });
-  console.log('Firebase Admin initialized with default credentials.');
+  try {
+    // Try to initialize without arguments to pick up environment variables
+    admin.initializeApp();
+    console.log('Firebase Admin initialized successfully (default).');
+  } catch (error) {
+    console.warn('Default Firebase Admin initialization failed, trying with config:', error);
+    try {
+      admin.initializeApp({
+        projectId: projectId
+      });
+      console.log('Firebase Admin initialized successfully with config.');
+    } catch (innerError) {
+      console.error('Firebase Admin initialization failed completely:', innerError);
+    }
+  }
 }
 
-const db = admin.firestore();
-console.log(`Firestore database: ${db.databaseId}`);
+// Get Firestore instance
+// In some environments, getFirestore might need the app explicitly
+const db = getFirestore(admin.app(), databaseId);
+console.log(`[Server] Firestore initialized. Database: ${databaseId}, Project: ${admin.app().options.projectId}`);
+
+// Test connection
+(async () => {
+  try {
+    await db.collection('test_connection').doc('status').set({
+      last_check: admin.firestore.FieldValue.serverTimestamp(),
+      status: 'ok'
+    });
+    console.log('[Server] Firestore test write successful.');
+  } catch (error) {
+    console.error('[Server] Firestore test write failed:', error);
+  }
+})();
 
 async function initializeSystemData() {
   if (!projectId) return;
