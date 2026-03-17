@@ -43,7 +43,10 @@ service cloud.firestore {
     match /posts/{postId} {
       allow read: if true;
       allow create: if isAuthenticated() && (request.resource.data.topic != 'noticias' || isAdmin());
-      allow update, delete: if isAdmin() || (isAuthenticated() && request.auth.uid == resource.data.authorId && (request.resource.data.topic != 'noticias' || isAdmin()));
+      allow update: if isAdmin() || 
+                    (isAuthenticated() && request.auth.uid == resource.data.authorId && (request.resource.data.topic != 'noticias' || isAdmin())) ||
+                    (isAuthenticated() && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['likes']));
+      allow delete: if isAdmin() || (isAuthenticated() && request.auth.uid == resource.data.authorId);
     }
     
     // Users can create and edit their own SOS cards

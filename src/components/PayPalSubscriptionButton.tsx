@@ -57,12 +57,12 @@ export default function PayPalSubscriptionButton({ planId, planType, shape, onSu
             if (onSuccess) onSuccess();
           } catch (err) {
             console.error('Error saving subscription:', err);
-            setError('Error saving subscription details.');
+            setError(t('vip.errors.saveSubscription'));
           }
         }}
         onError={(err) => {
           console.error('PayPal Error:', err);
-          setError('PayPal encountered an error. Please try again.');
+          setError(t('vip.errors.paypalError'));
         }}
       />
     </div>

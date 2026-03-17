@@ -74,17 +74,17 @@ export default function Settings({
       state,
       city
     });
-    alert('Perfil salvo com sucesso!');
+    alert(t('settings.profileSaved'));
   };
 
   const handlePasswordReset = async () => {
     if (!user?.email) return;
     try {
       await sendPasswordResetEmail(auth, user.email);
-      alert('E-mail de recuperação enviado!');
+      alert(t('settings.passwordResetSent'));
     } catch (error) {
       console.error(error);
-      alert('Erro ao enviar e-mail de recuperação.');
+      alert(t('settings.passwordResetError'));
     }
   };
 

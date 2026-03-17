@@ -9,11 +9,14 @@
     "vip": "Área VIP",
     "termos": "Termos de Uso",
     "privacidade": "Privacidade",
-    "contato": "Contato"
+    "contato": "Contato",
+    "videos": "Vídeos",
+    "createAccount": "Criar Conta"
   },
   "auth": {
     "login": "Entrar",
     "logout": "Sair",
+    "guestLogin": "Entrar como visitante",
     "welcome": "Bem-vindo ao Conecta TEA",
     "google": "Entrar com Google",
     "emailPlaceholder": "seu@email.com",
@@ -31,6 +34,7 @@
     "createAccount": "Criar Conta",
     "alreadyHaveAccount": "Já tenho uma conta. Entrar.",
     "noAccount": "Não tem conta? Criar agora.",
+    "readAndAccept": "Li e aceito os",
     "errors": {
       "popupClosed": "O login com Google foi fechado antes de concluir.",
       "popupBlocked": "O navegador bloqueou a janela de login. Tente novamente.",
@@ -44,7 +48,8 @@
       "invalidPhone": "O número de celular informado é inválido.",
       "codeExpired": "O código expirou. Solicite um novo SMS.",
       "invalidCode": "Código inválido. Verifique e tente novamente.",
-      "default": "Não foi possível concluir a autenticação. Tente novamente."
+      "default": "Não foi possível concluir a autenticação. Tente novamente.",
+      "authError": "ERRO DE AUTENTICAÇÃO"
     }
   },
   "feed": {
@@ -72,21 +77,186 @@
     "accessLimited": "Acesso limitado ao feed"
   },
   "communities": {
-    "title": "Comunidades Ativas"
+    "title": "Comunidades Ativas",
+    "loading": "Carregando comunidades ativas...",
+    "empty": "As comunidades começarão a aparecer conforme novos usuários se conectarem.",
+    "families": "famílias"
+  },
+  "externalNews": {
+    "title": "Notícias na Web",
+    "subtitle": "Últimas notícias sobre autismo",
+    "readMore": "Ler matéria",
+    "noNews": "Nenhuma notícia encontrada para este tópico.",
+    "topics": {
+      "geral": "Geral",
+      "educacao": "Educação",
+      "saude": "Saúde",
+      "direitos": "Direitos",
+      "tecnologia": "Tecnologia",
+      "pesquisa": "Pesquisa"
+    }
   },
   "vip": {
     "title": "Área VIP",
+    "subtitle": "Biblioteca de Conteúdo",
+    "welcomeVip": "Bem-vindo à Comunidade VIP!",
+    "welcomeLibrary": "Bem-vindo à Biblioteca!",
+    "thanksVip": "Muito obrigado por fazer parte da nossa comunidade VIP! Sua ajuda é fundamental para transformarmos a jornada das famílias TEA.",
+    "exploreLibrary": "Explore nossos materiais e e-books. Torne-se VIP para liberar os downloads e apoiar o projeto Conecta TEA.",
+    "sosSensorial": "SOS SENSORIAL",
+    "officialPartner": "Parceiro Oficial",
+    "triagemTitle": "Triagem TEA IA: Tecnologia a favor do diagnóstico precoce.",
+    "triagemSubtitle": "Utilize nossa inteligência artificial para auxiliar na triagem e acompanhamento do desenvolvimento.",
+    "goToSite": "Ir para o Site",
+    "downloadApp": "Baixar App",
+    "appSoon": "App em breve",
+    "materialsTitle": "Materiais e E-books",
+    "ebookVip": "E-book VIP",
+    "downloadGuide": "Baixar Guia",
+    "subscribeToDownload": "Assine o VIP para liberar o download dos e-books.",
+    "vipOnly": "Disponível para usuários VIP",
+    "viewingLibrary": "Você está vendo a biblioteca.",
+    "becomeVipToUnlock": "Torne-se VIP para liberar os downloads e acessar todos os recursos exclusivos.",
+    "suggestionTitle": "Tem uma sugestão de conteúdo?",
+    "suggestionSubtitle": "Como membro VIP, sua voz é prioridade. Diga-nos qual tema você gostaria de ver aqui!",
+    "suggestionPlaceholder": "Escreva sua sugestão aqui...",
+    "sendSuggestion": "Enviar Sugestão",
+    "sending": "A enviar...",
+    "suggestionSuccess": "Sugestão enviada com sucesso! Obrigado pelo apoio.",
+    "suggestionError": "Erro ao enviar sugestão. Tente novamente.",
+    "verifyingAccess": "Verificando acesso exclusivo...",
+    "restrictedAccess": "Acesso Restrito",
+    "loginToAccess": "Faça login para acessar esta área.",
+    "loginToSubscribe": "Por favor, faça login para assinar.",
+    "activePlan": "Plano Ativo",
+    "monthlyPlan": "Plano Mensal",
+    "annualPlan": "Plano Anual",
+    "bestValue": "Melhor Valor",
+    "save2Months": "Economize 2 meses",
+    "earlyAccess": "Acesso antecipado",
+    "allMonthlyFeatures": "Tudo do plano mensal",
+    "vipBadge": "Selo VIP no perfil",
+    "exclusiveVideos": "Vídeos exclusivos",
+    "internationalPayment": "Pagamento Internacional (PayPal)",
+    "supportText": "Apoie nossa comunidade e tenha acesso a recursos exclusivos para ajudar no desenvolvimento e bem-estar.",
     "plans": "Nossos Planos",
     "subscribeMonthly": "Assinar Mensal",
     "subscribeAnnual": "Assinar Anual",
     "subscribePayPal": "Assinar com PayPal",
-    "internationalPayment": "Pagamento internacional",
-    "loginToSubscribe": "Faça login para assinar",
-    "subscriptionSuccess": "Assinatura criada com sucesso"
+    "subscriptionSuccess": "Assinatura criada com sucesso",
+    "perMonth": "/mês",
+    "perYear": "/ano",
+    "errors": {
+      "saveSubscription": "Erro ao salvar os detalhes da assinatura.",
+      "paypalError": "O PayPal encontrou um erro. Tente novamente."
+    },
+    "ebooks": {
+      "crises": {
+        "title": "Crises no Autismo",
+        "description": "Aprenda estratégias práticas para acalmar a sobrecarga sensorial e lidar com momentos de crise."
+      },
+      "direitos": {
+        "title": "Direitos TEA no Brasil",
+        "description": "Um guia completo sobre as leis, benefícios e garantias para pessoas com autismo no Brasil."
+      },
+      "seletividade": {
+        "title": "Seletividade Alimentar",
+        "description": "Dicas e técnicas para lidar com as dificuldades alimentares comuns no espectro autista."
+      },
+      "higiene": {
+        "title": "Higiene sem Crise",
+        "description": "Como tornar os momentos de higiene pessoal mais tranquilos e previsíveis para a criança."
+      },
+      "diagnostico": {
+        "title": "O Diagnóstico Chegou, e Agora?",
+        "description": "Os primeiros passos e orientações fundamentais para famílias que acabaram de receber o diagnóstico."
+      },
+      "sinais": {
+        "title": "Os Sinais do Autismo",
+        "description": "Entenda os principais sinais e comportamentos que podem indicar o transtorno do espectro autista."
+      },
+      "guia": {
+        "title": "Guia Inicial",
+        "description": "Um material introdutório essencial para entender as bases do TEA e como começar o suporte."
+      }
+    }
   },
   "sos": {
     "title": "Carteirinha Digital",
-    "description": "Sua identificação e suporte em qualquer lugar."
+    "description": "Sua identificação e suporte em qualquer lugar.",
+    "subtitle": "Identificação e Suporte Conecta TEA",
+    "setupTitle": "Configurar Carteirinha",
+    "edit": "Editar",
+    "print": "Imprimir",
+    "save": "Salvar Carteirinha",
+    "saving": "Salvando...",
+    "cancel": "Cancelar",
+    "loginRequired": "Você precisa fazer login para acessar a Carteirinha Digital.",
+    "loginButton": "Fazer Login",
+    "restrictedTitle": "Acesso Restrito",
+    "connectionError": "Erro de Conexão",
+    "saveError": "Erro ao salvar a carteirinha",
+    "tryAgain": "Tentar Novamente",
+    "officialId": "Identificação Oficial",
+    "immediateSupport": "Suporte Imediato",
+    "scanInstructions": "Escaneie para ver instruções de abordagem em crise",
+    "officialIdLabel": "ID Oficial Conecta TEA",
+    "crisisNotice": "Em caso de crise: Mantenha a calma, evite toques bruscos e barulhos excessivos.",
+    "presentationNotice": "Esta carteirinha pode ser apresentada em escolas, hospitais e órgãos públicos.",
+    "sections": {
+      "child": "Dados da Pessoa com TEA",
+      "responsible": "Dados do Responsável",
+      "additional": "Contatos Adicionais e Endereço"
+    },
+    "fields": {
+      "childName": "Nome Completo",
+      "birthDate": "Data de Nascimento",
+      "city": "Cidade",
+      "state": "Estado (UF)",
+      "bloodType": "Tipo Sanguíneo",
+      "allergies": "Alergias / Medicação",
+      "observations": "Observações de Suporte",
+      "responsibleName": "Nome do Responsável",
+      "emergencyPhone": "WhatsApp de Emergência",
+      "emergencyNote": "Nota de Emergência (Exibida no QR Code)",
+      "contact2Name": "Contato Secundário (Nome)",
+      "contact2Phone": "Contato Secundário (Telefone)",
+      "homeAddress": "Endereço Residencial"
+    },
+    "labels": {
+      "childName": "Nome do Portador",
+      "birthDate": "Nascimento",
+      "bloodType": "Tipo Sanguíneo",
+      "cityState": "Cidade / UF",
+      "responsible": "Responsável",
+      "observations": "Observações de Suporte",
+      "emergencyContact": "Contato de Emergência"
+    },
+    "noObservations": "Nenhuma observação informada.",
+    "processing": "PROCESSANDO...",
+    "notInformed": "N/I",
+    "placeholders": {
+      "bloodType": "Ex: O+",
+      "allergies": "Ex: Alergia a dipirona",
+      "observations": "Ex: Sensibilidade auditiva, prefere comunicação visual",
+      "emergencyNote": "Ex: Em caso de crise, por favor fale com calma e não toque sem permissão.",
+      "phone": "(00) 00000-0000"
+    }
+  },
+  "emergency": {
+    "loading": "Carregando Informações de Suporte...",
+    "errorTitle": "Erro de Identificação",
+    "errorDescription": "Carteirinha não encontrada. Verifique se o QR Code ou link está correto.",
+    "protocol": "Protocolo de Suporte e Identificação",
+    "attention": "Atenção / Abordagem",
+    "teaStatement": "Esta pessoa possui Transtorno do Espectro Autista (TEA).",
+    "crisisAdvice": "Em caso de crise ou desorientação, por favor mantenha a calma, evite toques bruscos e barulhos excessivos.",
+    "specificInstruction": "Instrução Específica",
+    "contactsTitle": "Contatos de Emergência",
+    "locationTitle": "Localização",
+    "loadError": "Erro ao carregar os dados. Tente novamente.",
+    "noObservations": "Nenhuma observação adicional.",
+    "allergiesMedication": "Alergias / Medicação"
   },
   "map": {
     "title": "Mapa do Brasil do Autismo",
@@ -117,7 +287,24 @@
     "footerLink": "Apoie a Missão"
   },
   "common": {
-    "back": "Voltar"
+    "user": "Usuário",
+    "loading": "Carregando...",
+    "error": "Ocorreu um erro",
+    "save": "Salvar",
+    "cancel": "Cancelar",
+    "delete": "Excluir",
+    "edit": "Editar",
+    "back": "Voltar",
+    "next": "Próximo",
+    "finish": "Finalizar"
+  },
+  "videos": {
+    "galleryTitle": "Galeria de Vídeos",
+    "gallerySubtitle": "Conteúdo educativo e informativo sobre o autismo.",
+    "exclusiveVideos": "Vídeos Exclusivos",
+    "noVideos": "Nenhum vídeo encontrado.",
+    "noTitle": "Sem título",
+    "loadMore": "Carregar mais vídeos"
   },
   "landing": {
     "title": "A sua rede de apoio e conexão autista.",
@@ -169,5 +356,14 @@
     "footer": {
       "rights": "© 2026 Conecta TEA. Todos os direitos reservados."
     }
+  },
+  "onboarding": {
+    "welcome": "Bem-vindo! Para começar, onde você mora?",
+    "selectState": "Selecione o Estado",
+    "selectCity": "Selecione a Cidade",
+    "button": "Começar",
+    "saveError": "Erro ao salvar localização",
+    "system": "Sistema",
+    "community": "Comunidade"
   }
 }

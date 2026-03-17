@@ -4,6 +4,7 @@ import { doc, getDoc, collection, addDoc, serverTimestamp } from 'firebase/fires
 import { Lock, Crown, Loader2, Download, Heart, BookOpen, ShieldCheck, ExternalLink, ShieldAlert } from 'lucide-react';
 import { motion } from 'framer-motion';
 import PlanosVip from './PlanosVip';
+import { useTranslation } from 'react-i18next';
 
 export default function AreaVip({
   isAdmin,
@@ -18,6 +19,7 @@ export default function AreaVip({
   onNavigate?: (tab: string) => void,
   isGuest?: boolean
 }) {
+  const { t } = useTranslation();
   const loading = !authReady;
 
   const [suggestionText, setSuggestionText] = useState('');
@@ -49,7 +51,7 @@ export default function AreaVip({
       setTimeout(() => setShowSuccess(false), 5000);
     } catch (error) {
       console.error('Erro ao enviar sugestão:', error);
-      alert('Erro ao enviar sugestão. Tente novamente.');
+      alert(t('vip.suggestionError'));
     } finally {
       setIsSending(false);
     }
@@ -68,7 +70,7 @@ export default function AreaVip({
     return (
       <div className="flex flex-col items-center justify-center py-20">
         <Loader2 className="animate-spin text-sky-500 mb-4" size={48} />
-        <p className="text-gray-500 font-medium">Verificando acesso exclusivo...</p>
+        <p className="text-gray-500 font-medium">{t('vip.verifyingAccess')}</p>
       </div>
     );
   }
@@ -84,9 +86,9 @@ export default function AreaVip({
           <div className="w-20 h-20 bg-lavender-100 rounded-3xl flex items-center justify-center text-lavender-600 mx-auto mb-6">
             <Lock size={40} />
           </div>
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">Acesso Restrito</h2>
+          <h2 className="text-3xl font-bold text-gray-900 mb-4">{t('vip.restrictedAccess')}</h2>
           <p className="text-gray-600 text-xl leading-relaxed mb-8">
-            Faça login para acessar esta área.
+            {t('vip.loginToAccess')}
           </p>
         </motion.div>
       </div>
@@ -96,56 +98,56 @@ export default function AreaVip({
   const ebooks = [
     {
       id: '1',
-      title: 'Crises no Autismo',
-      description: 'Aprenda estratégias práticas para acalmar a sobrecarga sensorial e lidar com momentos de crise.',
+      title: t('vip.ebooks.crises.title'),
+      description: t('vip.ebooks.crises.description'),
       url: 'https://drive.google.com/file/d/1H4WwZKD7jqqbkMccFjc6PiyDTn0nqJPM/view?usp=drivesdk',
       color: 'border-sky-100 bg-sky-50/30',
       btnColor: 'bg-sky-500 hover:bg-sky-600'
     },
     {
       id: '2',
-      title: 'Direitos TEA no Brasil',
-      description: 'Um guia completo sobre as leis, benefícios e garantias para pessoas com autismo no Brasil.',
+      title: t('vip.ebooks.direitos.title'),
+      description: t('vip.ebooks.direitos.description'),
       url: 'https://drive.google.com/file/d/1T9stxGqRGRA8w1sWqNB-9FnamWBwnzc0/view?usp=drivesdk',
       color: 'border-emerald-100 bg-emerald-50/30',
       btnColor: 'bg-emerald-500 hover:bg-emerald-600'
     },
     {
       id: '3',
-      title: 'Seletividade Alimentar',
-      description: 'Dicas e técnicas para lidar com as dificuldades alimentares comuns no espectro autista.',
+      title: t('vip.ebooks.seletividade.title'),
+      description: t('vip.ebooks.seletividade.description'),
       url: 'https://drive.google.com/file/d/1wIwhkQsuaJJqdtDfCjBPgjLirIj8AqKC/view?usp=drivesdk',
       color: 'border-sky-100 bg-sky-50/30',
       btnColor: 'bg-sky-500 hover:bg-sky-600'
     },
     {
       id: '4',
-      title: 'Higiene sem Crise',
-      description: 'Como tornar os momentos de higiene pessoal mais tranquilos e previsíveis para a criança.',
+      title: t('vip.ebooks.higiene.title'),
+      description: t('vip.ebooks.higiene.description'),
       url: 'https://drive.google.com/file/d/1rl_vcqm3uZWMCTz38MRi3KgxaRtYqJTp/view?usp=drivesdk',
       color: 'border-emerald-100 bg-emerald-50/30',
       btnColor: 'bg-emerald-500 hover:bg-emerald-600'
     },
     {
       id: '5',
-      title: 'O Diagnóstico Chegou, e Agora?',
-      description: 'Os primeiros passos e orientações fundamentais para famílias que acabaram de receber o diagnóstico.',
+      title: t('vip.ebooks.diagnostico.title'),
+      description: t('vip.ebooks.diagnostico.description'),
       url: 'https://drive.google.com/file/d/1GsICIFDJZb30xTT3AujMlsxEVre0iHzg/view?usp=drivesdk',
       color: 'border-sky-100 bg-sky-50/30',
       btnColor: 'bg-sky-500 hover:bg-sky-600'
     },
     {
       id: '6',
-      title: 'Os Sinais do Autismo',
-      description: 'Entenda os principais sinais e comportamentos que podem indicar o transtorno do espectro autista.',
+      title: t('vip.ebooks.sinais.title'),
+      description: t('vip.ebooks.sinais.description'),
       url: 'https://drive.google.com/file/d/14g7yE7Yk6Aa__QM309PoFY_fjUL4EL2p/view?usp=drivesdk',
       color: 'border-emerald-100 bg-emerald-50/30',
       btnColor: 'bg-emerald-500 hover:bg-emerald-600'
     },
     {
       id: '7',
-      title: 'Guia Inicial',
-      description: 'Um material introdutório essencial para entender as bases do TEA e como começar o suporte.',
+      title: t('vip.ebooks.guia.title'),
+      description: t('vip.ebooks.guia.description'),
       url: 'https://drive.google.com/file/d/1aFcrP3_-16aRFRypJ-tlrqO1WdXygBNC/view?usp=drivesdk',
       color: 'border-sky-100 bg-sky-50/30',
       btnColor: 'bg-sky-500 hover:bg-sky-600'
@@ -169,12 +171,12 @@ export default function AreaVip({
               </div>
               <div>
                 <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">
-                  {effectiveVip ? 'Bem-vindo à Comunidade VIP!' : 'Bem-vindo à Biblioteca!'}
+                  {effectiveVip ? t('vip.welcomeVip') : t('vip.welcomeLibrary')}
                 </h2>
                 <p className="text-gray-600 text-xl leading-relaxed">
                   {effectiveVip 
-                    ? 'Muito obrigado por fazer parte da nossa comunidade VIP! Sua ajuda é fundamental para transformarmos a jornada das famílias TEA.'
-                    : 'Explore nossos materiais e e-books. Torne-se VIP para liberar os downloads e apoiar o projeto Conecta TEA.'}
+                    ? t('vip.thanksVip')
+                    : t('vip.exploreLibrary')}
                 </p>
               </div>
             </div>
@@ -185,7 +187,7 @@ export default function AreaVip({
                 className="bg-red-500 text-white px-8 py-5 rounded-3xl font-black text-xl shadow-xl shadow-red-200 hover:bg-red-600 hover:scale-105 transition-all active:scale-95 flex items-center gap-3 animate-pulse"
               >
                 <ShieldAlert size={28} />
-                SOS SENSORIAL
+                {t('vip.sosSensorial')}
               </button>
             )}
           </div>
@@ -196,15 +198,15 @@ export default function AreaVip({
             <div className="text-center md:text-left max-w-xl">
               <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-md px-4 py-2 rounded-full mb-4">
                 <ShieldCheck size={18} />
-                <span className="text-sm font-bold uppercase tracking-wider">Parceiro Oficial</span>
+                <span className="text-sm font-bold uppercase tracking-wider">{t('vip.officialPartner')}</span>
               </div>
 
               <h3 className="text-3xl md:text-4xl font-black mb-4 leading-tight">
-                Triagem TEA IA: Tecnologia a favor do diagnóstico precoce.
+                {t('vip.triagemTitle')}
               </h3>
 
               <p className="text-emerald-50 text-lg mb-8">
-                Utilize nossa inteligência artificial para auxiliar na triagem e acompanhamento do desenvolvimento.
+                {t('vip.triagemSubtitle')}
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4">
@@ -215,7 +217,7 @@ export default function AreaVip({
                   className="bg-white text-emerald-700 px-8 py-4 rounded-2xl font-bold text-lg hover:bg-emerald-50 transition-all flex items-center justify-center gap-2 shadow-lg"
                 >
                   <ExternalLink size={20} />
-                  Ir para o Site
+                  {t('vip.goToSite')}
                 </a>
 
                 {appDownloadUrl ? (
@@ -226,7 +228,7 @@ export default function AreaVip({
                     className="bg-emerald-800/30 backdrop-blur-md border border-white/30 text-white px-8 py-4 rounded-2xl font-bold text-lg hover:bg-emerald-800/40 transition-all flex items-center justify-center gap-2"
                   >
                     <Download size={20} />
-                    Baixar App
+                    {t('vip.downloadApp')}
                   </a>
                 ) : (
                   <button
@@ -234,7 +236,7 @@ export default function AreaVip({
                     className="bg-emerald-800/20 border border-white/20 text-white/70 px-8 py-4 rounded-2xl font-bold text-lg cursor-not-allowed flex items-center justify-center gap-2"
                   >
                     <Download size={20} />
-                    App em breve
+                    {t('vip.appSoon')}
                   </button>
                 )}
               </div>
@@ -257,7 +259,7 @@ export default function AreaVip({
         <div>
           <div className="flex items-center gap-3 mb-8 px-4">
             <BookOpen className="text-lavender-600" size={32} />
-            <h3 className="text-2xl font-bold text-gray-900">Materiais e E-books</h3>
+            <h3 className="text-2xl font-bold text-gray-900">{t('vip.materialsTitle')}</h3>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -271,7 +273,7 @@ export default function AreaVip({
                 </div>
 
                 <div className="flex-grow mb-6">
-                  <p className="text-xs font-bold uppercase tracking-wider text-lavender-400 mb-2">E-book VIP</p>
+                  <p className="text-xs font-bold uppercase tracking-wider text-lavender-400 mb-2">{t('vip.ebookVip')}</p>
                   <h4 className="text-xl font-bold text-gray-900 mb-2 leading-tight">{ebook.title}</h4>
                   <p className="text-gray-500 text-sm line-clamp-2">{ebook.description}</p>
                 </div>
@@ -284,18 +286,18 @@ export default function AreaVip({
                     className={`flex items-center justify-center gap-2 py-4 rounded-2xl text-white font-bold transition-all shadow-md active:scale-95 ${ebook.btnColor}`}
                   >
                     <Download size={20} />
-                    Baixar Guia
+                    {t('vip.downloadGuide')}
                   </a>
                 ) : (
                   <button
                     onClick={() => {
                       console.log('[VIP] download blocked for non-vip');
-                      alert('Assine o VIP para liberar o download dos e-books.');
+                      alert(t('vip.subscribeToDownload'));
                     }}
                     className="flex items-center justify-center gap-2 py-4 rounded-2xl text-gray-400 bg-gray-100 font-bold transition-all cursor-not-allowed"
                   >
                     <Lock size={20} />
-                    Disponível para usuários VIP
+                    {t('vip.vipOnly')}
                   </button>
                 )}
               </div>
@@ -305,16 +307,16 @@ export default function AreaVip({
 
         {!effectiveVip && (
           <div className="mt-12 bg-lavender-100/50 border border-lavender-200 rounded-3xl p-8 text-center">
-            <h3 className="text-xl font-bold text-lavender-800 mb-2">Você está vendo a biblioteca.</h3>
-            <p className="text-lavender-600 mb-6">Torne-se VIP para liberar os downloads e acessar todos os recursos exclusivos.</p>
+            <h3 className="text-xl font-bold text-lavender-800 mb-2">{t('vip.viewingLibrary')}</h3>
+            <p className="text-lavender-600 mb-6">{t('vip.becomeVipToUnlock')}</p>
             <PlanosVip isVip={effectiveVip} />
           </div>
         )}
 
         <div className="mt-20 p-12 bg-white rounded-[3rem] border-2 border-dashed border-lavender-200 text-center">
-          <h3 className="text-2xl font-bold text-gray-900 mb-4">Tem uma sugestão de conteúdo?</h3>
+          <h3 className="text-2xl font-bold text-gray-900 mb-4">{t('vip.suggestionTitle')}</h3>
           <p className="text-gray-500 text-lg mb-8 max-w-xl mx-auto">
-            Como membro VIP, sua voz é prioridade. Diga-nos qual tema você gostaria de ver aqui!
+            {t('vip.suggestionSubtitle')}
           </p>
 
           {showSuccess ? (
@@ -323,14 +325,14 @@ export default function AreaVip({
               animate={{ opacity: 1, y: 0 }}
               className="bg-emerald-50 text-emerald-700 p-6 rounded-2xl font-bold border border-emerald-100"
             >
-              Sugestão enviada com sucesso! Obrigado pelo apoio.
+              {t('vip.suggestionSuccess')}
             </motion.div>
           ) : (
             <div className="space-y-4 max-w-xl mx-auto">
               <textarea
                 value={suggestionText}
                 onChange={(e) => setSuggestionText(e.target.value)}
-                placeholder="Escreva sua sugestão aqui..."
+                placeholder={t('vip.suggestionPlaceholder')}
                 className="w-full p-6 bg-lavender-50 rounded-2xl border-none focus:ring-2 focus:ring-lavender-200 resize-none text-lg min-h-[150px]"
               />
 
@@ -339,7 +341,7 @@ export default function AreaVip({
                 disabled={isSending || !suggestionText.trim()}
                 className="w-full bg-lavender-600 text-white px-12 py-5 rounded-2xl font-bold text-xl hover:bg-lavender-700 transition-all shadow-xl shadow-lavender-200 active:scale-95 disabled:bg-gray-300 disabled:shadow-none"
               >
-                {isSending ? 'A enviar...' : 'Enviar Sugestão'}
+                {isSending ? t('vip.sending') : t('vip.sendSuggestion')}
               </button>
             </div>
           )}

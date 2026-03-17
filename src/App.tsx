@@ -325,7 +325,7 @@ export default function App() {
               </button>
               <button onClick={() => setActiveTab('videos')} className={`p-2 sm:px-4 sm:py-2 rounded-full flex items-center gap-2 transition-all ${activeTab === 'videos' ? 'bg-purple-100 text-purple-700 font-bold' : 'hover:bg-gray-100 text-gray-600'}`}>
                 <PlayCircle size={20} />
-                <span className="hidden sm:inline">Vídeos</span>
+                <span className="hidden sm:inline">{t('nav.videos')}</span>
               </button>
               <button onClick={() => setActiveTab('vip')} className={`p-2 sm:px-4 sm:py-2 rounded-full flex items-center gap-2 transition-all ${activeTab === 'vip' ? 'bg-amber-100 text-amber-700 font-bold' : 'hover:bg-gray-100 text-gray-600'}`}>
                 <Crown size={20} />
@@ -336,7 +336,7 @@ export default function App() {
             <div className="flex items-center gap-3">
               {isGuest ? (
                 <button onClick={() => setIsGuest(false)} className="px-4 py-2 bg-sky-500 text-white rounded-full font-bold text-sm hover:bg-sky-600 transition-colors">
-                  Criar Conta
+                  {t('nav.createAccount')}
                 </button>
               ) : (
                 <button onClick={() => setActiveTab('settings')} className={`w-10 h-10 rounded-full border-2 overflow-hidden hidden sm:block transition-all ${activeTab === 'settings' ? 'border-sky-500' : 'border-sky-100'}`}>

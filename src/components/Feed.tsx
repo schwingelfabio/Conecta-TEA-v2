@@ -14,10 +14,15 @@ import {
   startAfter,
   QueryDocumentSnapshot,
   DocumentData,
-  updateDoc
+  updateDoc,
+  arrayUnion,
+  arrayRemove
 } from 'firebase/firestore';
 import { Post, UserProfile } from '../types';
 import { motion, AnimatePresence } from 'framer-motion';
+import ReactMarkdown from 'react-markdown';
+import { useTranslation } from 'react-i18next';
+import PostComments from './PostComments';
 import { 
   Send, 
   MessageCircle, 
@@ -98,7 +103,6 @@ import ReactMarkdown from 'react-markdown';
 import PostComments from './PostComments';
 import ActiveCommunities from './ActiveCommunities';
 import ExternalNews from './ExternalNews';
-import { useTranslation } from 'react-i18next';
 import { useInView } from 'react-intersection-observer';
 
 interface FeedProps {
@@ -344,6 +348,37 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
     }
   };
 
+  const handleLike = async (postId: string, likes: string[] = []) => {
+    if (isGuest) {
+      alert('Crie sua conta para curtir posts.');
+      return;
+    }
+
+    if (!userProfile) return;
+
+    const postRef = doc(db, 'posts', postId);
+    const isLiked = likes.includes(userProfile.uid);
+
+    try {
+      await updateDoc(postRef, {
+        likes: isLiked ? arrayRemove(userProfile.uid) : arrayUnion(userProfile.uid)
+      });
+      
+      // Optimistically update local state
+      setPosts(prev => prev.map(p => {
+        if (p.id === postId) {
+          const newLikes = isLiked 
+            ? likes.filter(id => id !== userProfile.uid)
+            : [...likes, userProfile.uid];
+          return { ...p, likes: newLikes };
+        }
+        return p;
+      }));
+    } catch (err) {
+      console.error("Error toggling like:", err);
+    }
+  };
+
   const topics = [
     { id: 'geral', label: 'Geral', icon: <Tag size={16} /> },
     { id: 'cidade', label: 'Minha Cidade', icon: <MapPin size={16} /> },
@@ -537,13 +572,23 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
                         </div>
                       )}
 
-                      <div className="flex items-center justify-between pt-4 border-t border-slate-100">
-                        <div className="flex items-center space-x-6">
-                          <button className="flex items-center space-x-2 text-slate-400 hover:text-brand-secondary transition-colors group">
-                            <Heart size={20} className="group-hover:fill-brand-secondary" />
-                            <span className="text-sm font-medium">{post.likes?.length || 0}</span>
-                          </button>
-                          <button 
+                        <div className="flex items-center justify-between pt-4 border-t border-slate-100">
+                          <div className="flex items-center space-x-6">
+                            <button 
+                              onClick={() => handleLike(post.id, post.likes)}
+                              className={`flex items-center space-x-2 transition-colors group ${
+                                post.likes?.includes(userProfile?.uid || '') 
+                                  ? 'text-brand-secondary' 
+                                  : 'text-slate-400 hover:text-brand-secondary'
+                              }`}
+                            >
+                              <Heart 
+                                size={20} 
+                                className={`${post.likes?.includes(userProfile?.uid || '') ? 'fill-brand-secondary' : 'group-hover:fill-brand-secondary'}`} 
+                              />
+                              <span className="text-sm font-medium">{post.likes?.length || 0}</span>
+                            </button>
+                            <button 
                             onClick={() => setExpandedComments(expandedComments === post.id ? null : post.id)}
                             className="flex items-center space-x-2 text-slate-400 hover:text-brand-primary transition-colors"
                           >

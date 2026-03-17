@@ -3,6 +3,7 @@ import { db } from '../lib/firebase';
 import { collection, getDocs } from 'firebase/firestore';
 import { MapPin, Users } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 
 interface StateCount {
   state: string;
@@ -10,6 +11,7 @@ interface StateCount {
 }
 
 const ActiveCommunities: React.FC = () => {
+  const { t } = useTranslation();
   const [data, setData] = useState<StateCount[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -44,7 +46,7 @@ const ActiveCommunities: React.FC = () => {
   if (loading) {
     return (
       <div className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 mb-8 animate-pulse">
-        <p className="text-slate-400 font-medium">Carregando comunidades ativas...</p>
+        <p className="text-slate-400 font-medium">{t('communities.loading')}</p>
       </div>
     );
   }
@@ -52,8 +54,8 @@ const ActiveCommunities: React.FC = () => {
   if (data.length === 0) {
     return (
       <div className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 mb-8">
-        <h3 className="text-xl font-bold text-slate-900 mb-4">Comunidades Ativas</h3>
-        <p className="text-slate-500">As comunidades começarão a aparecer conforme novos usuários se conectarem.</p>
+        <h3 className="text-xl font-bold text-slate-900 mb-4">{t('communities.title')}</h3>
+        <p className="text-slate-500">{t('communities.empty')}</p>
       </div>
     );
   }
@@ -62,7 +64,7 @@ const ActiveCommunities: React.FC = () => {
     <div className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 mb-8">
       <h3 className="text-xl font-bold text-slate-900 mb-6 flex items-center space-x-2">
         <Users size={20} className="text-brand-primary" />
-        <span>Comunidades Ativas</span>
+        <span>{t('communities.title')}</span>
       </h3>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {data.map((item) => (
@@ -76,7 +78,7 @@ const ActiveCommunities: React.FC = () => {
               <MapPin size={18} className="text-brand-primary" />
               <span className="font-bold text-slate-900">{item.state}</span>
             </div>
-            <span className="text-sm font-medium text-slate-600">- {item.count} famílias</span>
+            <span className="text-sm font-medium text-slate-600">- {item.count} {t('communities.families')}</span>
           </motion.div>
         ))}
       </div>

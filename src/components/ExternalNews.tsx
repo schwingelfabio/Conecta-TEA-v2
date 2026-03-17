@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ExternalLink, Loader2, Globe } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 interface NewsItem {
   title: string;
@@ -10,17 +11,18 @@ interface NewsItem {
 }
 
 export default function ExternalNews() {
+  const { t, i18n } = useTranslation();
   const [news, setNews] = useState<NewsItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [topic, setTopic] = useState('autismo');
 
   const topics = [
-    { id: 'autismo', label: 'Geral' },
-    { id: 'autismo educação', label: 'Educação' },
-    { id: 'autismo saúde', label: 'Saúde' },
-    { id: 'autismo direitos', label: 'Direitos' },
-    { id: 'autismo tecnologia', label: 'Tecnologia' },
-    { id: 'autismo pesquisa', label: 'Pesquisa' },
+    { id: 'autismo', label: t('externalNews.topics.geral') },
+    { id: 'autismo educação', label: t('externalNews.topics.educacao') },
+    { id: 'autismo saúde', label: t('externalNews.topics.saude') },
+    { id: 'autismo direitos', label: t('externalNews.topics.direitos') },
+    { id: 'autismo tecnologia', label: t('externalNews.topics.tecnologia') },
+    { id: 'autismo pesquisa', label: t('externalNews.topics.pesquisa') },
   ];
 
   useEffect(() => {
@@ -29,10 +31,20 @@ export default function ExternalNews() {
       try {
         const query = encodeURIComponent(topic);
         
-        // Force Portuguese language and Brazil region
-        const hl = 'pt-BR';
-        const gl = 'BR';
-        const ceid = 'BR:pt';
+        // Force language and region based on current i18n language
+        let hl = 'pt-BR';
+        let gl = 'BR';
+        let ceid = 'BR:pt';
+
+        if (i18n.language.startsWith('en')) {
+          hl = 'en-US';
+          gl = 'US';
+          ceid = 'US:en';
+        } else if (i18n.language.startsWith('es')) {
+          hl = 'es-ES';
+          gl = 'ES';
+          ceid = 'ES:es';
+        }
 
         const url = `https://api.rss2json.com/v1/api.json?rss_url=https://news.google.com/rss/search?q=${query}&hl=${hl}&gl=${gl}&ceid=${ceid}`;
         const response = await fetch(url);
@@ -59,8 +71,8 @@ export default function ExternalNews() {
             <Globe size={24} />
           </div>
           <div>
-            <h2 className="text-xl font-bold text-slate-900">Notícias na Web</h2>
-            <p className="text-sm text-slate-500">Últimas notícias sobre autismo</p>
+            <h2 className="text-xl font-bold text-slate-900">{t('externalNews.title')}</h2>
+            <p className="text-sm text-slate-500">{t('externalNews.subtitle')}</p>
           </div>
         </div>
 
@@ -100,16 +112,16 @@ export default function ExternalNews() {
               </h3>
               <p className="text-sm text-slate-500 mb-4 line-clamp-2" dangerouslySetInnerHTML={{ __html: item.description.replace(/<[^>]*>?/gm, '') }} />
               <div className="flex items-center justify-between text-xs text-slate-400">
-                <span>{new Date(item.pubDate).toLocaleDateString('pt-BR')}</span>
+                <span>{new Date(item.pubDate).toLocaleDateString(i18n.language === 'pt' ? 'pt-BR' : i18n.language === 'es' ? 'es-ES' : 'en-US')}</span>
                 <span className="flex items-center gap-1 text-sky-500 font-medium opacity-0 group-hover:opacity-100 transition-opacity">
-                  Ler matéria <ExternalLink size={14} />
+                  {t('externalNews.readMore')} <ExternalLink size={14} />
                 </span>
               </div>
             </a>
           ))}
           {news.length === 0 && (
             <div className="text-center py-12 text-slate-500">
-              Nenhuma notícia encontrada para este tópico.
+              {t('externalNews.noNews')}
             </div>
           )}
         </div>

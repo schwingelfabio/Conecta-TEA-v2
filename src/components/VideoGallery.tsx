@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { PlayCircle, Loader2, X, Play } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { db } from '../lib/firebase';
 import { 
   collection, 
@@ -23,6 +24,7 @@ interface Video {
 }
 
 export default function VideoGallery() {
+  const { t } = useTranslation();
   const [videos, setVideos] = useState<Video[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
@@ -90,12 +92,12 @@ export default function VideoGallery() {
     <section className="px-4">
       <div className="flex items-center space-x-3 mb-8">
         <PlayCircle className="text-brand-secondary" size={32} />
-        <h2 className="text-2xl font-bold text-slate-900">Vídeos Exclusivos</h2>
+        <h2 className="text-2xl font-bold text-slate-900">{t('videos.exclusiveVideos')}</h2>
       </div>
 
       {videos.length === 0 ? (
         <div className="text-center py-12 bg-white rounded-3xl border border-dashed border-slate-200">
-          <p className="text-slate-500">Nenhum vídeo encontrado.</p>
+          <p className="text-slate-500">{t('videos.noVideos')}</p>
         </div>
       ) : (
         <>
@@ -121,7 +123,7 @@ export default function VideoGallery() {
                   </div>
                 </div>
                 <div className="p-4">
-                  <h3 className="font-bold text-slate-900 line-clamp-2">{video.title || 'Sem título'}</h3>
+                  <h3 className="font-bold text-slate-900 line-clamp-2">{video.title || t('videos.noTitle')}</h3>
                 </div>
               </motion.div>
             ))}
@@ -137,7 +139,7 @@ export default function VideoGallery() {
                 {loadingMore ? (
                   <Loader2 className="animate-spin" size={20} />
                 ) : (
-                  'Carregar mais vídeos'
+                  t('videos.loadMore')
                 )}
               </button>
             </div>

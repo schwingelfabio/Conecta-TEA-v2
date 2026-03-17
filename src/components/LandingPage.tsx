@@ -188,7 +188,7 @@ export default function LandingPage({ onLogin, onShowTerms, onGuestLogin }: Land
                       }}
                       className={`px-6 py-3 bg-slate-100 text-slate-700 rounded-xl font-bold text-sm shadow-sm hover:bg-slate-200 transition-all active:scale-95 flex items-center gap-2 ${!acceptedTerms ? 'opacity-50 cursor-not-allowed' : ''}`}
                     >
-                      Entrar como visitante
+                      {t('auth.guestLogin')}
                     </button>
                   </div>
 

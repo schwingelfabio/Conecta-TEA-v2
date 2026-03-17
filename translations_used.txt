@@ -1,0 +1,146 @@
+src/components/DonationSupportCard.tsx:            {t('donation.title')}
+src/components/DonationSupportCard.tsx:            {t('donation.description')}
+src/components/DonationSupportCard.tsx:            {t('donation.button')}
+src/components/DonationSupportCard.tsx:            {t('donation.scanToDonate')}
+src/components/Settings.tsx:    alert('Perfil salvo com sucesso!');
+src/components/Settings.tsx:      alert('E-mail de recuperação enviado!');
+src/components/Settings.tsx:      alert('Erro ao enviar e-mail de recuperação.');
+src/components/Settings.tsx:          <h2 className="text-2xl font-bold text-gray-900">{t('settings.title')}</h2>
+src/components/Settings.tsx:              <label className="block text-sm font-medium text-gray-700 mb-1">{t('settings.state')}</label>
+src/components/Settings.tsx:              <label className="block text-sm font-medium text-gray-700 mb-1">{t('settings.city')}</label>
+src/components/Settings.tsx:            {t('settings.save')}
+src/components/Settings.tsx:          {t('settings.vipStatus')}
+src/components/Settings.tsx:              <p className="font-bold text-gray-900">{effectiveVip ? t('settings.vipMember') : t('settings.freePlan')}</p>
+src/components/Settings.tsx:              <p className="text-sm text-gray-500">{effectiveVip ? t('settings.accessFull') : t('settings.accessLimited')}</p>
+src/components/Settings.tsx:          {t('auth.logout')}
+src/components/PlanosVip.tsx:      alert(t('vip.loginToSubscribe'));
+src/components/PlanosVip.tsx:            {t('vip.title')}
+src/components/PlanosVip.tsx:              onClick={() => handleCheckout('https://pag.ae/81AiqTpHL')}
+src/components/PlanosVip.tsx:              {isVip ? 'Plano Ativo' : t('vip.subscribeMonthly')}
+src/components/PlanosVip.tsx:                <p className="text-xs text-center text-gray-500 mb-2 font-medium uppercase tracking-wider">{t('vip.internationalPayment')}</p>
+src/components/PlanosVip.tsx:              onClick={() => handleCheckout('https://pag.ae/81AirzxhL')}
+src/components/PlanosVip.tsx:              {isVip ? 'Plano Ativo' : t('vip.subscribeAnnual')}
+src/components/PlanosVip.tsx:                <p className="text-xs text-center text-gray-500 mb-2 font-medium uppercase tracking-wider">{t('vip.internationalPayment')}</p>
+src/components/LandingPage.tsx:          {t('landing.supportModalTitle')}
+src/components/LandingPage.tsx:              {t('landing.supportModalPix')}
+src/components/LandingPage.tsx:            {t('landing.supportModalPayPal')}
+src/components/LandingPage.tsx:          {t('donation.description')}
+src/components/LandingPage.tsx:      alert(t('landing.termsAlert'));
+src/components/LandingPage.tsx:              {t('landing.heroTitle')}
+src/components/LandingPage.tsx:              {t('landing.heroSubtitle')}
+src/components/LandingPage.tsx:                  {t('common.back')}
+src/components/LandingPage.tsx:                    {t('landing.heroCTA')}
+src/components/LandingPage.tsx:                    {t('landing.supportButton')}
+src/components/LandingPage.tsx:                      {t('landing.login')}
+src/components/LandingPage.tsx:                          alert(t('landing.termsAlert'));
+src/components/LandingPage.tsx:                      {t('landing.readAndAccept')}{' '}
+src/components/LandingPage.tsx:                        {t('landing.termsLink')}
+src/components/LandingPage.tsx:                    {t('landing.trustElement')}
+src/components/LandingPage.tsx:              {t('landing.impact.title')}
+src/components/LandingPage.tsx:              {t('landing.impact.subtitle')}
+src/components/LandingPage.tsx:              {t('landing.heroCTA')}
+src/components/LandingPage.tsx:              <h3 className="text-2xl font-bold mb-4">{t('landing.features.communities.title')}</h3>
+src/components/LandingPage.tsx:                {t('landing.features.communities.desc')}
+src/components/LandingPage.tsx:              <h3 className="text-2xl font-bold mb-4">{t('landing.features.vip.title')}</h3>
+src/components/LandingPage.tsx:                {t('landing.features.vip.desc')}
+src/components/LandingPage.tsx:              <h3 className="text-2xl font-bold mb-4">{t('landing.features.triagem.title')}</h3>
+src/components/LandingPage.tsx:                {t('landing.features.triagem.desc')}
+src/components/LandingPage.tsx:            {t('landing.network.badge')}
+src/components/LandingPage.tsx:          <h2 className="text-3xl md:text-5xl font-black mb-12">{t('landing.network.title')}</h2>
+src/components/LandingPage.tsx:            <h2 className="text-4xl md:text-5xl font-black mb-8">{t('landing.cta.title')}</h2>
+src/components/LandingPage.tsx:              {t('landing.cta.subtitle')}
+src/components/LandingPage.tsx:                    alert(t('landing.termsAlertTop'));
+src/components/LandingPage.tsx:                {t('landing.cta.button')}
+src/components/LandingPage.tsx:                {t('landing.cta.triagemButton')}
+src/components/LandingPage.tsx:                {t('landing.cta.termsHint')}
+src/components/LandingPage.tsx:          <p>{t('landing.footer.rights')}</p>
+src/components/LandingPage.tsx:              {t('landing.termsLink')}
+src/components/LandingPage.tsx:                  {t('donation.footerLink')}
+src/components/AiAssistant.tsx:    setInput('');
+src/components/AuthForm.tsx:      return t('auth.errors.popupClosed');
+src/components/AuthForm.tsx:      return t('auth.errors.popupBlocked');
+src/components/AuthForm.tsx:      return t('auth.errors.invalidEmail');
+src/components/AuthForm.tsx:      return t('auth.errors.userNotFound');
+src/components/AuthForm.tsx:      return t('auth.errors.wrongPassword');
+src/components/AuthForm.tsx:      return t('auth.errors.emailAlreadyInUse');
+src/components/AuthForm.tsx:      return t('auth.errors.weakPassword');
+src/components/AuthForm.tsx:      return t('auth.errors.tooManyRequests');
+src/components/AuthForm.tsx:      return t('auth.errors.missingPhone');
+src/components/AuthForm.tsx:      return t('auth.errors.invalidPhone');
+src/components/AuthForm.tsx:      return t('auth.errors.codeExpired');
+src/components/AuthForm.tsx:      return t('auth.errors.invalidCode');
+src/components/AuthForm.tsx:      return t('auth.errors.default');
+src/components/AuthForm.tsx:        {t('auth.welcome')}
+src/components/AuthForm.tsx:        {t('auth.google')}
+src/components/AuthForm.tsx:        <span className="flex-shrink-0 mx-4 text-gray-400 text-sm font-medium">{t('auth.orContinue')}</span>
+src/components/AuthForm.tsx:            {t('auth.phone')}
+src/components/AuthForm.tsx:            {t('auth.email')}
+src/components/AuthForm.tsx:                  {t('auth.phoneLabel')}
+src/components/AuthForm.tsx:                  placeholder={t('auth.phonePlaceholder')}
+src/components/AuthForm.tsx:                {loading ? <Loader2 className="animate-spin" size={20} /> : t('auth.sendSms')}
+src/components/AuthForm.tsx:                  {t('auth.codeLabel')}
+src/components/AuthForm.tsx:                  placeholder={t('auth.codePlaceholder')}
+src/components/AuthForm.tsx:                {loading ? <Loader2 className="animate-spin" size={20} /> : t('auth.verifyCode')}
+src/components/AuthForm.tsx:              <label className="block text-sm font-medium text-gray-700 mb-1">{t('auth.email')}</label>
+src/components/AuthForm.tsx:                placeholder={t('auth.emailPlaceholder')}
+src/components/AuthForm.tsx:              <label className="block text-sm font-medium text-gray-700 mb-1">{t('auth.passwordLabel')}</label>
+src/components/AuthForm.tsx:                placeholder={t('auth.passwordPlaceholder')}
+src/components/AuthForm.tsx:              {loading ? <Loader2 className="animate-spin" size={20} /> : (isSignUp ? t('auth.createAccount') : t('auth.login'))}
+src/components/AuthForm.tsx:                {isSignUp ? t('auth.alreadyHaveAccount') : t('auth.noAccount')}
+src/components/AreaVip.tsx:      setSuggestionText('');
+src/components/AreaVip.tsx:      alert('Erro ao enviar sugestão. Tente novamente.');
+src/components/AreaVip.tsx:                      alert('Assine o VIP para liberar o download dos e-books.');
+src/components/PayPalSubscriptionButton.tsx:            setError(t('vip.loginToSubscribe'));
+src/components/PayPalSubscriptionButton.tsx:            return Promise.reject('Not logged in');
+src/components/PayPalSubscriptionButton.tsx:            alert(t('vip.subscriptionSuccess'));
+src/components/CityPage.tsx:  const shareText = t('map.shareText', { city });
+src/components/CityPage.tsx:    email: `mailto:?subject=${encodeURIComponent(t('map.communityOf') + ' ' + city)}&body=${encodeURIComponent(shareText + '\n\n' + shareUrl)}`
+src/components/CityPage.tsx:        <p className="text-gray-500 font-medium">{t('map.loading')}</p>
+src/components/CityPage.tsx:        {t('map.backToMap')}
+src/components/CityPage.tsx:            {t('map.growing')}
+src/components/CityPage.tsx:          <span className="text-sm text-gray-500 font-medium uppercase tracking-wider mt-1">{t('map.connectedFamilies')}</span>
+src/components/CityPage.tsx:          <span className="text-sm text-gray-500 font-medium uppercase tracking-wider mt-1">{t('map.postsShared')}</span>
+src/components/CityPage.tsx:          <h3 className="text-xl font-bold text-gray-900">{t('map.shareTitle')}</h3>
+src/components/CityPage.tsx:            <span className="font-medium text-sm">{copied ? t('map.linkCopied') : t('map.copyLink')}</span>
+src/components/CityPage.tsx:            {copied ? t('map.linkCopied') : t('map.copyLink')}
+src/components/PostComments.tsx:      setNewComment('');
+src/components/NetworkMap.tsx:      alert(t('map.shareNotSupported'));
+src/components/NetworkMap.tsx:            const [city, state] = key.split(', ');
+src/components/NetworkMap.tsx:        <p className="text-gray-500 font-medium">{t('map.loading')}</p>
+src/components/NetworkMap.tsx:        <h2 className="text-2xl font-bold text-gray-900">{t('map.title')}</h2>
+src/components/NetworkMap.tsx:          <span className="text-xs text-gray-500 font-medium uppercase tracking-wider">{t('map.connectedFamilies')}</span>
+src/components/NetworkMap.tsx:          <span className="text-xs text-gray-500 font-medium uppercase tracking-wider">{t('map.activeCities')}</span>
+src/components/NetworkMap.tsx:          <span className="text-xs text-gray-500 font-medium uppercase tracking-wider">{t('map.activeStates')}</span>
+src/components/NetworkMap.tsx:          <span className="text-xs text-gray-500 font-medium uppercase tracking-wider">{t('map.postsShared')}</span>
+src/components/NetworkMap.tsx:          <h3 className="text-lg font-bold text-gray-900 mb-4">{t('map.activeCommunities')}</h3>
+src/components/NetworkMap.tsx:                  {stateData[selectedState] || 0} {t('map.families')}
+src/components/NetworkMap.tsx:              {t('map.fastestGrowing')}
+src/components/NetworkMap.tsx:                    <p className="text-[10px] text-emerald-500 uppercase">{t('map.thisWeek')}</p>
+src/components/NetworkMap.tsx:              {selectedState ? `${t('map.citiesIn')} ${selectedState}` : t('map.activeCommunities')}
+src/components/NetworkMap.tsx:                ← {t('map.backToMap')}
+src/components/NetworkMap.tsx:                        onClick={(e) => { e.stopPropagation(); handleShare(t('map.shareTitle', { place: state }), t('map.shareText', { place: state })); }}
+src/components/NetworkMap.tsx:                        {count} {t('map.families')}
+src/components/NetworkMap.tsx:                        onClick={(e) => { e.stopPropagation(); handleShare(t('map.shareTitle', { place: city.name }), t('map.shareText', { place: city.name })); }}
+src/components/NetworkMap.tsx:                        {city.users} {t('map.families')}
+src/components/Feed.tsx:  const [loadingMessage, setLoadingMessage] = useState(t('feed.loading'));
+src/components/Feed.tsx:      alert('Crie sua conta para liberar este recurso.');
+src/components/Feed.tsx:      alert('Aguarde o carregamento do sistema...');
+src/components/Feed.tsx:      alert('Erro: Perfil de usuário não encontrado. Tente fazer login novamente.');
+src/components/Feed.tsx:      setNewPost('');
+src/components/Feed.tsx:        alert('Mensagem copiada! Compartilhe com outras famílias da sua cidade.');
+src/components/Feed.tsx:      alert('Crie sua conta para curtir posts.');
+src/components/Feed.tsx:                <span>{t('feed.post')}</span>
+src/components/Feed.tsx:                                  {t('feed.pin')}
+src/components/Feed.tsx:                              title={post.isPinned ? t('feed.unpinPost') : t('feed.pinPost')}
+src/components/Feed.tsx:                              title={t('feed.delete')}
+src/components/Feed.tsx:                        <span className="animate-pulse">{t('feed.loading')}</span>
+src/components/Feed.tsx:                        <span>{t('feed.loadMore')}</span>
+src/components/Feed.tsx:                <p className="text-center text-slate-400 py-8">{t('feed.endOfFeed')}</p>
+src/lib/pagseguro.ts:    alert('Erro ao processar dados de assinatura. Tente novamente.');
+src/lib/pagseguro.ts:    alert('Erro ao iniciar checkout. Tente novamente mais tarde.');
+src/services/paymentService.ts:    alert('Erro ao iniciar o pagamento. Tente novamente mais tarde.');
+src/App.tsx:      const userId = path.split('/emergencia/')[1];
+src/App.tsx:                <span className="hidden sm:inline">{t('nav.feed')}</span>
+src/App.tsx:                <span className="hidden sm:inline">{t('nav.sos')}</span>
+src/App.tsx:                <span className="hidden sm:inline">{t('nav.map')}</span>
+src/App.tsx:                <span className="hidden sm:inline">{t('nav.vip')}</span>

@@ -4,12 +4,14 @@ import { doc, getDoc } from 'firebase/firestore';
 import { SosCard } from '../types';
 import { motion } from 'framer-motion';
 import { AlertTriangle, Phone, MapPin, HeartPulse, ShieldAlert, FileText } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 interface EmergencyPageProps {
   id: string;
 }
 
 const EmergencyPage: React.FC<EmergencyPageProps> = ({ id }) => {
+  const { t, i18n } = useTranslation();
   const [sosCard, setSosCard] = useState<SosCard | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -27,11 +29,11 @@ const EmergencyPage: React.FC<EmergencyPageProps> = ({ id }) => {
           setSosCard(data);
         } else {
           console.log('[EMERGENCY] card not found');
-          setError('Carteirinha não encontrada. Verifique se o QR Code ou link está correto.');
+          setError(t('emergency.errorDescription'));
         }
       } catch (err) {
         console.error("[EMERGENCY] load failure:", err);
-        setError('Erro ao carregar os dados. Tente novamente.');
+        setError(t('emergency.loadError'));
       } finally {
         setLoading(false);
       }
@@ -40,13 +42,13 @@ const EmergencyPage: React.FC<EmergencyPageProps> = ({ id }) => {
     if (id) {
       fetchSosCard();
     }
-  }, [id]);
+  }, [id, t]);
 
   if (loading) {
     return (
       <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-4">
         <div className="w-16 h-16 border-4 border-brand-primary/20 border-t-brand-primary rounded-full animate-spin mb-6" />
-        <p className="text-slate-400 font-bold text-sm tracking-widest uppercase animate-pulse">Carregando Informações de Suporte...</p>
+        <p className="text-slate-400 font-bold text-sm tracking-widest uppercase animate-pulse">{t('emergency.loading')}</p>
       </div>
     );
   }
@@ -55,7 +57,7 @@ const EmergencyPage: React.FC<EmergencyPageProps> = ({ id }) => {
     return (
       <div className="min-h-screen bg-slate-900 flex flex-col items-center justify-center p-4 text-center">
         <ShieldAlert size={64} className="text-red-500 mb-6" />
-        <h1 className="text-3xl font-black text-white mb-4 uppercase tracking-wider">Erro de Identificação</h1>
+        <h1 className="text-3xl font-black text-white mb-4 uppercase tracking-wider">{t('emergency.errorTitle')}</h1>
         <p className="text-slate-400 max-w-md">{error}</p>
       </div>
     );
@@ -71,7 +73,7 @@ const EmergencyPage: React.FC<EmergencyPageProps> = ({ id }) => {
           </div>
           <h1 className="text-xl font-black text-slate-900 uppercase tracking-tight">Conecta TEA</h1>
         </div>
-        <p className="text-[10px] font-black text-brand-primary uppercase tracking-widest">Protocolo de Suporte e Identificação</p>
+        <p className="text-[10px] font-black text-brand-primary uppercase tracking-widest">{t('emergency.protocol')}</p>
       </div>
 
       <div className="max-w-2xl mx-auto p-4 space-y-6 mt-4">
@@ -85,15 +87,15 @@ const EmergencyPage: React.FC<EmergencyPageProps> = ({ id }) => {
             <ShieldAlert size={160} />
           </div>
           <div className="relative z-10">
-            <h2 className="text-sm font-black uppercase tracking-widest mb-4 opacity-80">Atenção / Abordagem</h2>
+            <h2 className="text-sm font-black uppercase tracking-widest mb-4 opacity-80">{t('emergency.attention')}</h2>
             <p className="text-3xl font-black leading-tight mb-6">
-              Esta pessoa possui Transtorno do Espectro Autista (TEA).
+              {t('emergency.teaStatement')}
             </p>
             <div className="space-y-4">
               <div className="flex items-start space-x-3 bg-white/10 backdrop-blur-md p-4 rounded-2xl border border-white/20">
                 <div className="mt-1"><ShieldAlert size={18} /></div>
                 <p className="text-sm font-bold leading-relaxed">
-                  Em caso de crise ou desorientação, por favor mantenha a calma, evite toques bruscos e barulhos excessivos.
+                  {t('emergency.crisisAdvice')}
                 </p>
               </div>
             </div>
@@ -108,7 +110,7 @@ const EmergencyPage: React.FC<EmergencyPageProps> = ({ id }) => {
             transition={{ delay: 0.1 }}
             className="bg-amber-50 border-2 border-amber-200 rounded-[2rem] p-8"
           >
-            <h3 className="text-xs font-black text-amber-600 uppercase tracking-widest mb-3">Instrução Específica</h3>
+            <h3 className="text-xs font-black text-amber-600 uppercase tracking-widest mb-3">{t('emergency.specificInstruction')}</h3>
             <p className="text-xl font-bold text-amber-900 leading-relaxed italic">
               "{sosCard.emergencyNote}"
             </p>
@@ -123,34 +125,34 @@ const EmergencyPage: React.FC<EmergencyPageProps> = ({ id }) => {
           className="bg-white rounded-[2rem] p-8 shadow-sm border border-slate-100"
         >
           <div className="mb-8">
-            <h2 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Nome do Portador</h2>
+            <h2 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{t('sos.labels.childName')}</h2>
             <p className="text-3xl font-black text-slate-900">{sosCard.childName}</p>
           </div>
 
           <div className="grid grid-cols-2 gap-6 mb-8">
             <div>
-              <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Nascimento</h3>
+              <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{t('sos.labels.birthDate')}</h3>
               <p className="text-lg font-bold text-slate-800">
-                {sosCard.birthDate ? new Date(sosCard.birthDate).toLocaleDateString('pt-BR') : '-'}
+                {sosCard.birthDate ? new Date(sosCard.birthDate).toLocaleDateString(i18n.language === 'pt' ? 'pt-BR' : i18n.language === 'es' ? 'es-ES' : 'en-US') : '-'}
               </p>
             </div>
             <div>
-              <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Tipo Sanguíneo</h3>
-              <p className="text-lg font-bold text-brand-primary">{sosCard.bloodType || 'N/I'}</p>
+              <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{t('sos.labels.bloodType')}</h3>
+              <p className="text-lg font-bold text-brand-primary">{sosCard.bloodType || t('sos.notInformed')}</p>
             </div>
           </div>
 
           <div className="space-y-6">
             <div className="bg-slate-50 p-6 rounded-2xl border border-slate-100">
-              <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Observações de Suporte</h3>
+              <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">{t('sos.labels.observations')}</h3>
               <p className="text-base font-bold text-slate-700 leading-relaxed">
-                {sosCard.observations || 'Nenhuma observação adicional.'}
+                {sosCard.observations || t('emergency.noObservations')}
               </p>
             </div>
 
             {sosCard.allergies && (
               <div className="bg-red-50 p-6 rounded-2xl border border-red-100">
-                <h3 className="text-[10px] font-black text-red-400 uppercase tracking-widest mb-2">Alergias / Medicação</h3>
+                <h3 className="text-[10px] font-black text-red-400 uppercase tracking-widest mb-2">{t('emergency.allergiesMedication')}</h3>
                 <p className="text-base font-bold text-red-900 leading-relaxed">
                   {sosCard.allergies}
                 </p>
@@ -168,7 +170,7 @@ const EmergencyPage: React.FC<EmergencyPageProps> = ({ id }) => {
         >
           <h2 className="text-xl font-black text-slate-900 uppercase tracking-tight mb-6 flex items-center space-x-3">
             <Phone className="text-brand-primary" size={24} />
-            <span>Contatos de Emergência</span>
+            <span>{t('emergency.contactsTitle')}</span>
           </h2>
 
           <div className="space-y-4">
@@ -177,7 +179,7 @@ const EmergencyPage: React.FC<EmergencyPageProps> = ({ id }) => {
               className="flex items-center justify-between bg-slate-50 hover:bg-slate-100 p-6 rounded-2xl border border-slate-200 transition-all group"
             >
               <div>
-                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Responsável</p>
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{t('sos.labels.responsible')}</p>
                 <p className="text-xl font-black text-slate-900">{sosCard.responsibleName || sosCard.contact1Name}</p>
                 <p className="text-lg font-bold text-brand-primary">{sosCard.contact1Phone}</p>
               </div>
@@ -192,7 +194,7 @@ const EmergencyPage: React.FC<EmergencyPageProps> = ({ id }) => {
                 className="flex items-center justify-between bg-slate-50 hover:bg-slate-100 p-6 rounded-2xl border border-slate-200 transition-all group"
               >
                 <div>
-                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Contato Secundário</p>
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{t('sos.fields.contact2Name')}</p>
                   <p className="text-xl font-black text-slate-900">{sosCard.contact2Name}</p>
                   <p className="text-lg font-bold text-brand-primary">{sosCard.contact2Phone}</p>
                 </div>
@@ -214,17 +216,17 @@ const EmergencyPage: React.FC<EmergencyPageProps> = ({ id }) => {
           >
             <h2 className="text-xl font-black text-slate-900 uppercase tracking-tight mb-6 flex items-center space-x-3">
               <MapPin className="text-slate-400" size={24} />
-              <span>Localização</span>
+              <span>{t('emergency.locationTitle')}</span>
             </h2>
 
             <div className="space-y-4">
               <div>
-                <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Cidade / UF</h3>
+                <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{t('sos.labels.cityState')}</h3>
                 <p className="text-lg font-bold text-slate-800">{sosCard.city} / {sosCard.state}</p>
               </div>
               {sosCard.homeAddress && (
                 <div>
-                  <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Endereço Residencial</h3>
+                  <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{t('sos.fields.homeAddress')}</h3>
                   <p className="text-base font-bold text-slate-700 bg-slate-50 p-4 rounded-xl border border-slate-100">
                     {sosCard.homeAddress}
                   </p>
@@ -237,7 +239,7 @@ const EmergencyPage: React.FC<EmergencyPageProps> = ({ id }) => {
         <div className="text-center pt-8">
           <div className="flex flex-col items-center justify-center mb-2">
             <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">
-              ID Oficial Conecta TEA
+              {t('sos.officialIdLabel')}
             </p>
             <p className="text-xl font-black text-slate-900 font-mono">
               {sosCard.officialId || '---'}

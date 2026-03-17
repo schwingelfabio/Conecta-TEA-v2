@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { db, auth } from '../lib/firebase';
+import { useTranslation } from 'react-i18next';
 import { doc, updateDoc, collection, query, where, getDocs, setDoc, serverTimestamp, addDoc } from 'firebase/firestore';
 
 export default function Onboarding({ onComplete }: { onComplete: () => void }) {
+  const { t } = useTranslation();
   const [states, setStates] = useState<{ id: number, sigla: string, nome: string }[]>([]);
   const [cities, setCities] = useState<{ id: number, nome: string }[]>([]);
   const [selectedState, setSelectedState] = useState('');
@@ -56,20 +58,20 @@ export default function Onboarding({ onComplete }: { onComplete: () => void }) {
             state: type === 'state' ? locationValue : selectedState,
             city: type === 'city' ? locationValue : '',
             type: type,
-            author: 'Sistema',
+            author: t('onboarding.system'),
             createdAt: serverTimestamp()
           });
         }
       };
 
-      await ensureTopic(`Comunidade ${selectedState}`, selectedState, 'state');
-      await ensureTopic(`Comunidade ${selectedCity}`, selectedCity, 'city');
+      await ensureTopic(`${t('onboarding.community')} ${selectedState}`, selectedState, 'state');
+      await ensureTopic(`${t('onboarding.community')} ${selectedCity}`, selectedCity, 'city');
       
       console.log('[Onboarding] Save success');
       onComplete();
     } catch (err: any) {
       console.error("[Onboarding] Error saving onboarding:", err);
-      alert(`Erro ao salvar localização: ${err.message}`);
+      alert(`${t('onboarding.saveError')}: ${err.message}`);
     } finally {
       setLoading(false);
     }
@@ -78,13 +80,13 @@ export default function Onboarding({ onComplete }: { onComplete: () => void }) {
   return (
     <div className="fixed inset-0 bg-white z-50 flex items-center justify-center p-4">
       <div className="max-w-md w-full bg-white p-8 rounded-3xl shadow-xl border border-gray-100">
-        <h2 className="text-2xl font-bold mb-6">Bem-vindo! Para começar, onde você mora?</h2>
+        <h2 className="text-2xl font-bold mb-6">{t('onboarding.welcome')}</h2>
         
         <select 
           className="w-full p-4 mb-4 rounded-xl border border-gray-200"
           onChange={(e) => setSelectedState(e.target.value)}
         >
-          <option value="">Selecione o Estado</option>
+          <option value="">{t('onboarding.selectState')}</option>
           {states.map(s => <option key={s.id} value={s.sigla}>{s.nome}</option>)}
         </select>
 
@@ -93,7 +95,7 @@ export default function Onboarding({ onComplete }: { onComplete: () => void }) {
           disabled={!selectedState}
           onChange={(e) => setSelectedCity(e.target.value)}
         >
-          <option value="">Selecione a Cidade</option>
+          <option value="">{t('onboarding.selectCity')}</option>
           {cities.map(c => <option key={c.id} value={c.nome}>{c.nome}</option>)}
         </select>
 
@@ -102,7 +104,7 @@ export default function Onboarding({ onComplete }: { onComplete: () => void }) {
           disabled={!selectedState || !selectedCity || loading}
           className="w-full bg-sky-500 text-white font-bold py-4 rounded-xl"
         >
-          {loading ? 'Salvando...' : 'Salvar e Continuar'}
+          {loading ? '...' : t('onboarding.button')}
         </button>
       </div>
     </div>

@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import VideoGallery from './VideoGallery';
 import { PlayCircle } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { db, auth } from '../lib/firebase';
 import { 
   collection, 
@@ -26,6 +27,7 @@ const SHORTS_VIDEOS = [
 const ADMIN_EMAIL = 'fabiopalacioschwingel@gmail.com';
 
 export default function VideosPage() {
+  const { t } = useTranslation();
   useEffect(() => {
     const seedVideos = async (userEmail: string) => {
       if (userEmail !== ADMIN_EMAIL) return;
@@ -72,8 +74,8 @@ export default function VideosPage() {
             <PlayCircle size={28} />
           </div>
           <div>
-            <h1 className="text-2xl font-black text-slate-900">Galeria de Vídeos</h1>
-            <p className="text-slate-500">Conteúdo educativo e informativo sobre o autismo.</p>
+            <h1 className="text-2xl font-black text-slate-900">{t('videos.galleryTitle')}</h1>
+            <p className="text-slate-500">{t('videos.gallerySubtitle')}</p>
           </div>
         </div>
       </div>

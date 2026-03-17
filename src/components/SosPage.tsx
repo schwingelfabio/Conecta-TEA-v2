@@ -5,6 +5,7 @@ import { UserProfile, SosCard } from '../types';
 import { motion } from 'framer-motion';
 import { Activity, Printer, Save, Edit2, Phone, MapPin, AlertTriangle, HeartPulse, ShieldAlert, ShieldCheck, IdCard, Crown } from 'lucide-react';
 import QRCode from 'react-qr-code';
+import { useTranslation } from 'react-i18next';
 
 interface SosPageProps {
   userProfile: UserProfile | null;
@@ -16,6 +17,7 @@ interface SosPageProps {
 }
 
 const SosPage: React.FC<SosPageProps> = ({ userProfile, authReady, onLoginClick, isGuest, isAdmin, isVip }) => {
+  const { t } = useTranslation();
   const effectiveVip = Boolean(isVip || isAdmin);
   const [sosCard, setSosCard] = useState<SosCard | null>(null);
   const [isEditing, setIsEditing] = useState(false);
@@ -96,7 +98,7 @@ const SosPage: React.FC<SosPageProps> = ({ userProfile, authReady, onLoginClick,
         }
       } catch (err) {
         console.error("[CARD] load failure:", err);
-        setError("Ocorreu um erro ao carregar os dados. Tente novamente mais tarde.");
+        setError(t('sos.connectionError'));
       } finally {
         setLoading(false);
       }
@@ -181,7 +183,7 @@ const SosPage: React.FC<SosPageProps> = ({ userProfile, authReady, onLoginClick,
       console.error("[CARD] collection path:", "sos_cards");
       console.error("[CARD] write error exact message:", error.message);
       console.error("[ID] save failure:", error);
-      alert(`Erro ao salvar a carteirinha: ${error.message}`);
+      alert(`${t('sos.saveError')}: ${error.message}`);
     } finally {
       setSaving(false);
     }
@@ -206,15 +208,15 @@ const SosPage: React.FC<SosPageProps> = ({ userProfile, authReady, onLoginClick,
         <div className="w-24 h-24 bg-slate-50 text-slate-400 rounded-full flex items-center justify-center mx-auto mb-6">
           <AlertTriangle size={48} />
         </div>
-        <h2 className="text-3xl font-serif font-bold text-slate-900 mb-4">Acesso Restrito</h2>
+        <h2 className="text-3xl font-serif font-bold text-slate-900 mb-4">{t('sos.restrictedTitle')}</h2>
         <p className="text-slate-500 max-w-md mx-auto mb-8">
-          Você precisa fazer login para acessar a Carteirinha Digital.
+          {t('sos.loginRequired')}
         </p>
         <button 
           onClick={onLoginClick}
           className="px-8 py-4 bg-brand-primary text-white rounded-full font-bold hover:bg-brand-secondary transition-all shadow-lg"
         >
-          Fazer Login
+          {t('sos.loginButton')}
         </button>
       </div>
     );
@@ -229,7 +231,7 @@ const SosPage: React.FC<SosPageProps> = ({ userProfile, authReady, onLoginClick,
         <div className="w-24 h-24 bg-red-50 text-red-500 rounded-full flex items-center justify-center mx-auto mb-6">
           <AlertTriangle size={48} />
         </div>
-        <h2 className="text-3xl font-serif font-bold text-slate-900 mb-4">Erro de Conexão</h2>
+        <h2 className="text-3xl font-serif font-bold text-slate-900 mb-4">{t('sos.connectionError')}</h2>
         <p className="text-slate-500 max-w-md mx-auto mb-8">
           {error}
         </p>
@@ -237,7 +239,7 @@ const SosPage: React.FC<SosPageProps> = ({ userProfile, authReady, onLoginClick,
           onClick={() => window.location.reload()}
           className="px-8 py-4 bg-slate-900 text-white rounded-full font-bold hover:bg-slate-800 transition-all shadow-lg"
         >
-          Tentar Novamente
+          {t('sos.tryAgain')}
         </button>
       </div>
     );
@@ -251,18 +253,18 @@ const SosPage: React.FC<SosPageProps> = ({ userProfile, authReady, onLoginClick,
             <Activity size={32} />
           </div>
           <div>
-            <h1 className="text-4xl font-serif font-bold text-slate-900">Carteirinha Digital</h1>
-            <p className="text-slate-500">Identificação e Suporte Conecta TEA</p>
+            <h1 className="text-4xl font-serif font-bold text-slate-900">{t('sos.title')}</h1>
+            <p className="text-slate-500">{t('sos.subtitle')}</p>
           </div>
         </div>
         <div className="hidden md:flex space-x-3">
           <button onClick={() => setIsEditing(true)} className="flex items-center space-x-2 px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-xl transition-colors">
             <Edit2 size={18} />
-            <span>Editar</span>
+            <span>{t('sos.edit')}</span>
           </button>
           <button onClick={handlePrint} className="flex items-center space-x-2 bg-slate-900 text-white px-6 py-2 rounded-xl font-bold hover:bg-slate-800 transition-colors">
             <Printer size={18} />
-            <span>Imprimir</span>
+            <span>{t('sos.print')}</span>
           </button>
         </div>
       </div>
@@ -273,70 +275,70 @@ const SosPage: React.FC<SosPageProps> = ({ userProfile, authReady, onLoginClick,
           animate={{ opacity: 1, y: 0 }}
           className="bg-white rounded-3xl shadow-sm border border-slate-100 p-8 print:hidden"
         >
-          <h2 className="text-2xl font-bold text-slate-900 mb-6">Configurar Carteirinha</h2>
+          <h2 className="text-2xl font-bold text-slate-900 mb-6">{t('sos.setupTitle')}</h2>
           <form onSubmit={handleSave} className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-4 md:col-span-2">
-                <h3 className="text-lg font-bold text-slate-800 border-b pb-2">Dados da Pessoa com TEA</h3>
+                <h3 className="text-lg font-bold text-slate-800 border-b pb-2">{t('sos.sections.child')}</h3>
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Nome Completo</label>
+                <label className="block text-sm font-medium text-slate-700 mb-1">{t('sos.fields.childName')}</label>
                 <input required type="text" name="childName" value={formData.childName} onChange={handleInputChange} className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-primary/20 outline-none" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Data de Nascimento</label>
+                <label className="block text-sm font-medium text-slate-700 mb-1">{t('sos.fields.birthDate')}</label>
                 <input required type="date" name="birthDate" value={formData.birthDate} onChange={handleInputChange} className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-primary/20 outline-none" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Cidade</label>
+                <label className="block text-sm font-medium text-slate-700 mb-1">{t('sos.fields.city')}</label>
                 <input required type="text" name="city" value={formData.city} onChange={handleInputChange} className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-primary/20 outline-none" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Estado (UF)</label>
+                <label className="block text-sm font-medium text-slate-700 mb-1">{t('sos.fields.state')}</label>
                 <input required type="text" name="state" value={formData.state} onChange={handleInputChange} className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-primary/20 outline-none" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Tipo Sanguíneo</label>
-                <input type="text" name="bloodType" placeholder="Ex: O+" value={formData.bloodType} onChange={handleInputChange} className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-primary/20 outline-none" />
+                <label className="block text-sm font-medium text-slate-700 mb-1">{t('sos.fields.bloodType')}</label>
+                <input type="text" name="bloodType" placeholder={t('sos.placeholders.bloodType')} value={formData.bloodType} onChange={handleInputChange} className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-primary/20 outline-none" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Alergias / Medicação</label>
-                <input type="text" name="allergies" placeholder="Ex: Alergia a dipirona" value={formData.allergies} onChange={handleInputChange} className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-primary/20 outline-none" />
+                <label className="block text-sm font-medium text-slate-700 mb-1">{t('sos.fields.allergies')}</label>
+                <input type="text" name="allergies" placeholder={t('sos.placeholders.allergies')} value={formData.allergies} onChange={handleInputChange} className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-primary/20 outline-none" />
               </div>
               <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-slate-700 mb-1">Observações de Suporte</label>
-                <textarea name="observations" placeholder="Ex: Sensibilidade auditiva, prefere comunicação visual" value={formData.observations} onChange={handleInputChange} className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-primary/20 outline-none min-h-[80px]" />
+                <label className="block text-sm font-medium text-slate-700 mb-1">{t('sos.fields.observations')}</label>
+                <textarea name="observations" placeholder={t('sos.placeholders.observations')} value={formData.observations} onChange={handleInputChange} className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-primary/20 outline-none min-h-[80px]" />
               </div>
 
               <div className="space-y-4 md:col-span-2 mt-4">
-                <h3 className="text-lg font-bold text-slate-800 border-b pb-2">Dados do Responsável</h3>
+                <h3 className="text-lg font-bold text-slate-800 border-b pb-2">{t('sos.sections.responsible')}</h3>
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Nome do Responsável</label>
+                <label className="block text-sm font-medium text-slate-700 mb-1">{t('sos.fields.responsibleName')}</label>
                 <input required type="text" name="responsibleName" value={formData.responsibleName} onChange={handleInputChange} className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-primary/20 outline-none" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">WhatsApp de Emergência</label>
-                <input required type="tel" name="contact1Phone" placeholder="(00) 00000-0000" value={formData.contact1Phone} onChange={handleInputChange} className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-primary/20 outline-none" />
+                <label className="block text-sm font-medium text-slate-700 mb-1">{t('sos.fields.emergencyPhone')}</label>
+                <input required type="tel" name="contact1Phone" placeholder={t('sos.placeholders.phone')} value={formData.contact1Phone} onChange={handleInputChange} className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-primary/20 outline-none" />
               </div>
               <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-slate-700 mb-1">Nota de Emergência (Exibida no QR Code)</label>
-                <textarea name="emergencyNote" placeholder="Ex: Em caso de crise, por favor fale com calma e não toque sem permissão." value={formData.emergencyNote} onChange={handleInputChange} className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-primary/20 outline-none min-h-[80px]" />
+                <label className="block text-sm font-medium text-slate-700 mb-1">{t('sos.fields.emergencyNote')}</label>
+                <textarea name="emergencyNote" placeholder={t('sos.placeholders.emergencyNote')} value={formData.emergencyNote} onChange={handleInputChange} className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-primary/20 outline-none min-h-[80px]" />
               </div>
 
               <div className="space-y-4 md:col-span-2 mt-4">
-                <h3 className="text-lg font-bold text-slate-800 border-b pb-2">Contatos Adicionais e Endereço</h3>
+                <h3 className="text-lg font-bold text-slate-800 border-b pb-2">{t('sos.sections.additional')}</h3>
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Contato Secundário (Nome)</label>
+                <label className="block text-sm font-medium text-slate-700 mb-1">{t('sos.fields.contact2Name')}</label>
                 <input type="text" name="contact2Name" value={formData.contact2Name} onChange={handleInputChange} className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-primary/20 outline-none" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Contato Secundário (Telefone)</label>
-                <input type="tel" name="contact2Phone" placeholder="(00) 00000-0000" value={formData.contact2Phone} onChange={handleInputChange} className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-primary/20 outline-none" />
+                <label className="block text-sm font-medium text-slate-700 mb-1">{t('sos.fields.contact2Phone')}</label>
+                <input type="tel" name="contact2Phone" placeholder={t('sos.placeholders.phone')} value={formData.contact2Phone} onChange={handleInputChange} className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-primary/20 outline-none" />
               </div>
               <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-slate-700 mb-1">Endereço Residencial</label>
+                <label className="block text-sm font-medium text-slate-700 mb-1">{t('sos.fields.homeAddress')}</label>
                 <input type="text" name="homeAddress" value={formData.homeAddress} onChange={handleInputChange} className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-primary/20 outline-none" />
               </div>
             </div>
@@ -344,12 +346,12 @@ const SosPage: React.FC<SosPageProps> = ({ userProfile, authReady, onLoginClick,
             <div className="flex justify-end space-x-4 pt-6 border-t border-slate-100">
               {sosCard && (
                 <button type="button" onClick={() => setIsEditing(false)} className="px-6 py-3 text-slate-600 font-bold hover:bg-slate-50 rounded-xl transition-colors">
-                  Cancelar
+                  {t('sos.cancel')}
                 </button>
               )}
               <button type="submit" disabled={saving} className="px-8 py-3 bg-brand-primary text-white font-bold rounded-xl hover:bg-brand-secondary transition-colors flex items-center space-x-2 disabled:opacity-50">
                 <Save size={20} />
-                <span>{saving ? 'Salvando...' : 'Salvar Carteirinha'}</span>
+                <span>{saving ? t('sos.saving') : t('sos.save')}</span>
               </button>
             </div>
           </form>
@@ -370,12 +372,12 @@ const SosPage: React.FC<SosPageProps> = ({ userProfile, authReady, onLoginClick,
                 </div>
                 <div>
                   <h2 className="text-2xl font-black tracking-tight leading-none">Conecta TEA</h2>
-                  <p className="text-white/80 text-xs font-bold uppercase tracking-widest mt-1">Carteirinha Digital</p>
+                  <p className="text-white/80 text-xs font-bold uppercase tracking-widest mt-1">{t('sos.subtitle')}</p>
                 </div>
               </div>
               <div className="text-right">
                 <span className="bg-white/20 backdrop-blur-md px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest">
-                  Identificação Oficial
+                  {t('sos.officialId')}
                 </span>
               </div>
             </div>
@@ -384,30 +386,30 @@ const SosPage: React.FC<SosPageProps> = ({ userProfile, authReady, onLoginClick,
               {/* Left Column: Data */}
               <div className="md:col-span-8 space-y-6">
                 <div>
-                  <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Nome do Portador</h3>
+                  <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{t('sos.labels.childName')}</h3>
                   <p className="text-3xl font-black text-slate-900 leading-tight">{sosCard?.childName}</p>
                 </div>
 
                 <div className="grid grid-cols-2 gap-6">
                   <div>
-                    <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Nascimento</h3>
+                    <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{t('sos.labels.birthDate')}</h3>
                     <p className="text-lg font-bold text-slate-800">
-                      {sosCard?.birthDate ? new Date(sosCard.birthDate).toLocaleDateString('pt-BR') : '-'}
+                      {sosCard?.birthDate ? new Date(sosCard.birthDate).toLocaleDateString(i18n.language === 'pt' ? 'pt-BR' : i18n.language === 'es' ? 'es-ES' : 'en-US') : '-'}
                     </p>
                   </div>
                   <div>
-                    <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Tipo Sanguíneo</h3>
-                    <p className="text-lg font-bold text-brand-primary">{sosCard?.bloodType || 'N/I'}</p>
+                    <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{t('sos.labels.bloodType')}</h3>
+                    <p className="text-lg font-bold text-brand-primary">{sosCard?.bloodType || t('sos.notInformed')}</p>
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-6">
                   <div>
-                    <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Cidade / UF</h3>
+                    <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{t('sos.labels.cityState')}</h3>
                     <p className="text-lg font-bold text-slate-800">{sosCard?.city} / {sosCard?.state}</p>
                   </div>
                   <div>
-                    <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Responsável</h3>
+                    <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{t('sos.labels.responsible')}</h3>
                     <p className="text-lg font-bold text-slate-800 flex items-center gap-1">
                       {sosCard?.responsibleName}
                       {effectiveVip && <Crown size={14} className="text-amber-500" />}
@@ -418,15 +420,15 @@ const SosPage: React.FC<SosPageProps> = ({ userProfile, authReady, onLoginClick,
                 <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100">
                   <div className="flex items-center space-x-2 mb-2 text-slate-400">
                     <AlertTriangle size={14} />
-                    <h3 className="text-[10px] font-black uppercase tracking-widest">Observações de Suporte</h3>
+                    <h3 className="text-[10px] font-black uppercase tracking-widest">{t('sos.labels.observations')}</h3>
                   </div>
                   <p className="text-sm font-medium text-slate-700 leading-relaxed">
-                    {sosCard?.observations || 'Nenhuma observação cadastrada.'}
+                    {sosCard?.observations || t('sos.noObservations')}
                   </p>
                 </div>
 
                 <div className="pt-4 border-t border-slate-100">
-                  <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">Contato de Emergência</h3>
+                  <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">{t('sos.labels.emergencyContact')}</h3>
                   <div className="flex items-center justify-between bg-brand-primary/5 p-4 rounded-2xl border border-brand-primary/10">
                     <div className="flex items-center space-x-3">
                       <div className="w-10 h-10 bg-brand-primary text-white rounded-full flex items-center justify-center">
@@ -444,8 +446,8 @@ const SosPage: React.FC<SosPageProps> = ({ userProfile, authReady, onLoginClick,
               {/* Right Column: QR Code & Branding */}
               <div className="md:col-span-4 flex flex-col items-center justify-center border-t md:border-t-0 md:border-l border-slate-100 pt-8 md:pt-0 md:pl-8">
                 <div className="text-center mb-6">
-                  <p className="text-[10px] font-black text-brand-primary uppercase tracking-widest mb-1">Suporte Imediato</p>
-                  <p className="text-[9px] text-slate-400 leading-tight">Escaneie para ver instruções de abordagem em crise</p>
+                  <p className="text-[10px] font-black text-brand-primary uppercase tracking-widest mb-1">{t('sos.immediateSupport')}</p>
+                  <p className="text-[9px] text-slate-400 leading-tight">{t('sos.scanInstructions')}</p>
                 </div>
                 
                 <div className="bg-white p-4 rounded-3xl shadow-lg border border-slate-100 relative group">
@@ -462,10 +464,10 @@ const SosPage: React.FC<SosPageProps> = ({ userProfile, authReady, onLoginClick,
                   <div className="flex flex-col items-center justify-center mb-2">
                     <div className="flex items-center space-x-1 mb-1">
                       <ShieldAlert size={12} className="text-brand-primary" />
-                      <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest">ID Oficial Conecta TEA</span>
+                      <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest">{t('sos.officialIdLabel')}</span>
                     </div>
                     <p className="text-sm font-black text-slate-900 font-mono tracking-tighter">
-                      {sosCard?.officialId || 'PROCESSANDO...'}
+                      {sosCard?.officialId || t('sos.processing')}
                     </p>
                   </div>
                   <p className="text-[7px] text-slate-300 font-mono opacity-50">REF: {sosCard?.id?.toUpperCase()}</p>
@@ -476,21 +478,21 @@ const SosPage: React.FC<SosPageProps> = ({ userProfile, authReady, onLoginClick,
             {/* Footer Notice */}
             <div className="bg-slate-50 border-t border-slate-100 p-4 text-center">
               <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">
-                Em caso de crise: Mantenha a calma, evite toques bruscos e barulhos excessivos.
+                {t('sos.crisisNotice')}
               </p>
             </div>
           </div>
 
           <div className="flex flex-col items-center space-y-4 print:hidden">
             <p className="text-slate-400 text-sm italic">
-              Esta carteirinha pode ser apresentada em escolas, hospitais e órgãos públicos.
+              {t('sos.presentationNotice')}
             </p>
             <div className="flex space-x-4">
               <button onClick={() => setIsEditing(true)} className="px-6 py-2 text-slate-600 font-bold hover:bg-slate-100 rounded-xl transition-colors">
-                Editar Dados
+                {t('sos.edit')}
               </button>
               <button onClick={handlePrint} className="px-8 py-2 bg-slate-900 text-white font-bold rounded-xl hover:bg-slate-800 transition-colors">
-                Imprimir Carteirinha
+                {t('sos.print')}
               </button>
             </div>
           </div>
