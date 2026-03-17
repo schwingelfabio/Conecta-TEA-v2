@@ -3,7 +3,8 @@ import { motion } from 'framer-motion';
 import { Mail, Phone, Loader2 } from 'lucide-react';
 import { auth, googleProvider } from '../lib/firebase';
 import {
-  signInWithPopup,
+  signInWithRedirect,
+  getRedirectResult,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   RecaptchaVerifier,
@@ -63,6 +64,48 @@ export default function AuthForm({ onSuccess }: AuthFormProps) {
   const [isSignUp, setIsSignUp] = useState(false);
 
   useEffect(() => {
+    const checkRedirect = async () => {
+      try {
+        console.log('[AuthForm] Checking redirect result...');
+        // @ts-ignore
+        const currentProjectId = auth.app.options.projectId;
+        console.log('[AuthForm] Current Firebase Config:', {
+          projectId: currentProjectId,
+          authDomain: auth.app.options.authDomain,
+          apiKey: auth.app.options.apiKey?.substring(0, 6) + '...'
+        });
+
+        if (currentProjectId !== 'conecta-tea-41747') {
+          console.warn(`[AuthForm] AVISO: O Project ID atual (${currentProjectId}) não coincide com o esperado (conecta-tea-41747).`);
+        }
+        const result = await getRedirectResult(auth);
+        
+        if (result?.user) {
+          console.log('[AuthForm] Redirect success:', {
+            uid: result.user.uid,
+            email: result.user.email,
+            displayName: result.user.displayName
+          });
+          onSuccess();
+        } else {
+          console.log('[AuthForm] Nenhum resultado de redirect');
+        }
+      } catch (err: any) {
+        console.error('[AuthForm] Redirect Auth Error Full:', err);
+        const diagnosticInfo = {
+          code: err.code,
+          message: err.message,
+          customData: err.customData,
+          stack: err.stack
+        };
+        console.log('[AuthForm] Diagnostic Info:', JSON.stringify(diagnosticInfo, null, 2));
+        setError(`ERRO DE AUTENTICAÇÃO: ${err.message} (Código: ${err.code})`);
+      }
+    };
+    checkRedirect();
+  }, [onSuccess, t]);
+
+  useEffect(() => {
     try {
       // @ts-ignore
       if (!window.recaptchaVerifier) {
@@ -97,12 +140,10 @@ export default function AuthForm({ onSuccess }: AuthFormProps) {
     try {
       setLoading(true);
       setError(null);
-      await signInWithPopup(auth, googleProvider);
-      onSuccess();
+      await signInWithRedirect(auth, googleProvider);
     } catch (err: any) {
       console.error('[AuthForm] Google Auth Error:', err);
-      setError(getFriendlyErrorMessage(err, t));
-    } finally {
+      setError(`${getFriendlyErrorMessage(err, t)} [${err.code}: ${err.message}]`);
       setLoading(false);
     }
   };
@@ -123,7 +164,7 @@ export default function AuthForm({ onSuccess }: AuthFormProps) {
       onSuccess();
     } catch (err: any) {
       console.error('[AuthForm] Firebase Auth Error:', err);
-      setError(getFriendlyErrorMessage(err, t));
+      setError(`${getFriendlyErrorMessage(err, t)} [${err.code}: ${err.message}]`);
     } finally {
       setLoading(false);
     }
@@ -141,7 +182,7 @@ export default function AuthForm({ onSuccess }: AuthFormProps) {
       const confirmation = await signInWithPhoneNumber(auth, formattedPhone, appVerifier);
       setConfirmationResult(confirmation);
     } catch (err: any) {
-      setError(getFriendlyErrorMessage(err, t));
+      setError(`${getFriendlyErrorMessage(err, t)} [${err.code}: ${err.message}]`);
     } finally {
       setLoading(false);
     }
@@ -157,7 +198,7 @@ export default function AuthForm({ onSuccess }: AuthFormProps) {
       await confirmationResult.confirm(verificationCode);
       onSuccess();
     } catch (err: any) {
-      setError(getFriendlyErrorMessage(err, t));
+      setError(`${getFriendlyErrorMessage(err, t)} [${err.code}: ${err.message}]`);
     } finally {
       setLoading(false);
     }
@@ -170,7 +211,11 @@ export default function AuthForm({ onSuccess }: AuthFormProps) {
       </h2>
 
       {error && (
-        <div className="mb-4 p-3 bg-red-50 text-red-600 rounded-xl text-sm text-center">
+        <div className="mb-6 p-4 bg-red-50 border-2 border-red-200 text-red-700 rounded-2xl text-sm font-mono break-all">
+          <div className="font-bold mb-2 flex items-center gap-2">
+            <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
+            DIAGNÓSTICO DE ERRO:
+          </div>
           {error}
         </div>
       )}
