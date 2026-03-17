@@ -67,17 +67,6 @@ export default function AuthForm({ onSuccess }: AuthFormProps) {
     const checkRedirect = async () => {
       try {
         console.log('[AuthForm] Checking redirect result...');
-        // @ts-ignore
-        const currentProjectId = auth.app.options.projectId;
-        console.log('[AuthForm] Current Firebase Config:', {
-          projectId: currentProjectId,
-          authDomain: auth.app.options.authDomain,
-          apiKey: auth.app.options.apiKey?.substring(0, 6) + '...'
-        });
-
-        if (currentProjectId !== 'conecta-tea-41747') {
-          console.warn(`[AuthForm] AVISO: O Project ID atual (${currentProjectId}) não coincide com o esperado (conecta-tea-41747).`);
-        }
         const result = await getRedirectResult(auth);
         
         if (result?.user) {
@@ -211,11 +200,7 @@ export default function AuthForm({ onSuccess }: AuthFormProps) {
       </h2>
 
       {error && (
-        <div className="mb-6 p-4 bg-red-50 border-2 border-red-200 text-red-700 rounded-2xl text-sm font-mono break-all">
-          <div className="font-bold mb-2 flex items-center gap-2">
-            <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
-            DIAGNÓSTICO DE ERRO:
-          </div>
+        <div className="mb-4 p-3 bg-red-50 text-red-600 rounded-xl text-sm text-center font-medium">
           {error}
         </div>
       )}
