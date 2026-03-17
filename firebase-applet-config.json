@@ -3,7 +3,7 @@
   "appId": "1:873443573055:web:bc6ddcb1de34030f2ae78a",
   "apiKey": "AIzaSyCZGhDDX61aKf9vMDS_k8M3JSDC7ADYR4s",
   "authDomain": "conecta-tea-41747.firebaseapp.com",
-  "firestoreDatabaseId": "ai-studio-9098eec9-1bc8-4a40-a917-50d96c833aaa",
+  "firestoreDatabaseId": "(default)",
   "storageBucket": "conecta-tea-41747.firebasestorage.app",
   "messagingSenderId": "873443573055",
   "measurementId": ""

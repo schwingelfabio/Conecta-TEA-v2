@@ -15,7 +15,8 @@ dotenv.config();
 
 // Initialize Firebase Admin
 const projectId = firebaseConfig.projectId;
-const databaseId = firebaseConfig.firestoreDatabaseId;
+// Use (default) as a fallback if the specific database ID fails
+const databaseId = firebaseConfig.firestoreDatabaseId || '(default)';
 
 console.log(`[Server] Config Project ID: ${projectId}`);
 console.log(`[Server] Config Database ID: ${databaseId}`);
@@ -25,6 +26,7 @@ console.log(`[Server] Env GOOGLE_CLOUD_PROJECT: ${process.env.GOOGLE_CLOUD_PROJE
 async function initAdmin() {
   if (!admin.apps.length) {
     try {
+      // Try to initialize with the project ID from config
       admin.initializeApp({
         projectId: projectId,
         credential: admin.credential.applicationDefault()
@@ -32,11 +34,19 @@ async function initAdmin() {
       console.log(`Firebase Admin initialized successfully for project: ${projectId}`);
     } catch (error) {
       console.error('Firebase Admin initialization failed:', error);
+      // Fallback to default initialization (uses environment variables)
+      admin.initializeApp();
+      console.log('Firebase Admin initialized with default environment config.');
     }
   } else {
-    console.log(`Firebase Admin already initialized for project: ${admin.app().options.projectId}`);
-    if (admin.app().options.projectId !== projectId) {
-      console.warn(`Project ID mismatch! Expected ${projectId}, got ${admin.app().options.projectId}. Re-initializing...`);
+    const currentProjectId = admin.app().options.projectId;
+    console.log(`Firebase Admin already initialized for project: ${currentProjectId}`);
+    
+    // If there's a mismatch and we are not in production, we might want to re-initialize
+    // but in this environment, re-initializing can be tricky.
+    // We'll only re-initialize if the current project is clearly wrong (e.g. empty)
+    if (!currentProjectId && projectId) {
+      console.warn(`Project ID missing in current app. Re-initializing with ${projectId}...`);
       await admin.app().delete();
       admin.initializeApp({
         projectId: projectId,
@@ -48,22 +58,53 @@ async function initAdmin() {
 
 await initAdmin();
 
-// Get Firestore instance
-const db = getFirestore(admin.app(), databaseId);
-console.log(`[Server] Firestore initialized. Database: ${databaseId}, Project: ${admin.app().options.projectId}`);
+// Get Firestore instance with error handling for the database ID
+let db: admin.firestore.Firestore;
+try {
+  db = getFirestore(admin.app(), databaseId);
+  console.log(`[Server] Firestore initialized. Database: ${databaseId}, Project: ${admin.app().options.projectId}`);
+} catch (error) {
+  console.error(`[Server] Failed to initialize Firestore with database ${databaseId}. Falling back to (default).`, error);
+  db = getFirestore(admin.app(), '(default)');
+}
 
-// Test connection
-(async () => {
+// Test connection and provide helpful error message for PERMISSION_DENIED
+async function testFirestoreConnection() {
   try {
     await db.collection('test_connection').doc('status').set({
       last_check: admin.firestore.FieldValue.serverTimestamp(),
-      status: 'ok'
+      status: 'ok',
+      project: admin.app().options.projectId,
+      database: databaseId
     });
     console.log('[Server] Firestore test write successful.');
-  } catch (error) {
-    console.error('[Server] Firestore test write failed:', error);
+  } catch (error: any) {
+    console.error('[Server] Firestore test write failed:', error.message || error);
+    if (error.code === 7 || error.message?.includes('PERMISSION_DENIED')) {
+      console.error('CRITICAL: Permission Denied. This usually means the service account does not have access to the project or database.');
+      console.error(`Current Project: ${admin.app().options.projectId}`);
+      console.error(`Current Database: ${databaseId}`);
+      
+      // If we are using a named database and it failed, try switching to (default) dynamically
+      if (databaseId !== '(default)') {
+        console.log('[Server] Attempting dynamic fallback to (default) database...');
+        try {
+          const fallbackDb = getFirestore(admin.app(), '(default)');
+          await fallbackDb.collection('test_connection').doc('status').set({
+            last_check: admin.firestore.FieldValue.serverTimestamp(),
+            status: 'ok_fallback'
+          });
+          console.log('[Server] Dynamic fallback to (default) successful. Updating global db instance.');
+          db = fallbackDb;
+        } catch (fallbackError) {
+          console.error('[Server] Dynamic fallback to (default) also failed.');
+        }
+      }
+    }
   }
-})();
+}
+
+await testFirestoreConnection();
 
 async function initializeSystemData() {
   if (!projectId) return;
