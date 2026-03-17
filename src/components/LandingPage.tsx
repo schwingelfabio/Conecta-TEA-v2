@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Users, LogIn, ShieldCheck, MessageCircle, Crown, Heart, Zap, ExternalLink } from 'lucide-react';
+import { Users, LogIn, ShieldCheck, MessageCircle, Crown, Heart, Zap, ExternalLink, X, Copy, Check } from 'lucide-react';
 import AuthForm from './AuthForm';
 import DonationSupportCard from './DonationSupportCard';
 import LanguageSelector from './LanguageSelector';
@@ -12,10 +12,79 @@ interface LandingPageProps {
   onGuestLogin: () => void;
 }
 
+function SupportModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
+  const { t } = useTranslation();
+  const [copied, setCopied] = useState(false);
+  const pixKey = "01244056065";
+
+  const copyPix = () => {
+    navigator.clipboard.writeText(pixKey);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+      <motion.div 
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        className="bg-white rounded-3xl p-8 max-w-md w-full shadow-2xl relative"
+      >
+        <button 
+          onClick={onClose}
+          className="absolute top-4 right-4 p-2 hover:bg-gray-100 rounded-full transition-colors"
+        >
+          <X size={20} />
+        </button>
+
+        <h3 className="text-2xl font-bold text-gray-900 mb-6 pr-8">
+          {t('landing.supportModalTitle')}
+        </h3>
+
+        <div className="space-y-4">
+          <div className="p-6 bg-sky-50 rounded-2xl border border-sky-100">
+            <p className="text-sm font-bold text-sky-700 uppercase tracking-wider mb-3">Pix (Brasil)</p>
+            <div className="flex items-center justify-between gap-3 bg-white p-3 rounded-xl border border-sky-200">
+              <code className="text-sky-900 font-mono text-sm">{pixKey}</code>
+              <button 
+                onClick={copyPix}
+                className="p-2 hover:bg-sky-50 rounded-lg transition-colors text-sky-600"
+                title="Copiar chave Pix"
+              >
+                {copied ? <Check size={18} /> : <Copy size={18} />}
+              </button>
+            </div>
+            <p className="text-xs text-sky-600 mt-3 italic">
+              {t('landing.supportModalPix')}
+            </p>
+          </div>
+
+          <a 
+            href="https://www.paypal.com/donate/?hosted_button_id=QFNBCLB7HH3QE"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center justify-center gap-3 w-full py-4 bg-[#0070ba] text-white rounded-2xl font-bold hover:bg-[#005ea6] transition-colors shadow-lg shadow-blue-100"
+          >
+            <ExternalLink size={20} />
+            {t('landing.supportModalPayPal')}
+          </a>
+        </div>
+
+        <p className="mt-6 text-center text-gray-500 text-sm">
+          {t('donation.description')}
+        </p>
+      </motion.div>
+    </div>
+  );
+}
+
 export default function LandingPage({ onLogin, onShowTerms, onGuestLogin }: LandingPageProps) {
   const { t, i18n } = useTranslation();
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [showAuthForm, setShowAuthForm] = useState(false);
+  const [isSupportModalOpen, setIsSupportModalOpen] = useState(false);
 
   const handleLoginClick = () => {
     if (!acceptedTerms) {
@@ -52,16 +121,12 @@ export default function LandingPage({ onLogin, onShowTerms, onGuestLogin }: Land
               </div>
             </div>
 
-            <h1 className="text-5xl md:text-7xl font-black text-gray-900 mb-6 tracking-tight">
-              Conecta <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-500 to-indigo-600">TEA</span>
+            <h1 className="text-4xl md:text-6xl font-black text-gray-900 mb-6 tracking-tight leading-tight max-w-4xl mx-auto">
+              {t('landing.heroTitle')}
             </h1>
 
-            <p className="text-2xl md:text-3xl font-bold text-gray-700 mb-8">
-              {t('landing.title')}
-            </p>
-
-            <p className="max-w-2xl mx-auto text-xl text-gray-600 mb-12 leading-relaxed">
-              {t('landing.subtitle')}
+            <p className="max-w-3xl mx-auto text-xl md:text-2xl text-gray-600 mb-12 leading-relaxed">
+              {t('landing.heroSubtitle')}
             </p>
 
             {showAuthForm ? (
@@ -79,69 +144,115 @@ export default function LandingPage({ onLogin, onShowTerms, onGuestLogin }: Land
                 </button>
               </motion.div>
             ) : (
-              <div className="flex flex-col items-center justify-center gap-6">
+              <div className="flex flex-col items-center justify-center gap-8">
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full">
                   <button
-                    onClick={handleLoginClick}
-                    className={`w-full sm:w-auto px-10 py-5 rounded-2xl font-bold text-xl shadow-lg hover:-translate-y-1 transition-all active:scale-95 flex items-center justify-center gap-3 ${acceptedTerms ? 'bg-sky-500 text-white shadow-sky-200 hover:bg-sky-600' : 'bg-gray-300 text-gray-500 cursor-not-allowed'}`}
-                  >
-                    <LogIn size={24} />
-                    {t('landing.login')}
-                  </button>
-
-                  <button
-                    onClick={handleLoginClick}
-                    className={`w-full sm:w-auto px-10 py-5 bg-white text-gray-900 border-2 border-gray-100 rounded-2xl font-bold text-xl shadow-md hover:bg-gray-50 hover:border-sky-100 hover:-translate-y-1 transition-all active:scale-95 flex items-center justify-center gap-3 ${!acceptedTerms ? 'opacity-50 cursor-not-allowed' : ''}`}
-                  >
-                    {t('landing.createAccount')}
-                  </button>
-
-                  <button
                     onClick={() => {
-                      if (!acceptedTerms) {
-                        alert(t('landing.termsAlert'));
-                        return;
+                      const screeningSection = document.getElementById('screening');
+                      if (screeningSection) {
+                        screeningSection.scrollIntoView({ behavior: 'smooth' });
                       }
-                      onGuestLogin();
                     }}
-                    className={`w-full sm:w-auto px-10 py-5 bg-slate-100 text-slate-700 rounded-2xl font-bold text-xl shadow-sm hover:bg-slate-200 hover:-translate-y-1 transition-all active:scale-95 flex items-center justify-center gap-3 ${!acceptedTerms ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    className="w-full sm:w-auto px-10 py-5 bg-sky-500 text-white rounded-2xl font-bold text-xl shadow-lg shadow-sky-100 hover:bg-sky-600 hover:-translate-y-1 transition-all active:scale-95 flex items-center justify-center gap-3"
                   >
-                    Entrar como visitante
+                    <ShieldCheck size={24} />
+                    {t('landing.heroCTA')}
                   </button>
 
-                  <a
-                    href="https://sites.google.com/view/triagemteaia/portugu%C3%AAs"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-full sm:w-auto px-10 py-5 bg-emerald-500 text-white rounded-2xl font-bold text-xl shadow-lg hover:bg-emerald-600 hover:-translate-y-1 transition-all active:scale-95 flex items-center justify-center gap-3"
+                  <button
+                    onClick={() => setIsSupportModalOpen(true)}
+                    className="w-full sm:w-auto px-10 py-5 bg-white text-emerald-600 border-2 border-emerald-100 rounded-2xl font-bold text-xl shadow-sm hover:bg-emerald-50 hover:border-emerald-200 hover:-translate-y-1 transition-all active:scale-95 flex items-center justify-center gap-3"
                   >
-                    <ExternalLink size={22} />
-                    {t('landing.triagemLink')}
-                  </a>
+                    <Heart size={24} className="fill-emerald-500" />
+                    {t('landing.supportButton')}
+                  </button>
                 </div>
 
-                <div className="flex items-center gap-2 text-sm text-gray-600 bg-white/50 p-3 rounded-xl border border-gray-100">
-                  <input
-                    type="checkbox"
-                    id="terms"
-                    checked={acceptedTerms}
-                    onChange={(e) => setAcceptedTerms(e.target.checked)}
-                    className="w-5 h-5 rounded border-gray-300 text-sky-500 focus:ring-sky-500"
-                  />
-                  <label htmlFor="terms" className="cursor-pointer">
-                    {t('landing.readAndAccept')}{' '}
-                    <button onClick={onShowTerms} className="text-sky-500 font-bold hover:underline">
-                      {t('landing.termsLink')}
+                <div className="flex flex-col items-center gap-6 w-full max-w-2xl">
+                  <div className="flex flex-wrap justify-center gap-4">
+                    <button
+                      onClick={handleLoginClick}
+                      className={`px-6 py-3 rounded-xl font-bold text-sm shadow-sm transition-all active:scale-95 flex items-center gap-2 ${acceptedTerms ? 'bg-slate-800 text-white hover:bg-slate-900' : 'bg-gray-200 text-gray-400 cursor-not-allowed'}`}
+                    >
+                      <LogIn size={18} />
+                      {t('landing.login')}
                     </button>
-                  </label>
+
+                    <button
+                      onClick={() => {
+                        if (!acceptedTerms) {
+                          alert(t('landing.termsAlert'));
+                          return;
+                        }
+                        onGuestLogin();
+                      }}
+                      className={`px-6 py-3 bg-slate-100 text-slate-700 rounded-xl font-bold text-sm shadow-sm hover:bg-slate-200 transition-all active:scale-95 flex items-center gap-2 ${!acceptedTerms ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    >
+                      Entrar como visitante
+                    </button>
+                  </div>
+
+                  <div className="flex items-center gap-3 text-sm text-gray-500 bg-gray-50/50 px-4 py-2 rounded-full border border-gray-100">
+                    <input
+                      type="checkbox"
+                      id="terms"
+                      checked={acceptedTerms}
+                      onChange={(e) => setAcceptedTerms(e.target.checked)}
+                      className="w-4 h-4 rounded border-gray-300 text-sky-500 focus:ring-sky-500"
+                    />
+                    <label htmlFor="terms" className="cursor-pointer">
+                      {t('landing.readAndAccept')}{' '}
+                      <button onClick={onShowTerms} className="text-sky-500 font-bold hover:underline">
+                        {t('landing.termsLink')}
+                      </button>
+                    </label>
+                  </div>
+                </div>
+
+                <div className="mt-4 flex items-center gap-3 text-gray-500 font-medium">
+                  <div className="w-8 h-[1px] bg-gray-200"></div>
+                  <p className="text-sm italic">
+                    {t('landing.trustElement')}
+                  </p>
+                  <div className="w-8 h-[1px] bg-gray-200"></div>
                 </div>
               </div>
             )}
           </motion.div>
         </div>
       </section>
+      
+      <section className="py-16 bg-sky-50/50 border-y border-sky-100/50">
+        <div className="max-w-4xl mx-auto px-4 text-center">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+          >
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4 leading-tight">
+              {t('landing.impact.title')}
+            </h2>
+            <p className="text-lg text-gray-600 mb-8">
+              {t('landing.impact.subtitle')}
+            </p>
+            <button
+              onClick={() => {
+                const screeningSection = document.getElementById('screening');
+                if (screeningSection) {
+                  screeningSection.scrollIntoView({ behavior: 'smooth' });
+                }
+              }}
+              className="inline-flex items-center gap-2 px-8 py-4 bg-sky-500 text-white rounded-2xl font-bold shadow-lg shadow-sky-100 hover:bg-sky-600 transition-all active:scale-95"
+            >
+              <ShieldCheck size={20} />
+              {t('landing.heroCTA')}
+            </button>
+          </motion.div>
+        </div>
+      </section>
 
-      <section className="py-24 bg-gray-50">
+      <section id="screening" className="py-24 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
             <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 hover:shadow-xl transition-shadow">
@@ -242,6 +353,10 @@ export default function LandingPage({ onLogin, onShowTerms, onGuestLogin }: Land
       </section>
 
       <footer className="py-12 border-t border-gray-100">
+        <SupportModal 
+          isOpen={isSupportModalOpen} 
+          onClose={() => setIsSupportModalOpen(false)} 
+        />
         <div className="max-w-7xl mx-auto px-4 flex flex-col items-center gap-4 text-gray-500">
           <p>{t('landing.footer.rights')}</p>
           <div className="flex items-center gap-4">

@@ -122,6 +122,18 @@
   "landing": {
     "title": "A sua rede de apoio e conexão autista.",
     "subtitle": "Conecte famílias, comunidades e tecnologia para transformar vidas.",
+    "heroTitle": "Seu filho pode estar mostrando sinais de autismo… e você pode não perceber.",
+    "heroSubtitle": "O Conecta TEA utiliza tecnologia e inteligência artificial para ajudar famílias a identificar sinais precoces e encontrar apoio.",
+    "heroCTA": "Fazer triagem gratuita",
+    "supportButton": "Apoiar o projeto",
+    "trustElement": "Apoiando famílias na identificação precoce do autismo com tecnologia acessível.",
+    "impact": {
+      "title": "Quanto antes os sinais do autismo são identificados, maiores são as chances de desenvolvimento da criança.",
+      "subtitle": "Nossa tecnologia ajuda famílias a agir no momento certo."
+    },
+    "supportModalTitle": "Apoie o Conecta TEA",
+    "supportModalPix": "Chave Pix (CPF): 01244056065",
+    "supportModalPayPal": "Doar via PayPal",
     "login": "Entrar",
     "createAccount": "Criar conta gratuita",
     "triagemLink": "Conheça o Triagem TEA IA",

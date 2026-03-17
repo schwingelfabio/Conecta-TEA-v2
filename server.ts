@@ -15,52 +15,43 @@ dotenv.config();
 
 // Initialize Firebase Admin
 const projectId = firebaseConfig.projectId;
-// Use (default) as a fallback if the specific database ID fails
 const databaseId = firebaseConfig.firestoreDatabaseId || '(default)';
-
-console.log(`[Server] Config Project ID: ${projectId}`);
-console.log(`[Server] Config Database ID: ${databaseId}`);
-console.log(`[Server] Env FIREBASE_PROJECT_ID: ${process.env.FIREBASE_PROJECT_ID}`);
-console.log(`[Server] Env GOOGLE_CLOUD_PROJECT: ${process.env.GOOGLE_CLOUD_PROJECT}`);
 
 async function initAdmin() {
   if (!admin.apps.length) {
     try {
-      // Try to initialize with the project ID from config
-      admin.initializeApp({
-        projectId: projectId,
-        credential: admin.credential.applicationDefault()
-      });
-      console.log(`Firebase Admin initialized successfully for project: ${projectId}`);
-    } catch (error) {
-      console.error('Firebase Admin initialization failed:', error);
-      // Fallback to default initialization (uses environment variables)
+      // In Cloud Run / AI Studio, the environment is usually pre-configured.
+      // Initializing without arguments is often the most reliable way to get the correct service account.
       admin.initializeApp();
-      console.log('Firebase Admin initialized with default environment config.');
-    }
-  } else {
-    const currentProjectId = admin.app().options.projectId;
-    console.log(`Firebase Admin already initialized for project: ${currentProjectId}`);
-    
-    // If there's a mismatch and we are not in production, we might want to re-initialize
-    // but in this environment, re-initializing can be tricky.
-    // We'll only re-initialize if the current project is clearly wrong (e.g. empty)
-    if (!currentProjectId && projectId) {
-      console.warn(`Project ID missing in current app. Re-initializing with ${projectId}...`);
-      await admin.app().delete();
-      admin.initializeApp({
-        projectId: projectId,
-        credential: admin.credential.applicationDefault()
-      });
+      const currentId = admin.app().options.projectId || process.env.GOOGLE_CLOUD_PROJECT || process.env.FIREBASE_PROJECT_ID;
+      console.log(`[Server] Firebase Admin initialized (default). Project: ${currentId}`);
+      
+      // If the environment project doesn't match our config project, we might have permission issues
+      if (currentId && projectId && currentId !== projectId) {
+        console.warn(`[Server] WARNING: Environment project (${currentId}) differs from config project (${projectId}).`);
+        console.warn(`[Server] If you get PERMISSION_DENIED, ensure the service account for ${currentId} has access to ${projectId}.`);
+      }
+    } catch (error) {
+      console.error('[Server] Default Firebase Admin initialization failed, trying with config...', error);
+      try {
+        admin.initializeApp({
+          projectId: projectId,
+          credential: admin.credential.applicationDefault()
+        });
+        console.log(`[Server] Firebase Admin initialized with config project: ${projectId}`);
+      } catch (configError) {
+        console.error('[Server] Firebase Admin initialization with config also failed:', configError);
+      }
     }
   }
 }
 
 await initAdmin();
 
-// Get Firestore instance with error handling for the database ID
+// Get Firestore instance with error handling
 let db: admin.firestore.Firestore;
 try {
+  // Explicitly use the database ID from config
   db = getFirestore(admin.app(), databaseId);
   console.log(`[Server] Firestore initialized. Database: ${databaseId}, Project: ${admin.app().options.projectId}`);
 } catch (error) {
@@ -71,35 +62,31 @@ try {
 // Test connection and provide helpful error message for PERMISSION_DENIED
 async function testFirestoreConnection() {
   try {
+    // Try a simple read first as it's less invasive than a write
+    await db.collection('test_connection').limit(1).get();
+    console.log('[Server] Firestore connection test (read) successful.');
+    
+    // Then try a write to confirm full permissions
     await db.collection('test_connection').doc('status').set({
       last_check: admin.firestore.FieldValue.serverTimestamp(),
       status: 'ok',
       project: admin.app().options.projectId,
       database: databaseId
     });
-    console.log('[Server] Firestore test write successful.');
+    console.log('[Server] Firestore connection test (write) successful.');
   } catch (error: any) {
-    console.error('[Server] Firestore test write failed:', error.message || error);
+    console.error('[Server] Firestore connection test failed:', error.message || error);
     if (error.code === 7 || error.message?.includes('PERMISSION_DENIED')) {
-      console.error('CRITICAL: Permission Denied. This usually means the service account does not have access to the project or database.');
-      console.error(`Current Project: ${admin.app().options.projectId}`);
-      console.error(`Current Database: ${databaseId}`);
-      
-      // If we are using a named database and it failed, try switching to (default) dynamically
-      if (databaseId !== '(default)') {
-        console.log('[Server] Attempting dynamic fallback to (default) database...');
-        try {
-          const fallbackDb = getFirestore(admin.app(), '(default)');
-          await fallbackDb.collection('test_connection').doc('status').set({
-            last_check: admin.firestore.FieldValue.serverTimestamp(),
-            status: 'ok_fallback'
-          });
-          console.log('[Server] Dynamic fallback to (default) successful. Updating global db instance.');
-          db = fallbackDb;
-        } catch (fallbackError) {
-          console.error('[Server] Dynamic fallback to (default) also failed.');
-        }
-      }
+      const currentProject = admin.app().options.projectId || process.env.GOOGLE_CLOUD_PROJECT;
+      console.error('--------------------------------------------------------------------------------');
+      console.error('CRITICAL: PERMISSION_DENIED (Error 7)');
+      console.error(`The service account for project "${currentProject}" does not have permission to access Firestore in project "${projectId}".`);
+      console.error('To fix this:');
+      console.error(`1. Go to Google Cloud Console for project "${projectId}"`);
+      console.error('2. Go to IAM & Admin > IAM');
+      console.error(`3. Add the service account for "${currentProject}" as a member`);
+      console.error('4. Grant it the "Cloud Datastore User" and "Firebase Admin" roles');
+      console.error('--------------------------------------------------------------------------------');
     }
   }
 }

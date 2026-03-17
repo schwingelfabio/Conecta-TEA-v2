@@ -4,15 +4,32 @@ import admin from "firebase-admin";
 export async function fetchAndPostAutismNews(db: admin.firestore.Firestore) {
   try {
     console.log("[News] Starting fetchAndPostAutismNews");
+    
+    // Check if db is initialized
+    if (!db) {
+      console.error("[News] Firestore database instance is null or undefined.");
+      return { success: false, error: 'db_not_initialized' };
+    }
+
     // Check for recent news first
     console.log("[News] Querying recent news...");
     const postsRef = db.collection('posts');
-    const recentNewsQuery = await postsRef
-      .where('topic', '==', 'noticias')
-      .orderBy('timestamp', 'desc')
-      .limit(1)
-      .get();
-    console.log("[News] Recent news query successful");
+    
+    let recentNewsQuery;
+    try {
+      recentNewsQuery = await postsRef
+        .where('topic', '==', 'noticias')
+        .orderBy('timestamp', 'desc')
+        .limit(1)
+        .get();
+      console.log("[News] Recent news query successful");
+    } catch (queryError: any) {
+      console.error("[News] Query failed:", queryError.message || queryError);
+      if (queryError.code === 7 || queryError.message?.includes('PERMISSION_DENIED')) {
+        console.error("[News] PERMISSION_DENIED: The service account does not have permission to read from 'posts' collection.");
+      }
+      throw queryError;
+    }
 
     if (!recentNewsQuery.empty) {
       const latestNews = recentNewsQuery.docs[0].data();

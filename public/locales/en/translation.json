@@ -122,6 +122,18 @@
   "landing": {
     "title": "Your autism support and connection network.",
     "subtitle": "Connecting families, communities, and technology to transform lives.",
+    "heroTitle": "Your child may be showing early signs of autism… and you might not notice.",
+    "heroSubtitle": "Conecta TEA uses technology and AI to help families identify early signs and find support.",
+    "heroCTA": "Start free screening",
+    "supportButton": "Support this project",
+    "trustElement": "Supporting families in early autism identification with accessible technology.",
+    "impact": {
+      "title": "The earlier autism signs are identified, the greater the chances of child development.",
+      "subtitle": "Our technology helps families take action at the right time."
+    },
+    "supportModalTitle": "Support Conecta TEA",
+    "supportModalPix": "Pix Key (CPF): 01244056065",
+    "supportModalPayPal": "Donate via PayPal",
     "login": "Login",
     "createAccount": "Create free account",
     "triagemLink": "Discover Triagem TEA IA",

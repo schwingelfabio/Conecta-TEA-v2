@@ -120,8 +120,20 @@
     "back": "Volver"
   },
   "landing": {
-    "title": "Tu red de apoyo y conexión para el autismo.",
+    "title": "Tu red de apoyo e conexión para el autismo.",
     "subtitle": "Conectando familias, comunidades y tecnología para transformar vidas.",
+    "heroTitle": "Su hijo puede estar mostrando señales de autismo… y usted puede no notarlo.",
+    "heroSubtitle": "Conecta TEA utiliza tecnología e inteligencia artificial para ayudar a las familias a identificar señales tempranas y encontrar apoyo.",
+    "heroCTA": "Comenzar evaluación gratuita",
+    "supportButton": "Apoyar este proyecto",
+    "trustElement": "Apoyando a las familias en la identificación temprana del autismo con tecnología accesible.",
+    "impact": {
+      "title": "Cuanto antes se identifiquen las señales del autismo, mayores serán las oportunidades de desarrollo del niño.",
+      "subtitle": "Nuestra tecnología ayuda a las familias a actuar en el momento adecuado."
+    },
+    "supportModalTitle": "Apoye a Conecta TEA",
+    "supportModalPix": "Clave Pix (CPF): 01244056065",
+    "supportModalPayPal": "Donar vía PayPal",
     "login": "Iniciar sesión",
     "createAccount": "Crear cuenta gratuita",
     "triagemLink": "Conoce Triagem TEA IA",
