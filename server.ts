@@ -19,28 +19,36 @@ const databaseId = firebaseConfig.firestoreDatabaseId;
 
 console.log(`[Server] Config Project ID: ${projectId}`);
 console.log(`[Server] Config Database ID: ${databaseId}`);
-console.log(`[Server] Env Project ID: ${process.env.FIREBASE_PROJECT_ID}`);
+console.log(`[Server] Env FIREBASE_PROJECT_ID: ${process.env.FIREBASE_PROJECT_ID}`);
+console.log(`[Server] Env GOOGLE_CLOUD_PROJECT: ${process.env.GOOGLE_CLOUD_PROJECT}`);
 
-if (!admin.apps.length) {
-  try {
-    // Try to initialize without arguments to pick up environment variables
-    admin.initializeApp();
-    console.log('Firebase Admin initialized successfully (default).');
-  } catch (error) {
-    console.warn('Default Firebase Admin initialization failed, trying with config:', error);
+async function initAdmin() {
+  if (!admin.apps.length) {
     try {
       admin.initializeApp({
-        projectId: projectId
+        projectId: projectId,
+        credential: admin.credential.applicationDefault()
       });
-      console.log('Firebase Admin initialized successfully with config.');
-    } catch (innerError) {
-      console.error('Firebase Admin initialization failed completely:', innerError);
+      console.log(`Firebase Admin initialized successfully for project: ${projectId}`);
+    } catch (error) {
+      console.error('Firebase Admin initialization failed:', error);
+    }
+  } else {
+    console.log(`Firebase Admin already initialized for project: ${admin.app().options.projectId}`);
+    if (admin.app().options.projectId !== projectId) {
+      console.warn(`Project ID mismatch! Expected ${projectId}, got ${admin.app().options.projectId}. Re-initializing...`);
+      await admin.app().delete();
+      admin.initializeApp({
+        projectId: projectId,
+        credential: admin.credential.applicationDefault()
+      });
     }
   }
 }
 
+await initAdmin();
+
 // Get Firestore instance
-// In some environments, getFirestore might need the app explicitly
 const db = getFirestore(admin.app(), databaseId);
 console.log(`[Server] Firestore initialized. Database: ${databaseId}, Project: ${admin.app().options.projectId}`);
 
