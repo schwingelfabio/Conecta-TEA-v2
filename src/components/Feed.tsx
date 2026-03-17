@@ -99,6 +99,7 @@ import PostComments from './PostComments';
 import ActiveCommunities from './ActiveCommunities';
 import ExternalNews from './ExternalNews';
 import { useTranslation } from 'react-i18next';
+import { useInView } from 'react-intersection-observer';
 
 interface FeedProps {
   userProfile: UserProfile | null;
@@ -119,6 +120,16 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
   const [hasMore, setHasMore] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [expandedComments, setExpandedComments] = useState<string | null>(null);
+  const { ref, inView } = useInView({
+    threshold: 0.5,
+  });
+
+  useEffect(() => {
+    if (inView && hasMore && !loadingMore && !loading && posts.length > 0) {
+      console.log('[Feed] Infinite scroll triggered');
+      fetchPosts(true);
+    }
+  }, [inView, hasMore, loadingMore, loading, posts.length]);
 
   const togglePinPost = async (postId: string, isPinned: boolean) => {
     try {
@@ -440,274 +451,175 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
         <div className="space-y-6">
           {loading ? (
             <LogoLoader />
-          ) : (
-            <AnimatePresence mode="popLayout">
-            {posts.map((post) => (
-              <motion.div
-                key={post.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                className={`bg-white rounded-3xl shadow-sm border ${post.isVip ? 'border-amber-400 ring-1 ring-amber-200' : 'border-slate-100'} overflow-hidden`}
-              >
-                <div className="p-6">
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center space-x-3">
-                      <img 
-                        src={post.authorPhoto} 
-                        alt={post.authorName} 
-                        className="w-10 h-10 rounded-full"
-                      />
-                      <div>
-                        <div className="flex items-center space-x-2">
-                          <h4 className="font-bold text-slate-900 flex items-center gap-1">
-                            {post.authorName}
-                            {post.isVip && <Crown size={14} className="text-amber-500" />}
-                          </h4>
-                          {post.isVip && (
-                            <span className="bg-amber-100 text-amber-700 text-[10px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider">VIP</span>
-                          )}
-                          {post.authorId === 'ai-bot' && (
-                            <span className="bg-brand-primary/10 text-brand-primary text-[10px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider">IA</span>
-                          )}
-                          {post.isPinned && (
-                            <span className="bg-sky-100 text-sky-700 text-[10px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider flex items-center gap-1">
-                              <Pin size={10} />
-                              {t('feed.pin')}
-                            </span>
-                          )}
-                        </div>
-                        <p className="text-xs text-slate-400 flex items-center space-x-1">
-                          <MapPin size={10} />
-                          <span>{post.location}</span>
-                          <span>•</span>
-                          <span>{post.timestamp?.toDate ? post.timestamp.toDate().toLocaleDateString('pt-BR') : 'Agora'}</span>
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      {isAdmin && (
-                        <button 
-                          onClick={() => togglePinPost(post.id, !!post.isPinned)}
-                          className={`transition-colors p-2 ${post.isPinned ? 'text-sky-600' : 'text-slate-400 hover:text-sky-600'}`}
-                          title={post.isPinned ? t('feed.unpinPost') : t('feed.pinPost')}
-                        >
-                          <Pin size={18} />
-                        </button>
-                      )}
-                      {(isAdmin || userProfile?.uid === post.authorId) && (
-                        <button 
-                          onClick={() => handleDeletePost(post.id)}
-                          className="text-red-400 hover:text-red-600 transition-colors p-2"
-                          title={t('feed.delete')}
-                        >
-                          <Trash2 size={18} />
-                        </button>
-                      )}
-                      <button className="text-slate-300 hover:text-slate-600 transition-colors">
-                        <MoreHorizontal size={20} />
-                      </button>
-                    </div>
-                  </div>
-
-                  <div className="markdown-body text-slate-700 mb-6">
-                    <ReactMarkdown>{post.text}</ReactMarkdown>
-                  </div>
-
-                  {post.mediaUrl && post.mediaType === 'image' && (
-                    <div className="mb-6 rounded-2xl overflow-hidden border border-slate-50">
-                      <img 
-                        src={post.mediaUrl} 
-                        alt="Post media" 
-                        className="w-full h-auto"
-                        referrerPolicy="no-referrer"
-                      />
-                    </div>
-                  )}
-
-                  <div className="flex items-center justify-between pt-4 border-t border-slate-50">
-                    <div className="flex items-center space-x-6">
-                      <button className="flex items-center space-x-2 text-slate-400 hover:text-brand-secondary transition-colors group">
-                        <Heart size={20} className="group-hover:fill-brand-secondary" />
-                        <span className="text-sm font-medium">{post.likes?.length || 0}</span>
-                      </button>
-                      <button className="flex items-center space-x-2 text-slate-400 hover:text-brand-primary transition-colors">
-                        <MessageCircle size={20} />
-                        <span className="text-sm font-medium">{post.commentsCount || 0}</span>
-                      </button>
-                    </div>
-                    <button className="text-slate-400 hover:text-slate-600 transition-colors">
-                      <Share2 size={20} />
-                    </button>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </AnimatePresence>
-        )}
-
-        {!loading && posts.length > 0 && hasMore && (
-          <div className="flex justify-center py-8">
-            <button
-              onClick={() => fetchPosts(true)}
-              disabled={loadingMore}
-              className={`
-                group relative flex items-center justify-center space-x-3 
-                px-10 py-5 bg-white border border-slate-100 rounded-[2rem] 
-                text-brand-primary font-bold shadow-lg shadow-sky-100/50 hover:shadow-xl 
-                hover:bg-slate-50 transition-all active:scale-95
-                disabled:opacity-70 disabled:active:scale-100 overflow-hidden
-              `}
-            >
-              {loadingMore ? (
-                <>
-                  <motion.div 
-                    animate={{ rotate: 360 }}
-                    transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-                    className="w-6 h-6 bg-brand-primary rounded-lg flex items-center justify-center"
+          ) : posts.length > 0 ? (
+            <>
+              <AnimatePresence mode="popLayout">
+                {posts.map((post) => (
+                  <motion.div
+                    key={post.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    className={`bg-white rounded-3xl shadow-sm border ${post.isVip ? 'border-amber-400 ring-1 ring-amber-200' : 'border-slate-100'} overflow-hidden`}
                   >
-                    <Users size={14} className="text-white" />
-                  </motion.div>
-                  <span className="animate-pulse">{t('feed.loading')}</span>
-                </>
-              ) : (
-                <>
-                  <div className="w-6 h-6 bg-brand-primary/10 rounded-lg flex items-center justify-center group-hover:bg-brand-primary group-hover:text-white transition-colors">
-                    <Users size={14} />
-                  </div>
-                  <span>{t('feed.loadMore')}</span>
-                </>
-              )}
-              {loadingMore && (
-                <motion.div 
-                  initial={{ x: "-100%" }}
-                  animate={{ x: "100%" }}
-                  transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
-                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent pointer-events-none"
-                />
-              )}
-            </button>
-          </div>
-        )}
-
-        {!loading && posts.length > 0 && !hasMore && (
-          <p className="text-center text-slate-400 py-4">{t('feed.endOfFeed')}</p>
-        )}
-
-        {!loading && posts.length === 0 && (
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="text-center py-20 bg-white rounded-[3rem] border border-dashed border-slate-200 shadow-inner"
-          >
-            {posts.map((post) => (
-              <motion.div
-                key={post.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                className="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden"
-              >
-                <div className="p-6">
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center space-x-3">
-                      <img 
-                        src={post.authorPhoto} 
-                        alt={post.authorName} 
-                        className="w-10 h-10 rounded-full"
-                      />
-                      <div>
-                        <div className="flex items-center space-x-2">
-                          <h4 className="font-bold text-slate-900 flex items-center gap-1">
-                            {post.authorName}
-                            {post.isVip && <Crown size={14} className="text-amber-500" />}
-                          </h4>
-                          {post.isVip && (
-                            <span className="bg-amber-100 text-amber-700 text-[10px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider">VIP</span>
-                          )}
-                          {post.authorId === 'ai-bot' && (
-                            <span className="bg-brand-primary/10 text-brand-primary text-[10px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider">IA</span>
-                          )}
-                          {post.isPinned && (
-                            <span className="bg-sky-100 text-sky-700 text-[10px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider flex items-center gap-1">
-                              <Pin size={10} />
-                              {t('feed.pin')}
-                            </span>
-                          )}
+                    <div className="p-6">
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="flex items-center space-x-3">
+                          <img 
+                            src={post.authorPhoto} 
+                            alt={post.authorName} 
+                            className="w-10 h-10 rounded-full"
+                          />
+                          <div>
+                            <div className="flex items-center space-x-2">
+                              <h4 className="font-bold text-slate-900 flex items-center gap-1">
+                                {post.authorName}
+                                {post.isVip && <Crown size={14} className="text-amber-500" />}
+                              </h4>
+                              {post.isVip && (
+                                <span className="bg-amber-100 text-amber-700 text-[10px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider">VIP</span>
+                              )}
+                              {post.authorId === 'ai-bot' && (
+                                <span className="bg-brand-primary/10 text-brand-primary text-[10px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider">IA</span>
+                              )}
+                              {post.isPinned && (
+                                <span className="bg-sky-100 text-sky-700 text-[10px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider flex items-center gap-1">
+                                  <Pin size={10} />
+                                  {t('feed.pin')}
+                                </span>
+                              )}
+                            </div>
+                            <p className="text-xs text-slate-400 flex items-center space-x-1">
+                              <MapPin size={10} />
+                              <span>{post.location}</span>
+                              <span>•</span>
+                              <span>{post.timestamp?.toDate ? post.timestamp.toDate().toLocaleDateString('pt-BR') : 'Agora'}</span>
+                            </p>
+                          </div>
                         </div>
-                        <p className="text-xs text-slate-400 flex items-center space-x-1">
-                          <MapPin size={10} />
-                          <span>{post.location}</span>
-                          <span>•</span>
-                          <span>{post.timestamp?.toDate ? post.timestamp.toDate().toLocaleDateString('pt-BR') : 'Agora'}</span>
-                        </p>
+                        <div className="flex items-center space-x-2">
+                          {isAdmin && (
+                            <button 
+                              onClick={() => togglePinPost(post.id, !!post.isPinned)}
+                              className={`transition-colors p-2 ${post.isPinned ? 'text-sky-600' : 'text-slate-400 hover:text-sky-600'}`}
+                              title={post.isPinned ? t('feed.unpinPost') : t('feed.pinPost')}
+                            >
+                              <Pin size={18} />
+                            </button>
+                          )}
+                          {(isAdmin || userProfile?.uid === post.authorId) && (
+                            <button 
+                              onClick={() => handleDeletePost(post.id)}
+                              className="text-red-400 hover:text-red-600 transition-colors p-2"
+                              title={t('feed.delete')}
+                            >
+                              <Trash2 size={18} />
+                            </button>
+                          )}
+                          <button className="text-slate-300 hover:text-slate-600 transition-colors">
+                            <MoreHorizontal size={20} />
+                          </button>
+                        </div>
                       </div>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      {isAdmin && (
-                        <button 
-                          onClick={() => togglePinPost(post.id, !!post.isPinned)}
-                          className={`transition-colors p-2 ${post.isPinned ? 'text-sky-600' : 'text-slate-400 hover:text-sky-600'}`}
-                          title={post.isPinned ? t('feed.unpinPost') : t('feed.pinPost')}
-                        >
-                          <Pin size={18} />
-                        </button>
+
+                      <div className="markdown-body text-slate-700 mb-6">
+                        <ReactMarkdown>{post.text}</ReactMarkdown>
+                      </div>
+
+                      {post.mediaUrl && post.mediaType === 'image' && (
+                        <div className="mb-6 rounded-2xl overflow-hidden border border-slate-50">
+                          <img 
+                            src={post.mediaUrl} 
+                            alt="Post media" 
+                            className="w-full h-auto"
+                            referrerPolicy="no-referrer"
+                          />
+                        </div>
                       )}
-                      {(isAdmin || userProfile?.uid === post.authorId) && (
-                        <button 
-                          onClick={() => handleDeletePost(post.id)}
-                          className="text-red-400 hover:text-red-600 transition-colors p-2"
-                          title={t('feed.delete')}
-                        >
-                          <Trash2 size={18} />
+
+                      <div className="flex items-center justify-between pt-4 border-t border-slate-100">
+                        <div className="flex items-center space-x-6">
+                          <button className="flex items-center space-x-2 text-slate-400 hover:text-brand-secondary transition-colors group">
+                            <Heart size={20} className="group-hover:fill-brand-secondary" />
+                            <span className="text-sm font-medium">{post.likes?.length || 0}</span>
+                          </button>
+                          <button 
+                            onClick={() => setExpandedComments(expandedComments === post.id ? null : post.id)}
+                            className="flex items-center space-x-2 text-slate-400 hover:text-brand-primary transition-colors"
+                          >
+                            <MessageCircle size={20} />
+                            <span className="text-sm font-medium">{post.commentsCount || 0}</span>
+                          </button>
+                        </div>
+                        <button className="text-slate-400 hover:text-slate-600 transition-colors">
+                          <Share2 size={20} />
                         </button>
-                      )}
-                      <button className="text-slate-300 hover:text-slate-600 transition-colors">
-                        <MoreHorizontal size={20} />
-                      </button>
+                      </div>
+
+                      <AnimatePresence>
+                        {expandedComments === post.id && (
+                          <motion.div
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: 'auto', opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            className="overflow-hidden"
+                          >
+                            <PostComments postId={post.id} userProfile={userProfile} isGuest={isGuest} />
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
                     </div>
-                  </div>
+                  </motion.div>
+                ))}
+              </AnimatePresence>
 
-                  <div className="markdown-body text-slate-700 mb-6">
-                    <ReactMarkdown>{post.text}</ReactMarkdown>
-                  </div>
-
-                  {post.mediaUrl && post.mediaType === 'image' && (
-                    <div className="mb-6 rounded-2xl overflow-hidden border border-slate-50">
-                      <img 
-                        src={post.mediaUrl} 
-                        alt="Post media" 
-                        className="w-full h-auto"
-                        referrerPolicy="no-referrer"
-                      />
-                    </div>
-                  )}
-
-                  <div className="flex items-center justify-between pt-4 border-t border-slate-100">
-                    <button 
-                      onClick={() => setExpandedComments(expandedComments === post.id ? null : post.id)}
-                      className="flex items-center space-x-2 text-slate-500 hover:text-brand-primary transition-colors"
-                    >
-                      <MessageSquare size={20} />
-                      <span className="text-sm font-medium">{post.commentsCount || 0} {t('feed.comments')}</span>
-                    </button>
-                  </div>
-
-                  <AnimatePresence>
-                    {expandedComments === post.id && (
-                      <motion.div
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: 'auto', opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                      >
-                        <PostComments postId={post.id} userProfile={userProfile} isGuest={isGuest} />
-                      </motion.div>
+              {/* Infinite Scroll Trigger / Load More Button */}
+              {hasMore && (
+                <div ref={ref} className="flex justify-center py-8">
+                  <button
+                    onClick={() => fetchPosts(true)}
+                    disabled={loadingMore}
+                    className={`
+                      group relative flex items-center justify-center space-x-3 
+                      px-10 py-5 bg-white border border-slate-100 rounded-[2rem] 
+                      text-brand-primary font-bold shadow-lg shadow-sky-100/50 hover:shadow-xl 
+                      hover:bg-slate-50 transition-all active:scale-95
+                      disabled:opacity-70 disabled:active:scale-100 overflow-hidden
+                    `}
+                  >
+                    {loadingMore ? (
+                      <>
+                        <motion.div 
+                          animate={{ rotate: 360 }}
+                          transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                          className="w-6 h-6 bg-brand-primary rounded-lg flex items-center justify-center"
+                        >
+                          <Users size={14} className="text-white" />
+                        </motion.div>
+                        <span className="animate-pulse">{t('feed.loading')}</span>
+                      </>
+                    ) : (
+                      <>
+                        <div className="w-6 h-6 bg-brand-primary/10 rounded-lg flex items-center justify-center group-hover:bg-brand-primary group-hover:text-white transition-colors">
+                          <Users size={14} />
+                        </div>
+                        <span>{t('feed.loadMore')}</span>
+                      </>
                     )}
-                  </AnimatePresence>
+                  </button>
                 </div>
-              </motion.div>
-            ))}
-            {posts.length === 0 && (
+              )}
+
+              {!hasMore && posts.length > 0 && (
+                <p className="text-center text-slate-400 py-8">{t('feed.endOfFeed')}</p>
+              )}
+            </>
+          ) : (
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="text-center py-20 bg-white rounded-[3rem] border border-dashed border-slate-200 shadow-inner"
+            >
               <div className="flex flex-col items-center space-y-6 px-6">
                 <div className="relative">
                   <div className="w-24 h-24 bg-slate-50 rounded-full flex items-center justify-center text-slate-200">
@@ -737,10 +649,9 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
                   <Send size={16} />
                 </button>
               </div>
-            )}
-          </motion.div>
-        )}
-      </div>
+            </motion.div>
+          )}
+        </div>
       )}
     </div>
   );

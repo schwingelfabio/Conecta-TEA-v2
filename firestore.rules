@@ -62,6 +62,12 @@ service cloud.firestore {
       allow write: if isAuthenticated();
     }
 
+    // Allow public to read videos
+    match /videos/{videoId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
     // Allow authenticated users to submit suggestions
     match /suggestions/{suggestionId} {
       allow create: if isAuthenticated();
