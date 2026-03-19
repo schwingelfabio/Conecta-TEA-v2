@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import {
   Home,
@@ -50,30 +49,6 @@ export default function App() {
   const [isGuest, setIsGuest] = useState(false);
 
   useEffect(() => {
-    // Microsoft Clarity
-    if (typeof window === 'undefined') return;
-
-    const clarityId = 'vy667xt888';
-
-    // Evita inserir o script mais de uma vez
-    if ((window as any).clarity) return;
-
-    (function (c: any, l: Document, a: string, r: string, i: string, t?: HTMLScriptElement, y?: Element | null) {
-      c[a] =
-        c[a] ||
-        function (...args: any[]) {
-          (c[a].q = c[a].q || []).push(args);
-        };
-
-      t = l.createElement(r) as HTMLScriptElement;
-      t.async = true;
-      t.src = 'https://www.clarity.ms/tag/' + i;
-      y = l.getElementsByTagName(r)[0];
-      y?.parentNode?.insertBefore(t, y);
-    })(window as any, document, 'clarity', 'script', clarityId);
-  }, []);
-
-  useEffect(() => {
     // Timeout fallback to prevent infinite loading
     const loadingTimeout = setTimeout(() => {
       setLoading(false);
@@ -91,7 +66,7 @@ export default function App() {
 
     const unsubscribe = onAuthStateChanged(auth, async (u) => {
       console.log('[App/Auth] onAuthStateChanged fired. User:', u?.email || 'null');
-
+      
       // Reset states while fetching
       if (!u) {
         console.log('[App/Auth] No user detected, clearing state');
@@ -131,15 +106,15 @@ export default function App() {
         console.log(`[AUTH] derived roles: isAdmin=${adminStatus}, isVip=${vipStatus}, isDeveloper=${developerStatus}`);
 
         const userDocRef = doc(db, 'users', u.uid);
-
+        
         try {
           const userDoc = await getDoc(userDocRef);
-
+          
           if (userDoc.exists()) {
             const data = userDoc.data() as UserProfile;
             console.log('[App/Auth] User profile found in Firestore');
             setUserProfile(data);
-
+            
             // Merge with Firestore roles if not hardcoded
             if (normalizedEmail !== 'fabiopalacioschwingel@gmail.com' && normalizedEmail !== 'fabiparadox2@gmail.com') {
               adminStatus = data.role === 'admin';
@@ -204,7 +179,7 @@ export default function App() {
             const data = docSnap.data() as UserProfile;
             console.log('[App/Auth] User profile snapshot update');
             setUserProfile(data);
-
+            
             // Re-apply forced roles on every snapshot to ensure consistency
             if (normalizedEmail === 'fabiopalacioschwingel@gmail.com') {
               setIsAdmin(true);
@@ -269,7 +244,7 @@ export default function App() {
 
   const renderContent = () => {
     console.log('[ACCESS] Rendering content for tab:', activeTab, { authReady, isAdmin, isVip, isGuest });
-
+    
     if (!authReady) {
       return (
         <div className="flex items-center justify-center min-h-[60vh]">
@@ -385,7 +360,7 @@ export default function App() {
       </main>
 
       {(user || isGuest) && <AiAssistant />}
-
+      
       {!user && !isGuest && showAuth && (
         <AuthForm onSuccess={() => setShowAuth(false)} />
       )}

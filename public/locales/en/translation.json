@@ -342,6 +342,21 @@
         "desc": "Use our artificial intelligence technology to assist in the screening and monitoring process."
       }
     },
+    "howItWorks": {
+      "title": "How does Conecta TEA work?",
+      "step1": {
+        "title": "Identification",
+        "desc": "Use our AI to identify signs and behaviors."
+      },
+      "step2": {
+        "title": "Connection",
+        "desc": "Find families and professionals in your city."
+      },
+      "step3": {
+        "title": "Support",
+        "desc": "Receive exclusive guidance and materials for development."
+      }
+    },
     "network": {
       "badge": "BUILDING A SUPPORT NETWORK FOR ASD FAMILIES",
       "title": "Together we are stronger."

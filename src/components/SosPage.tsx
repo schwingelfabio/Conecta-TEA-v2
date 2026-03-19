@@ -17,7 +17,7 @@ interface SosPageProps {
 }
 
 const SosPage: React.FC<SosPageProps> = ({ userProfile, authReady, onLoginClick, isGuest, isAdmin, isVip }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const effectiveVip = Boolean(isVip || isAdmin);
   const [sosCard, setSosCard] = useState<SosCard | null>(null);
   const [isEditing, setIsEditing] = useState(false);

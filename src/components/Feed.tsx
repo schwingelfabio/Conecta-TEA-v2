@@ -23,6 +23,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import ReactMarkdown from 'react-markdown';
 import { useTranslation } from 'react-i18next';
 import PostComments from './PostComments';
+import ActiveCommunities from './ActiveCommunities';
+import ExternalNews from './ExternalNews';
+import { useInView } from 'react-intersection-observer';
 import { 
   Send, 
   MessageCircle, 
@@ -99,11 +102,6 @@ const PostSkeleton = () => (
     </div>
   </div>
 );
-import ReactMarkdown from 'react-markdown';
-import PostComments from './PostComments';
-import ActiveCommunities from './ActiveCommunities';
-import ExternalNews from './ExternalNews';
-import { useInView } from 'react-intersection-observer';
 
 interface FeedProps {
   userProfile: UserProfile | null;

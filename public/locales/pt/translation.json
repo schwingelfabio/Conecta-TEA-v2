@@ -342,6 +342,21 @@
         "desc": "Utilize nossa tecnologia de inteligência artificial para auxiliar no processo de triagem e acompanhamento."
       }
     },
+    "howItWorks": {
+      "title": "Como o Conecta TEA funciona?",
+      "step1": {
+        "title": "Identificação",
+        "desc": "Utilize nossa IA para identificar sinais e comportamentos."
+      },
+      "step2": {
+        "title": "Conexão",
+        "desc": "Encontre famílias e profissionais na sua cidade."
+      },
+      "step3": {
+        "title": "Apoio",
+        "desc": "Receba orientações e materiais exclusivos para o desenvolvimento."
+      }
+    },
     "network": {
       "badge": "CONSTRUINDO UMA REDE DE APOIO PARA FAMÍLIAS TEA",
       "title": "Juntos somos mais fortes."

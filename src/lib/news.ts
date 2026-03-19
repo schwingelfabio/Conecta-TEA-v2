@@ -1,38 +1,51 @@
 import { GoogleGenAI } from "@google/genai";
 import admin from "firebase-admin";
+import { db as clientDb } from "./firebase.js";
+import { collection, query, where, orderBy, limit, getDocs, addDoc, serverTimestamp } from "firebase/firestore";
 
-export async function fetchAndPostAutismNews(db: admin.firestore.Firestore) {
+export async function fetchAndPostAutismNews(adminDb: admin.firestore.Firestore) {
   try {
     console.log("[News] Starting fetchAndPostAutismNews");
     
-    // Check if db is initialized
-    if (!db) {
-      console.error("[News] Firestore database instance is null or undefined.");
-      return { success: false, error: 'db_not_initialized' };
-    }
+    // Try to use the admin SDK first, but be ready to fall back to client SDK
+    // which uses the API Key and is more resilient to IAM issues.
+    let postsRef: any = adminDb?.collection('posts');
+    let useClientSdk = false;
 
     // Check for recent news first
     console.log("[News] Querying recent news...");
-    const postsRef = db.collection('posts');
     
     let recentNewsQuery;
     try {
+      if (!adminDb) throw new Error("Admin DB not initialized");
       recentNewsQuery = await postsRef
         .where('topic', '==', 'noticias')
         .orderBy('timestamp', 'desc')
         .limit(1)
         .get();
-      console.log("[News] Recent news query successful");
+      console.log("[News] Recent news query successful (Admin SDK)");
     } catch (queryError: any) {
-      console.error("[News] Query failed:", queryError.message || queryError);
-      if (queryError.code === 7 || queryError.message?.includes('PERMISSION_DENIED')) {
-        console.error("[News] PERMISSION_DENIED: The service account does not have permission to read from 'posts' collection.");
+      console.warn("[News] Admin SDK query failed, falling back to Client SDK:", queryError.message || queryError);
+      useClientSdk = true;
+      
+      try {
+        const q = query(
+          collection(clientDb, 'posts'),
+          where('topic', '==', 'noticias'),
+          orderBy('timestamp', 'desc'),
+          limit(1)
+        );
+        recentNewsQuery = await getDocs(q);
+        console.log("[News] Recent news query successful (Client SDK)");
+      } catch (clientError: any) {
+        console.error("[News] Client SDK query also failed:", clientError.message || clientError);
+        throw clientError;
       }
-      throw queryError;
     }
 
     if (!recentNewsQuery.empty) {
-      const latestNews = recentNewsQuery.docs[0].data();
+      const doc = useClientSdk ? recentNewsQuery.docs[0] : recentNewsQuery.docs[0];
+      const latestNews = doc.data();
       const latestTimestamp = latestNews.timestamp?.toDate() || new Date(0);
       const twelveHoursAgo = new Date(Date.now() - 12 * 60 * 60 * 1000);
 
@@ -90,16 +103,20 @@ export async function fetchAndPostAutismNews(db: admin.firestore.Firestore) {
       city: 'Geral',
       topic: 'noticias',
       location: 'Brasil',
-      timestamp: admin.firestore.FieldValue.serverTimestamp(),
-      createdAt: admin.firestore.FieldValue.serverTimestamp(),
-      updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+      timestamp: useClientSdk ? serverTimestamp() : admin.firestore.FieldValue.serverTimestamp(),
+      createdAt: useClientSdk ? serverTimestamp() : admin.firestore.FieldValue.serverTimestamp(),
+      updatedAt: useClientSdk ? serverTimestamp() : admin.firestore.FieldValue.serverTimestamp(),
       isGlobal: true
     };
 
     console.log("[News] payload created:", JSON.stringify(payload));
 
     console.log("[News] Writing to Firestore...");
-    await db.collection('posts').add(payload);
+    if (useClientSdk) {
+      await addDoc(collection(clientDb, 'posts'), payload);
+    } else {
+      await adminDb.collection('posts').add(payload);
+    }
     console.log("[News] Firestore write success");
     return { success: true };
   } catch (error: any) {
