@@ -55,17 +55,19 @@ export async function fetchAndPostAutismNews(adminDb: admin.firestore.Firestore)
       }
     }
 
-    if (!process.env.GEMINI_API_KEY) {
-      console.warn("GEMINI_API_KEY not set. Skipping AI news fetch.");
-      throw new Error("GEMINI_API_KEY environment variable is not set.");
+    const apiKey = process.env.GEMINI_API_KEY || process.env.API_KEY;
+    if (!apiKey) {
+      console.warn("GEMINI_API_KEY or API_KEY not set. Skipping AI news fetch.");
+      throw new Error("Gemini API key environment variable is not set.");
     }
 
-    const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+    console.log(`[News] Using API Key starting with: ${apiKey.substring(0, 5)}...`);
+    const ai = new GoogleGenAI({ apiKey });
     console.log("Fetching AI news about autism...");
 
-    console.log("[News] Calling ai.models.generateContent...");
+    console.log("[News] Calling ai.models.generateContent with model: gemini-3-flash-preview");
     const response = await ai.models.generateContent({
-      model: "gemini-3.1-flash-preview",
+      model: "gemini-3-flash-preview",
       contents: "Busque as notícias mais recentes e relevantes sobre autismo (TEA), benefícios, direitos ou avanços científicos no Brasil. Escreva uma postagem curta e engajadora para uma comunidade de apoio ao autismo. Inclua os links das fontes se possível. Formate como um post de rede social.",
       config: {
         tools: [{ googleSearch: {} }],
