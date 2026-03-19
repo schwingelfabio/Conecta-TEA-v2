@@ -12,7 +12,10 @@ import {
   IdCard,
   Calendar,
   Save,
-  MapPin
+  MapPin,
+  Edit2,
+  Camera,
+  X
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import LanguageSelector from './LanguageSelector';
@@ -46,6 +49,12 @@ export default function Settings({
   const [photoURL, setPhotoURL] = useState(userProfile?.photoURL || user?.photoURL || '');
   const [state, setState] = useState(userProfile?.state || '');
   const [city, setCity] = useState(userProfile?.city || '');
+  const [bio, setBio] = useState(userProfile?.bio || '');
+  const [role, setRole] = useState(userProfile?.role || '');
+  const [isEditing, setIsEditing] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
 
   const effectiveVip = Boolean(isVip || isAdmin);
 
@@ -59,22 +68,52 @@ export default function Settings({
       setPhotoURL(userProfile.photoURL || user?.photoURL || '');
       setState(userProfile.state || '');
       setCity(userProfile.city || '');
+      setBio(userProfile.bio || '');
+      setRole(userProfile.role || '');
     }
   }, [userProfile, user]);
 
+  const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Check file size (limit to 1MB for base64 storage)
+    if (file.size > 1024 * 1024) {
+      alert(t('settings.photoTooLarge') || 'A foto deve ter menos de 1MB');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setPhotoURL(reader.result as string);
+    };
+    reader.readAsDataURL(file);
+  };
+
   const handleSave = async () => {
     if (!user) return;
-    await updateDoc(doc(db, 'users', user.uid), {
-      displayName: `${firstName} ${lastName}`.trim() || name,
-      firstName,
-      lastName,
-      address,
-      phoneNumber,
-      photoURL,
-      state,
-      city
-    });
-    alert(t('settings.profileSaved'));
+    setIsSaving(true);
+    try {
+      await updateDoc(doc(db, 'users', user.uid), {
+        displayName: `${firstName} ${lastName}`.trim() || name,
+        firstName,
+        lastName,
+        address,
+        phoneNumber,
+        photoURL,
+        state,
+        city,
+        bio,
+        role
+      });
+      setIsEditing(false);
+      alert(t('settings.profileSaved'));
+    } catch (error) {
+      console.error(error);
+      alert(t('settings.saveError') || 'Erro ao salvar perfil');
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handlePasswordReset = async () => {
@@ -101,119 +140,225 @@ export default function Settings({
       <div className="bg-white rounded-3xl p-8 shadow-sm border border-gray-100">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-bold text-gray-900">{t('settings.title')}</h2>
-          <LanguageSelector />
+          <div className="flex items-center gap-2">
+            {!isGuest && !isEditing && (
+              <button
+                onClick={() => setIsEditing(true)}
+                className="p-2 bg-sky-50 text-sky-600 rounded-xl hover:bg-sky-100 transition-colors flex items-center gap-2 px-4 font-bold"
+              >
+                <Edit2 size={18} />
+                {t('common.edit')}
+              </button>
+            )}
+            {isEditing && (
+              <button
+                onClick={() => setIsEditing(false)}
+                className="p-2 bg-gray-50 text-gray-600 rounded-xl hover:bg-gray-100 transition-colors flex items-center gap-2 px-4 font-bold"
+              >
+                <X size={18} />
+                {t('common.cancel')}
+              </button>
+            )}
+            <LanguageSelector />
+          </div>
         </div>
 
         {!isGuest && (
-          <div className="flex items-center gap-4 mb-8 p-4 bg-slate-50 rounded-2xl border border-slate-100">
-            <div className="w-16 h-16 rounded-full overflow-hidden bg-sky-100 border-2 border-sky-500 flex items-center justify-center shrink-0">
-              {user?.photoURL ? (
-                <img src={user.photoURL} alt="Perfil" className="w-full h-full object-cover" />
-              ) : (
-                <span className="text-2xl font-bold text-sky-600">{name?.charAt(0) || 'U'}</span>
+          <div className="flex items-center gap-6 mb-8 p-6 bg-slate-50 rounded-3xl border border-slate-100 relative group">
+            <div className="relative">
+              <div className="w-24 h-24 rounded-full overflow-hidden bg-sky-100 border-4 border-white shadow-md flex items-center justify-center shrink-0">
+                {photoURL ? (
+                  <img src={photoURL} alt="Perfil" className="w-full h-full object-cover" />
+                ) : (
+                  <span className="text-3xl font-bold text-sky-600">{name?.charAt(0) || 'U'}</span>
+                )}
+              </div>
+              {isEditing && (
+                <button
+                  onClick={() => fileInputRef.current?.click()}
+                  className="absolute bottom-0 right-0 p-2 bg-sky-500 text-white rounded-full shadow-lg hover:bg-sky-600 transition-all transform hover:scale-110"
+                >
+                  <Camera size={16} />
+                </button>
               )}
+              <input
+                type="file"
+                ref={fileInputRef}
+                onChange={handlePhotoUpload}
+                accept="image/*"
+                className="hidden"
+              />
             </div>
-            <div>
-              <h3 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-                {name || 'Usuário'}
+            <div className="flex-1">
+              <h3 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
+                {firstName ? `${firstName} ${lastName}` : (name || 'Usuário')}
                 {effectiveVip && <Crown size={20} className="text-amber-500" />}
               </h3>
-              <p className="text-sm text-gray-500">{user?.email || user?.phoneNumber}</p>
+              <p className="text-gray-500 mb-1">{user?.email || user?.phoneNumber}</p>
+              {userProfile?.role && (
+                <span className="inline-block px-3 py-1 bg-sky-100 text-sky-700 text-xs font-bold rounded-full uppercase tracking-wider">
+                  {t(`settings.roles.${userProfile.role}`)}
+                </span>
+              )}
             </div>
           </div>
         )}
         
-        <div className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Nome</label>
-              <input 
-                type="text" 
-                value={firstName} 
-                onChange={(e) => setFirstName(e.target.value)}
-                disabled={isGuest}
-                className="w-full p-3 rounded-xl border border-gray-200 disabled:bg-gray-50 disabled:text-gray-500"
-              />
+        <div className="space-y-6">
+          {!isEditing ? (
+            <div className="space-y-4">
+              {userProfile?.bio && (
+                <div className="p-4 bg-gray-50 rounded-2xl border border-gray-100">
+                  <p className="text-sm font-medium text-gray-500 mb-1 uppercase tracking-wider">Bio</p>
+                  <p className="text-gray-700 italic">"{userProfile.bio}"</p>
+                </div>
+              )}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="p-4 bg-gray-50 rounded-2xl border border-gray-100">
+                  <p className="text-sm font-medium text-gray-500 mb-1 uppercase tracking-wider">{t('settings.name')}</p>
+                  <p className="text-gray-900 font-bold">{firstName} {lastName}</p>
+                </div>
+                <div className="p-4 bg-gray-50 rounded-2xl border border-gray-100">
+                  <p className="text-sm font-medium text-gray-500 mb-1 uppercase tracking-wider">{t('settings.phone') || 'Telefone'}</p>
+                  <p className="text-gray-900 font-bold">{phoneNumber || t('common.notInformed') || 'Não informado'}</p>
+                </div>
+                <div className="p-4 bg-gray-50 rounded-2xl border border-gray-100">
+                  <p className="text-sm font-medium text-gray-500 mb-1 uppercase tracking-wider">{t('map.locationTitle') || 'Localização'}</p>
+                  <p className="text-gray-900 font-bold">{city}, {state}</p>
+                </div>
+                <div className="p-4 bg-gray-50 rounded-2xl border border-gray-100">
+                  <p className="text-sm font-medium text-gray-500 mb-1 uppercase tracking-wider">{t('settings.address') || 'Endereço'}</p>
+                  <p className="text-gray-900 font-bold">{address || t('common.notInformed') || 'Não informado'}</p>
+                </div>
+              </div>
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Sobrenome</label>
-              <input 
-                type="text" 
-                value={lastName} 
-                onChange={(e) => setLastName(e.target.value)}
-                disabled={isGuest}
-                className="w-full p-3 rounded-xl border border-gray-200 disabled:bg-gray-50 disabled:text-gray-500"
-              />
+          ) : (
+            <div className="space-y-4 animate-in fade-in slide-in-from-top-4 duration-300">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">{t('settings.name')}</label>
+                  <input 
+                    type="text" 
+                    value={firstName} 
+                    placeholder={t('settings.firstNamePlaceholder') || 'Nome'}
+                    onChange={(e) => setFirstName(e.target.value)}
+                    className="w-full p-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-sky-500 focus:border-transparent outline-none transition-all"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">{t('settings.lastName') || 'Sobrenome'}</label>
+                  <input 
+                    type="text" 
+                    value={lastName} 
+                    placeholder={t('settings.lastNamePlaceholder') || 'Sobrenome'}
+                    onChange={(e) => setLastName(e.target.value)}
+                    className="w-full p-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-sky-500 focus:border-transparent outline-none transition-all"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">{t('settings.iAm')}</label>
+                <select
+                  value={role}
+                  onChange={(e) => setRole(e.target.value)}
+                  className="w-full p-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-sky-500 focus:border-transparent outline-none transition-all bg-white"
+                >
+                  <option value="">{t('settings.rolePlaceholder')}</option>
+                  <option value="parent">{t('settings.roles.parent')}</option>
+                  <option value="professional">{t('settings.roles.professional')}</option>
+                  <option value="autistic">{t('settings.roles.autistic')}</option>
+                  <option value="other">{t('settings.roles.other')}</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">{t('settings.bio')}</label>
+                <textarea 
+                  value={bio} 
+                  onChange={(e) => setBio(e.target.value)}
+                  rows={3}
+                  placeholder={t('settings.bioPlaceholder')}
+                  className="w-full p-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-sky-500 focus:border-transparent outline-none transition-all resize-none"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">{t('settings.address') || 'Endereço'}</label>
+                <input 
+                  type="text" 
+                  value={address} 
+                  onChange={(e) => setAddress(e.target.value)}
+                  className="w-full p-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-sky-500 focus:border-transparent outline-none transition-all"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">{t('settings.phone') || 'Telefone'}</label>
+                <input 
+                  type="tel" 
+                  value={phoneNumber} 
+                  onChange={(e) => setPhoneNumber(e.target.value)}
+                  className="w-full p-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-sky-500 focus:border-transparent outline-none transition-all"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">{t('settings.state')}</label>
+                  <input 
+                    type="text" 
+                    value={state} 
+                    onChange={(e) => setState(e.target.value)}
+                    className="w-full p-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-sky-500 focus:border-transparent outline-none transition-all"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">{t('settings.city')}</label>
+                  <input 
+                    type="text" 
+                    value={city} 
+                    onChange={(e) => setCity(e.target.value)}
+                    className="w-full p-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-sky-500 focus:border-transparent outline-none transition-all"
+                  />
+                </div>
+              </div>
+
+              <div className="flex gap-3 pt-2">
+                <button 
+                  onClick={() => setIsEditing(false)}
+                  className="flex-1 bg-gray-100 text-gray-700 font-bold py-4 rounded-2xl hover:bg-gray-200 transition-all"
+                >
+                  {t('common.cancel')}
+                </button>
+                <button 
+                  onClick={handleSave}
+                  disabled={isSaving}
+                  className="flex-[2] bg-sky-500 text-white font-bold py-4 rounded-2xl flex items-center justify-center gap-2 hover:bg-sky-600 transition-all shadow-lg shadow-sky-100 disabled:opacity-50"
+                >
+                  {isSaving ? (
+                    <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  ) : (
+                    <>
+                      <Save size={20} />
+                      {t('settings.save')}
+                    </>
+                  )}
+                </button>
+              </div>
             </div>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Endereço</label>
-            <input 
-              type="text" 
-              value={address} 
-              onChange={(e) => setAddress(e.target.value)}
+          )}
+
+          {!isEditing && (
+            <button 
+              onClick={handlePasswordReset}
               disabled={isGuest}
-              className="w-full p-3 rounded-xl border border-gray-200 disabled:bg-gray-50 disabled:text-gray-500"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Telefone</label>
-            <input 
-              type="tel" 
-              value={phoneNumber} 
-              onChange={(e) => setPhoneNumber(e.target.value)}
-              disabled={isGuest}
-              className="w-full p-3 rounded-xl border border-gray-200 disabled:bg-gray-50 disabled:text-gray-500"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">URL da Foto</label>
-            <input 
-              type="text" 
-              value={photoURL} 
-              onChange={(e) => setPhotoURL(e.target.value)}
-              disabled={isGuest}
-              className="w-full p-3 rounded-xl border border-gray-200 disabled:bg-gray-50 disabled:text-gray-500"
-            />
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">{t('settings.state')}</label>
-              <input 
-                type="text" 
-                value={state} 
-                onChange={(e) => setState(e.target.value)}
-                disabled={isGuest}
-                className="w-full p-3 rounded-xl border border-gray-200 disabled:bg-gray-50 disabled:text-gray-500"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">{t('settings.city')}</label>
-              <input 
-                type="text" 
-                value={city} 
-                onChange={(e) => setCity(e.target.value)}
-                disabled={isGuest}
-                className="w-full p-3 rounded-xl border border-gray-200 disabled:bg-gray-50 disabled:text-gray-500"
-              />
-            </div>
-          </div>
-          <button 
-            onClick={handleSave}
-            disabled={isGuest}
-            className="w-full bg-sky-500 text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            <Save size={20} />
-            {t('settings.save')}
-          </button>
-          <button 
-            onClick={handlePasswordReset}
-            disabled={isGuest}
-            className="w-full bg-gray-100 text-gray-700 font-bold py-3 rounded-xl flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            <Mail size={20} />
-            Recuperar Senha
-          </button>
+              className="w-full bg-slate-50 text-slate-600 font-bold py-4 rounded-2xl flex items-center justify-center gap-2 hover:bg-slate-100 transition-all border border-slate-200 disabled:opacity-50"
+            >
+              <Mail size={20} />
+              {t('settings.recoverPassword') || 'Recuperar Senha'}
+            </button>
+          )}
         </div>
       </div>
 
@@ -245,17 +390,17 @@ export default function Settings({
       <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100">
         <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
           <IdCard size={20} className="text-brand-primary" />
-          Carteirinha Digital
+          {t('settings.digitalId') || 'Carteirinha Digital'}
         </h3>
         <p className="text-sm text-gray-500 mb-4">
-          Acesse sua identificação digital profissional para suporte e emergências.
+          {t('settings.digitalIdDesc') || 'Acesse sua identificação digital profissional para suporte e emergências.'}
         </p>
         <button 
           onClick={() => onNavigate('sos')}
           className="w-full bg-slate-50 hover:bg-slate-100 text-slate-900 font-bold py-4 rounded-2xl flex items-center justify-center gap-2 border border-slate-200 transition-all"
         >
           <IdCard size={20} />
-          Ver Minha Carteirinha
+          {t('settings.viewId') || 'Ver Minha Carteirinha'}
         </button>
       </div>
 

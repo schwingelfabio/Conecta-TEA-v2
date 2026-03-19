@@ -70,6 +70,29 @@
     "state": "Estado",
     "city": "Cidade",
     "save": "Salvar Alterações",
+    "profileSaved": "Perfil atualizado com sucesso!",
+    "saveError": "Erro ao salvar perfil. Tente novamente.",
+    "photoTooLarge": "A foto deve ter menos de 1MB.",
+    "firstName": "Nome",
+    "lastName": "Sobrenome",
+    "firstNamePlaceholder": "Nome",
+    "lastNamePlaceholder": "Sobrenome",
+    "address": "Endereço",
+    "phone": "Telefone",
+    "recoverPassword": "Recuperar Senha",
+    "digitalId": "Carteirinha Digital",
+    "digitalIdDesc": "Acesse sua identificação digital profissional para suporte e emergências.",
+    "viewId": "Ver Minha Carteirinha",
+    "roles": {
+      "parent": "Pai/Mãe",
+      "professional": "Profissional",
+      "autistic": "Autista",
+      "other": "Outro"
+    },
+    "iAm": "Eu sou...",
+    "bio": "Bio / Sobre mim",
+    "bioPlaceholder": "Conte um pouco sobre você...",
+    "rolePlaceholder": "Selecione seu papel",
     "vipStatus": "Status da Conta",
     "freePlan": "Plano Gratuito",
     "vipMember": "Membro VIP",
@@ -203,6 +226,8 @@
     "officialIdLabel": "ID Oficial Conecta TEA",
     "crisisNotice": "Em caso de crise: Mantenha a calma, evite toques bruscos e barulhos excessivos.",
     "presentationNotice": "Esta carteirinha pode ser apresentada em escolas, hospitais e órgãos públicos.",
+    "qrPending": "QR Code disponível após salvar",
+    "downloadQR": "Baixar QR Code",
     "sections": {
       "child": "Dados da Pessoa com TEA",
       "responsible": "Dados do Responsável",
@@ -296,7 +321,8 @@
     "edit": "Editar",
     "back": "Voltar",
     "next": "Próximo",
-    "finish": "Finalizar"
+    "finish": "Finalizar",
+    "notInformed": "Não informado"
   },
   "videos": {
     "galleryTitle": "Galeria de Vídeos",

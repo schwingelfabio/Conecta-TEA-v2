@@ -70,6 +70,29 @@
     "state": "State",
     "city": "City",
     "save": "Save Changes",
+    "profileSaved": "Profile updated successfully!",
+    "saveError": "Error saving profile. Try again.",
+    "photoTooLarge": "Photo must be less than 1MB.",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "firstNamePlaceholder": "First Name",
+    "lastNamePlaceholder": "Last Name",
+    "address": "Address",
+    "phone": "Phone Number",
+    "recoverPassword": "Recover Password",
+    "digitalId": "Digital ID Card",
+    "digitalIdDesc": "Access your professional digital identification for support and emergencies.",
+    "viewId": "View My ID Card",
+    "roles": {
+      "parent": "Parent",
+      "professional": "Professional",
+      "autistic": "Autistic",
+      "other": "Other"
+    },
+    "iAm": "I am...",
+    "bio": "Bio / About me",
+    "bioPlaceholder": "Tell us a bit about yourself...",
+    "rolePlaceholder": "Select your role",
     "vipStatus": "Account Status",
     "freePlan": "Free Plan",
     "vipMember": "VIP Member",
@@ -203,6 +226,8 @@
     "officialIdLabel": "Conecta TEA Official ID",
     "crisisNotice": "In case of crisis: Keep calm, avoid sudden touches and excessive noise.",
     "presentationNotice": "This ID card can be presented at schools, hospitals, and public agencies.",
+    "qrPending": "QR Code available after saving",
+    "downloadQR": "Download QR Code",
     "sections": {
       "child": "Person with ASD Data",
       "responsible": "Responsible Person Data",
@@ -296,7 +321,8 @@
     "edit": "Edit",
     "back": "Back",
     "next": "Next",
-    "finish": "Finish"
+    "finish": "Finish",
+    "notInformed": "Not informed"
   },
   "videos": {
     "galleryTitle": "Video Gallery",

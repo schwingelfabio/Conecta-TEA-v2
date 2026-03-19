@@ -3,20 +3,23 @@ import { db } from '../lib/firebase';
 import { collection, query, where, getDocs, addDoc, updateDoc, doc, serverTimestamp, runTransaction } from 'firebase/firestore';
 import { UserProfile, SosCard } from '../types';
 import { motion } from 'framer-motion';
-import { Activity, Printer, Save, Edit2, Phone, MapPin, AlertTriangle, HeartPulse, ShieldAlert, ShieldCheck, IdCard, Crown } from 'lucide-react';
+import { Activity, Printer, Save, Edit2, Phone, MapPin, AlertTriangle, HeartPulse, ShieldAlert, ShieldCheck, IdCard, Crown, Download } from 'lucide-react';
 import QRCode from 'react-qr-code';
 import { useTranslation } from 'react-i18next';
+import { toPng } from 'html-to-image';
+import { useRef } from 'react';
 
 interface SosPageProps {
   userProfile: UserProfile | null;
   authReady?: boolean;
   onLoginClick?: () => void;
+  onNavigate?: (tab: string) => void;
   isGuest?: boolean;
   isAdmin?: boolean;
   isVip?: boolean;
 }
 
-const SosPage: React.FC<SosPageProps> = ({ userProfile, authReady, onLoginClick, isGuest, isAdmin, isVip }) => {
+const SosPage: React.FC<SosPageProps> = ({ userProfile, authReady, onLoginClick, onNavigate, isGuest, isAdmin, isVip }) => {
   const { t, i18n } = useTranslation();
   const effectiveVip = Boolean(isVip || isAdmin);
   const [sosCard, setSosCard] = useState<SosCard | null>(null);
@@ -24,6 +27,7 @@ const SosPage: React.FC<SosPageProps> = ({ userProfile, authReady, onLoginClick,
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const qrRef = useRef<HTMLDivElement>(null);
 
   // Form State
   const [formData, setFormData] = useState({
@@ -191,6 +195,20 @@ const SosPage: React.FC<SosPageProps> = ({ userProfile, authReady, onLoginClick,
 
   const handlePrint = () => {
     window.print();
+  };
+
+  const handleDownloadQR = async () => {
+    if (qrRef.current === null) return;
+    
+    try {
+      const dataUrl = await toPng(qrRef.current, { cacheBust: true, backgroundColor: '#ffffff', pixelRatio: 3 });
+      const link = document.createElement('a');
+      link.download = `QR-SOS-${sosCard?.childName || 'Card'}.png`;
+      link.href = dataUrl;
+      link.click();
+    } catch (err) {
+      console.error('Error downloading QR code:', err);
+    }
   };
 
   if (!authReady || loading) {
@@ -450,15 +468,31 @@ const SosPage: React.FC<SosPageProps> = ({ userProfile, authReady, onLoginClick,
                   <p className="text-[9px] text-slate-400 leading-tight">{t('sos.scanInstructions')}</p>
                 </div>
                 
-                <div className="bg-white p-4 rounded-3xl shadow-lg border border-slate-100 relative group">
-                  <QRCode 
-                    value={`${window.location.origin}/emergencia/${sosCard?.id}`} 
-                    size={160}
-                    level="H"
-                    className="relative z-10"
-                  />
+                <div className="bg-white p-4 rounded-3xl shadow-lg border border-slate-100 relative group" ref={qrRef}>
+                  {sosCard?.id ? (
+                    <QRCode 
+                      value={`${window.location.origin}/emergencia/${sosCard.id}`} 
+                      size={160}
+                      level="H"
+                      className="relative z-10"
+                    />
+                  ) : (
+                    <div className="w-[160px] h-[160px] bg-slate-50 flex items-center justify-center text-slate-300 italic text-[10px] text-center px-4">
+                      {t('sos.qrPending')}
+                    </div>
+                  )}
                   <div className="absolute inset-0 bg-brand-primary/5 rounded-3xl -m-2 -z-0" />
                 </div>
+
+                {sosCard?.id && (
+                  <button 
+                    onClick={handleDownloadQR}
+                    className="mt-4 flex items-center space-x-2 text-[10px] font-black text-brand-primary uppercase tracking-widest hover:opacity-70 transition-opacity print:hidden"
+                  >
+                    <Download size={12} />
+                    <span>{t('sos.downloadQR')}</span>
+                  </button>
+                )}
 
                 <div className="mt-8 text-center">
                   <div className="flex flex-col items-center justify-center mb-2">
@@ -491,6 +525,15 @@ const SosPage: React.FC<SosPageProps> = ({ userProfile, authReady, onLoginClick,
               <button onClick={() => setIsEditing(true)} className="px-6 py-2 text-slate-600 font-bold hover:bg-slate-100 rounded-xl transition-colors">
                 {t('sos.edit')}
               </button>
+              {onNavigate && (
+                <button 
+                  onClick={() => onNavigate('settings')} 
+                  className="px-6 py-2 text-sky-600 font-bold hover:bg-sky-50 rounded-xl transition-colors flex items-center gap-2"
+                >
+                  <Edit2 size={16} />
+                  {t('nav.profile')}
+                </button>
+              )}
               <button onClick={handlePrint} className="px-8 py-2 bg-slate-900 text-white font-bold rounded-xl hover:bg-slate-800 transition-colors">
                 {t('sos.print')}
               </button>

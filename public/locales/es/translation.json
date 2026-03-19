@@ -70,6 +70,29 @@
     "state": "Estado",
     "city": "Ciudad",
     "save": "Guardar cambios",
+    "profileSaved": "¡Perfil actualizado con éxito!",
+    "saveError": "Error al guardar el perfil. Inténtalo de nuevo.",
+    "photoTooLarge": "La foto debe tener menos de 1MB.",
+    "firstName": "Nombre",
+    "lastName": "Apellido",
+    "firstNamePlaceholder": "Nombre",
+    "lastNamePlaceholder": "Apellido",
+    "address": "Dirección",
+    "phone": "Teléfono",
+    "recoverPassword": "Recuperar Contraseña",
+    "digitalId": "Tarjeta de Identificación Digital",
+    "digitalIdDesc": "Acceda a su identificación digital profesional para soporte y emergencias.",
+    "viewId": "Ver Mi Tarjeta de Identificación",
+    "roles": {
+      "parent": "Padre/Madre",
+      "professional": "Profesional",
+      "autistic": "Autista",
+      "other": "Otro"
+    },
+    "iAm": "Yo soy...",
+    "bio": "Bio / Sobre mí",
+    "bioPlaceholder": "Cuéntanos un poco sobre ti...",
+    "rolePlaceholder": "Selecciona tu rol",
     "vipStatus": "Estado de la cuenta",
     "freePlan": "Plan gratuito",
     "vipMember": "Miembro VIP",
@@ -203,6 +226,8 @@
     "officialIdLabel": "ID Oficial Conecta TEA",
     "crisisNotice": "En caso de crisis: Mantenga la calma, evite toques bruscos y ruidos excesivos.",
     "presentationNotice": "Este carnet puede ser presentado en escuelas, hospitales y agencias públicas.",
+    "qrPending": "Código QR disponible después de guardar",
+    "downloadQR": "Descargar Código QR",
     "sections": {
       "child": "Datos de la Persona con TEA",
       "responsible": "Datos del Responsable",
@@ -296,7 +321,8 @@
     "edit": "Editar",
     "back": "Volver",
     "next": "Siguiente",
-    "finish": "Finalizar"
+    "finish": "Finalizar",
+    "notInformed": "No informado"
   },
   "videos": {
     "galleryTitle": "Galería de Vídeos",
