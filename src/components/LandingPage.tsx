@@ -72,7 +72,7 @@ function SupportModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => voi
         </div>
 
         <p className="mt-6 text-center text-gray-500 text-sm">
-          Todo valor arrecadado é revertido para melhorias na plataforma e servidores.
+          Todo valor arrecadado é revertido para melhorias no app e servidores.
         </p>
       </motion.div>
     </div>
@@ -113,13 +113,17 @@ export default function LandingPage({ onLogin, onShowTerms }: LandingPageProps) 
             exit={{ y: 100, opacity: 0 }}
             className="fixed bottom-0 left-0 right-0 p-4 bg-white/90 backdrop-blur-md border-t border-slate-100 z-50 flex justify-center md:hidden"
           >
-            <button
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              animate={{ boxShadow: ["0px 0px 0px rgba(14, 165, 233, 0)", "0px 0px 20px rgba(14, 165, 233, 0.5)", "0px 0px 0px rgba(14, 165, 233, 0)"] }}
+              transition={{ duration: 2, repeat: Infinity }}
               onClick={handleMainAction}
-              className="w-full max-w-md px-8 py-4 bg-sky-500 text-white rounded-2xl font-bold text-lg shadow-lg shadow-sky-500/30 hover:bg-sky-600 transition-all active:scale-95 flex items-center justify-center gap-2"
+              className="w-full max-w-md px-8 py-4 bg-sky-500 text-white rounded-2xl font-bold text-lg shadow-lg shadow-sky-500/30 flex items-center justify-center gap-2"
             >
               Quero ajuda agora
               <ArrowRight size={20} />
-            </button>
+            </motion.button>
           </motion.div>
         )}
       </AnimatePresence>
@@ -177,28 +181,37 @@ export default function LandingPage({ onLogin, onShowTerms }: LandingPageProps) 
               </motion.div>
             ) : (
               <div className="flex flex-col items-center justify-center gap-4 w-full max-w-md mx-auto">
-                <button
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  animate={{ boxShadow: ["0px 0px 0px rgba(14, 165, 233, 0)", "0px 0px 20px rgba(14, 165, 233, 0.5)", "0px 0px 0px rgba(14, 165, 233, 0)"] }}
+                  transition={{ duration: 2, repeat: Infinity }}
                   onClick={handleMainAction}
-                  className="w-full px-8 py-5 bg-sky-500 text-white rounded-2xl font-bold text-xl shadow-lg shadow-sky-500/30 hover:bg-sky-600 hover:-translate-y-1 transition-all active:scale-95 flex items-center justify-center gap-2"
+                  className="w-full px-8 py-5 bg-sky-500 text-white rounded-2xl font-bold text-xl shadow-lg shadow-sky-500/30 flex items-center justify-center gap-2"
                 >
                   Quero ajuda agora
                   <ArrowRight size={20} />
-                </button>
+                </motion.button>
 
                 <div className="flex flex-col items-center gap-2 mt-2 w-full">
                   <div className="flex items-center gap-2 text-slate-600 font-medium text-sm bg-slate-50 px-4 py-3 rounded-xl w-full justify-center border border-slate-100">
                     <Zap size={18} className="text-amber-500" />
-                    Leva menos de 1 minuto
+                    Sem cadastro complicado. Comece em segundos.
                   </div>
                   <div className="flex items-center gap-2 text-slate-600 font-medium text-sm bg-slate-50 px-4 py-3 rounded-xl w-full justify-center text-center border border-slate-100">
                     <ShieldCheck size={18} className="text-emerald-500 shrink-0" />
-                    Nenhum compromisso. Você pode sair quando quiser.
+                    Se não for útil, você pode sair a qualquer momento.
                   </div>
                 </div>
 
-                <p className="mt-6 text-sm text-slate-400 font-medium italic border-b border-slate-200 pb-1">
-                  Ignorar isso pode atrasar o desenvolvimento da criança.
-                </p>
+                <div className="mt-4 flex flex-col items-center gap-1">
+                  <p className="text-sm text-slate-500 font-medium">
+                    Famílias reais já estão usando e encontrando apoio.
+                  </p>
+                  <p className="text-sm text-slate-400 font-medium italic border-b border-slate-200 pb-1 mt-2">
+                    Ignorar isso pode atrasar o desenvolvimento da criança.
+                  </p>
+                </div>
               </div>
             )}
           </motion.div>
@@ -212,7 +225,7 @@ export default function LandingPage({ onLogin, onShowTerms }: LandingPageProps) 
             <h2 className="text-2xl md:text-3xl font-black text-slate-900 mb-3">Como funciona?</h2>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
             <div className="bg-white p-8 rounded-[2rem] shadow-sm border border-slate-100 flex flex-col items-center text-center">
               <div className="w-16 h-16 bg-sky-100 text-sky-600 rounded-2xl flex items-center justify-center mb-4">
                 <Search size={32} />
@@ -243,6 +256,16 @@ export default function LandingPage({ onLogin, onShowTerms }: LandingPageProps) 
               </p>
             </div>
           </div>
+          
+          <div className="flex justify-center">
+            <button
+              onClick={handleMainAction}
+              className="px-8 py-4 bg-sky-100 text-sky-700 rounded-2xl font-bold text-lg hover:bg-sky-200 transition-all active:scale-95 flex items-center justify-center gap-2"
+            >
+              Quero ajuda agora
+              <ArrowRight size={20} />
+            </button>
+          </div>
         </div>
       </section>
 
@@ -250,9 +273,12 @@ export default function LandingPage({ onLogin, onShowTerms }: LandingPageProps) 
       <section className="py-16 bg-white px-4">
         <div className="max-w-3xl mx-auto">
           <div className="bg-sky-50 rounded-[2.5rem] p-8 md:p-12 border border-sky-100">
-            <h2 className="text-2xl md:text-3xl font-black text-slate-900 mb-8 text-center">Esse app é para você se:</h2>
+            <div className="text-center mb-10">
+              <p className="text-sky-600 font-bold mb-3 uppercase tracking-wider text-sm">Se você chegou até aqui, provavelmente está buscando respostas.</p>
+              <h2 className="text-3xl md:text-4xl font-black text-slate-900">Esse app é para você se:</h2>
+            </div>
             
-            <div className="space-y-4 max-w-xl mx-auto">
+            <div className="space-y-4 max-w-xl mx-auto mb-10">
               <div className="flex items-start gap-4 bg-white p-4 rounded-2xl shadow-sm">
                 <div className="w-8 h-8 bg-sky-500 text-white rounded-full flex items-center justify-center shrink-0">
                   <Check size={18} />
@@ -288,6 +314,16 @@ export default function LandingPage({ onLogin, onShowTerms }: LandingPageProps) 
                 <p className="text-white font-bold pt-1 text-lg">Se você está em dúvida… já é um sinal de que vale investigar.</p>
               </div>
             </div>
+            
+            <div className="flex justify-center">
+              <button
+                onClick={handleMainAction}
+                className="w-full sm:w-auto px-8 py-4 bg-sky-500 text-white rounded-2xl font-bold text-lg shadow-lg shadow-sky-500/30 hover:bg-sky-600 transition-all active:scale-95 flex items-center justify-center gap-2"
+              >
+                Quero ajuda agora
+                <ArrowRight size={20} />
+              </button>
+            </div>
           </div>
         </div>
       </section>
@@ -299,7 +335,7 @@ export default function LandingPage({ onLogin, onShowTerms }: LandingPageProps) 
             <h2 className="text-2xl md:text-3xl font-black text-slate-900 mb-3">O que você vai encontrar</h2>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10">
             <div className="bg-white p-5 rounded-3xl shadow-sm border border-slate-100 flex items-center gap-4">
               <div className="w-14 h-14 bg-sky-100 text-sky-600 rounded-2xl flex items-center justify-center shrink-0">
                 <MapPin size={24} />
@@ -335,10 +371,20 @@ export default function LandingPage({ onLogin, onShowTerms }: LandingPageProps) 
                 <Zap size={24} />
               </div>
               <div>
-                <h3 className="font-bold text-slate-900 text-lg">Triagem TEA IA</h3>
-                <p className="text-slate-500 text-sm">Inteligência artificial para sinais precoces</p>
+                <h3 className="font-bold text-slate-900 text-lg">Apoio Inicial</h3>
+                <p className="text-slate-500 text-sm">Tecnologia para ajudar a entender os sinais precoces</p>
               </div>
             </div>
+          </div>
+          
+          <div className="flex justify-center">
+            <button
+              onClick={handleMainAction}
+              className="px-8 py-4 bg-sky-100 text-sky-700 rounded-2xl font-bold text-lg hover:bg-sky-200 transition-all active:scale-95 flex items-center justify-center gap-2"
+            >
+              Quero ajuda agora
+              <ArrowRight size={20} />
+            </button>
           </div>
         </div>
       </section>
@@ -364,7 +410,7 @@ export default function LandingPage({ onLogin, onShowTerms }: LandingPageProps) 
             onClick={handleMainAction}
             className="w-full sm:w-auto px-10 py-5 bg-white text-sky-600 rounded-2xl font-bold text-xl shadow-xl hover:bg-sky-50 hover:-translate-y-1 transition-all active:scale-95 flex items-center justify-center gap-2 mx-auto"
           >
-            Começar gratuitamente
+            Quero ajuda agora
             <ArrowRight size={20} />
           </button>
         </div>
@@ -387,9 +433,19 @@ export default function LandingPage({ onLogin, onShowTerms }: LandingPageProps) 
             Construindo uma rede de apoio para famílias TEA no Brasil 🇧🇷
           </p>
           
-          <div className="inline-flex items-center gap-2 text-emerald-700 bg-emerald-50 px-5 py-3 rounded-full text-sm font-bold border border-emerald-100">
+          <div className="inline-flex items-center gap-2 text-emerald-700 bg-emerald-50 px-5 py-3 rounded-full text-sm font-bold border border-emerald-100 mb-8">
             <ShieldCheck size={18} />
             Baseado em boas práticas utilizadas por profissionais.
+          </div>
+          
+          <div className="flex justify-center">
+            <button
+              onClick={handleMainAction}
+              className="px-8 py-4 bg-sky-100 text-sky-700 rounded-2xl font-bold text-lg hover:bg-sky-200 transition-all active:scale-95 flex items-center justify-center gap-2"
+            >
+              Quero ajuda agora
+              <ArrowRight size={20} />
+            </button>
           </div>
         </div>
       </section>
@@ -398,19 +454,27 @@ export default function LandingPage({ onLogin, onShowTerms }: LandingPageProps) 
       <section className="py-20 bg-slate-50 px-4">
         <div className="max-w-3xl mx-auto text-center">
           <h2 className="text-3xl md:text-4xl font-black text-slate-900 mb-4">
-            Você não precisa enfrentar isso sozinho(a).
+            Você chegou até aqui por um motivo.
           </h2>
-          <p className="text-lg text-slate-600 mb-10">
-            Comece agora e entenda melhor seu filho ainda hoje.
+          <p className="text-lg text-slate-600 mb-8">
+            Agora você pode dar o primeiro passo.
+          </p>
+          
+          <p className="text-lg font-bold text-amber-600 mb-8">
+            Ignorar isso hoje pode virar arrependimento amanhã.
           </p>
 
-          <button
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            animate={{ boxShadow: ["0px 0px 0px rgba(14, 165, 233, 0)", "0px 0px 20px rgba(14, 165, 233, 0.5)", "0px 0px 0px rgba(14, 165, 233, 0)"] }}
+            transition={{ duration: 2, repeat: Infinity }}
             onClick={handleMainAction}
-            className="w-full sm:w-auto px-10 py-5 bg-sky-500 text-white rounded-2xl font-bold text-xl shadow-lg shadow-sky-500/30 hover:bg-sky-600 hover:-translate-y-1 transition-all active:scale-95 flex items-center justify-center gap-2 mx-auto"
+            className="w-full sm:w-auto px-10 py-5 bg-sky-500 text-white rounded-2xl font-bold text-xl shadow-lg shadow-sky-500/30 flex items-center justify-center gap-2 mx-auto"
           >
-            Quero começar agora
+            Quero ajuda agora
             <ArrowRight size={20} />
-          </button>
+          </motion.button>
         </div>
       </section>
 
