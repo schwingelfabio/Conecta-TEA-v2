@@ -3,7 +3,7 @@ import { db } from '../lib/firebase';
 import { collection, query, where, getDocs, addDoc, updateDoc, doc, serverTimestamp, runTransaction } from 'firebase/firestore';
 import { UserProfile, SosCard } from '../types';
 import { motion } from 'framer-motion';
-import { Activity, Printer, Save, Edit2, Phone, MapPin, AlertTriangle, HeartPulse, ShieldAlert, ShieldCheck, IdCard, Crown, Download } from 'lucide-react';
+import { Activity, Printer, Save, Edit2, Phone, MapPin, AlertTriangle, HeartPulse, ShieldAlert, ShieldCheck, IdCard, Crown, Download, MessageCircle, X } from 'lucide-react';
 import QRCode from 'react-qr-code';
 import { useTranslation } from 'react-i18next';
 import { toPng } from 'html-to-image';
@@ -27,6 +27,7 @@ const SosPage: React.FC<SosPageProps> = ({ userProfile, authReady, onLoginClick,
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [activeSosTool, setActiveSosTool] = useState<string | null>(null);
   const qrRef = useRef<HTMLDivElement>(null);
 
   // Form State
@@ -267,25 +268,209 @@ const SosPage: React.FC<SosPageProps> = ({ userProfile, authReady, onLoginClick,
     <div className="max-w-4xl mx-auto py-8 px-4">
       <div className="flex items-center justify-between mb-8 print:hidden">
         <div className="flex items-center space-x-4">
-          <div className="w-16 h-16 bg-brand-primary/10 text-brand-primary rounded-2xl flex items-center justify-center">
-            <Activity size={32} />
+          <div className="w-16 h-16 bg-red-100 text-red-600 rounded-2xl flex items-center justify-center shadow-inner">
+            <ShieldAlert size={32} />
           </div>
           <div>
-            <h1 className="text-4xl font-serif font-bold text-slate-900">{t('sos.title')}</h1>
-            <p className="text-slate-500">{t('sos.subtitle')}</p>
+            <h1 className="text-4xl font-black text-slate-900 tracking-tight">SOS & Identidade</h1>
+            <p className="text-slate-500 font-medium mt-1">Recursos de emergência e carteirinha digital</p>
           </div>
         </div>
         <div className="hidden md:flex space-x-3">
-          <button onClick={() => setIsEditing(true)} className="flex items-center space-x-2 px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-xl transition-colors">
+          <button onClick={() => setIsEditing(true)} className="flex items-center space-x-2 px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-xl transition-colors font-bold">
             <Edit2 size={18} />
-            <span>{t('sos.edit')}</span>
+            <span>Editar Dados</span>
           </button>
-          <button onClick={handlePrint} className="flex items-center space-x-2 bg-slate-900 text-white px-6 py-2 rounded-xl font-bold hover:bg-slate-800 transition-colors">
+          <button onClick={handlePrint} className="flex items-center space-x-2 bg-slate-900 text-white px-6 py-2 rounded-xl font-bold hover:bg-slate-800 transition-colors shadow-md">
             <Printer size={18} />
-            <span>{t('sos.print')}</span>
+            <span>Imprimir</span>
           </button>
         </div>
       </div>
+
+      {/* SOS Sensorial Section */}
+      {!isEditing && (
+        <div className="mb-12 print:hidden">
+          <div className="bg-red-50 border border-red-100 rounded-3xl p-6 md:p-8 relative overflow-hidden">
+            <div className="relative z-10">
+              <div className="flex items-center gap-2 mb-4">
+                <Activity size={24} className="text-red-500" />
+                <h2 className="text-2xl font-black text-red-900">SOS Sensorial</h2>
+              </div>
+              <p className="text-red-700 mb-6 max-w-2xl font-medium">
+                Acesso rápido a ferramentas de regulação e comunicação para momentos de crise ou sobrecarga sensorial.
+              </p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+                <button onClick={() => setActiveSosTool('public')} className="bg-white p-4 rounded-2xl shadow-sm border border-red-100 hover:border-red-300 hover:shadow-md transition-all text-left group">
+                  <div className="w-10 h-10 bg-red-100 text-red-600 rounded-xl flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                    <AlertTriangle size={20} />
+                  </div>
+                  <h3 className="font-bold text-slate-900 mb-1">Crise em Público</h3>
+                  <p className="text-xs text-slate-500">Texto de apoio para mostrar a terceiros</p>
+                </button>
+                <button onClick={() => setActiveSosTool('noise')} className="bg-white p-4 rounded-2xl shadow-sm border border-red-100 hover:border-red-300 hover:shadow-md transition-all text-left group">
+                  <div className="w-10 h-10 bg-orange-100 text-orange-600 rounded-xl flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                    <Activity size={20} />
+                  </div>
+                  <h3 className="font-bold text-slate-900 mb-1">Ambiente Barulhento</h3>
+                  <p className="text-xs text-slate-500">Sons calmantes e ruído branco</p>
+                </button>
+                <button onClick={() => setActiveSosTool('communication')} className="bg-white p-4 rounded-2xl shadow-sm border border-red-100 hover:border-red-300 hover:shadow-md transition-all text-left group">
+                  <div className="w-10 h-10 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                    <MessageCircle size={20} />
+                  </div>
+                  <h3 className="font-bold text-slate-900 mb-1">Comunicação Alternativa</h3>
+                  <p className="text-xs text-slate-500">Cartões de necessidades básicas</p>
+                </button>
+                <button onClick={() => setActiveSosTool('regulation')} className="bg-white p-4 rounded-2xl shadow-sm border border-red-100 hover:border-red-300 hover:shadow-md transition-all text-left group">
+                  <div className="w-10 h-10 bg-emerald-100 text-emerald-600 rounded-xl flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                    <HeartPulse size={20} />
+                  </div>
+                  <h3 className="font-bold text-slate-900 mb-1">Regulação Emocional</h3>
+                  <p className="text-xs text-slate-500">Exercícios de respiração guiada</p>
+                </button>
+              </div>
+            </div>
+            <div className="absolute top-0 right-0 -mt-16 -mr-16 w-64 h-64 bg-red-200 opacity-20 rounded-full blur-3xl"></div>
+          </div>
+        </div>
+      )}
+
+      {/* SOS Tool Modal */}
+      {activeSosTool && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm print:hidden">
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            className="bg-white rounded-[2rem] p-6 md:p-8 max-w-lg w-full shadow-2xl relative overflow-hidden"
+          >
+            <button 
+              onClick={() => setActiveSosTool(null)}
+              className="absolute top-4 right-4 p-2 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-full transition-colors z-10"
+            >
+              <X size={20} />
+            </button>
+
+            {activeSosTool === 'public' && (
+              <div className="text-center">
+                <div className="w-20 h-20 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <AlertTriangle size={40} />
+                </div>
+                <h2 className="text-3xl font-black text-slate-900 mb-6 uppercase tracking-tight">Aviso Importante</h2>
+                <div className="bg-red-50 p-6 rounded-2xl border border-red-100 mb-6">
+                  <p className="text-xl md:text-2xl font-bold text-red-700 leading-relaxed">
+                    Esta pessoa é autista e está passando por uma sobrecarga sensorial ou crise.
+                  </p>
+                </div>
+                <ul className="text-left space-y-4 mb-8">
+                  <li className="flex items-start gap-3">
+                    <div className="w-6 h-6 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center shrink-0 font-bold text-sm mt-0.5">1</div>
+                    <p className="text-slate-700 font-medium">Por favor, dê espaço e evite aglomerações.</p>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <div className="w-6 h-6 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center shrink-0 font-bold text-sm mt-0.5">2</div>
+                    <p className="text-slate-700 font-medium">Evite barulhos altos, luzes fortes ou contato físico.</p>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <div className="w-6 h-6 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center shrink-0 font-bold text-sm mt-0.5">3</div>
+                    <p className="text-slate-700 font-medium">Não faça perguntas no momento. Ela está acompanhada e segura.</p>
+                  </li>
+                </ul>
+                <p className="text-slate-500 font-medium">Agradecemos a sua compreensão e empatia.</p>
+              </div>
+            )}
+
+            {activeSosTool === 'noise' && (
+              <div className="text-center">
+                <div className="w-20 h-20 bg-orange-100 text-orange-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <Activity size={40} />
+                </div>
+                <h2 className="text-2xl font-black text-slate-900 mb-4">Ambiente Barulhento</h2>
+                <p className="text-slate-600 mb-8">Utilize ruído branco ou sons da natureza para abafar sons externos e ajudar na regulação.</p>
+                
+                <div className="grid grid-cols-2 gap-4">
+                  <button className="p-4 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-2xl transition-colors flex flex-col items-center gap-3">
+                    <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-sm">
+                      <Activity size={24} className="text-slate-700" />
+                    </div>
+                    <span className="font-bold text-slate-700">Ruído Branco</span>
+                  </button>
+                  <button className="p-4 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-2xl transition-colors flex flex-col items-center gap-3">
+                    <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-sm">
+                      <Activity size={24} className="text-blue-500" />
+                    </div>
+                    <span className="font-bold text-slate-700">Som de Chuva</span>
+                  </button>
+                </div>
+                <p className="text-xs text-slate-400 mt-6 italic">* Funcionalidade de áudio em desenvolvimento</p>
+              </div>
+            )}
+
+            {activeSosTool === 'communication' && (
+              <div className="text-center">
+                <div className="w-20 h-20 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <MessageCircle size={40} />
+                </div>
+                <h2 className="text-2xl font-black text-slate-900 mb-6">Comunicação Alternativa</h2>
+                
+                <div className="grid grid-cols-2 gap-4">
+                  <button className="p-6 bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-2xl transition-colors flex flex-col items-center justify-center gap-2 h-32">
+                    <span className="text-4xl">💧</span>
+                    <span className="font-bold text-blue-900">Água</span>
+                  </button>
+                  <button className="p-6 bg-amber-50 hover:bg-amber-100 border border-amber-200 rounded-2xl transition-colors flex flex-col items-center justify-center gap-2 h-32">
+                    <span className="text-4xl">🚽</span>
+                    <span className="font-bold text-amber-900">Banheiro</span>
+                  </button>
+                  <button className="p-6 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-2xl transition-colors flex flex-col items-center justify-center gap-2 h-32">
+                    <span className="text-4xl">🥪</span>
+                    <span className="font-bold text-emerald-900">Comida</span>
+                  </button>
+                  <button className="p-6 bg-red-50 hover:bg-red-100 border border-red-200 rounded-2xl transition-colors flex flex-col items-center justify-center gap-2 h-32">
+                    <span className="text-4xl">🛑</span>
+                    <span className="font-bold text-red-900">Parar / Sair</span>
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {activeSosTool === 'regulation' && (
+              <div className="text-center">
+                <div className="w-20 h-20 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <HeartPulse size={40} />
+                </div>
+                <h2 className="text-2xl font-black text-slate-900 mb-4">Respiração Guiada</h2>
+                <p className="text-slate-600 mb-8">Acompanhe o círculo para regular a respiração.</p>
+                
+                <div className="relative w-48 h-48 mx-auto mb-8 flex items-center justify-center">
+                  <motion.div 
+                    animate={{ 
+                      scale: [1, 1.5, 1.5, 1],
+                      opacity: [0.5, 1, 1, 0.5]
+                    }}
+                    transition={{ 
+                      duration: 8,
+                      repeat: Infinity,
+                      times: [0, 0.4, 0.6, 1],
+                      ease: "easeInOut"
+                    }}
+                    className="absolute inset-0 bg-emerald-200 rounded-full"
+                  />
+                  <div className="relative z-10 w-24 h-24 bg-emerald-500 rounded-full flex items-center justify-center shadow-lg">
+                    <HeartPulse size={32} className="text-white" />
+                  </div>
+                </div>
+                
+                <div className="flex justify-between text-sm font-bold text-slate-500 max-w-xs mx-auto">
+                  <span>Inspire (4s)</span>
+                  <span>Segure (2s)</span>
+                  <span>Expire (4s)</span>
+                </div>
+              </div>
+            )}
+          </motion.div>
+        </div>
+      )}
 
       {isEditing ? (
         <motion.div

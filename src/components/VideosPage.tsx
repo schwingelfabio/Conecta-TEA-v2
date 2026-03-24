@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import VideoGallery from './VideoGallery';
-import { PlayCircle } from 'lucide-react';
+import { PlayCircle, Sparkles, Video } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { db, auth } from '../lib/firebase';
 import { 
@@ -67,17 +67,29 @@ export default function VideosPage() {
   }, []);
 
   return (
-    <div className="space-y-8">
-      <div className="bg-white rounded-3xl p-8 shadow-sm border border-slate-100">
-        <div className="flex items-center gap-4 mb-4">
-          <div className="w-12 h-12 bg-sky-100 rounded-2xl flex items-center justify-center text-sky-600">
-            <PlayCircle size={28} />
+    <div className="space-y-8 pb-24">
+      <div className="bg-gradient-to-br from-indigo-600 to-purple-700 rounded-[3rem] p-8 md:p-12 shadow-xl shadow-indigo-200 relative overflow-hidden text-white">
+        <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
+          <div className="max-w-2xl text-center md:text-left">
+            <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-md px-4 py-2 rounded-full mb-6">
+              <Sparkles size={18} className="text-amber-300" />
+              <span className="text-sm font-bold uppercase tracking-wider text-white">Conteúdo Exclusivo</span>
+            </div>
+            <h1 className="text-4xl md:text-5xl font-black mb-4 leading-tight">
+              {t('videos.galleryTitle')}
+            </h1>
+            <p className="text-indigo-100 text-lg md:text-xl leading-relaxed">
+              {t('videos.gallerySubtitle')}
+            </p>
           </div>
-          <div>
-            <h1 className="text-2xl font-black text-slate-900">{t('videos.galleryTitle')}</h1>
-            <p className="text-slate-500">{t('videos.gallerySubtitle')}</p>
+          <div className="hidden md:flex w-32 h-32 bg-white/10 rounded-full items-center justify-center backdrop-blur-md border border-white/20 shrink-0">
+            <Video size={64} className="text-white opacity-80" />
           </div>
         </div>
+        
+        {/* Decorative elements */}
+        <div className="absolute -right-20 -top-20 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
+        <div className="absolute -left-20 -bottom-20 w-64 h-64 bg-purple-400/30 rounded-full blur-3xl"></div>
       </div>
       
       <VideoGallery />

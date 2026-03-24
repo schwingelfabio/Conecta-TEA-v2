@@ -151,44 +151,69 @@ export default function NetworkMap() {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="max-w-4xl mx-auto space-y-6 pb-24"
+      className="max-w-4xl mx-auto space-y-8 pb-24"
     >
-      <div className="flex items-center gap-3 mb-6">
-        <div className="w-12 h-12 bg-sky-500 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-sky-200">
-          <MapIcon size={24} />
+      <div className="bg-gradient-to-br from-sky-500 to-indigo-600 rounded-[2rem] p-8 text-white shadow-xl relative overflow-hidden">
+        <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
+          <div className="space-y-4 max-w-lg">
+            <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-md px-4 py-2 rounded-full text-sm font-medium border border-white/10">
+              <MapIcon size={16} className="text-sky-200" />
+              <span className="text-sky-50">Autismo no Brasil</span>
+            </div>
+            <h2 className="text-3xl md:text-4xl font-black leading-tight">
+              Estamos construindo a maior rede de apoio TEA do país.
+            </h2>
+            <p className="text-sky-100 text-lg">
+              Descubra famílias, profissionais e eventos perto de você. Ninguém precisa caminhar sozinho.
+            </p>
+          </div>
+          <div className="shrink-0">
+            <button 
+              onClick={() => handleShare('Conecta TEA', 'Venha fazer parte da maior rede de apoio ao autismo do Brasil!')}
+              className="bg-white text-indigo-600 px-8 py-4 rounded-full font-bold text-lg shadow-lg hover:shadow-xl hover:scale-105 transition-all flex items-center gap-3"
+            >
+              <MapPin size={20} />
+              <span>Ativar minha cidade</span>
+            </button>
+          </div>
         </div>
-        <h2 className="text-2xl font-bold text-gray-900">{t('map.title')}</h2>
+        <div className="absolute top-0 right-0 -mt-16 -mr-16 w-64 h-64 bg-white opacity-10 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-0 left-0 -mb-16 -ml-16 w-48 h-48 bg-sky-300 opacity-20 rounded-full blur-2xl"></div>
       </div>
 
       {/* Summary Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center text-center">
-          <div className="w-10 h-10 bg-sky-100 text-sky-600 rounded-full flex items-center justify-center mb-2">
-            <Users size={20} />
+        <div className="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 flex flex-col items-center text-center relative overflow-hidden group hover:border-sky-200 transition-colors">
+          <div className="w-12 h-12 bg-sky-50 text-sky-600 rounded-2xl flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+            <Users size={24} />
           </div>
-          <span className="text-2xl font-bold text-gray-900">{stats.totalUsers}</span>
-          <span className="text-xs text-gray-500 font-medium uppercase tracking-wider">{t('map.connectedFamilies')}</span>
+          <span className="text-3xl font-black text-slate-800">{stats.totalUsers}</span>
+          <span className="text-xs text-slate-500 font-bold uppercase tracking-wider mt-1">Famílias</span>
+          <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-sky-400 to-sky-500 opacity-0 group-hover:opacity-100 transition-opacity" />
         </div>
-        <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center text-center">
-          <div className="w-10 h-10 bg-teal-100 text-teal-600 rounded-full flex items-center justify-center mb-2">
-            <MapPin size={20} />
+        <div className="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 flex flex-col items-center text-center relative overflow-hidden group hover:border-teal-200 transition-colors">
+          <div className="w-12 h-12 bg-teal-50 text-teal-600 rounded-2xl flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+            <MapPin size={24} />
           </div>
-          <span className="text-2xl font-bold text-gray-900">{stats.totalCities}</span>
-          <span className="text-xs text-gray-500 font-medium uppercase tracking-wider">{t('map.activeCities')}</span>
+          <span className="text-3xl font-black text-slate-800">{stats.totalCities}</span>
+          <span className="text-xs text-slate-500 font-bold uppercase tracking-wider mt-1">Cidades</span>
+          <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-teal-400 to-teal-500 opacity-0 group-hover:opacity-100 transition-opacity" />
         </div>
-        <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center text-center">
-          <div className="w-10 h-10 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center mb-2">
-            <MapIcon size={20} />
+        <div className="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 flex flex-col items-center text-center relative overflow-hidden group hover:border-purple-200 transition-colors">
+          <div className="w-12 h-12 bg-purple-50 text-purple-600 rounded-2xl flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+            <MapIcon size={24} />
           </div>
-          <span className="text-2xl font-bold text-gray-900">{stats.totalStates}</span>
-          <span className="text-xs text-gray-500 font-medium uppercase tracking-wider">{t('map.activeStates')}</span>
+          <span className="text-3xl font-black text-slate-800">{stats.totalStates}</span>
+          <span className="text-xs text-slate-500 font-bold uppercase tracking-wider mt-1">Estados</span>
+          <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-purple-400 to-purple-500 opacity-0 group-hover:opacity-100 transition-opacity" />
         </div>
-        <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center text-center">
-          <div className="w-10 h-10 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center mb-2">
-            <MessageCircle size={20} />
+        <div className="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 flex flex-col items-center text-center relative overflow-hidden group hover:border-amber-200 transition-colors">
+          <div className="w-12 h-12 bg-amber-50 text-amber-600 rounded-2xl flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+            <MessageCircle size={24} />
           </div>
-          <span className="text-2xl font-bold text-gray-900">{stats.totalPosts}</span>
-          <span className="text-xs text-gray-500 font-medium uppercase tracking-wider">{t('map.postsShared')}</span>
+          <span className="text-3xl font-black text-slate-800">{stats.totalPosts}</span>
+          <span className="text-xs text-slate-500 font-bold uppercase tracking-wider mt-1">Conexões</span>
+          <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-amber-400 to-amber-500 opacity-0 group-hover:opacity-100 transition-opacity" />
         </div>
       </div>
 

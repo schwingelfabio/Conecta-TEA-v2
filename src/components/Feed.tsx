@@ -47,7 +47,8 @@ import {
   Users,
   Crown,
   Globe,
-  MessageSquare
+  MessageSquare,
+  LogIn
 } from 'lucide-react';
 
 const LogoLoader = () => (
@@ -476,21 +477,77 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
     { id: 'eventos', label: 'Eventos', icon: <MapPin size={16} /> },
   ];
 
+  const topicSubtitles: Record<string, string> = {
+    geral: 'Tudo o que está rolando na comunidade',
+    cidade: 'Conecte-se com famílias perto de você',
+    estado: 'Rede de apoio em todo o seu estado',
+    noticias_externas: 'Últimas atualizações e descobertas',
+    duvidas: 'Ninguém sabe tudo. Pergunte aqui!',
+    conquistas: 'Cada pequeno passo merece ser celebrado',
+    eventos: 'Encontros e atividades inclusivas',
+    noticias: 'Comunicados oficiais do Conecta TEA'
+  };
+
+  const postSuggestions = [
+    "Hoje meu filho conseguiu...",
+    "Alguém conhece um bom neuropediatra em...",
+    "Dica de atividade sensorial para...",
+    "Desabafo do dia: ..."
+  ];
+
+  const firstName = userProfile?.displayName?.split(' ')[0] || 'Família';
+
   return (
     <div className="max-w-2xl mx-auto py-8 px-4">
+      {/* Welcome Block */}
+      <div className="bg-gradient-to-br from-sky-500 via-indigo-500 to-purple-600 rounded-[2rem] p-8 mb-8 text-white shadow-xl relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-10 rounded-full blur-3xl -mr-20 -mt-20"></div>
+        <div className="absolute bottom-0 left-0 w-48 h-48 bg-sky-300 opacity-20 rounded-full blur-2xl -ml-10 -mb-10"></div>
+        
+        <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+          <div>
+            <h2 className="text-3xl font-black mb-2 tracking-tight">
+              Olá, {firstName}! 💙
+            </h2>
+            <p className="text-sky-100 text-lg max-w-md leading-relaxed">
+              {isGuest 
+                ? 'Faça parte da nossa comunidade e conecte-se com outras famílias atípicas.' 
+                : 'Que bom ter você aqui. Compartilhe suas conquistas, tire dúvidas ou apenas desabafe. Estamos juntos!'}
+            </p>
+          </div>
+          
+          <div className="flex flex-row md:flex-col gap-3">
+            <div className="flex items-center gap-2 bg-white/10 backdrop-blur-md px-4 py-2 rounded-2xl border border-white/20">
+              <Users size={18} className="text-sky-200" />
+              <span className="text-sm font-semibold text-white">Comunidade Viva</span>
+            </div>
+            <div className="flex items-center gap-2 bg-white/10 backdrop-blur-md px-4 py-2 rounded-2xl border border-white/20">
+              <Sparkles size={18} className="text-amber-300" />
+              <span className="text-sm font-semibold text-white">Rede de Apoio</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <ActiveCommunities />
 
       {/* Post Creation */}
-      <div className="bg-white rounded-3xl shadow-sm border border-slate-100 p-6 mb-8 relative">
+      <div className="bg-white rounded-[2rem] shadow-sm border border-slate-100 p-6 mb-8 relative overflow-hidden">
         {isGuest && (
-          <div className="absolute inset-0 bg-white/60 backdrop-blur-[2px] z-10 rounded-3xl flex items-center justify-center">
-            <div className="bg-white px-6 py-3 rounded-full shadow-lg border border-sky-100 flex items-center gap-3">
-              <span className="text-sky-800 font-medium">Crie uma conta para publicar</span>
+          <div className="absolute inset-0 bg-white/60 backdrop-blur-sm z-10 flex items-center justify-center">
+            <div className="bg-white px-8 py-6 rounded-3xl shadow-xl border border-sky-100 flex flex-col items-center gap-4 text-center max-w-sm mx-4">
+              <div className="w-14 h-14 bg-sky-100 text-sky-600 rounded-full flex items-center justify-center mb-2">
+                <LogIn size={28} />
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-slate-800 mb-1">Crie uma conta para publicar</h3>
+                <p className="text-slate-500 text-sm">Junte-se à comunidade para interagir, curtir e comentar.</p>
+              </div>
               <button 
                 onClick={() => window.location.reload()} 
-                className="bg-sky-500 text-white px-4 py-1.5 rounded-full text-sm font-bold hover:bg-sky-600 transition-colors"
+                className="w-full bg-sky-500 text-white px-6 py-3.5 rounded-2xl font-bold hover:bg-sky-600 transition-colors shadow-lg shadow-sky-200 mt-2"
               >
-                Criar Conta
+                Fazer Login
               </button>
             </div>
           </div>
@@ -499,7 +556,7 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
           <img 
             src={userProfile?.photoURL || `https://api.dicebear.com/7.x/avataaars/svg?seed=${userProfile?.uid || 'guest'}`} 
             alt="Avatar" 
-            className="w-12 h-12 rounded-full border-2 border-slate-50"
+            className="w-12 h-12 rounded-full border-2 border-slate-50 shadow-sm"
           />
           <form onSubmit={handlePost} className="flex-1">
             <textarea
@@ -507,31 +564,54 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
               onChange={(e) => setNewPost(e.target.value)}
               disabled={isGuest}
               placeholder="O que está acontecendo na sua jornada?"
-              className="w-full p-4 bg-slate-50 border-none rounded-2xl focus:ring-2 focus:ring-brand-primary/20 outline-none resize-none min-h-[120px] transition-all"
+              className="w-full p-4 bg-slate-50/50 border border-slate-100 rounded-2xl focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 outline-none resize-none min-h-[120px] transition-all text-slate-700 placeholder:text-slate-400"
             />
-            <div className="mt-4 flex items-center justify-between">
+            
+            {!newPost && (
+              <div className="flex flex-wrap gap-2 mt-3">
+                {postSuggestions.map((suggestion, idx) => (
+                  <button
+                    key={idx}
+                    type="button"
+                    onClick={() => setNewPost(suggestion)}
+                    disabled={isGuest}
+                    className="text-xs font-medium bg-sky-50 text-sky-700 px-4 py-2 rounded-full hover:bg-sky-100 transition-colors disabled:opacity-50 border border-sky-100/50 flex items-center gap-1.5"
+                  >
+                    <MessageSquare size={12} />
+                    {suggestion}
+                  </button>
+                ))}
+              </div>
+            )}
+
+            <div className="mt-4 flex items-center justify-between pt-4 border-t border-slate-50">
               <div className="flex space-x-2">
                 {/* Topic Selector */}
-                <select 
-                  value={topic}
-                  onChange={(e) => setTopic(e.target.value)}
-                  disabled={isGuest}
-                  className="bg-slate-50 text-slate-600 text-sm px-3 py-2 rounded-xl border-none focus:ring-0 cursor-pointer"
-                >
-                  {topics.map(t => (
-                    (t.id !== 'noticias' || isAdmin) && (
-                      <option key={t.id} value={t.id}>{t.label}</option>
-                    )
-                  ))}
-                </select>
+                <div className="relative">
+                  <select 
+                    value={topic}
+                    onChange={(e) => setTopic(e.target.value)}
+                    disabled={isGuest}
+                    className="appearance-none bg-slate-50 text-slate-600 text-sm font-medium px-4 py-2.5 pr-10 rounded-xl border border-slate-200 focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 cursor-pointer transition-all disabled:opacity-50"
+                  >
+                    {topics.map(t => (
+                      (t.id !== 'noticias' || isAdmin) && (
+                        <option key={t.id} value={t.id}>{t.label}</option>
+                      )
+                    ))}
+                  </select>
+                  <div className="absolute inset-y-0 right-0 flex items-center px-3 pointer-events-none text-slate-400">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+                  </div>
+                </div>
               </div>
               <button
                 type="submit"
                 disabled={!newPost.trim() || isGuest}
-                className="bg-brand-primary text-white px-6 py-2 rounded-full font-semibold flex items-center space-x-2 hover:bg-brand-primary/90 transition-all disabled:opacity-50"
+                className="bg-sky-500 text-white px-8 py-2.5 rounded-xl font-bold flex items-center space-x-2 hover:bg-sky-600 transition-all disabled:opacity-50 disabled:hover:bg-sky-500 shadow-md shadow-sky-200"
               >
                 <span>{t('feed.post')}</span>
-                <Send size={16} />
+                <Send size={18} />
               </button>
             </div>
           </form>
@@ -539,41 +619,46 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
       </div>
 
       {/* Filters */}
-      <div className="flex items-center space-x-2 mb-8 overflow-x-auto pb-2 no-scrollbar">
-        <div className="p-2 bg-white rounded-xl border border-slate-100 text-slate-400">
-          <Filter size={18} />
+      <div className="mb-8">
+        <div className="flex items-center space-x-2 overflow-x-auto pb-4 no-scrollbar scroll-smooth">
+          <div className="p-2 bg-white rounded-xl border border-slate-100 text-slate-400 shrink-0">
+            <Filter size={18} />
+          </div>
+          <button
+            onClick={handleShareCommunity}
+            className="flex items-center space-x-2 px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap bg-brand-primary text-white hover:bg-brand-primary/90 transition-all shadow-md shrink-0"
+          >
+            <Share2 size={16} />
+            <span>Compartilhar Comunidade</span>
+          </button>
+          {topics.map(t => (
+            <button
+              key={t.id}
+              onClick={() => setTopic(t.id)}
+              className={`flex items-center space-x-2 px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all shrink-0 ${
+                topic === t.id 
+                  ? 'bg-slate-900 text-white shadow-md' 
+                  : 'bg-white text-slate-600 border border-slate-100 hover:bg-slate-50'
+              }`}
+            >
+              {t.icon}
+              <span>{t.label}</span>
+            </button>
+          ))}
+          {isAdmin && (
+            <button
+              onClick={generateAiNews}
+              disabled={generatingAiNews}
+              className="flex items-center space-x-2 px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap bg-indigo-500 text-white hover:bg-indigo-600 transition-all shadow-md disabled:opacity-50 shrink-0"
+            >
+              {generatingAiNews ? <RefreshCw size={16} className="animate-spin" /> : <Sparkles size={16} />}
+              <span>{generatingAiNews ? 'Gerando...' : 'Gerar Notícia IA'}</span>
+            </button>
+          )}
         </div>
-        <button
-          onClick={handleShareCommunity}
-          className="flex items-center space-x-2 px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap bg-brand-primary text-white hover:bg-brand-primary/90 transition-all shadow-md"
-        >
-          <Share2 size={16} />
-          <span>Compartilhar Comunidade</span>
-        </button>
-        {topics.map(t => (
-          <button
-            key={t.id}
-            onClick={() => setTopic(t.id)}
-            className={`flex items-center space-x-2 px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all ${
-              topic === t.id 
-                ? 'bg-slate-900 text-white shadow-md' 
-                : 'bg-white text-slate-600 border border-slate-100 hover:bg-slate-50'
-            }`}
-          >
-            {t.icon}
-            <span>{t.label}</span>
-          </button>
-        ))}
-        {isAdmin && (
-          <button
-            onClick={generateAiNews}
-            disabled={generatingAiNews}
-            className="flex items-center space-x-2 px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap bg-indigo-500 text-white hover:bg-indigo-600 transition-all shadow-md disabled:opacity-50"
-          >
-            {generatingAiNews ? <RefreshCw size={16} className="animate-spin" /> : <Sparkles size={16} />}
-            <span>{generatingAiNews ? 'Gerando...' : 'Gerar Notícia IA'}</span>
-          </button>
-        )}
+        <p className="text-sm text-slate-500 font-medium px-2 mt-1">
+          {topicSubtitles[topic] || 'Explore a comunidade'}
+        </p>
       </div>
 
       {/* Post List or External News */}
@@ -592,7 +677,7 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, scale: 0.95 }}
-                    className={`bg-white rounded-3xl shadow-sm border ${post.isVip ? 'border-amber-400 ring-1 ring-amber-200' : 'border-slate-100'} overflow-hidden`}
+                    className={`bg-white rounded-[2rem] shadow-sm border ${post.isVip ? 'border-amber-300 ring-4 ring-amber-50' : 'border-slate-100'} overflow-hidden hover:shadow-md transition-shadow`}
                   >
                     <div className="p-6">
                       <div className="flex items-center justify-between mb-4">

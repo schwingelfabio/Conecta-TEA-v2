@@ -180,18 +180,37 @@ export default function AreaVip({
                 </p>
               </div>
             </div>
-
-            {onNavigate && (
-              <button
-                onClick={() => onNavigate('sos')}
-                className="bg-red-500 text-white px-8 py-5 rounded-3xl font-black text-xl shadow-xl shadow-red-200 hover:bg-red-600 hover:scale-105 transition-all active:scale-95 flex items-center gap-3 animate-pulse"
-              >
-                <ShieldAlert size={28} />
-                {t('vip.sosSensorial')}
-              </button>
-            )}
           </div>
         </div>
+
+        {onNavigate && (
+          <div className="mb-12 bg-gradient-to-r from-red-500 to-rose-600 rounded-[3rem] p-8 md:p-12 text-white shadow-xl shadow-red-200 relative overflow-hidden cursor-pointer hover:scale-[1.02] transition-transform active:scale-95" onClick={() => onNavigate('sos')}>
+            <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
+              <div className="text-center md:text-left max-w-xl">
+                <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-md px-4 py-2 rounded-full mb-4">
+                  <ShieldAlert size={18} />
+                  <span className="text-sm font-bold uppercase tracking-wider">Acesso Rápido</span>
+                </div>
+                <h3 className="text-3xl md:text-4xl font-black mb-4 leading-tight">
+                  {t('vip.sosSensorial')}
+                </h3>
+                <p className="text-red-50 text-lg mb-8">
+                  Ferramentas imediatas para regulação sensorial, comunicação alternativa e suporte em crises.
+                </p>
+                <button className="bg-white text-red-600 px-8 py-4 rounded-2xl font-bold text-lg hover:bg-red-50 transition-all flex items-center justify-center gap-2 shadow-lg">
+                  Acessar SOS Agora
+                </button>
+              </div>
+              <div className="hidden lg:block">
+                <div className="w-64 h-64 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm border border-white/30">
+                  <ShieldAlert size={120} className="text-white opacity-80" />
+                </div>
+              </div>
+            </div>
+            <div className="absolute -right-20 -top-20 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
+            <div className="absolute -left-20 -bottom-20 w-64 h-64 bg-red-400/20 rounded-full blur-3xl"></div>
+          </div>
+        )}
 
         <div className="mb-12 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-[3rem] p-8 md:p-12 text-white shadow-xl shadow-emerald-200 relative overflow-hidden">
           <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
@@ -251,9 +270,6 @@ export default function AreaVip({
 
           <div className="absolute -right-20 -top-20 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
           <div className="absolute -left-20 -bottom-20 w-64 h-64 bg-emerald-400/20 rounded-full blur-3xl"></div>
-        </div>
-
-        <div className="mb-16">
         </div>
 
         <div>

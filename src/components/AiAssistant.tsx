@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { GoogleGenAI } from "@google/genai";
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send, Bot, User, Sparkles, Loader2, Trash2, Maximize2, Minimize2 } from 'lucide-react';
+import { Send, Bot, User, Sparkles, Loader2, Trash2, Maximize2, Minimize2, Lightbulb } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 
 const TypingMessage: React.FC<{ text: string }> = ({ text }) => {
@@ -21,6 +21,13 @@ const TypingMessage: React.FC<{ text: string }> = ({ text }) => {
   return <ReactMarkdown>{displayedText}</ReactMarkdown>;
 };
 
+const SUGGESTED_PROMPTS = [
+  "Quais são os direitos da pessoa com TEA?",
+  "Como lidar com crises sensoriais?",
+  "O que é o Triagem TEA IA?",
+  "Dicas para rotina de sono"
+];
+
 const AiAssistant: React.FC = () => {
   const [messages, setMessages] = useState<{ role: 'user' | 'model'; text: string; isNew?: boolean }[]>([
     { role: 'model', text: 'Olá! Sou seu assistente Conecta TEA. Como posso ajudar você hoje com informações sobre autismo, direitos ou suporte?', isNew: false }
@@ -36,11 +43,11 @@ const AiAssistant: React.FC = () => {
     }
   }, [messages, loading]);
 
-  const handleSend = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!input.trim() || loading) return;
+  const handleSend = async (e?: React.FormEvent, textOverride?: string) => {
+    if (e) e.preventDefault();
+    const userMessage = textOverride || input.trim();
+    if (!userMessage || loading) return;
 
-    const userMessage = input.trim();
     setInput('');
     setMessages(prev => [...prev.map(m => ({ ...m, isNew: false })), { role: 'user', text: userMessage, isNew: true }]);
     setLoading(true);
@@ -73,7 +80,7 @@ const AiAssistant: React.FC = () => {
   };
 
   return (
-    <div className={`fixed bottom-6 right-6 z-40 transition-all duration-500 ease-in-out ${isExpanded ? 'w-[400px] h-[600px]' : 'w-16 h-16'}`}>
+    <div className={`fixed bottom-6 right-6 z-40 transition-all duration-500 ease-in-out ${isExpanded ? 'w-[400px] h-[600px] max-w-[calc(100vw-3rem)]' : 'w-16 h-16'}`}>
       <AnimatePresence mode="wait">
         {!isExpanded ? (
           <motion.button
@@ -153,6 +160,30 @@ const AiAssistant: React.FC = () => {
                 </motion.div>
               ))}
               
+              {messages.length === 1 && !loading && (
+                <motion.div 
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.5 }}
+                  className="mt-6"
+                >
+                  <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 flex items-center gap-2">
+                    <Lightbulb size={14} /> Sugestões
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {SUGGESTED_PROMPTS.map((prompt, idx) => (
+                      <button
+                        key={idx}
+                        onClick={() => handleSend(undefined, prompt)}
+                        className="text-left text-xs bg-white border border-slate-200 text-slate-600 px-3 py-2 rounded-xl hover:bg-sky-50 hover:border-sky-200 hover:text-sky-700 transition-colors shadow-sm"
+                      >
+                        {prompt}
+                      </button>
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+
               {loading && (
                 <motion.div 
                   initial={{ opacity: 0 }}
@@ -186,7 +217,7 @@ const AiAssistant: React.FC = () => {
             </div>
 
             {/* Input */}
-            <form onSubmit={handleSend} className="p-5 bg-white border-t border-slate-100">
+            <form onSubmit={(e) => handleSend(e)} className="p-5 bg-white border-t border-slate-100">
               <div className="relative group">
                 <input
                   type="text"
