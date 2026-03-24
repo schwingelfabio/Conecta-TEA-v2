@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Users, LogIn, ShieldCheck, MessageCircle, Crown, Heart, Zap, ExternalLink, X, Copy, Check } from 'lucide-react';
+import { Users, LogIn, ShieldCheck, MessageCircle, Crown, Heart, Zap, ExternalLink, X, Copy, Check, ArrowRight, MapPin, Activity, BookOpen, Search, Shield, Smartphone } from 'lucide-react';
 import AuthForm from './AuthForm';
 import DonationSupportCard from './DonationSupportCard';
 import LanguageSelector from './LanguageSelector';
@@ -82,300 +82,369 @@ function SupportModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => voi
 
 export default function LandingPage({ onLogin, onShowTerms, onGuestLogin }: LandingPageProps) {
   const { t, i18n } = useTranslation();
-  const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [showAuthForm, setShowAuthForm] = useState(false);
   const [isSupportModalOpen, setIsSupportModalOpen] = useState(false);
 
-  const handleLoginClick = () => {
-    if (!acceptedTerms) {
-      alert(t('landing.termsAlert'));
-      return;
+  const scrollToSection = (id: string) => {
+    const section = document.getElementById(id);
+    if (section) {
+      section.scrollIntoView({ behavior: 'smooth' });
     }
-    setShowAuthForm(true);
   };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white font-sans">
       <div className="absolute top-4 right-4 z-50">
         <LanguageSelector />
       </div>
 
-      <section className="relative pt-20 pb-32 overflow-hidden">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full -z-10 opacity-10">
-          <div className="absolute top-0 left-1/4 w-96 h-96 bg-sky-400 rounded-full blur-3xl animate-pulse"></div>
-          <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-indigo-400 rounded-full blur-3xl animate-pulse delay-700"></div>
+      {/* SEÇÃO 1 — HERO PRINCIPAL */}
+      <section className="relative pt-24 pb-20 overflow-hidden">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full -z-10 opacity-20">
+          <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-sky-300 rounded-full blur-[100px] opacity-60 mix-blend-multiply"></div>
+          <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-indigo-300 rounded-full blur-[100px] opacity-60 mix-blend-multiply"></div>
         </div>
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
+            transition={{ duration: 0.6 }}
           >
             <div className="flex justify-center mb-8">
-              <div className="relative group">
-                <div className="absolute -inset-1 bg-gradient-to-r from-sky-400 to-indigo-500 rounded-[2.5rem] blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
-                <div className="relative w-24 h-24 bg-white rounded-[2rem] shadow-xl flex items-center justify-center text-sky-500 border border-sky-50">
-                  <Users size={48} />
-                </div>
+              <div className="w-20 h-20 bg-white rounded-3xl shadow-lg flex items-center justify-center text-sky-500 border border-sky-50">
+                <Users size={40} strokeWidth={2.5} />
               </div>
             </div>
 
-            <h1 className="text-4xl md:text-6xl font-black text-gray-900 mb-6 tracking-tight leading-tight max-w-4xl mx-auto">
-              {t('landing.heroTitle')}
+            <h1 className="text-4xl md:text-6xl font-black text-slate-900 mb-6 tracking-tight leading-[1.1] max-w-4xl mx-auto">
+              Apoio real para famílias na jornada do autismo.
             </h1>
 
-            <p className="max-w-3xl mx-auto text-xl md:text-2xl text-gray-600 mb-12 leading-relaxed">
-              {t('landing.heroSubtitle')}
+            <p className="max-w-2xl mx-auto text-xl text-slate-600 mb-10 leading-relaxed">
+              Comunidade acolhedora, orientação prática e tecnologia acessível para ajudar famílias desde os primeiros sinais.
             </p>
 
             {showAuthForm ? (
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="mt-8"
+                className="mt-8 max-w-md mx-auto"
               >
                 <AuthForm onSuccess={onLogin} />
                 <button
                   onClick={() => setShowAuthForm(false)}
-                  className="mt-6 text-gray-500 hover:text-gray-700 font-medium"
+                  className="mt-6 text-slate-500 hover:text-slate-700 font-medium transition-colors"
                 >
-                  {t('common.back')}
+                  Voltar
                 </button>
               </motion.div>
             ) : (
               <div className="flex flex-col items-center justify-center gap-8">
-                <div className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full">
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full max-w-md mx-auto">
                   <button
-                    onClick={() => {
-                      const screeningSection = document.getElementById('screening');
-                      if (screeningSection) {
-                        screeningSection.scrollIntoView({ behavior: 'smooth' });
-                      }
-                    }}
-                    className="w-full sm:w-auto px-10 py-5 bg-sky-500 text-white rounded-2xl font-bold text-xl shadow-lg shadow-sky-100 hover:bg-sky-600 hover:-translate-y-1 transition-all active:scale-95 flex items-center justify-center gap-3"
+                    onClick={() => setShowAuthForm(true)}
+                    className="w-full px-8 py-4 bg-sky-500 text-white rounded-2xl font-bold text-lg shadow-lg shadow-sky-500/30 hover:bg-sky-600 hover:-translate-y-0.5 transition-all active:scale-95 flex items-center justify-center gap-2"
                   >
-                    <ShieldCheck size={24} />
-                    {t('landing.heroCTA')}
+                    Começar agora
+                    <ArrowRight size={20} />
                   </button>
 
                   <button
-                    onClick={() => setIsSupportModalOpen(true)}
-                    className="w-full sm:w-auto px-10 py-5 bg-white text-emerald-600 border-2 border-emerald-100 rounded-2xl font-bold text-xl shadow-sm hover:bg-emerald-50 hover:border-emerald-200 hover:-translate-y-1 transition-all active:scale-95 flex items-center justify-center gap-3"
+                    onClick={() => scrollToSection('como-ajuda')}
+                    className="w-full px-8 py-4 bg-white text-slate-700 border border-slate-200 rounded-2xl font-bold text-lg hover:bg-slate-50 hover:border-slate-300 transition-all active:scale-95 flex items-center justify-center gap-2"
                   >
-                    <Heart size={24} className="fill-emerald-500" />
-                    {t('landing.supportButton')}
+                    Conhecer o app
                   </button>
                 </div>
 
-                <div className="flex flex-col items-center gap-6 w-full max-w-2xl">
-                  <div className="flex flex-wrap justify-center gap-4">
-                    <button
-                      onClick={handleLoginClick}
-                      className={`px-6 py-3 rounded-xl font-bold text-sm shadow-sm transition-all active:scale-95 flex items-center gap-2 ${acceptedTerms ? 'bg-slate-800 text-white hover:bg-slate-900' : 'bg-gray-200 text-gray-400 cursor-not-allowed'}`}
-                    >
-                      <LogIn size={18} />
-                      {t('landing.login')}
-                    </button>
-
-                    <button
-                      onClick={() => {
-                        if (!acceptedTerms) {
-                          alert(t('landing.termsAlert'));
-                          return;
-                        }
-                        onGuestLogin();
-                      }}
-                      className={`px-6 py-3 bg-slate-100 text-slate-700 rounded-xl font-bold text-sm shadow-sm hover:bg-slate-200 transition-all active:scale-95 flex items-center gap-2 ${!acceptedTerms ? 'opacity-50 cursor-not-allowed' : ''}`}
-                    >
-                      {t('auth.guestLogin')}
-                    </button>
+                <div className="flex flex-wrap justify-center gap-6 md:gap-10 mt-4">
+                  <div className="flex items-center gap-2 text-slate-600 font-medium text-sm">
+                    <div className="w-8 h-8 rounded-full bg-sky-100 text-sky-600 flex items-center justify-center">
+                      <Search size={16} />
+                    </div>
+                    Entenda os sinais
                   </div>
-
-                  <div className="flex items-center gap-3 text-sm text-gray-500 bg-gray-50/50 px-4 py-2 rounded-full border border-gray-100">
-                    <input
-                      type="checkbox"
-                      id="terms"
-                      checked={acceptedTerms}
-                      onChange={(e) => setAcceptedTerms(e.target.checked)}
-                      className="w-4 h-4 rounded border-gray-300 text-sky-500 focus:ring-sky-500"
-                    />
-                    <label htmlFor="terms" className="cursor-pointer">
-                      {t('landing.readAndAccept')}{' '}
-                      <button onClick={onShowTerms} className="text-sky-500 font-bold hover:underline">
-                        {t('landing.termsLink')}
-                      </button>
-                    </label>
+                  <div className="flex items-center gap-2 text-slate-600 font-medium text-sm">
+                    <div className="w-8 h-8 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center">
+                      <Users size={16} />
+                    </div>
+                    Conecte-se
+                  </div>
+                  <div className="flex items-center gap-2 text-slate-600 font-medium text-sm">
+                    <div className="w-8 h-8 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center">
+                      <Shield size={16} />
+                    </div>
+                    Apoio prático
                   </div>
                 </div>
-
-                <div className="mt-4 flex items-center gap-3 text-gray-500 font-medium">
-                  <div className="w-8 h-[1px] bg-gray-200"></div>
-                  <p className="text-sm italic">
-                    {t('landing.trustElement')}
-                  </p>
-                  <div className="w-8 h-[1px] bg-gray-200"></div>
-                </div>
+                
+                <button
+                  onClick={onGuestLogin}
+                  className="mt-2 text-sm text-slate-500 hover:text-slate-800 font-medium transition-colors underline underline-offset-4"
+                >
+                  Apenas explorar como visitante
+                </button>
               </div>
             )}
           </motion.div>
         </div>
       </section>
-      
-      <section className="py-16 bg-sky-50/50 border-y border-sky-100/50">
-        <div className="max-w-4xl mx-auto px-4 text-center">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
+
+      {/* SEÇÃO 2 — COMO O CONECTA TEA AJUDA */}
+      <section id="como-ajuda" className="py-24 bg-slate-50">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-black text-slate-900 mb-4">Como o Conecta TEA ajuda?</h2>
+            <p className="text-lg text-slate-600 max-w-2xl mx-auto">Três passos simples para trazer mais clareza e segurança para a sua jornada.</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="bg-white p-8 rounded-[2rem] shadow-sm border border-slate-100 text-center">
+              <div className="w-16 h-16 bg-sky-100 text-sky-600 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                <Search size={32} />
+              </div>
+              <h3 className="text-xl font-bold text-slate-900 mb-3">1. Entenda</h3>
+              <p className="text-slate-600 leading-relaxed">
+                Acesse orientações e conteúdos que ajudam a dar clareza aos primeiros passos e sinais.
+              </p>
+            </div>
+
+            <div className="bg-white p-8 rounded-[2rem] shadow-sm border border-slate-100 text-center">
+              <div className="w-16 h-16 bg-indigo-100 text-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                <Users size={32} />
+              </div>
+              <h3 className="text-xl font-bold text-slate-900 mb-3">2. Conecte-se</h3>
+              <p className="text-slate-600 leading-relaxed">
+                Encontre uma comunidade acolhedora com famílias e apoio perto de você.
+              </p>
+            </div>
+
+            <div className="bg-white p-8 rounded-[2rem] shadow-sm border border-slate-100 text-center">
+              <div className="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                <ShieldCheck size={32} />
+              </div>
+              <h3 className="text-xl font-bold text-slate-900 mb-3">3. Aja com segurança</h3>
+              <p className="text-slate-600 leading-relaxed">
+                Use ferramentas e recursos que ajudam no dia a dia e no acompanhamento da jornada.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* SEÇÃO 3 — PARA QUEM É */}
+      <section className="py-24 bg-white">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="bg-sky-50 rounded-[3rem] p-10 md:p-16 border border-sky-100">
+            <h2 className="text-3xl md:text-4xl font-black text-slate-900 mb-10 text-center">Isso foi feito para você?</h2>
+            
+            <div className="space-y-6 max-w-2xl mx-auto">
+              <div className="flex items-start gap-4">
+                <div className="w-8 h-8 bg-sky-500 text-white rounded-full flex items-center justify-center shrink-0 mt-1">
+                  <Check size={18} />
+                </div>
+                <p className="text-lg text-slate-700 font-medium">Para pais e mães com dúvidas sobre sinais de autismo.</p>
+              </div>
+              
+              <div className="flex items-start gap-4">
+                <div className="w-8 h-8 bg-sky-500 text-white rounded-full flex items-center justify-center shrink-0 mt-1">
+                  <Check size={18} />
+                </div>
+                <p className="text-lg text-slate-700 font-medium">Para famílias que buscam acolhimento e orientação.</p>
+              </div>
+              
+              <div className="flex items-start gap-4">
+                <div className="w-8 h-8 bg-sky-500 text-white rounded-full flex items-center justify-center shrink-0 mt-1">
+                  <Check size={18} />
+                </div>
+                <p className="text-lg text-slate-700 font-medium">Para responsáveis que querem apoio prático no dia a dia.</p>
+              </div>
+              
+              <div className="flex items-start gap-4">
+                <div className="w-8 h-8 bg-sky-500 text-white rounded-full flex items-center justify-center shrink-0 mt-1">
+                  <Check size={18} />
+                </div>
+                <p className="text-lg text-slate-700 font-medium">Para quem deseja entender melhor os próximos passos.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* SEÇÃO 4 — BENEFÍCIOS PRINCIPAIS */}
+      <section className="py-24 bg-slate-50">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-black text-slate-900 mb-4">O que você encontra no app</h2>
+            <p className="text-lg text-slate-600 max-w-2xl mx-auto">Ferramentas pensadas para facilitar a sua rotina.</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 flex items-start gap-4">
+              <div className="w-12 h-12 bg-sky-100 text-sky-600 rounded-xl flex items-center justify-center shrink-0">
+                <MapPin size={24} />
+              </div>
+              <div>
+                <h3 className="font-bold text-slate-900 mb-1 text-lg">Comunidades Locais</h3>
+                <p className="text-slate-600 text-sm leading-relaxed">Conecte-se com famílias e profissionais mais perto de você.</p>
+              </div>
+            </div>
+
+            <div className="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 flex items-start gap-4">
+              <div className="w-12 h-12 bg-indigo-100 text-indigo-600 rounded-xl flex items-center justify-center shrink-0">
+                <Smartphone size={24} />
+              </div>
+              <div>
+                <h3 className="font-bold text-slate-900 mb-1 text-lg">Carteirinha Digital</h3>
+                <p className="text-slate-600 text-sm leading-relaxed">Organize informações importantes da pessoa com TEA de forma prática.</p>
+              </div>
+            </div>
+
+            <div className="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 flex items-start gap-4">
+              <div className="w-12 h-12 bg-red-100 text-red-600 rounded-xl flex items-center justify-center shrink-0">
+                <Activity size={24} />
+              </div>
+              <div>
+                <h3 className="font-bold text-slate-900 mb-1 text-lg">SOS Sensorial</h3>
+                <p className="text-slate-600 text-sm leading-relaxed">Acesse orientações rápidas para momentos de crise e sobrecarga.</p>
+              </div>
+            </div>
+
+            <div className="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 flex items-start gap-4">
+              <div className="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-xl flex items-center justify-center shrink-0">
+                <BookOpen size={24} />
+              </div>
+              <div>
+                <h3 className="font-bold text-slate-900 mb-1 text-lg">Vídeos e Materiais</h3>
+                <p className="text-slate-600 text-sm leading-relaxed">Conteúdos úteis para entender, aprender e aplicar no dia a dia.</p>
+              </div>
+            </div>
+
+            <div className="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 flex items-start gap-4">
+              <div className="w-12 h-12 bg-purple-100 text-purple-600 rounded-xl flex items-center justify-center shrink-0">
+                <Zap size={24} />
+              </div>
+              <div>
+                <h3 className="font-bold text-slate-900 mb-1 text-lg">Triagem TEA IA</h3>
+                <p className="text-slate-600 text-sm leading-relaxed">Tecnologia de apoio para observação inicial e acompanhamento.</p>
+              </div>
+            </div>
+
+            <div className="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 flex items-start gap-4">
+              <div className="w-12 h-12 bg-amber-100 text-amber-600 rounded-xl flex items-center justify-center shrink-0">
+                <Crown size={24} />
+              </div>
+              <div>
+                <h3 className="font-bold text-slate-900 mb-1 text-lg">Área VIP</h3>
+                <p className="text-slate-600 text-sm leading-relaxed">Materiais exclusivos para aprofundar sua jornada com mais suporte.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* SEÇÃO 5 — PROVA DE CONFIANÇA */}
+      <section className="py-20 bg-white border-y border-slate-100">
+        <div className="max-w-5xl mx-auto px-4 text-center">
+          <h2 className="text-2xl md:text-3xl font-bold text-slate-900 mb-10">
+            Construindo uma rede de apoio para famílias TEA no Brasil
+          </h2>
+          <div className="flex flex-wrap justify-center gap-4 md:gap-8">
+            <div className="flex flex-col items-center gap-2">
+              <div className="w-14 h-14 bg-slate-50 rounded-full flex items-center justify-center text-slate-600">
+                <Heart size={24} />
+              </div>
+              <span className="text-sm font-medium text-slate-600">Acolhimento</span>
+            </div>
+            <div className="flex flex-col items-center gap-2">
+              <div className="w-14 h-14 bg-slate-50 rounded-full flex items-center justify-center text-slate-600">
+                <BookOpen size={24} />
+              </div>
+              <span className="text-sm font-medium text-slate-600">Informação prática</span>
+            </div>
+            <div className="flex flex-col items-center gap-2">
+              <div className="w-14 h-14 bg-slate-50 rounded-full flex items-center justify-center text-slate-600">
+                <Users size={24} />
+              </div>
+              <span className="text-sm font-medium text-slate-600">Comunidade</span>
+            </div>
+            <div className="flex flex-col items-center gap-2">
+              <div className="w-14 h-14 bg-slate-50 rounded-full flex items-center justify-center text-slate-600">
+                <Zap size={24} />
+              </div>
+              <span className="text-sm font-medium text-slate-600">Tecnologia acessível</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* SEÇÃO 6 — BLOCO TRIAGEM TEA IA */}
+      <section className="py-24 bg-indigo-50">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-indigo-100 text-indigo-600 rounded-2xl mb-6">
+            <Zap size={32} />
+          </div>
+          <h2 className="text-3xl md:text-4xl font-black text-slate-900 mb-6">Triagem TEA IA</h2>
+          <p className="text-lg text-slate-600 mb-10 max-w-2xl mx-auto leading-relaxed">
+            Uma tecnologia parceira para auxiliar na observação inicial de sinais e no acompanhamento do desenvolvimento.
+          </p>
+          <a
+            href="https://sites.google.com/view/triagemteaia/portugu%C3%AAs"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 px-8 py-4 bg-white text-indigo-600 border border-indigo-200 rounded-2xl font-bold text-lg hover:bg-indigo-50 transition-all shadow-sm"
           >
-            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4 leading-tight">
-              {t('landing.impact.title')}
-            </h2>
-            <p className="text-lg text-gray-600 mb-8">
-              {t('landing.impact.subtitle')}
-            </p>
-            <button
-              onClick={() => {
-                const screeningSection = document.getElementById('screening');
-                if (screeningSection) {
-                  screeningSection.scrollIntoView({ behavior: 'smooth' });
-                }
-              }}
-              className="inline-flex items-center gap-2 px-8 py-4 bg-sky-500 text-white rounded-2xl font-bold shadow-lg shadow-sky-100 hover:bg-sky-600 transition-all active:scale-95"
-            >
-              <ShieldCheck size={20} />
-              {t('landing.heroCTA')}
-            </button>
-          </motion.div>
+            Conhecer Triagem TEA IA
+            <ExternalLink size={20} />
+          </a>
         </div>
       </section>
 
-      <section id="screening" className="py-24 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-            <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 hover:shadow-xl transition-shadow">
-              <div className="w-14 h-14 bg-sky-100 text-sky-600 rounded-2xl flex items-center justify-center mb-6">
-                <Users size={28} />
-              </div>
-              <h3 className="text-2xl font-bold mb-4">{t('landing.features.communities.title')}</h3>
-              <p className="text-gray-600 leading-relaxed">
-                {t('landing.features.communities.desc')}
-              </p>
-            </div>
-
-            <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 hover:shadow-xl transition-shadow">
-              <div className="w-14 h-14 bg-amber-100 text-amber-600 rounded-2xl flex items-center justify-center mb-6">
-                <Crown size={28} />
-              </div>
-              <h3 className="text-2xl font-bold mb-4">{t('landing.features.vip.title')}</h3>
-              <p className="text-gray-600 leading-relaxed">
-                {t('landing.features.vip.desc')}
-              </p>
-            </div>
-
-            <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 hover:shadow-xl transition-shadow">
-              <div className="w-14 h-14 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center mb-6">
-                <ShieldCheck size={28} />
-              </div>
-              <h3 className="text-2xl font-bold mb-4">{t('landing.features.triagem.title')}</h3>
-              <p className="text-gray-600 leading-relaxed">
-                {t('landing.features.triagem.desc')}
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-sky-50 text-sky-700 rounded-full font-bold text-sm mb-8">
-            <Zap size={16} />
-            {t('landing.network.badge')}
-          </div>
-          <h2 className="text-3xl md:text-5xl font-black mb-12">{t('landing.network.title')}</h2>
-          <div className="flex flex-wrap justify-center gap-12 opacity-50 grayscale hover:grayscale-0 transition-all duration-500">
-            <Users size={40} />
-            <Heart size={40} />
-            <ShieldCheck size={40} />
-            <MessageCircle size={40} />
-          </div>
-        </div>
-      </section>
-
-      <div className="px-4">
-        <DonationSupportCard />
-      </div>
-
-      <section className="py-24">
+      {/* SEÇÃO 7 — CTA FINAL FORTE */}
+      <section className="py-24 bg-white">
         <div className="max-w-5xl mx-auto px-4">
-          <div className="bg-gradient-to-r from-sky-500 to-indigo-600 rounded-[3rem] p-12 md:p-20 text-center text-white shadow-2xl shadow-sky-200">
-            <h2 className="text-4xl md:text-5xl font-black mb-8">{t('landing.cta.title')}</h2>
-            <p className="text-xl text-sky-50 mb-12 max-w-2xl mx-auto">
-              {t('landing.cta.subtitle')}
+          <div className="bg-gradient-to-br from-sky-500 to-indigo-600 rounded-[3rem] p-12 md:p-20 text-center text-white shadow-2xl shadow-sky-200">
+            <h2 className="text-4xl md:text-5xl font-black mb-6">Pronto para começar?</h2>
+            <p className="text-xl text-sky-50 mb-12 max-w-2xl mx-auto leading-relaxed">
+              Junte-se a outras famílias e faça parte de uma rede de apoio feita com acolhimento, informação e tecnologia.
             </p>
 
             <div className="flex flex-col sm:flex-row justify-center gap-4">
               <button
                 onClick={() => {
-                  if (!acceptedTerms) {
-                    alert(t('landing.termsAlertTop'));
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                    return;
-                  }
                   setShowAuthForm(true);
                   window.scrollTo({ top: 0, behavior: 'smooth' });
                 }}
-                className={`px-12 py-5 rounded-2xl font-bold text-xl transition-colors shadow-xl ${acceptedTerms ? 'bg-white text-sky-600 hover:bg-sky-50' : 'bg-white/50 text-white cursor-not-allowed'}`}
+                className="px-10 py-5 bg-white text-sky-600 rounded-2xl font-bold text-xl hover:bg-sky-50 transition-all shadow-lg hover:-translate-y-0.5 active:scale-95"
               >
-                {t('landing.cta.button')}
+                Começar gratuitamente
               </button>
-
-              <a
-                href="https://sites.google.com/view/triagemteaia/portugu%C3%AAs"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="px-12 py-5 rounded-2xl font-bold text-xl transition-colors shadow-xl bg-emerald-500 text-white hover:bg-emerald-600 inline-flex items-center justify-center gap-3"
-              >
-                <ExternalLink size={22} />
-                {t('landing.cta.triagemButton')}
-              </a>
             </div>
-
-            {!acceptedTerms && (
-              <p className="mt-4 text-sm text-sky-100 opacity-80">
-                {t('landing.cta.termsHint')}
-              </p>
-            )}
+            <p className="mt-6 text-sm text-sky-100 font-medium opacity-90">
+              Entrada simples e gratuita.
+            </p>
           </div>
         </div>
       </section>
 
-      <footer className="py-12 border-t border-gray-100">
+      <footer className="py-12 border-t border-slate-100 bg-white">
         <SupportModal 
           isOpen={isSupportModalOpen} 
           onClose={() => setIsSupportModalOpen(false)} 
         />
-        <div className="max-w-7xl mx-auto px-4 flex flex-col items-center gap-4 text-gray-500">
-          <p>{t('landing.footer.rights')}</p>
+        <div className="max-w-7xl mx-auto px-4 flex flex-col items-center gap-6 text-slate-500">
+          <div className="flex items-center gap-4">
+            <button onClick={() => setIsSupportModalOpen(true)} className="text-sm font-medium hover:text-sky-500 transition-colors flex items-center gap-2">
+              <Heart size={16} className="text-emerald-500" />
+              Apoiar Projeto
+            </button>
+          </div>
+          <p className="text-sm">© {new Date().getFullYear()} Conecta TEA. Todos os direitos reservados.</p>
           <div className="flex items-center gap-4">
             <button onClick={onShowTerms} className="text-sm hover:text-sky-500 transition-colors">
-              {t('landing.termsLink')}
+              Termos de Uso e Privacidade
             </button>
-            {(i18n.language === 'en' || i18n.language === 'es') && (
-              <>
-                <span>•</span>
-                <a 
-                  href="https://www.paypal.com/donate/?hosted_button_id=QFNBCLB7HH3QE" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="text-sm hover:text-sky-500 transition-colors"
-                >
-                  {t('donation.footerLink')}
-                </a>
-              </>
-            )}
           </div>
         </div>
       </footer>

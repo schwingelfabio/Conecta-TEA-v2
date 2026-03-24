@@ -15,6 +15,7 @@ import { useTranslation } from 'react-i18next';
 
 interface AuthFormProps {
   onSuccess: () => void;
+  onShowTerms?: () => void;
 }
 
 function getFriendlyErrorMessage(err: any, t: any): string {
@@ -51,7 +52,7 @@ function getFriendlyErrorMessage(err: any, t: any): string {
   }
 }
 
-export default function AuthForm({ onSuccess }: AuthFormProps) {
+export default function AuthForm({ onSuccess, onShowTerms }: AuthFormProps) {
   const { t } = useTranslation();
   const [method, setMethod] = useState<'google' | 'email' | 'phone'>('google');
   const [email, setEmail] = useState('');
@@ -358,6 +359,16 @@ export default function AuthForm({ onSuccess }: AuthFormProps) {
         </motion.div>
       )}
       
+      {onShowTerms && (
+        <div className="mt-8 text-center text-xs text-gray-500">
+          Ao continuar, você concorda com os{' '}
+          <button onClick={onShowTerms} className="text-sky-600 hover:underline">
+            Termos de Uso e Privacidade
+          </button>
+          .
+        </div>
+      )}
+
       <div id="recaptcha-container"></div>
     </div>
   );
