@@ -16,7 +16,8 @@ import {
   DocumentData,
   updateDoc,
   arrayUnion,
-  arrayRemove
+  arrayRemove,
+  Timestamp
 } from 'firebase/firestore';
 import { Post, UserProfile } from '../types';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -26,6 +27,7 @@ import PostComments from './PostComments';
 import ActiveCommunities from './ActiveCommunities';
 import ExternalNews from './ExternalNews';
 import { useInView } from 'react-intersection-observer';
+import { GoogleGenAI } from "@google/genai";
 import { 
   Send, 
   MessageCircle, 
@@ -121,6 +123,7 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
   const [lastVisible, setLastVisible] = useState<QueryDocumentSnapshot<DocumentData> | null>(null);
   const [hasMore, setHasMore] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
+  const [generatingAiNews, setGeneratingAiNews] = useState(false);
   const [expandedComments, setExpandedComments] = useState<string | null>(null);
   const { ref, inView } = useInView({
     threshold: 0.5,
@@ -138,6 +141,92 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
       await updateDoc(doc(db, 'posts', postId), { isPinned: !isPinned });
     } catch (err) {
       console.error("Error pinning post:", err);
+    }
+  };
+
+  const generateAiNews = async () => {
+    if (!isAdmin || generatingAiNews) return;
+    
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (!apiKey) {
+      alert("Chave API do Gemini não configurada.");
+      return;
+    }
+
+    setGeneratingAiNews(true);
+    try {
+      // Check for recent news first
+      const qRecent = query(
+        collection(db, 'posts'),
+        where('topic', '==', 'noticias'),
+        orderBy('timestamp', 'desc'),
+        limit(1)
+      );
+      const recentSnapshot = await getDocs(qRecent);
+      
+      if (!recentSnapshot.empty) {
+        const latestNews = recentSnapshot.docs[0].data();
+        const latestTimestamp = (latestNews.timestamp as Timestamp)?.toDate() || new Date(0);
+        const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
+        
+        if (latestTimestamp > oneHourAgo) {
+          if (!window.confirm("Uma notícia foi gerada há menos de 1 hora. Deseja gerar outra mesmo assim?")) {
+            setGeneratingAiNews(false);
+            return;
+          }
+        }
+      }
+
+      const ai = new GoogleGenAI({ apiKey });
+      const response = await ai.models.generateContent({
+        model: "gemini-3-flash-preview",
+        contents: "Busque as notícias mais recentes e relevantes sobre autismo (TEA), benefícios, direitos ou avanços científicos no Brasil. Escreva uma postagem curta e engajadora para uma comunidade de apoio ao autismo. Inclua os links das fontes se possível. Formate como um post de rede social.",
+        config: {
+          tools: [{ googleSearch: {} }],
+        },
+      });
+
+      const newsText = response.text;
+      if (!newsText) throw new Error("IA retornou texto vazio");
+
+      let finalContent = newsText;
+      const chunks = response.candidates?.[0]?.groundingMetadata?.groundingChunks;
+      if (chunks && chunks.length > 0) {
+        finalContent += "\n\nFontes:\n";
+        chunks.forEach((chunk: any) => {
+          if (chunk.web?.uri && chunk.web?.title) {
+            finalContent += `- [${chunk.web.title}](${chunk.web.uri})\n`;
+          }
+        });
+      }
+
+      const payload = {
+        text: finalContent,
+        content: finalContent,
+        authorId: 'ai-bot',
+        userId: 'ai-bot',
+        authorName: 'Conecta TEA IA',
+        authorPhoto: 'https://api.dicebear.com/7.x/bottts/svg?seed=ConectaTEA&backgroundColor=0ea5e9',
+        mediaType: 'text',
+        state: 'Geral',
+        city: 'Geral',
+        topic: 'noticias',
+        location: 'Brasil',
+        timestamp: serverTimestamp(),
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+        isGlobal: true
+      };
+
+      await addDoc(collection(db, 'posts'), payload);
+      alert("Notícia gerada e publicada com sucesso!");
+      setTopic('noticias');
+      fetchPosts();
+    } catch (err: any) {
+      console.error("Erro ao gerar notícia IA:", err);
+      alert(`Erro ao gerar notícia: ${err.message || 'Erro desconhecido'}`);
+    } finally {
+      setGeneratingAiNews(false);
     }
   };
 
@@ -475,6 +564,16 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
             <span>{t.label}</span>
           </button>
         ))}
+        {isAdmin && (
+          <button
+            onClick={generateAiNews}
+            disabled={generatingAiNews}
+            className="flex items-center space-x-2 px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap bg-indigo-500 text-white hover:bg-indigo-600 transition-all shadow-md disabled:opacity-50"
+          >
+            {generatingAiNews ? <RefreshCw size={16} className="animate-spin" /> : <Sparkles size={16} />}
+            <span>{generatingAiNews ? 'Gerando...' : 'Gerar Notícia IA'}</span>
+          </button>
+        )}
       </div>
 
       {/* Post List or External News */}
