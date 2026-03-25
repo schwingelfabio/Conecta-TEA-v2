@@ -24,20 +24,22 @@ import EmergencyPage from './components/EmergencyPage';
 import LandingPage from './components/LandingPage';
 import VideosPage from './components/VideosPage';
 import AcolheTEA from './components/AcolheTEA';
+import { SofiaIA } from './components/SofiaIA';
 import { TermosDeUso, Privacidade, Contato } from './components/LegalPages';
 import AiAssistant from './components/AiAssistant';
 import AuthForm from './components/AuthForm';
 import Onboarding from './components/Onboarding';
 import { UserProfile } from './types';
-import { auth, googleProvider, db } from './lib/firebase';
-import { signInWithPopup, signOut, onAuthStateChanged, User as FirebaseUser } from 'firebase/auth';
+import { auth, db } from './lib/firebase';
+import { signOut, onAuthStateChanged, User as FirebaseUser } from 'firebase/auth';
 import { doc, getDoc, setDoc, collection, query, where, getDocs, onSnapshot, serverTimestamp } from 'firebase/firestore';
 import { checkIsAdmin } from './lib/admin';
 import { useTranslation } from 'react-i18next';
+import { ErrorBoundary } from './components/ErrorBoundary';
 
 export default function App() {
   const { t } = useTranslation();
-  const [activeTab, setActiveTab] = useState<'feed' | 'vip' | 'settings' | 'sos' | 'termos' | 'privacidade' | 'contato' | 'map' | 'videos' | 'acolhe'>('feed');
+  const [activeTab, setActiveTab] = useState<'feed' | 'vip' | 'settings' | 'sos' | 'termos' | 'privacidade' | 'contato' | 'map' | 'videos' | 'acolhe' | 'sofia'>('feed');
   const [user, setUser] = useState<FirebaseUser | null>(null);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -266,6 +268,8 @@ export default function App() {
         return <NetworkMap />;
       case 'videos':
         return <VideosPage />;
+      case 'sofia':
+        return <SofiaIA />;
       case 'acolhe':
         return <AcolheTEA isDirectEntry={!user && !isGuest} isUrgent={isAcolheUrgent} onRequireLogin={(!user || isGuest) ? () => { setIsGuest(false); setActiveTab('feed'); } : undefined} />;
       case 'settings':
@@ -301,83 +305,89 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-sky-50 to-white font-sans text-gray-900">
-      {showOnboarding && <Onboarding onComplete={() => setShowOnboarding(false)} />}
-      {(user || isGuest) && activeTab !== 'acolhe' && (
-        <nav className="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-gray-100">
-          <div className="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
-            <div className="flex items-center gap-2 cursor-pointer" onClick={() => setActiveTab('feed')}>
-              <div className="w-10 h-10 bg-sky-500 rounded-xl flex items-center justify-center text-white shadow-sm">
-                <Users size={24} />
+    <ErrorBoundary>
+      <div className="min-h-screen bg-gradient-to-b from-sky-50 to-white font-sans text-gray-900">
+        {showOnboarding && <Onboarding onComplete={() => setShowOnboarding(false)} />}
+        {(user || isGuest) && activeTab !== 'acolhe' && (
+          <nav className="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-gray-100">
+            <div className="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
+              <div className="flex items-center gap-2 cursor-pointer" onClick={() => setActiveTab('feed')}>
+                <div className="w-10 h-10 bg-sky-500 rounded-xl flex items-center justify-center text-white shadow-sm">
+                  <Users size={24} />
+                </div>
+                <h1 className="text-xl font-bold tracking-tight hidden sm:block">
+                  Conecta <span className="text-sky-500">TEA</span>
+                </h1>
               </div>
-              <h1 className="text-xl font-bold tracking-tight hidden sm:block">
-                Conecta <span className="text-sky-500">TEA</span>
-              </h1>
-            </div>
 
-            <div className="flex items-center gap-1 sm:gap-4 overflow-x-auto no-scrollbar">
-              <button onClick={() => setActiveTab('feed')} className={`p-2 sm:px-4 sm:py-2 rounded-full flex items-center gap-2 transition-all shrink-0 ${activeTab === 'feed' ? 'bg-sky-100 text-sky-700 font-bold' : 'hover:bg-gray-100 text-gray-600'}`}>
-                <Home size={20} />
-                <span className="hidden sm:inline">{t('nav.feed')}</span>
-              </button>
-              <button onClick={() => setActiveTab('sos')} className={`p-2 sm:px-4 sm:py-2 rounded-full flex items-center gap-2 transition-all shrink-0 ${activeTab === 'sos' ? 'bg-red-100 text-red-700 font-bold' : 'hover:bg-gray-100 text-gray-600'}`}>
-                <ShieldCheck size={20} />
-                <span className="hidden sm:inline">{t('nav.sos')}</span>
-              </button>
-              <button onClick={() => setActiveTab('map')} className={`p-2 sm:px-4 sm:py-2 rounded-full flex items-center gap-2 transition-all shrink-0 ${activeTab === 'map' ? 'bg-emerald-100 text-emerald-700 font-bold' : 'hover:bg-gray-100 text-gray-600'}`}>
-                <MapIcon size={20} />
-                <span className="hidden sm:inline">{t('nav.map')}</span>
-              </button>
-              <button onClick={() => setActiveTab('videos')} className={`p-2 sm:px-4 sm:py-2 rounded-full flex items-center gap-2 transition-all shrink-0 ${activeTab === 'videos' ? 'bg-purple-100 text-purple-700 font-bold' : 'hover:bg-gray-100 text-gray-600'}`}>
-                <PlayCircle size={20} />
-                <span className="hidden sm:inline">{t('nav.videos')}</span>
-              </button>
-              <button onClick={() => setActiveTab('acolhe')} className={`p-2 sm:px-4 sm:py-2 rounded-full flex items-center gap-2 transition-all shrink-0 ${(activeTab as string) === 'acolhe' ? 'bg-rose-100 text-rose-700 font-bold' : 'hover:bg-gray-100 text-gray-600'}`}>
-                <HeartHandshake size={20} />
-                <span className="hidden sm:inline">Acolhe TEA</span>
-              </button>
-              <button onClick={() => setActiveTab('vip')} className={`p-2 sm:px-4 sm:py-2 rounded-full flex items-center gap-2 transition-all shrink-0 ${activeTab === 'vip' ? 'bg-amber-100 text-amber-700 font-bold' : 'hover:bg-gray-100 text-gray-600'}`}>
-                <Crown size={20} />
-                <span className="hidden sm:inline">{t('nav.vip')}</span>
-              </button>
-            </div>
-
-            <div className="flex items-center gap-2 sm:gap-3 shrink-0">
-              {isGuest ? (
-                <button onClick={() => setIsGuest(false)} className="px-3 py-1.5 sm:px-4 sm:py-2 bg-sky-500 text-white rounded-full font-bold text-xs sm:text-sm hover:bg-sky-600 transition-colors">
-                  {t('nav.createAccount')}
+              <div className="flex items-center gap-1 sm:gap-4 overflow-x-auto no-scrollbar">
+                <button onClick={() => setActiveTab('feed')} className={`p-2 sm:px-4 sm:py-2 rounded-full flex items-center gap-2 transition-all shrink-0 ${activeTab === 'feed' ? 'bg-sky-100 text-sky-700 font-bold' : 'hover:bg-gray-100 text-gray-600'}`}>
+                  <Home size={20} />
+                  <span className="hidden sm:inline">{t('nav.feed')}</span>
                 </button>
-              ) : (
-                <button onClick={() => setActiveTab('settings')} className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full border-2 overflow-hidden transition-all ${activeTab === 'settings' ? 'border-sky-500' : 'border-sky-100'}`}>
-                  {user?.photoURL ? <img src={user.photoURL} alt="Perfil" className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center bg-sky-100 text-sky-600 font-bold text-xs sm:text-base">{user?.displayName?.charAt(0) || 'U'}</div>}
+                <button onClick={() => setActiveTab('sos')} className={`p-2 sm:px-4 sm:py-2 rounded-full flex items-center gap-2 transition-all shrink-0 ${activeTab === 'sos' ? 'bg-red-100 text-red-700 font-bold' : 'hover:bg-gray-100 text-gray-600'}`}>
+                  <ShieldCheck size={20} />
+                  <span className="hidden sm:inline">{t('nav.sos')}</span>
                 </button>
-              )}
-              <button onClick={handleLogout} className="p-1.5 sm:p-2 text-gray-400 hover:text-red-500 transition-colors">
-                <LogOut size={20} />
-              </button>
-            </div>
-          </div>
-        </nav>
-      )}
+                <button onClick={() => setActiveTab('map')} className={`p-2 sm:px-4 sm:py-2 rounded-full flex items-center gap-2 transition-all shrink-0 ${activeTab === 'map' ? 'bg-emerald-100 text-emerald-700 font-bold' : 'hover:bg-gray-100 text-gray-600'}`}>
+                  <MapIcon size={20} />
+                  <span className="hidden sm:inline">{t('nav.map')}</span>
+                </button>
+                <button onClick={() => setActiveTab('videos')} className={`p-2 sm:px-4 sm:py-2 rounded-full flex items-center gap-2 transition-all shrink-0 ${activeTab === 'videos' ? 'bg-purple-100 text-purple-700 font-bold' : 'hover:bg-gray-100 text-gray-600'}`}>
+                  <PlayCircle size={20} />
+                  <span className="hidden sm:inline">{t('nav.videos')}</span>
+                </button>
+                <button onClick={() => setActiveTab('sofia')} className={`p-2 sm:px-4 sm:py-2 rounded-full flex items-center gap-2 transition-all shrink-0 ${(activeTab as string) === 'sofia' ? 'bg-sky-100 text-sky-700 font-bold' : 'hover:bg-gray-100 text-gray-600'}`}>
+                  <MessageCircle size={20} />
+                  <span className="hidden sm:inline">Sofia IA</span>
+                </button>
+                <button onClick={() => setActiveTab('acolhe')} className={`p-2 sm:px-4 sm:py-2 rounded-full flex items-center gap-2 transition-all shrink-0 ${(activeTab as string) === 'acolhe' ? 'bg-rose-100 text-rose-700 font-bold' : 'hover:bg-gray-100 text-gray-600'}`}>
+                  <HeartHandshake size={20} />
+                  <span className="hidden sm:inline">Acolhe TEA</span>
+                </button>
+                <button onClick={() => setActiveTab('vip')} className={`p-2 sm:px-4 sm:py-2 rounded-full flex items-center gap-2 transition-all shrink-0 ${activeTab === 'vip' ? 'bg-amber-100 text-amber-700 font-bold' : 'hover:bg-gray-100 text-gray-600'}`}>
+                  <Crown size={20} />
+                  <span className="hidden sm:inline">{t('nav.vip')}</span>
+                </button>
+              </div>
 
-      <main className={(!user && !isGuest && activeTab !== 'acolhe') ? '' : 'max-w-5xl mx-auto px-4 py-8'}>
-        {(!user && !isGuest && activeTab !== 'acolhe') ? (
-          <LandingPage 
-            onLogin={handleLoginSuccess} 
-            onShowTerms={() => setActiveTab('termos')} 
-            onGuestLogin={() => setIsGuest(true)} 
-            onOpenAcolhe={(urgent) => { setIsAcolheUrgent(urgent); setActiveTab('acolhe'); }} 
-          />
-        ) : (
-          renderContent()
+              <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+                {isGuest ? (
+                  <button onClick={() => setIsGuest(false)} className="px-3 py-1.5 sm:px-4 sm:py-2 bg-sky-500 text-white rounded-full font-bold text-xs sm:text-sm hover:bg-sky-600 transition-colors">
+                    {t('nav.createAccount')}
+                  </button>
+                ) : (
+                  <button onClick={() => setActiveTab('settings')} className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full border-2 overflow-hidden transition-all ${activeTab === 'settings' ? 'border-sky-500' : 'border-sky-100'}`}>
+                    {user?.photoURL ? <img src={user.photoURL} alt="Perfil" className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center bg-sky-100 text-sky-600 font-bold text-xs sm:text-base">{user?.displayName?.charAt(0) || 'U'}</div>}
+                  </button>
+                )}
+                <button onClick={handleLogout} className="p-1.5 sm:p-2 text-gray-400 hover:text-red-500 transition-colors">
+                  <LogOut size={20} />
+                </button>
+              </div>
+            </div>
+          </nav>
         )}
-      </main>
 
-      {(user || isGuest) && <AiAssistant />}
-      
-      {!user && !isGuest && showAuth && (
-        <AuthForm onSuccess={() => setShowAuth(false)} />
-      )}
-    </div>
+        <main className={(!user && !isGuest && activeTab !== 'acolhe') ? '' : 'max-w-5xl mx-auto px-4 py-8'}>
+          {(!user && !isGuest && activeTab !== 'acolhe') ? (
+            <LandingPage 
+              onLogin={handleLoginSuccess} 
+              onShowTerms={() => setActiveTab('termos')} 
+              onGuestLogin={() => setIsGuest(true)} 
+              onOpenAcolhe={(urgent) => { setIsAcolheUrgent(urgent); setActiveTab('acolhe'); }} 
+            />
+          ) : (
+            renderContent()
+          )}
+        </main>
+
+        {(user || isGuest) && <AiAssistant />}
+        
+        {!user && !isGuest && showAuth && (
+          <AuthForm onSuccess={() => setShowAuth(false)} />
+        )}
+      </div>
+    </ErrorBoundary>
   );
 }

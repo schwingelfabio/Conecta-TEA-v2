@@ -1,102 +1,102 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    
-    // Helper function to check if user is admin
-    function isAdmin() {
-      return request.auth != null && (
-        request.auth.token.email == 'fabiopalacioschwingel@gmail.com' || 
-        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin'
-      );
-    }
-    
-    // Helper function to check if user is authenticated
+
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    //
+    // Collection: users
+    // Document ID: {userId}
+    // Fields:
+    //   - uid: string (required)
+    //   - displayName: string (optional)
+    //   - email: string (required)
+    //   - photoURL: string (optional)
+    //   - role: string (optional, enum: ["admin", "user", "vip"])
+    //   - city: string (optional)
+    //   - state: string (optional)
+    //   - isVip: boolean (optional)
+    //
+    // Collection: sofia_users
+    // Document ID: {userId}
+    // Fields:
+    //   - id: string (required)
+    //   - name: string (optional)
+    //   - childName: string (optional)
+    //   - childAge: number (optional)
+    //   - mainConcerns: array of strings (optional)
+    //   - createdAt: string (date-time, optional)
+    //
+    // [Other collections follow similar patterns]
+    //
+    // ===============================================================
+
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+
     function isAuthenticated() {
       return request.auth != null;
     }
 
-    match /{document=**} {
-      // Admin has full read/write access
-      allow read, write: if isAdmin();
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
     }
-    
-    // Users can write their own data
+
+    function isAdmin() {
+      return isAuthenticated() && 
+        (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin' ||
+         request.auth.token.email == "fabiopalacioschwingel@gmail.com");
+    }
+
+    function hasRequiredFields(fields) {
+      return request.resource.data.keys().hasAll(fields);
+    }
+
+    function validStringLength(field, minLen, maxLen) {
+      return request.resource.data[field] is string &&
+        request.resource.data[field].size() >= minLen &&
+        request.resource.data[field].size() <= maxLen;
+    }
+
+    // ===============================================================
+    // Domain Validators
+    // ===============================================================
+
+    function isValidSofiaUser(data) {
+      return data.keys().hasOnly(['id', 'name', 'childName', 'childAge', 'mainConcerns', 'createdAt']) &&
+             data.id is string &&
+             (!('name' in data) || data.name is string && data.name.size() < 100) &&
+             (!('childName' in data) || data.childName is string && data.childName.size() < 100) &&
+             (!('childAge' in data) || data.childAge is number && data.childAge >= 0) &&
+             (!('mainConcerns' in data) || data.mainConcerns is list && data.mainConcerns.size() < 20);
+    }
+
+    // ===============================================================
+    // Match Rules
+    // ===============================================================
+
     match /users/{userId} {
-      allow read: if isAuthenticated();
-      allow write: if request.auth != null && request.auth.uid == userId;
-    }
-    
-    // Allow authenticated users to read admins
-    match /admins/{email} {
-      allow read: if isAuthenticated();
-      allow write: if isAdmin();
+      allow read: if isOwner(userId) || isAdmin();
+      allow write: if isOwner(userId) || isAdmin();
     }
 
-    // Allow public to read topics
-    match /topics/{topicId} {
-      allow read: if true;
-      allow create: if isAuthenticated();
-      allow update, delete: if isAdmin();
-    }
-    
-    // Allow public to read posts
-    match /posts/{postId} {
-      allow read: if true;
-      allow create: if (isAuthenticated() && (request.resource.data.topic != 'noticias' || isAdmin())) ||
-                    (request.resource.data.authorId == 'ai-bot');
-      allow update: if isAdmin() || 
-                    (isAuthenticated() && request.auth.uid == resource.data.authorId && (request.resource.data.topic != 'noticias' || isAdmin())) ||
-                    (isAuthenticated() && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['likes']));
-      allow delete: if isAdmin() || (isAuthenticated() && request.auth.uid == resource.data.authorId);
-    }
-    
-    // Users can create and edit their own SOS cards
-    match /sos_cards/{cardId} {
-      // Public read access for emergency situations (QR scan)
-      allow read: if true;
-      allow create: if isAuthenticated() && request.resource.data.userId == request.auth.uid;
-      allow update: if isAuthenticated() && request.auth.uid == resource.data.userId 
-                    && (!('officialId' in resource.data) || request.resource.data.officialId == resource.data.officialId);
-      allow delete: if isAuthenticated() && request.auth.uid == resource.data.userId;
-    }
-
-    // Global counters for ID generation
-    match /meta/counters {
-      allow read: if isAuthenticated();
-      allow write: if isAuthenticated();
-    }
-
-    // Allow public to read videos
-    match /videos/{videoId} {
-      allow read: if true;
-      allow write: if isAdmin();
-    }
-
-    // Allow authenticated users to submit suggestions
-    match /suggestions/{suggestionId} {
-      allow create: if isAuthenticated();
-      allow read, update, delete: if isAdmin();
-    }
-
-    // Sofia IA Collections
     match /sofia_users/{userId} {
-      allow read, write: if isAuthenticated() && request.auth.uid == userId;
+      allow read: if isOwner(userId) || isAdmin();
+      allow create: if isOwner(userId) && isValidSofiaUser(request.resource.data);
+      allow update: if isOwner(userId) && isValidSofiaUser(request.resource.data);
     }
-    
+
     match /sofia_sessions/{sessionId} {
-      allow read, write: if isAuthenticated() && request.auth.uid == resource.data.userId || request.resource.data.userId == request.auth.uid;
+      allow read: if isAuthenticated() && (request.auth.uid == resource.data.userId || isAdmin());
+      allow create: if isAuthenticated() && request.resource.data.userId == request.auth.uid;
+      allow update: if isAuthenticated() && (request.auth.uid == resource.data.userId || isAdmin());
     }
-    
+
     match /sofia_messages/{messageId} {
-      allow read, write: if isAuthenticated(); // In a real app, we should check if the message belongs to a session owned by the user
-    }
-    
-    match /sofia_summaries/{summaryId} {
-      allow read, write: if isAuthenticated(); // Same here, should check session ownership
-    }
-    
-    match /sofia_safety_events/{eventId} {
-      allow read, write: if isAuthenticated(); // Same here
+      allow read: if isAuthenticated() && (get(/databases/$(database)/documents/sofia_sessions/$(resource.data.sessionId)).data.userId == request.auth.uid || isAdmin());
+      allow create: if isAuthenticated() && get(/databases/$(database)/documents/sofia_sessions/$(request.resource.data.sessionId)).data.userId == request.auth.uid;
     }
   }
 }
