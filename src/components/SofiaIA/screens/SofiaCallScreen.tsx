@@ -1,94 +1,69 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Mic, MicOff, PhoneOff, Volume2, MoreVertical, Heart } from 'lucide-react';
 import { Avatar } from '../components/Avatar';
-import { useVoiceCapture } from '../hooks/useVoiceCapture';
+import { useSofiaVoice } from '../hooks/useSofiaVoice';
 import { useSofiaOrchestrator } from '../hooks/useSofiaOrchestrator';
 
 export type CallState = 'idle' | 'connecting' | 'listening' | 'processing' | 'retrieving' | 'thinking' | 'speaking' | 'urgent' | 'finished';
 
 export const SofiaCallScreen = ({ onEndCall }: { onEndCall: () => void }) => {
-  const { isListening, transcript, startListening, stopListening } = useVoiceCapture();
+  const { isListening, isProcessing, isSpeaking, startListening, stopListening, speak } = useSofiaVoice();
   const { processTurn, state, setState } = useSofiaOrchestrator();
   const [lastResponse, setLastResponse] = useState<{ response: string, grounding?: any[] } | null>(null);
 
   // 1. Início automático
   useEffect(() => {
     setState('connecting');
-    const timer = setTimeout(() => {
-      setState('speaking');
-      setLastResponse({ response: "Oi, eu sou a Sofia. Estou aqui pra te ajudar. Pode falar comigo." });
-      
-      // Após a fala inicial, inicia a escuta
-      setTimeout(() => {
-        startListening();
-      }, 2000);
+    const timer = setTimeout(async () => {
+      const initialGreeting = "Oi, eu sou a Sofia. Estou aqui pra te ajudar. Pode falar comigo.";
+      setLastResponse({ response: initialGreeting });
+      await speak(initialGreeting);
+      setState('listening');
+      startListening();
     }, 1500);
     return () => clearTimeout(timer);
   }, []);
 
-  // 2. Loop de escuta contínua
-  useEffect(() => {
-    if (state === 'listening' && transcript) {
-      stopListening();
+  // 2. Loop de conversa contínua
+  const handleStopListening = async () => {
+    const transcript = await stopListening();
+    if (transcript) {
       setState('processing');
-      processTurn(transcript).then(res => {
-        setLastResponse(res);
-        setState('speaking');
-        
-        // Após responder, volta a escutar
-        setTimeout(() => {
-          startListening();
-        }, 3000);
-      });
-    }
-  }, [state, transcript, processTurn, stopListening, startListening, setState]);
-
-  // 3. Botão central (pausa/retoma)
-  const toggleListening = () => {
-    if (isListening) {
-      stopListening();
-      setState('idle');
-    } else {
-      startListening();
+      const res = await processTurn(transcript);
+      setLastResponse(res);
+      setState('speaking');
+      await speak(res.response);
       setState('listening');
+      startListening();
     }
   };
 
-  // 4. Silêncio inteligente
-  useEffect(() => {
-    let silenceTimer: NodeJS.Timeout;
-    if (state === 'listening') {
-      silenceTimer = setTimeout(() => {
-        setLastResponse({ response: "Pode falar comigo no seu tempo. Estou aqui com você." });
-      }, 7000);
+  const toggleListening = () => {
+    if (isListening) {
+      handleStopListening();
+    } else {
+      startListening();
     }
-    return () => clearTimeout(silenceTimer);
-  }, [state]);
+  };
 
   const getStatusMessage = () => {
+    if (isSpeaking) return 'Sofia está falando...';
+    if (isProcessing) return 'Processando...';
+    if (isListening) return 'Estou ouvindo você...';
     switch (state) {
       case 'connecting': return 'Conectando...';
-      case 'listening': return 'Estou ouvindo você...';
-      case 'processing': return 'Processando...';
       case 'thinking': return 'Estou organizando isso com você...';
       case 'retrieving': return 'Buscando informações relevantes...';
-      case 'speaking': return 'Sofia está falando...';
       case 'urgent': return 'Modo de emergência ativo';
       default: return 'Sofia está pronta';
     }
   };
 
   const getAvatarState = () => {
-    switch (state) {
-      case 'listening': return 'listening';
-      case 'speaking': return 'speaking';
-      case 'processing':
-      case 'thinking':
-      case 'retrieving':
-      case 'connecting': return 'processing';
-      case 'urgent': return 'urgent';
-      default: return 'idle';
-    }
+    if (isSpeaking) return 'speaking';
+    if (isListening) return 'listening';
+    if (isProcessing) return 'processing';
+    return 'idle';
   };
 
   return (

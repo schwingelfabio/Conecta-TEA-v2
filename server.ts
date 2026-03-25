@@ -7,6 +7,10 @@ import dotenv from "dotenv";
 import path from "path";
 import { getFirestore } from "firebase-admin/firestore";
 import firebaseConfig from "./firebase-applet-config.json";
+import multer from "multer";
+import OpenAI from "openai";
+import { ElevenLabsClient } from "elevenlabs";
+import fs from "fs";
 
 dotenv.config();
 
@@ -138,6 +142,54 @@ async function startServer() {
 
   app.use(express.urlencoded({ extended: true }));
   app.use(express.json());
+
+  const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+  const elevenlabs = new ElevenLabsClient({ apiKey: process.env.ELEVENLABS_API_KEY });
+  const upload = multer({ dest: 'uploads/' });
+
+  if (!fs.existsSync('uploads')) {
+    fs.mkdirSync('uploads');
+  }
+
+  // API Route: Speech-to-Text (Whisper)
+  app.post("/api/stt", upload.single('audio'), async (req, res) => {
+    try {
+      if (!req.file) return res.status(400).json({ error: "No audio file provided" });
+      const transcription = await openai.audio.transcriptions.create({
+        file: fs.createReadStream(req.file.path),
+        model: "whisper-1",
+      });
+      fs.unlinkSync(req.file.path);
+      res.json({ text: transcription.text });
+    } catch (error: any) {
+      console.error("STT Error:", error);
+      res.status(500).json({ error: "Failed to transcribe audio" });
+    }
+  });
+
+  // API Route: Text-to-Speech (ElevenLabs)
+  app.post("/api/tts", async (req, res) => {
+    try {
+      const { text } = req.body;
+      const audio = await elevenlabs.generate({
+        voice: "Sofia", // Need to pick a voice ID
+        text,
+        model_id: "eleven_monolingual_v1",
+      });
+      
+      const chunks: Buffer[] = [];
+      for await (const chunk of audio) {
+        chunks.push(chunk);
+      }
+      const audioBuffer = Buffer.concat(chunks);
+      
+      res.set('Content-Type', 'audio/mpeg');
+      res.send(audioBuffer);
+    } catch (error: any) {
+      console.error("TTS Error:", error);
+      res.status(500).json({ error: "Failed to generate speech" });
+    }
+  });
 
   // API Route: Create PagSeguro Checkout
   app.post("/api/create-checkout", async (req, res) => {
