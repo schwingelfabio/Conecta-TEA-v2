@@ -29,9 +29,12 @@ export const useVoiceCapture = () => {
 
   const startListening = () => {
     if (recognitionRef.current) {
-      setTranscript('');
-      recognitionRef.current.start();
-      setIsListening(true);
+      try {
+        recognitionRef.current.start();
+        setIsListening(true);
+      } catch (e) {
+        console.error("Recognition already started or error:", e);
+      }
     }
   };
 
