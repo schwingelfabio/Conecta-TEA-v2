@@ -10,6 +10,19 @@
   --color-brand-primary: #0ea5e9;
   --color-brand-secondary: #f43f5e;
   --color-brand-accent: #10b981;
+
+  --animate-breath: breath 4s ease-in-out infinite;
+
+  @keyframes breath {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+  }
+}
+
+@layer utilities {
+  .mask-linear-fade {
+    mask-image: linear-gradient(to right, black 80%, transparent 100%);
+  }
 }
 
 @layer base {

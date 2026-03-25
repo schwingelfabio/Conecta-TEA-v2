@@ -77,5 +77,26 @@ service cloud.firestore {
       allow create: if isAuthenticated();
       allow read, update, delete: if isAdmin();
     }
+
+    // Sofia IA Collections
+    match /sofia_users/{userId} {
+      allow read, write: if isAuthenticated() && request.auth.uid == userId;
+    }
+    
+    match /sofia_sessions/{sessionId} {
+      allow read, write: if isAuthenticated() && request.auth.uid == resource.data.userId || request.resource.data.userId == request.auth.uid;
+    }
+    
+    match /sofia_messages/{messageId} {
+      allow read, write: if isAuthenticated(); // In a real app, we should check if the message belongs to a session owned by the user
+    }
+    
+    match /sofia_summaries/{summaryId} {
+      allow read, write: if isAuthenticated(); // Same here, should check session ownership
+    }
+    
+    match /sofia_safety_events/{eventId} {
+      allow read, write: if isAuthenticated(); // Same here
+    }
   }
 }

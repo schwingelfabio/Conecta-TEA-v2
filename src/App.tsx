@@ -12,7 +12,8 @@ import {
   Shield,
   Mail,
   Map as MapIcon,
-  PlayCircle
+  PlayCircle,
+  HeartHandshake
 } from 'lucide-react';
 import Feed from './components/Feed';
 import AreaVip from './components/AreaVip';
@@ -22,6 +23,7 @@ import SosPage from './components/SosPage';
 import EmergencyPage from './components/EmergencyPage';
 import LandingPage from './components/LandingPage';
 import VideosPage from './components/VideosPage';
+import AcolheTEA from './components/AcolheTEA';
 import { TermosDeUso, Privacidade, Contato } from './components/LegalPages';
 import AiAssistant from './components/AiAssistant';
 import AuthForm from './components/AuthForm';
@@ -35,7 +37,7 @@ import { useTranslation } from 'react-i18next';
 
 export default function App() {
   const { t } = useTranslation();
-  const [activeTab, setActiveTab] = useState<'feed' | 'vip' | 'settings' | 'sos' | 'termos' | 'privacidade' | 'contato' | 'map' | 'videos'>('feed');
+  const [activeTab, setActiveTab] = useState<'feed' | 'vip' | 'settings' | 'sos' | 'termos' | 'privacidade' | 'contato' | 'map' | 'videos' | 'acolhe'>('feed');
   const [user, setUser] = useState<FirebaseUser | null>(null);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -47,6 +49,7 @@ export default function App() {
   const [showAuth, setShowAuth] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [isGuest, setIsGuest] = useState(false);
+  const [isAcolheUrgent, setIsAcolheUrgent] = useState(false);
 
   useEffect(() => {
     // Timeout fallback to prevent infinite loading
@@ -263,6 +266,8 @@ export default function App() {
         return <NetworkMap />;
       case 'videos':
         return <VideosPage />;
+      case 'acolhe':
+        return <AcolheTEA isDirectEntry={!user && !isGuest} isUrgent={isAcolheUrgent} onRequireLogin={(!user || isGuest) ? () => { setIsGuest(false); setActiveTab('feed'); } : undefined} />;
       case 'settings':
         return <Settings userProfile={userProfile} isAdmin={isAdmin} isVip={isVip} isDeveloper={isDeveloper} onNavigate={(tab) => setActiveTab(tab as any)} isGuest={isGuest} />;
       case 'sos':
@@ -298,7 +303,7 @@ export default function App() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-sky-50 to-white font-sans text-gray-900">
       {showOnboarding && <Onboarding onComplete={() => setShowOnboarding(false)} />}
-      {(user || isGuest) && (
+      {(user || isGuest) && activeTab !== 'acolhe' && (
         <nav className="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-gray-100">
           <div className="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
             <div className="flex items-center gap-2 cursor-pointer" onClick={() => setActiveTab('feed')}>
@@ -327,6 +332,10 @@ export default function App() {
                 <PlayCircle size={20} />
                 <span className="hidden sm:inline">{t('nav.videos')}</span>
               </button>
+              <button onClick={() => setActiveTab('acolhe')} className={`p-2 sm:px-4 sm:py-2 rounded-full flex items-center gap-2 transition-all shrink-0 ${(activeTab as string) === 'acolhe' ? 'bg-rose-100 text-rose-700 font-bold' : 'hover:bg-gray-100 text-gray-600'}`}>
+                <HeartHandshake size={20} />
+                <span className="hidden sm:inline">Acolhe TEA</span>
+              </button>
               <button onClick={() => setActiveTab('vip')} className={`p-2 sm:px-4 sm:py-2 rounded-full flex items-center gap-2 transition-all shrink-0 ${activeTab === 'vip' ? 'bg-amber-100 text-amber-700 font-bold' : 'hover:bg-gray-100 text-gray-600'}`}>
                 <Crown size={20} />
                 <span className="hidden sm:inline">{t('nav.vip')}</span>
@@ -351,9 +360,14 @@ export default function App() {
         </nav>
       )}
 
-      <main className={(!user && !isGuest) ? '' : 'max-w-5xl mx-auto px-4 py-8'}>
-        {(!user && !isGuest) ? (
-          <LandingPage onLogin={handleLoginSuccess} onShowTerms={() => setActiveTab('termos')} onGuestLogin={() => setIsGuest(true)} />
+      <main className={(!user && !isGuest && activeTab !== 'acolhe') ? '' : 'max-w-5xl mx-auto px-4 py-8'}>
+        {(!user && !isGuest && activeTab !== 'acolhe') ? (
+          <LandingPage 
+            onLogin={handleLoginSuccess} 
+            onShowTerms={() => setActiveTab('termos')} 
+            onGuestLogin={() => setIsGuest(true)} 
+            onOpenAcolhe={(urgent) => { setIsAcolheUrgent(urgent); setActiveTab('acolhe'); }} 
+          />
         ) : (
           renderContent()
         )}

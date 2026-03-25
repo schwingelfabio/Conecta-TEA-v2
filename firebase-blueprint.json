@@ -60,6 +60,77 @@
         "bloodType": { "type": "string" }
       },
       "required": ["userId", "name"]
+    },
+    "SofiaUser": {
+      "title": "SofiaUser",
+      "description": "User profile for Sofia IA",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "childName": { "type": "string" },
+        "childAge": { "type": "number" },
+        "mainConcerns": { "type": "array", "items": { "type": "string" } },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id"]
+    },
+    "SofiaSession": {
+      "title": "SofiaSession",
+      "description": "A conversation session with Sofia IA",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "startedAt": { "type": "string", "format": "date-time" },
+        "endedAt": { "type": "string", "format": "date-time" },
+        "mode": { "type": "string" },
+        "urgentFlag": { "type": "boolean" }
+      },
+      "required": ["id", "startedAt", "mode"]
+    },
+    "SofiaMessage": {
+      "title": "SofiaMessage",
+      "description": "A message in a Sofia IA session",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "sessionId": { "type": "string" },
+        "sender": { "type": "string", "enum": ["user", "sofia"] },
+        "text": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" },
+        "detectedEmotion": { "type": "string" }
+      },
+      "required": ["id", "sessionId", "sender", "text", "timestamp"]
+    },
+    "SofiaSummary": {
+      "title": "SofiaSummary",
+      "description": "Summary of a Sofia IA session",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "sessionId": { "type": "string" },
+        "summaryText": { "type": "string" },
+        "feelings": { "type": "array", "items": { "type": "string" } },
+        "orientations": { "type": "array", "items": { "type": "string" } },
+        "nextSteps": { "type": "array", "items": { "type": "string" } },
+        "resources": { "type": "array", "items": { "type": "object" } }
+      },
+      "required": ["id", "sessionId", "summaryText"]
+    },
+    "SofiaSafetyEvent": {
+      "title": "SofiaSafetyEvent",
+      "description": "A safety event triggered during a Sofia IA session",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "sessionId": { "type": "string" },
+        "type": { "type": "string" },
+        "severity": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" },
+        "details": { "type": "string" }
+      },
+      "required": ["id", "sessionId", "type", "severity", "timestamp"]
     }
   },
   "firestore": {
@@ -78,6 +149,26 @@
     "/sos_cards/{cardId}": {
       "schema": "SosCard",
       "description": "Emergency cards"
+    },
+    "/sofia_users/{userId}": {
+      "schema": "SofiaUser",
+      "description": "Sofia IA user profiles"
+    },
+    "/sofia_sessions/{sessionId}": {
+      "schema": "SofiaSession",
+      "description": "Sofia IA sessions"
+    },
+    "/sofia_messages/{messageId}": {
+      "schema": "SofiaMessage",
+      "description": "Sofia IA messages"
+    },
+    "/sofia_summaries/{summaryId}": {
+      "schema": "SofiaSummary",
+      "description": "Sofia IA session summaries"
+    },
+    "/sofia_safety_events/{eventId}": {
+      "schema": "SofiaSafetyEvent",
+      "description": "Sofia IA safety events"
     }
   }
 }

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Users, ShieldCheck, Crown, Heart, Zap, ExternalLink, X, Copy, Check, ArrowRight, MapPin, Activity, BookOpen, Search, Shield, Smartphone } from 'lucide-react';
+import { Users, ShieldCheck, Crown, Heart, Zap, ExternalLink, X, Copy, Check, ArrowRight, MapPin, Activity, BookOpen, Search, Shield, Smartphone, HeartHandshake } from 'lucide-react';
 import AuthForm from './AuthForm';
 import LanguageSelector from './LanguageSelector';
 import { useTranslation } from 'react-i18next';
@@ -9,6 +9,7 @@ interface LandingPageProps {
   onLogin: () => void;
   onShowTerms: () => void;
   onGuestLogin: () => void;
+  onOpenAcolhe: (urgent: boolean) => void;
 }
 
 function SupportModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
@@ -79,7 +80,7 @@ function SupportModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => voi
   );
 }
 
-export default function LandingPage({ onLogin, onShowTerms }: LandingPageProps) {
+export default function LandingPage({ onLogin, onShowTerms, onGuestLogin, onOpenAcolhe }: LandingPageProps) {
   const { i18n } = useTranslation();
   const [showAuthForm, setShowAuthForm] = useState(false);
   const [isSupportModalOpen, setIsSupportModalOpen] = useState(false);
@@ -99,10 +100,57 @@ export default function LandingPage({ onLogin, onShowTerms }: LandingPageProps) 
   };
 
   return (
-    <div className="min-h-screen bg-white font-sans text-slate-800 pb-20 md:pb-0">
+    <div className="min-h-screen bg-white font-sans text-slate-800 pb-20 md:pb-0 relative">
       <div className="absolute top-4 right-4 z-50">
         <LanguageSelector />
       </div>
+
+      {/* SOFIA IA BANNER (TOP) */}
+      <motion.div 
+        initial={{ y: -50, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ delay: 0.5, type: 'spring' }}
+        className="w-full bg-gradient-to-r from-rose-50 to-purple-50 border-b border-rose-100 p-4 sticky top-0 z-40 shadow-sm"
+      >
+        <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-3 text-center sm:text-left">
+            <div className="w-12 h-12 bg-rose-100 rounded-full flex items-center justify-center shrink-0">
+              <HeartHandshake className="w-6 h-6 text-rose-500" />
+            </div>
+            <div>
+              <h3 className="text-slate-800 font-bold">Precisa conversar agora?</h3>
+              <p className="text-sm text-slate-600">Sofia IA pode te ajudar neste momento</p>
+            </div>
+          </div>
+          <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+            <button 
+              onClick={() => onOpenAcolhe(true)}
+              className="w-full sm:w-auto px-6 py-3 bg-white hover:bg-rose-50 text-rose-600 border border-rose-200 rounded-full font-bold transition-all flex items-center justify-center gap-2"
+            >
+              Estou sobrecarregado(a)
+            </button>
+            <button 
+              onClick={() => onOpenAcolhe(false)}
+              className="w-full sm:w-auto px-6 py-3 bg-rose-500 hover:bg-rose-600 text-white rounded-full font-bold shadow-lg shadow-rose-200 transition-all flex items-center justify-center gap-2"
+            >
+              Falar com Sofia agora
+            </button>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* FLOATING URGENT BUTTON */}
+      <motion.button
+        initial={{ scale: 0 }}
+        animate={{ scale: 1 }}
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+        onClick={() => onOpenAcolhe(true)}
+        className="fixed bottom-6 right-6 z-50 w-16 h-16 bg-rose-500 text-white rounded-full shadow-2xl shadow-rose-500/40 flex items-center justify-center md:w-auto md:h-auto md:px-6 md:py-4 md:gap-2 group"
+      >
+        <Heart className="w-6 h-6 animate-pulse" />
+        <span className="hidden md:block font-bold">Preciso de ajuda agora</span>
+      </motion.button>
 
       {/* STICKY BOTTOM CTA (MOBILE FIRST) */}
       <AnimatePresence>
@@ -111,7 +159,7 @@ export default function LandingPage({ onLogin, onShowTerms }: LandingPageProps) 
             initial={{ y: 100, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: 100, opacity: 0 }}
-            className="fixed bottom-0 left-0 right-0 p-4 bg-white/90 backdrop-blur-md border-t border-slate-100 z-50 flex justify-center md:hidden"
+            className="fixed bottom-0 left-0 right-0 p-4 bg-white/90 backdrop-blur-md border-t border-slate-100 z-40 flex justify-center md:hidden"
           >
             <motion.button
               whileHover={{ scale: 1.02 }}
@@ -121,7 +169,7 @@ export default function LandingPage({ onLogin, onShowTerms }: LandingPageProps) 
               onClick={handleMainAction}
               className="w-full max-w-md px-8 py-4 bg-sky-500 text-white rounded-2xl font-bold text-lg shadow-lg shadow-sky-500/30 flex items-center justify-center gap-2"
             >
-              Quero ajuda agora
+              Entrar na Comunidade
               <ArrowRight size={20} />
             </motion.button>
           </motion.div>
