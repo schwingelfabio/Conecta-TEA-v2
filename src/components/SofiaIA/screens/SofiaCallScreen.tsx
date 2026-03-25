@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Mic, MicOff, PhoneOff, Volume2, MoreVertical, Heart, Send, MessageSquare, Mic as MicIcon } from 'lucide-react';
+import { Virtuoso } from 'react-virtuoso';
 import { Avatar } from '../components/Avatar';
 import { useSofiaVoice, VoiceCapability } from '../hooks/useSofiaVoice';
 import { useSofiaOrchestrator } from '../hooks/useSofiaOrchestrator';
@@ -14,15 +15,7 @@ export const SofiaCallScreen = ({ onEndCall }: { onEndCall: () => void }) => {
   const [textInput, setTextInput] = useState('');
   const [messages, setMessages] = useState<{sender: 'user' | 'sofia', text: string}[]>([]);
   const hasInitialized = useRef(false);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
-
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
-
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
+  const virtuosoRef = useRef<any>(null);
 
   const initConversation = useCallback(async () => {
     if (hasInitialized.current) return;
@@ -168,11 +161,15 @@ export const SofiaCallScreen = ({ onEndCall }: { onEndCall: () => void }) => {
       <div className="flex-1 flex flex-col relative overflow-hidden">
         {mode === 'text' || sofiaState === 'fallback_text' ? (
           <div className="flex-1 flex flex-col p-6 overflow-hidden">
-            <div className="flex-1 overflow-y-auto space-y-4 mb-4 pr-2 custom-scrollbar">
-              {messages.map((m, i) => (
+            <Virtuoso
+              ref={virtuosoRef}
+              data={messages}
+              followOutput="smooth"
+              initialTopMostItemIndex={messages.length > 0 ? messages.length - 1 : 0}
+              className="flex-1 pr-2 custom-scrollbar"
+              itemContent={(index, m) => (
                 <div 
-                  key={i} 
-                  className={`flex ${m.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+                  className={`flex ${m.sender === 'user' ? 'justify-end' : 'justify-start'} mb-4`}
                 >
                   <div className={`p-4 rounded-2xl max-w-[85%] text-sm leading-relaxed ${
                     m.sender === 'user' 
@@ -182,11 +179,10 @@ export const SofiaCallScreen = ({ onEndCall }: { onEndCall: () => void }) => {
                     {m.text}
                   </div>
                 </div>
-              ))}
-              <div ref={messagesEndRef} />
-            </div>
+              )}
+            />
             
-            <div className="flex gap-2 bg-slate-900 p-2 rounded-2xl border border-white/5 shadow-2xl">
+            <div className="flex gap-2 bg-slate-900 p-2 rounded-2xl border border-white/5 shadow-2xl mt-4">
               <input 
                 value={textInput} 
                 onChange={(e) => setTextInput(e.target.value)}
