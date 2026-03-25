@@ -54,12 +54,26 @@
       "type": "object",
       "properties": {
         "userId": { "type": "string" },
-        "name": { "type": "string" },
-        "condition": { "type": "string" },
-        "emergencyContact": { "type": "string" },
-        "bloodType": { "type": "string" }
+        "officialId": { "type": "string" },
+        "childName": { "type": "string" },
+        "birthDate": { "type": "string" },
+        "bloodType": { "type": "string" },
+        "allergies": { "type": "string" },
+        "observations": { "type": "string" },
+        "contact1Name": { "type": "string" },
+        "contact1Phone": { "type": "string" },
+        "contact2Name": { "type": "string" },
+        "contact2Phone": { "type": "string" },
+        "homeAddress": { "type": "string" },
+        "workAddress": { "type": "string" },
+        "city": { "type": "string" },
+        "state": { "type": "string" },
+        "responsibleName": { "type": "string" },
+        "emergencyNote": { "type": "string" },
+        "createdAt": { "type": "object" },
+        "updatedAt": { "type": "object" }
       },
-      "required": ["userId", "name"]
+      "required": ["userId", "childName"]
     },
     "SofiaUser": {
       "title": "SofiaUser",

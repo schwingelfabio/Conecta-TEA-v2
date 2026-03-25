@@ -98,5 +98,46 @@ service cloud.firestore {
       allow read: if isAuthenticated() && (get(/databases/$(database)/documents/sofia_sessions/$(resource.data.sessionId)).data.userId == request.auth.uid || isAdmin());
       allow create: if isAuthenticated() && get(/databases/$(database)/documents/sofia_sessions/$(request.resource.data.sessionId)).data.userId == request.auth.uid;
     }
+
+    match /sos_cards/{cardId} {
+      allow read: if isAuthenticated() && (resource.data.userId == request.auth.uid || isAdmin());
+      allow create: if isAuthenticated() && request.resource.data.userId == request.auth.uid && isValidSosCard(request.resource.data);
+      allow update: if isAuthenticated() && (resource.data.userId == request.auth.uid || isAdmin()) && isValidSosCard(request.resource.data);
+    }
+
+    match /videos/{videoId} {
+      allow read: if isAuthenticated() || isAdmin();
+      allow write: if isAdmin();
+    }
+
+    match /posts/{postId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated() && (request.resource.data.authorId == request.auth.uid || (request.resource.data.authorId == 'ai-bot' && isAdmin()));
+      allow update: if isAuthenticated() && (resource.data.authorId == request.auth.uid || isAdmin());
+      allow delete: if isAuthenticated() && (resource.data.authorId == request.auth.uid || isAdmin());
+    }
   }
+}
+
+function isValidSosCard(data) {
+  return data.keys().hasAll(['userId', 'childName', 'createdAt', 'updatedAt']) &&
+         data.userId is string &&
+         data.childName is string && data.childName.size() < 100 &&
+         (!('officialId' in data) || data.officialId is string) &&
+         (!('birthDate' in data) || data.birthDate is string) &&
+         (!('bloodType' in data) || data.bloodType is string && data.bloodType.size() < 10) &&
+         (!('allergies' in data) || data.allergies is string && data.allergies.size() < 500) &&
+         (!('observations' in data) || data.observations is string && data.observations.size() < 1000) &&
+         (!('contact1Name' in data) || data.contact1Name is string && data.contact1Name.size() < 100) &&
+         (!('contact1Phone' in data) || data.contact1Phone is string && data.contact1Phone.size() < 20) &&
+         (!('contact2Name' in data) || data.contact2Name is string && data.contact2Name.size() < 100) &&
+         (!('contact2Phone' in data) || data.contact2Phone is string && data.contact2Phone.size() < 20) &&
+         (!('homeAddress' in data) || data.homeAddress is string && data.homeAddress.size() < 500) &&
+         (!('workAddress' in data) || data.workAddress is string && data.workAddress.size() < 500) &&
+         (!('city' in data) || data.city is string && data.city.size() < 100) &&
+         (!('state' in data) || data.state is string && data.state.size() < 100) &&
+         (!('responsibleName' in data) || data.responsibleName is string && data.responsibleName.size() < 100) &&
+         (!('emergencyNote' in data) || data.emergencyNote is string && data.emergencyNote.size() < 1000) &&
+         data.createdAt is timestamp &&
+         data.updatedAt is timestamp;
 }

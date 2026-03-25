@@ -1,9 +1,9 @@
 import React from 'react';
 import { motion } from 'motion/react';
-import { CallState } from '../screens/SofiaCallScreen';
+import { SofiaState } from '../types';
 
 interface AvatarProps {
-  state: CallState;
+  state: SofiaState;
 }
 
 export const Avatar = ({ state }: AvatarProps) => {
@@ -12,7 +12,10 @@ export const Avatar = ({ state }: AvatarProps) => {
     listening: { scale: 1.05, opacity: 1 },
     speaking: { scale: 1.1, opacity: 1 },
     processing: { scale: 1, opacity: 0.8 },
-    urgent: { scale: 1.1, opacity: 1 },
+    connecting: { scale: 1, opacity: 0.5 },
+    ready: { scale: 1, opacity: 1 },
+    fallback_text: { scale: 1, opacity: 1 },
+    error: { scale: 1, opacity: 1 },
   };
 
   const glowVariants = {
@@ -20,7 +23,10 @@ export const Avatar = ({ state }: AvatarProps) => {
     listening: { opacity: 0.5, scale: 1.2 },
     speaking: { opacity: 1, scale: 1.4 },
     processing: { opacity: 0.3, scale: 1.1 },
-    urgent: { opacity: 1, scale: 1.5 },
+    connecting: { opacity: 0.2, scale: 1.1 },
+    ready: { opacity: 0.3, scale: 1.1 },
+    fallback_text: { opacity: 0 },
+    error: { opacity: 0 },
   };
 
   return (

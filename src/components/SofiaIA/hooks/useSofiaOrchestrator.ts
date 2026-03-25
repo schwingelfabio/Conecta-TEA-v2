@@ -1,13 +1,13 @@
 import { useState, useCallback, useEffect } from 'react';
 import { analyzeTriage, generateResponse } from '../../../services/sofiaService';
-import { CallState } from '../screens/SofiaCallScreen';
+import { SofiaState } from '../types';
 import { db, auth } from '../../../lib/firebase';
 import { collection, addDoc, serverTimestamp, doc, setDoc } from 'firebase/firestore';
 import { handleFirestoreError, OperationType } from '../../../lib/errorHandling';
 
 export const useSofiaOrchestrator = () => {
   const [history, setHistory] = useState<string[]>([]);
-  const [state, setState] = useState<CallState>('idle');
+  const [state, setState] = useState<SofiaState>('idle');
   const [sessionId, setSessionId] = useState<string | null>(null);
 
   // Initialize session
