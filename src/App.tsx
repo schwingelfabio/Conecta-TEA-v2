@@ -26,7 +26,6 @@ import VideosPage from './components/VideosPage';
 import AcolheTEA from './components/AcolheTEA';
 import { SofiaIA } from './components/SofiaIA';
 import { TermosDeUso, Privacidade, Contato } from './components/LegalPages';
-import AiAssistant from './components/AiAssistant';
 import AuthForm from './components/AuthForm';
 import Onboarding from './components/Onboarding';
 import { UserProfile } from './types';
@@ -382,8 +381,6 @@ export default function App() {
           )}
         </main>
 
-        {(user || isGuest) && <AiAssistant />}
-        
         {!user && !isGuest && showAuth && (
           <AuthForm onSuccess={() => setShowAuth(false)} />
         )}
