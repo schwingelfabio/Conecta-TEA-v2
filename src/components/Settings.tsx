@@ -15,11 +15,13 @@ import {
   MapPin,
   Edit2,
   Camera,
-  X
+  X,
+  Loader2
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import LanguageSelector from './LanguageSelector';
 import { useTranslation } from 'react-i18next';
+import Avatar from './Avatar';
 
 import { UserProfile } from '../types';
 
@@ -53,6 +55,7 @@ export default function Settings({
   const [role, setRole] = useState(userProfile?.role || '');
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
 
   const fileInputRef = React.useRef<HTMLInputElement>(null);
 
@@ -73,21 +76,36 @@ export default function Settings({
     }
   }, [userProfile, user]);
 
-  const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Check file size (limit to 1MB for base64 storage)
-    if (file.size > 1024 * 1024) {
-      alert(t('settings.photoTooLarge') || 'A foto deve ter menos de 1MB');
+    // Check file size (limit to 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      alert(t('settings.photoTooLarge') || 'A foto deve ter menos de 5MB');
       return;
     }
 
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setPhotoURL(reader.result as string);
-    };
-    reader.readAsDataURL(file);
+    setIsUploading(true);
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) throw new Error('Upload failed');
+
+      const data = await response.json();
+      setPhotoURL(data.url);
+    } catch (error) {
+      console.error('Error uploading photo:', error);
+      alert(t('settings.uploadError') || 'Erro ao enviar foto');
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   const handleSave = async () => {
@@ -166,17 +184,24 @@ export default function Settings({
         {!isGuest && (
           <div className="flex items-center gap-6 mb-8 p-6 bg-slate-50 rounded-3xl border border-slate-100 relative group">
             <div className="relative">
-              <div className="w-24 h-24 rounded-full overflow-hidden bg-sky-100 border-4 border-white shadow-md flex items-center justify-center shrink-0">
-                {photoURL ? (
-                  <img src={photoURL} alt="Perfil" className="w-full h-full object-cover" />
-                ) : (
-                  <span className="text-3xl font-bold text-sky-600">{name?.charAt(0) || 'U'}</span>
+              <div className="relative">
+                <Avatar 
+                  src={photoURL} 
+                  name={firstName ? `${firstName} ${lastName}` : name} 
+                  size="xl" 
+                  className={isUploading ? 'opacity-50' : ''}
+                />
+                {isUploading && (
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <Loader2 className="text-sky-500 animate-spin" size={32} />
+                  </div>
                 )}
               </div>
               {isEditing && (
                 <button
                   onClick={() => fileInputRef.current?.click()}
-                  className="absolute bottom-0 right-0 p-2 bg-sky-500 text-white rounded-full shadow-lg hover:bg-sky-600 transition-all transform hover:scale-110"
+                  disabled={isUploading}
+                  className="absolute bottom-0 right-0 p-2 bg-sky-500 text-white rounded-full shadow-lg hover:bg-sky-600 transition-all transform hover:scale-110 disabled:opacity-50"
                 >
                   <Camera size={16} />
                 </button>

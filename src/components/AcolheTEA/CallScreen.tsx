@@ -73,12 +73,9 @@ export default function CallScreen({ onEndCall, isUrgent = false, initialMessage
       await playResponse(response.text, response.emotion, response.isEmergency);
     };
 
-    const timer = setTimeout(() => {
-      startGreeting();
-    }, 1500);
+    startGreeting();
 
     return () => {
-      clearTimeout(timer);
       if (stateTimerRef.current) clearTimeout(stateTimerRef.current);
       if (recognitionRef.current) recognitionRef.current.stop();
       if (audioRef.current) {
@@ -136,17 +133,6 @@ export default function CallScreen({ onEndCall, isUrgent = false, initialMessage
     setCallState('processing');
     setCurrentSubtitle(message); // Show what the user said briefly
     
-    // Simulate progressive states for better UX during long waits
-    stateTimerRef.current = setTimeout(() => {
-      setCallState('thinking');
-      setCurrentSubtitle('Estou organizando isso com você...');
-      
-      stateTimerRef.current = setTimeout(() => {
-        setCallState('searching');
-        setCurrentSubtitle('Buscando informações relevantes...');
-      }, 3000);
-    }, 1500);
-
     const response = await sofiaService.sendMessage(message);
     await playResponse(response.text, response.emotion, response.isEmergency);
   };

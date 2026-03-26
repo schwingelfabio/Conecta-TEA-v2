@@ -1,5 +1,5 @@
 {
   "name": "Conecta-TEA",
   "description": "Uma plataforma para conectar e apoiar indivíduos com Transtorno do Espectro Autista (TEA).",
-  "requestFramePermissions": ["microphone"]
+  "requestFramePermissions": []
 }

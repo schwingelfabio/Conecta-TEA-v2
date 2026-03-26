@@ -1,17 +1,12 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Mic, MicOff, PhoneOff, Volume2, MoreVertical, Heart, Send, MessageSquare, Mic as MicIcon } from 'lucide-react';
+import { PhoneOff, Send, MessageSquare, Loader2, AlertCircle } from 'lucide-react';
 import { Virtuoso } from 'react-virtuoso';
-import { Avatar } from '../components/Avatar';
-import { useSofiaVoice, VoiceCapability } from '../hooks/useSofiaVoice';
 import { useSofiaOrchestrator } from '../hooks/useSofiaOrchestrator';
-
-import { SofiaState, InteractionMode } from '../types';
+import { SofiaState } from '../types';
 
 export const SofiaCallScreen = ({ onEndCall }: { onEndCall: () => void }) => {
-  const { isListening, isProcessing, isSpeaking, startListening, stopListening, speak, checkCapabilities } = useSofiaVoice();
-  const { processTurn, state: orchestratorState, setState: setOrchestratorState } = useSofiaOrchestrator();
+  const { processTurn, state: orchestratorState } = useSofiaOrchestrator();
   const [sofiaState, setSofiaState] = useState<SofiaState>('idle');
-  const [mode, setMode] = useState<InteractionMode>('text');
   const [textInput, setTextInput] = useState('');
   const [messages, setMessages] = useState<{sender: 'user' | 'sofia', text: string}[]>([]);
   const hasInitialized = useRef(false);
@@ -21,241 +16,136 @@ export const SofiaCallScreen = ({ onEndCall }: { onEndCall: () => void }) => {
     if (hasInitialized.current) return;
     hasInitialized.current = true;
     
-    const capability = checkCapabilities();
-    let initialMode: InteractionMode = 'text';
-    
-    if (capability === 'full') initialMode = 'voice';
-    else if (capability === 'turn_based') initialMode = 'turn_based';
-    
-    setMode(initialMode);
-    setSofiaState('connecting');
-
-    const initialGreeting = "Oi, eu sou a Sofia. Estou aqui com você.";
+    setSofiaState('ready');
+    const initialGreeting = "Oi, eu sou a Sofia. Estou aqui para te ouvir e apoiar. Como você está se sentindo hoje?";
     setMessages([{sender: 'sofia', text: initialGreeting}]);
-
-    if (initialMode === 'text') {
-      setSofiaState('fallback_text');
-      return;
-    }
-
-    try {
-      await speak(initialGreeting);
-      setSofiaState('ready');
-      if (initialMode === 'voice') {
-        setSofiaState('listening');
-        startListening();
-      } else {
-        setSofiaState('listening');
-      }
-    } catch (err) {
-      console.error("Initialization failed:", err);
-      setMode('text');
-      setSofiaState('fallback_text');
-      setMessages(prev => [...prev, {sender: 'sofia', text: "A voz não ficou disponível. Vamos continuar por texto."}]);
-    }
-  }, [speak, startListening, checkCapabilities]);
+  }, []);
 
   useEffect(() => {
     initConversation();
   }, [initConversation]);
 
-  const handleStopListening = async () => {
-    setSofiaState('processing');
-    const transcript = await stopListening();
-    if (transcript) {
-      setMessages(prev => [...prev, {sender: 'user', text: transcript}]);
-      const res = await processTurn(transcript);
-      setSofiaState('speaking');
-      setMessages(prev => [...prev, {sender: 'sofia', text: res.response}]);
-      await speak(res.response);
-      
-      if (mode === 'voice') {
-        setSofiaState('listening');
-        startListening();
-      } else {
-        setSofiaState('ready');
-      }
-    } else {
-      setSofiaState('listening');
-      if (mode === 'voice') startListening();
-    }
-  };
-
   const handleTextSubmit = async () => {
-    if (!textInput.trim()) return;
+    if (!textInput.trim() || sofiaState === 'processing') return;
+    
     const userText = textInput;
     setMessages(prev => [...prev, {sender: 'user', text: userText}]);
     setTextInput('');
     setSofiaState('processing');
-    const res = await processTurn(userText);
-    setSofiaState('speaking');
-    setMessages(prev => [...prev, {sender: 'sofia', text: res.response}]);
-    
-    if (mode !== 'text') {
-      await speak(res.response);
-      setSofiaState('listening');
-      if (mode === 'voice') startListening();
-    } else {
-      setSofiaState('fallback_text');
+
+    try {
+      const res = await processTurn(userText);
+      setMessages(prev => [...prev, {sender: 'sofia', text: res.response}]);
+      setSofiaState('ready');
+    } catch (err) {
+      console.error("Error in Sofia response:", err);
+      setMessages(prev => [...prev, {
+        sender: 'sofia', 
+        text: "Desculpe, tive um probleminha técnico momentâneo. Mas estou aqui! Pode tentar falar comigo de novo?" 
+      }]);
+      setSofiaState('error');
     }
-  };
-
-  const switchToText = () => {
-    stopListening();
-    setMode('text');
-    setSofiaState('fallback_text');
-  };
-
-  const getStatusMessage = () => {
-    if (sofiaState === 'fallback_text') return 'Conversando por texto';
-    switch (sofiaState) {
-      case 'connecting': return 'Conectando...';
-      case 'listening': return mode === 'turn_based' ? 'Toque no microfone para falar' : 'Pode falar, estou ouvindo...';
-      case 'processing': return 'Entendendo...';
-      case 'speaking': return 'Sofia está respondendo...';
-      case 'error': return 'Ops, tive um probleminha técnico.';
-      default: return 'Sofia está pronta';
-    }
-  };
-
-  const retryConnection = () => {
-    hasInitialized.current = false;
-    setSofiaState('idle');
-    initConversation();
   };
 
   return (
-    <div className="flex flex-col h-full bg-slate-950 text-white overflow-hidden">
+    <div className="flex flex-col h-full bg-slate-950 text-white overflow-hidden font-sans">
       {/* Header */}
-      <div className="flex justify-between items-center p-6 bg-slate-900/50 border-b border-white/5">
+      <div className="flex justify-between items-center p-5 bg-slate-900/80 border-b border-white/5 backdrop-blur-md z-20">
         <div className="flex items-center gap-3">
-          <div className={`w-2 h-2 rounded-full ${sofiaState === 'ready' || sofiaState === 'listening' ? 'bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]' : 'bg-slate-500'}`} />
+          <div className={`w-2.5 h-2.5 rounded-full ${sofiaState === 'ready' || sofiaState === 'processing' ? 'bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]' : 'bg-slate-500'} transition-all duration-500`} />
           <div>
-            <h2 className="text-sm font-bold text-white">Sofia IA</h2>
-            <p className="text-[10px] text-slate-400 uppercase tracking-widest">
-              {mode === 'voice' ? 'Voz Contínua' : mode === 'turn_based' ? 'Áudio por Turno' : 'Modo Texto'}
+            <h2 className="text-base font-bold text-white tracking-tight">Sofia IA</h2>
+            <p className="text-[10px] text-slate-400 uppercase tracking-[0.2em] font-semibold">
+              {sofiaState === 'processing' ? 'Pensando...' : 'Online'}
             </p>
           </div>
         </div>
-        <div className="flex gap-2">
-          {mode !== 'text' && (
-            <button 
-              onClick={switchToText} 
-              className="p-2.5 bg-slate-800 hover:bg-slate-700 rounded-xl text-slate-400 hover:text-white transition-all"
-              title="Mudar para texto"
-            >
-              <MessageSquare size={18} />
-            </button>
-          )}
-          <button 
-            onClick={onEndCall} 
-            className="p-2.5 bg-red-500/10 hover:bg-red-500/20 rounded-xl text-red-400 transition-all"
-            title="Encerrar"
-          >
-            <PhoneOff size={18} />
-          </button>
-        </div>
+        <button 
+          onClick={onEndCall} 
+          className="p-2.5 bg-red-500/10 hover:bg-red-500/20 rounded-xl text-red-400 transition-all border border-red-500/20"
+          title="Encerrar conversa"
+        >
+          <PhoneOff size={18} />
+        </button>
       </div>
 
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col relative overflow-hidden">
-        {mode === 'text' || sofiaState === 'fallback_text' ? (
-          <div className="flex-1 flex flex-col p-6 overflow-hidden">
-            <Virtuoso
-              ref={virtuosoRef}
-              data={messages}
-              followOutput="smooth"
-              initialTopMostItemIndex={messages.length > 0 ? messages.length - 1 : 0}
-              className="flex-1 pr-2 custom-scrollbar"
-              itemContent={(index, m) => (
-                <div 
-                  className={`flex ${m.sender === 'user' ? 'justify-end' : 'justify-start'} mb-4`}
-                >
-                  <div className={`p-4 rounded-2xl max-w-[85%] text-sm leading-relaxed ${
-                    m.sender === 'user' 
-                      ? 'bg-sky-600 text-white rounded-tr-none' 
-                      : 'bg-slate-800 text-slate-200 rounded-tl-none border border-white/5'
-                  }`}>
-                    {m.text}
+      {/* Chat Area */}
+      <div className="flex-1 flex flex-col relative overflow-hidden bg-[radial-gradient(circle_at_50%_50%,_#0f172a_0%,_#020617_100%)]">
+        <div className="flex-1 flex flex-col p-4 md:p-6 overflow-hidden">
+          {sofiaState === 'connecting' ? (
+            <div className="flex-1 flex flex-col items-center justify-center space-y-4">
+              <Loader2 className="w-8 h-8 text-sky-500 animate-spin" />
+              <p className="text-slate-400 text-sm animate-pulse">Iniciando conversa segura...</p>
+            </div>
+          ) : (
+            <>
+              <Virtuoso
+                ref={virtuosoRef}
+                data={messages}
+                followOutput="smooth"
+                initialTopMostItemIndex={messages.length > 0 ? messages.length - 1 : 0}
+                className="flex-1 pr-2 custom-scrollbar"
+                itemContent={(index, m) => (
+                  <div 
+                    className={`flex ${m.sender === 'user' ? 'justify-end' : 'justify-start'} mb-6`}
+                  >
+                    <div className={`relative p-4 rounded-2xl max-w-[85%] text-sm md:text-base leading-relaxed shadow-lg ${
+                      m.sender === 'user' 
+                        ? 'bg-sky-600 text-white rounded-tr-none shadow-sky-900/20' 
+                        : 'bg-slate-800 text-slate-100 rounded-tl-none border border-white/5 shadow-black/40'
+                    }`}>
+                      {m.text}
+                      <div className={`absolute top-0 ${m.sender === 'user' ? '-right-1 border-l-sky-600' : '-left-1 border-r-slate-800'} w-0 h-0 border-t-[8px] border-t-transparent border-b-[8px] border-b-transparent border-l-[8px]`} />
+                    </div>
+                  </div>
+                )}
+              />
+              
+              {sofiaState === 'processing' && (
+                <div className="flex justify-start mb-6 animate-in fade-in slide-in-from-left-2 duration-300">
+                  <div className="bg-slate-800/50 p-4 rounded-2xl rounded-tl-none border border-white/5 flex items-center gap-2">
+                    <div className="flex gap-1">
+                      <span className="w-1.5 h-1.5 bg-sky-500 rounded-full animate-bounce [animation-delay:-0.3s]" />
+                      <span className="w-1.5 h-1.5 bg-sky-500 rounded-full animate-bounce [animation-delay:-0.15s]" />
+                      <span className="w-1.5 h-1.5 bg-sky-500 rounded-full animate-bounce" />
+                    </div>
                   </div>
                 </div>
               )}
-            />
-            
-            <div className="flex gap-2 bg-slate-900 p-2 rounded-2xl border border-white/5 shadow-2xl mt-4">
-              <input 
-                value={textInput} 
-                onChange={(e) => setTextInput(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && handleTextSubmit()}
-                className="flex-1 bg-transparent p-3 text-sm text-white outline-none placeholder:text-slate-500"
-                placeholder="Escreva sua mensagem..."
-                autoFocus
-              />
-              <button 
-                onClick={handleTextSubmit} 
-                disabled={!textInput.trim() || sofiaState === 'processing'}
-                className="p-3 bg-sky-500 hover:bg-sky-400 disabled:opacity-50 disabled:hover:bg-sky-500 rounded-xl transition-all shadow-lg shadow-sky-500/20"
-              >
-                <Send size={18} />
-              </button>
-            </div>
-          </div>
-        ) : (
-          <div className="flex-1 flex flex-col items-center justify-center p-6">
-            <div className="relative">
-              <Avatar state={sofiaState === 'speaking' ? 'speaking' : sofiaState === 'listening' ? 'listening' : 'idle'} />
-              {sofiaState === 'processing' && (
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="w-32 h-32 border-4 border-sky-500/30 border-t-sky-500 rounded-full animate-spin" />
+
+              {sofiaState === 'error' && (
+                <div className="flex justify-center mb-4">
+                  <button 
+                    onClick={() => setSofiaState('ready')}
+                    className="flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-full text-xs text-slate-400 transition-all border border-white/5"
+                  >
+                    <AlertCircle size={14} />
+                    Limpar erro e continuar
+                  </button>
                 </div>
               )}
-            </div>
-            <div className="mt-12 text-center">
-              <p className="text-xl font-medium text-white mb-2">{getStatusMessage()}</p>
-              <p className="text-sm text-slate-400 max-w-xs mx-auto mb-6">
-                {sofiaState === 'listening' && mode === 'voice' ? 'Fale naturalmente, eu estou ouvindo.' : 
-                 sofiaState === 'listening' && mode === 'turn_based' ? 'Toque no botão abaixo para começar a falar.' : 
-                 sofiaState === 'processing' ? 'Estou processando o que você disse...' : 
-                 sofiaState === 'error' ? 'Houve um erro na conexão. Tente novamente.' : ''}
-              </p>
-              {sofiaState === 'error' && (
+              
+              <div className="flex gap-2 bg-slate-900/90 p-2 rounded-2xl border border-white/10 shadow-2xl mt-4 backdrop-blur-xl focus-within:border-sky-500/50 transition-all">
+                <input 
+                  value={textInput} 
+                  onChange={(e) => setTextInput(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && handleTextSubmit()}
+                  className="flex-1 bg-transparent px-4 py-3 text-sm md:text-base text-white outline-none placeholder:text-slate-500"
+                  placeholder="Escreva sua mensagem..."
+                  autoFocus
+                />
                 <button 
-                  onClick={retryConnection}
-                  className="px-6 py-3 bg-sky-500 hover:bg-sky-400 rounded-2xl font-bold transition-all shadow-lg shadow-sky-500/20"
+                  onClick={handleTextSubmit} 
+                  disabled={!textInput.trim() || sofiaState === 'processing'}
+                  className="p-3 bg-sky-500 hover:bg-sky-400 disabled:opacity-30 disabled:hover:bg-sky-500 rounded-xl transition-all shadow-lg shadow-sky-500/20 flex items-center justify-center min-w-[48px]"
                 >
-                  Tentar Novamente
+                  {sofiaState === 'processing' ? <Loader2 size={20} className="animate-spin" /> : <Send size={20} />}
                 </button>
-              )}
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* Voice Controls */}
-      {mode !== 'text' && sofiaState !== 'fallback_text' && (
-        <div className="p-8 flex justify-center items-center bg-slate-900/80 border-t border-white/5 backdrop-blur-xl">
-          <button 
-            onClick={() => {
-              if (sofiaState === 'listening') {
-                handleStopListening();
-              } else if (sofiaState === 'ready' || sofiaState === 'speaking') {
-                startListening();
-              }
-            }}
-            disabled={sofiaState === 'processing' || sofiaState === 'connecting'}
-            className={`relative p-8 rounded-full transition-all duration-300 transform active:scale-95 ${
-              sofiaState === 'listening' 
-                ? 'bg-sky-500 text-white shadow-[0_0_30px_rgba(14,165,233,0.4)]' 
-                : 'bg-slate-800 text-slate-400 hover:bg-slate-700'
-            } disabled:opacity-50`}
-          >
-            {sofiaState === 'listening' ? <Mic size={36} /> : <MicIcon size={36} />}
-            {sofiaState === 'listening' && (
-              <span className="absolute inset-0 rounded-full bg-sky-500 animate-ping opacity-20" />
-            )}
-          </button>
+              </div>
+            </>
+          )}
         </div>
-      )}
+      </div>
     </div>
   );
 };

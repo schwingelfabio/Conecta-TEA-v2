@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { db } from '../lib/firebase';
-import { collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, doc, updateDoc, increment } from 'firebase/firestore';
+import { collection, addDoc, query, orderBy, getDocs, serverTimestamp, doc, updateDoc, increment } from 'firebase/firestore';
 import { UserProfile, Comment } from '../types';
 import { Send, MessageSquare } from 'lucide-react';
+import Avatar from './Avatar';
 
 interface PostCommentsProps {
   postId: string;
@@ -16,21 +17,27 @@ const PostComments: React.FC<PostCommentsProps> = ({ postId, userProfile, isGues
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const q = query(
-      collection(db, 'posts', postId, 'comments'),
-      orderBy('timestamp', 'asc')
-    );
+    const fetchComments = async () => {
+      setLoading(true);
+      try {
+        const q = query(
+          collection(db, 'posts', postId, 'comments'),
+          orderBy('timestamp', 'asc')
+        );
+        const snapshot = await getDocs(q);
+        const commentsData = snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        })) as Comment[];
+        setComments(commentsData);
+      } catch (err) {
+        console.error('Error fetching comments:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const commentsData = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      })) as Comment[];
-      setComments(commentsData);
-      setLoading(false);
-    });
-
-    return () => unsubscribe();
+    fetchComments();
   }, [postId]);
 
   const handleAddComment = async (e: React.FormEvent) => {
@@ -67,7 +74,7 @@ const PostComments: React.FC<PostCommentsProps> = ({ postId, userProfile, isGues
       <div className="space-y-4 mb-4">
         {comments.map(comment => (
           <div key={comment.id} className="flex space-x-3">
-            <img src={comment.authorPhoto || ''} alt={comment.authorName} className="w-8 h-8 rounded-full" />
+            <Avatar src={comment.authorPhoto} name={comment.authorName} size="sm" />
             <div className="bg-slate-50 p-3 rounded-2xl flex-1">
               <p className="font-bold text-xs text-slate-900">{comment.authorName}</p>
               <p className="text-sm text-slate-700">{comment.text}</p>
@@ -78,7 +85,7 @@ const PostComments: React.FC<PostCommentsProps> = ({ postId, userProfile, isGues
 
       {!isGuest && userProfile && (
         <form onSubmit={handleAddComment} className="flex items-center space-x-2">
-          <img src={userProfile.photoURL || ''} alt={userProfile.displayName} className="w-8 h-8 rounded-full" />
+          <Avatar src={userProfile.photoURL} name={userProfile.displayName} size="sm" />
           <input
             type="text"
             value={newComment}

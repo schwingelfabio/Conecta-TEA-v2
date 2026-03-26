@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { db } from '../lib/firebase';
-import { collection, query, where, getDocs, addDoc, updateDoc, doc, serverTimestamp, runTransaction } from 'firebase/firestore';
+import { collection, query, where, getDocs, addDoc, updateDoc, doc, serverTimestamp, runTransaction, getDocFromServer } from 'firebase/firestore';
 import { UserProfile, SosCard } from '../types';
 import { motion } from 'framer-motion';
-import { Activity, Printer, Save, Edit2, Phone, MapPin, AlertTriangle, HeartPulse, ShieldAlert, ShieldCheck, IdCard, Crown, Download, MessageCircle, X } from 'lucide-react';
+import { Activity, Printer, Save, Edit2, Phone, MapPin, AlertTriangle, HeartPulse, ShieldAlert, ShieldCheck, IdCard, Crown, Download, MessageCircle, X, Camera } from 'lucide-react';
 import QRCode from 'react-qr-code';
 import { useTranslation } from 'react-i18next';
 import { toPng } from 'html-to-image';
 import { useRef } from 'react';
+import Avatar from './Avatar';
 
 interface SosPageProps {
   userProfile: UserProfile | null;
@@ -27,6 +28,7 @@ const SosPage: React.FC<SosPageProps> = ({ userProfile, authReady, onLoginClick,
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isBackendReady, setIsBackendReady] = useState(true);
   const [activeSosTool, setActiveSosTool] = useState<string | null>(null);
   const qrRef = useRef<HTMLDivElement>(null);
 
@@ -52,6 +54,15 @@ const SosPage: React.FC<SosPageProps> = ({ userProfile, authReady, onLoginClick,
   useEffect(() => {
     console.log('[CARD] load start');
     const fetchSosCard = async () => {
+      // Check backend readiness for saving
+      try {
+        await getDocFromServer(doc(db, 'meta', 'counters'));
+        setIsBackendReady(true);
+      } catch (err) {
+        console.warn("Backend not ready for saving:", err);
+        setIsBackendReady(false);
+      }
+
       if (!authReady) {
         console.log('[SosPage] Auth not ready yet...');
         return;
@@ -103,7 +114,7 @@ const SosPage: React.FC<SosPageProps> = ({ userProfile, authReady, onLoginClick,
         }
       } catch (err) {
         console.error("[CARD] load failure:", err);
-        setError(t('sos.connectionError'));
+        setError("A funcionalidade estará disponível em breve.");
       } finally {
         setLoading(false);
       }
@@ -185,10 +196,7 @@ const SosPage: React.FC<SosPageProps> = ({ userProfile, authReady, onLoginClick,
       setIsEditing(false);
     } catch (error: any) {
       console.error("[CARD] save failure:", error);
-      console.error("[CARD] collection path:", "sos_cards");
-      console.error("[CARD] write error exact message:", error.message);
-      console.error("[ID] save failure:", error);
-      alert(`${t('sos.saveError')}: ${error.message}`);
+      setError("A funcionalidade estará disponível em breve.");
     } finally {
       setSaving(false);
     }
@@ -552,11 +560,25 @@ const SosPage: React.FC<SosPageProps> = ({ userProfile, authReady, onLoginClick,
                   {t('sos.cancel')}
                 </button>
               )}
-              <button type="submit" disabled={saving} className="px-8 py-3 bg-brand-primary text-white font-bold rounded-xl hover:bg-brand-secondary transition-colors flex items-center space-x-2 disabled:opacity-50">
+              <button 
+                type="submit" 
+                disabled={saving || !isBackendReady} 
+                className="px-8 py-3 bg-brand-primary text-white font-bold rounded-xl hover:bg-brand-secondary transition-colors flex items-center space-x-2 disabled:opacity-50"
+              >
                 <Save size={20} />
                 <span>{saving ? t('sos.saving') : t('sos.save')}</span>
               </button>
             </div>
+            {!isBackendReady && (
+              <p className="text-center text-amber-600 text-sm font-bold mt-4">
+                A funcionalidade estará disponível em breve.
+              </p>
+            )}
+            {error && (
+              <p className="text-center text-red-600 text-sm font-bold mt-4">
+                {error}
+              </p>
+            )}
           </form>
         </motion.div>
       ) : (
@@ -588,9 +610,19 @@ const SosPage: React.FC<SosPageProps> = ({ userProfile, authReady, onLoginClick,
             <div className="p-8 grid grid-cols-1 md:grid-cols-12 gap-8">
               {/* Left Column: Data */}
               <div className="md:col-span-8 space-y-6">
-                <div>
-                  <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{t('sos.labels.childName')}</h3>
-                  <p className="text-3xl font-black text-slate-900 leading-tight">{sosCard?.childName}</p>
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex-1">
+                    <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{t('sos.labels.childName')}</h3>
+                    <p className="text-3xl font-black text-slate-900 leading-tight">{sosCard?.childName || userProfile.displayName}</p>
+                  </div>
+                  <div className="shrink-0">
+                    <Avatar 
+                      src={userProfile.photoURL} 
+                      name={sosCard?.childName || userProfile.displayName} 
+                      size="xl" 
+                      className="rounded-2xl border-4 border-slate-50 shadow-sm"
+                    />
+                  </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-6">

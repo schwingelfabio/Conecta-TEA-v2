@@ -31,10 +31,11 @@ import Onboarding from './components/Onboarding';
 import { UserProfile } from './types';
 import { auth, db } from './lib/firebase';
 import { signOut, onAuthStateChanged, User as FirebaseUser } from 'firebase/auth';
-import { doc, getDoc, setDoc, collection, query, where, getDocs, onSnapshot, serverTimestamp } from 'firebase/firestore';
+import { doc, getDoc, setDoc, collection, query, where, getDocs, serverTimestamp } from 'firebase/firestore';
 import { checkIsAdmin } from './lib/admin';
 import { useTranslation } from 'react-i18next';
 import { ErrorBoundary } from './components/ErrorBoundary';
+import Avatar from './components/Avatar';
 
 export default function App() {
   const { t } = useTranslation();
@@ -53,11 +54,6 @@ export default function App() {
   const [isAcolheUrgent, setIsAcolheUrgent] = useState(false);
 
   useEffect(() => {
-    // Timeout fallback to prevent infinite loading
-    const loadingTimeout = setTimeout(() => {
-      setLoading(false);
-    }, 5000); // 5 seconds max loading
-
     const path = window.location.pathname;
     if (path.startsWith('/emergencia/')) {
       const userId = path.split('/emergencia/')[1];
@@ -81,7 +77,6 @@ export default function App() {
         setIsDeveloper(false);
         setAuthReady(true);
         setLoading(false);
-        clearTimeout(loadingTimeout);
         return;
       }
 
@@ -175,52 +170,18 @@ export default function App() {
         setIsAdmin(adminStatus);
         setIsVip(vipStatus);
         setIsDeveloper(developerStatus);
-        console.log(`[AUTH] snapshot roles applied: isAdmin=${adminStatus}, isVip=${vipStatus}, isDeveloper=${developerStatus}`);
-
-        // Setup real-time listener
-        const unsubscribeUser = onSnapshot(userDocRef, (docSnap) => {
-          if (docSnap.exists()) {
-            const data = docSnap.data() as UserProfile;
-            console.log('[App/Auth] User profile snapshot update');
-            setUserProfile(data);
-            
-            // Re-apply forced roles on every snapshot to ensure consistency
-            if (normalizedEmail === 'fabiopalacioschwingel@gmail.com') {
-              setIsAdmin(true);
-              setIsVip(true);
-              setIsDeveloper(true);
-            } else if (normalizedEmail === 'fabiparadox2@gmail.com') {
-              setIsAdmin(false);
-              setIsVip(true);
-              setIsDeveloper(false);
-            } else {
-              setIsAdmin(data.role === 'admin');
-              setIsVip(data.isVip === true || data.role === 'admin');
-              setIsDeveloper(false);
-            }
-            console.log(`[AUTH] snapshot roles applied (listener): isAdmin=${isAdmin}, isVip=${isVip}, isDeveloper=${isDeveloper}`);
-          }
-        }, (err) => {
-          console.error('[App/Auth] Snapshot error:', err);
-        });
-
-        (window as any)._unsubscribeUser = unsubscribeUser;
+        console.log(`[AUTH] derived roles applied: isAdmin=${adminStatus}, isVip=${vipStatus}, isDeveloper=${developerStatus}`);
       } catch (err) {
         console.error('[App/Auth] Error in auth flow:', err);
       } finally {
         setAuthReady(true);
         setLoading(false);
         console.log('[App/Auth] Auth is now READY');
-        clearTimeout(loadingTimeout);
       }
     });
 
     return () => {
       unsubscribe();
-      clearTimeout(loadingTimeout);
-      if ((window as any)._unsubscribeUser) {
-        (window as any)._unsubscribeUser();
-      }
     };
   }, []);
 
@@ -357,7 +318,12 @@ export default function App() {
                   </button>
                 ) : (
                   <button onClick={() => setActiveTab('settings')} className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full border-2 overflow-hidden transition-all ${activeTab === 'settings' ? 'border-sky-500' : 'border-sky-100'}`}>
-                    {user?.photoURL ? <img src={user.photoURL} alt="Perfil" className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center bg-sky-100 text-sky-600 font-bold text-xs sm:text-base">{user?.displayName?.charAt(0) || 'U'}</div>}
+                    <Avatar 
+                      src={userProfile?.photoURL || user?.photoURL} 
+                      name={userProfile?.displayName || user?.displayName} 
+                      size="md" 
+                      className="w-full h-full border-none shadow-none"
+                    />
                   </button>
                 )}
                 <button onClick={handleLogout} className="p-1.5 sm:p-2 text-gray-400 hover:text-red-500 transition-colors">

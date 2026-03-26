@@ -105,6 +105,11 @@ service cloud.firestore {
       allow update: if isAuthenticated() && (resource.data.userId == request.auth.uid || isAdmin()) && isValidSosCard(request.resource.data);
     }
 
+    match /meta/counters {
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated();
+    }
+
     match /videos/{videoId} {
       allow read: if isAuthenticated() || isAdmin();
       allow write: if isAdmin();

@@ -18,7 +18,7 @@ export const useSofiaOrchestrator = () => {
           const sessionRef = await addDoc(collection(db, 'sofia_sessions'), {
             userId: auth.currentUser.uid,
             startedAt: serverTimestamp(),
-            mode: 'voice',
+            mode: 'text',
             urgentFlag: false
           });
           setSessionId(sessionRef.id);

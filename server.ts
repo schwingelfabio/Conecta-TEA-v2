@@ -145,11 +145,34 @@ async function startServer() {
 
   const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
   const elevenlabs = new ElevenLabsClient({ apiKey: process.env.ELEVENLABS_API_KEY });
-  const upload = multer({ dest: 'uploads/' });
+  const upload = multer({ 
+    storage: multer.diskStorage({
+      destination: 'uploads/',
+      filename: (req, file, cb) => {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        cb(null, uniqueSuffix + path.extname(file.originalname));
+      }
+    }),
+    limits: { fileSize: 5 * 1024 * 1024 } // 5MB limit
+  });
 
   if (!fs.existsSync('uploads')) {
     fs.mkdirSync('uploads');
   }
+
+  // API Route: File Upload
+  app.post("/api/upload", upload.single('file'), (req, res) => {
+    try {
+      if (!req.file) return res.status(400).json({ error: "No file provided" });
+      const fileUrl = `/uploads/${req.file.filename}`;
+      res.json({ url: fileUrl });
+    } catch (error: any) {
+      console.error("Upload Error:", error);
+      res.status(500).json({ error: "Failed to upload file" });
+    }
+  });
+
+  app.use('/uploads', express.static('uploads'));
 
   // API Route: Speech-to-Text (Whisper)
   app.post("/api/stt", upload.single('audio'), async (req, res) => {
