@@ -4,6 +4,7 @@ import { doc, getDoc, collection, addDoc, serverTimestamp } from 'firebase/fires
 import { Lock, Crown, Loader2, Download, Heart, BookOpen, ShieldCheck, ExternalLink, ShieldAlert, Video, PlayCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import PlanosVip from './PlanosVip';
+import DonationSupportCard from './DonationSupportCard';
 import { useTranslation } from 'react-i18next';
 
 export default function AreaVip({
@@ -402,6 +403,10 @@ export default function AreaVip({
             <PlanosVip isVip={effectiveVip} />
           </div>
         )}
+
+        <div className="mt-12">
+          <DonationSupportCard />
+        </div>
 
         <div className="mt-20 p-12 bg-white rounded-[3rem] border-2 border-dashed border-lavender-200 text-center">
           <h3 className="text-2xl font-bold text-gray-900 mb-4">{t('vip.suggestionTitle')}</h3>
