@@ -30,15 +30,15 @@ export default function DonationSupportCard() {
               <Heart size={24} className="fill-purple-600" />
             </div>
             <h3 className="text-2xl font-bold text-gray-900 mb-2">
-              Apoie o Projeto
+              {t('donation.title')}
             </h3>
             <p className="text-gray-600 mb-4 text-lg">
-              Sua contribuição ajuda a manter e melhorar o aplicativo.
+              {t('donation.description')}
             </p>
             <div className="bg-white p-4 rounded-2xl border border-sky-100 mb-6 inline-block text-left">
-              <p className="text-sm text-gray-500 mb-1 font-medium">Desenvolvedor do Conecta TEA e Triagem TEA IA:</p>
+              <p className="text-sm text-gray-500 mb-1 font-medium">{t('donation.developer')}</p>
               <p className="font-bold text-gray-900">Fábio Palacio Schwingel</p>
-              <p className="text-sm text-gray-500 mt-2 font-medium">Chave PIX (CPF):</p>
+              <p className="text-sm text-gray-500 mt-2 font-medium">{t('donation.pixKey')}</p>
               <div className="flex items-center gap-2 mt-1">
                 <code className="bg-gray-100 px-3 py-1.5 rounded-lg text-lg font-mono text-gray-800 select-all">
                   {pixKey}
@@ -46,7 +46,7 @@ export default function DonationSupportCard() {
                 <button
                   onClick={handleCopyPix}
                   className="p-2 bg-sky-100 text-sky-600 rounded-lg hover:bg-sky-200 transition-colors"
-                  title="Copiar chave PIX"
+                  title={t('donation.copyPix')}
                 >
                   {copied ? <CheckCircle2 size={20} className="text-green-500" /> : <Copy size={20} />}
                 </button>
@@ -57,7 +57,7 @@ export default function DonationSupportCard() {
           <div className="flex flex-col items-center bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
             <QRCode value={pixKey} size={120} className="mb-3" />
             <span className="text-xs text-gray-500 font-medium uppercase tracking-wider">
-              Escaneie para doar
+              {t('donation.scanToDonate')}
             </span>
           </div>
         </div>

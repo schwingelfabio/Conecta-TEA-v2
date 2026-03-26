@@ -159,24 +159,24 @@ export default function AreaVip({
   const vipVideos = [
     {
       id: 'v1',
-      title: 'Estratégias Avançadas de Regulação Sensorial',
-      description: 'Aprenda técnicas práticas para ajudar na regulação sensorial no dia a dia.',
+      title: t('vip.videos.v1.title'),
+      description: t('vip.videos.v1.description'),
       videoId: 'TW2Y33Tqja8',
       color: 'border-purple-100 bg-purple-50/30',
       btnColor: 'bg-purple-500 hover:bg-purple-600'
     },
     {
       id: 'v2',
-      title: 'Comunicação Alternativa e Aumentativa (CAA)',
-      description: 'Como introduzir e utilizar sistemas de comunicação alternativa.',
+      title: t('vip.videos.v2.title'),
+      description: t('vip.videos.v2.description'),
       videoId: 'k382m4l-yq0',
       color: 'border-rose-100 bg-rose-50/30',
       btnColor: 'bg-rose-500 hover:bg-rose-600'
     },
     {
       id: 'v3',
-      title: 'Manejo de Comportamentos Desafiadores',
-      description: 'Entendendo a função do comportamento e estratégias de intervenção.',
+      title: t('vip.videos.v3.title'),
+      description: t('vip.videos.v3.description'),
       videoId: 'gM218B11B8w',
       color: 'border-amber-100 bg-amber-50/30',
       btnColor: 'bg-amber-500 hover:bg-amber-600'
@@ -218,16 +218,16 @@ export default function AreaVip({
               <div className="text-center md:text-left max-w-xl">
                 <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-md px-4 py-2 rounded-full mb-4">
                   <ShieldAlert size={18} />
-                  <span className="text-sm font-bold uppercase tracking-wider">Acesso Rápido</span>
+                  <span className="text-sm font-bold uppercase tracking-wider">{t('vip.sos.badge')}</span>
                 </div>
                 <h3 className="text-3xl md:text-4xl font-black mb-4 leading-tight">
-                  {t('vip.sosSensorial')}
+                  {t('vip.sos.title')}
                 </h3>
                 <p className="text-red-50 text-lg mb-8">
-                  Ferramentas imediatas para regulação sensorial, comunicação alternativa e suporte em crises.
+                  {t('vip.sos.description')}
                 </p>
                 <button className="bg-white text-red-600 px-8 py-4 rounded-2xl font-bold text-lg hover:bg-red-50 transition-all flex items-center justify-center gap-2 shadow-lg">
-                  Acessar SOS Agora
+                  {t('vip.sos.button')}
                 </button>
               </div>
               <div className="hidden lg:block">
@@ -353,7 +353,7 @@ export default function AreaVip({
         <div className="mt-16">
           <div className="flex items-center gap-3 mb-8 px-4">
             <Video className="text-lavender-600" size={32} />
-            <h3 className="text-2xl font-bold text-gray-900">Vídeos Exclusivos VIP</h3>
+            <h3 className="text-2xl font-bold text-gray-900">{t('vip.videos.title')}</h3>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -367,7 +367,7 @@ export default function AreaVip({
                 </div>
 
                 <div className="flex-grow mb-6">
-                  <p className="text-xs font-bold uppercase tracking-wider text-lavender-400 mb-2">Vídeo VIP</p>
+                  <p className="text-xs font-bold uppercase tracking-wider text-lavender-400 mb-2">{t('vip.videos.badge')}</p>
                   <h4 className="text-xl font-bold text-gray-900 mb-2 leading-tight">{video.title}</h4>
                   <p className="text-gray-500 text-sm line-clamp-2">{video.description}</p>
                 </div>
@@ -378,7 +378,7 @@ export default function AreaVip({
                     className={`flex items-center justify-center gap-2 py-4 rounded-2xl text-white font-bold transition-all shadow-md active:scale-95 ${video.btnColor}`}
                   >
                     <PlayCircle size={20} />
-                    Assistir Agora
+                    {t('vip.videos.watchNow')}
                   </button>
                 ) : (
                   <button

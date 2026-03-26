@@ -11,6 +11,7 @@
     "privacidade": "Privacy",
     "contato": "Contact",
     "videos": "Videos",
+    "triagem": "AI Screening",
     "createAccount": "Create Account"
   },
   "auth": {
@@ -202,6 +203,29 @@
         "title": "Initial Guide",
         "description": "An essential introductory material to understand the bases of TEA and how to start support."
       }
+    },
+    "videos": {
+      "title": "Exclusive VIP Videos",
+      "badge": "VIP Video",
+      "watchNow": "Watch Now",
+      "v1": {
+        "title": "Advanced Sensory Regulation Strategies",
+        "description": "Learn practical techniques to help with sensory regulation in daily life."
+      },
+      "v2": {
+        "title": "Alternative and Augmentative Communication (AAC)",
+        "description": "How to introduce and use alternative communication systems."
+      },
+      "v3": {
+        "title": "Managing Challenging Behaviors",
+        "description": "Understanding the function of behavior and intervention strategies."
+      }
+    },
+    "sos": {
+      "badge": "Quick Access",
+      "title": "Sensory SOS",
+      "description": "Immediate tools for sensory regulation, alternative communication, and crisis support.",
+      "button": "Access SOS Now"
     }
   },
   "sos": {
@@ -406,5 +430,26 @@
     "saveError": "Error saving location",
     "system": "System",
     "community": "Community"
+  },
+  "donation": {
+    "title": "Support the Project",
+    "description": "Your contribution helps maintain and improve the app.",
+    "button": "Donate with PayPal",
+    "scanToDonate": "Scan to donate",
+    "developer": "Developer of Conecta TEA and Triagem TEA IA:",
+    "pixKey": "PIX Key (CPF):",
+    "copyPix": "Copy PIX key"
+  },
+  "triagem": {
+    "title": "AI ASD Screening",
+    "subtitle": "Our artificial intelligence tool was developed to assist in the early identification of autism signs. A fast, safe, and evidence-based analysis to guide your next steps.",
+    "feature1Title": "Intelligent Analysis",
+    "feature1Desc": "Algorithms trained to identify behavioral patterns sensitively.",
+    "feature2Title": "100% Secure",
+    "feature2Desc": "Your data is protected and the analysis is completely confidential and private.",
+    "feature3Title": "Next Steps",
+    "feature3Desc": "Receive clear guidance on how to seek appropriate professional help.",
+    "cta": "Start Screening Now",
+    "disclaimer": "* This tool does not replace professional medical diagnosis."
   }
 }

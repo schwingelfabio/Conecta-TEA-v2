@@ -11,6 +11,7 @@
     "privacidade": "Privacidade",
     "contato": "Contato",
     "videos": "Vídeos",
+    "triagem": "Triagem IA",
     "createAccount": "Criar Conta"
   },
   "auth": {
@@ -202,6 +203,29 @@
         "title": "Guia Inicial",
         "description": "Um material introdutório essencial para entender as bases do TEA e como começar o suporte."
       }
+    },
+    "videos": {
+      "title": "Vídeos Exclusivos VIP",
+      "badge": "Vídeo VIP",
+      "watchNow": "Assistir Agora",
+      "v1": {
+        "title": "Estratégias Avançadas de Regulação Sensorial",
+        "description": "Aprenda técnicas práticas para ajudar na regulação sensorial no dia a dia."
+      },
+      "v2": {
+        "title": "Comunicação Alternativa e Aumentativa (CAA)",
+        "description": "Como introduzir e utilizar sistemas de comunicação alternativa."
+      },
+      "v3": {
+        "title": "Manejo de Comportamentos Desafiadores",
+        "description": "Entendendo a função do comportamento e estratégias de intervenção."
+      }
+    },
+    "sos": {
+      "badge": "Acesso Rápido",
+      "title": "SOS Sensorial",
+      "description": "Ferramentas imediatas para regulação sensorial, comunicação alternativa e suporte em crises.",
+      "button": "Acessar SOS Agora"
     }
   },
   "sos": {
@@ -406,5 +430,26 @@
     "saveError": "Erro ao salvar localização",
     "system": "Sistema",
     "community": "Comunidade"
+  },
+  "donation": {
+    "title": "Apoie o Projeto",
+    "description": "Sua contribuição ajuda a manter e melhorar o aplicativo.",
+    "button": "Doar com PayPal",
+    "scanToDonate": "Escaneie para doar",
+    "developer": "Desenvolvedor do Conecta TEA e Triagem TEA IA:",
+    "pixKey": "Chave PIX (CPF):",
+    "copyPix": "Copiar chave PIX"
+  },
+  "triagem": {
+    "title": "Triagem TEA IA",
+    "subtitle": "Nossa ferramenta de inteligência artificial foi desenvolvida para auxiliar na identificação precoce de sinais de autismo. Uma análise rápida, segura e baseada em evidências para orientar os próximos passos.",
+    "feature1Title": "Análise Inteligente",
+    "feature1Desc": "Algoritmos treinados para identificar padrões comportamentais de forma sensível.",
+    "feature2Title": "100% Seguro",
+    "feature2Desc": "Seus dados são protegidos e a análise é totalmente confidencial e privada.",
+    "feature3Title": "Próximos Passos",
+    "feature3Desc": "Receba orientações claras sobre como buscar ajuda profissional adequada.",
+    "cta": "Iniciar Triagem Agora",
+    "disclaimer": "* Esta ferramenta não substitui o diagnóstico médico profissional."
   }
 }

@@ -19,19 +19,21 @@ import {
   Video,
   Brain
 } from 'lucide-react';
-import Feed from './components/Feed';
-import AreaVip from './components/AreaVip';
-import NetworkMap from './components/NetworkMap';
-import Settings from './components/Settings';
-import SosPage from './components/SosPage';
-import EmergencyPage from './components/EmergencyPage';
-import LandingPage from './components/LandingPage';
-import VideosPage from './components/VideosPage';
-import TriagemTeaIa from './components/TriagemTeaIa';
-import { SofiaIA } from './components/SofiaIA';
-import { TermosDeUso, Privacidade, Contato } from './components/LegalPages';
-import AuthForm from './components/AuthForm';
-import Onboarding from './components/Onboarding';
+const Feed = lazy(() => import('./components/Feed'));
+const AreaVip = lazy(() => import('./components/AreaVip'));
+const NetworkMap = lazy(() => import('./components/NetworkMap'));
+const Settings = lazy(() => import('./components/Settings'));
+const SosPage = lazy(() => import('./components/SosPage'));
+const EmergencyPage = lazy(() => import('./components/EmergencyPage'));
+const LandingPage = lazy(() => import('./components/LandingPage'));
+const VideosPage = lazy(() => import('./components/VideosPage'));
+const TriagemTeaIa = lazy(() => import('./components/TriagemTeaIa'));
+const SofiaIA = lazy(() => import('./components/SofiaIA').then(module => ({ default: module.SofiaIA })));
+const TermosDeUso = lazy(() => import('./components/LegalPages').then(module => ({ default: module.TermosDeUso })));
+const Privacidade = lazy(() => import('./components/LegalPages').then(module => ({ default: module.Privacidade })));
+const Contato = lazy(() => import('./components/LegalPages').then(module => ({ default: module.Contato })));
+const AuthForm = lazy(() => import('./components/AuthForm'));
+const Onboarding = lazy(() => import('./components/Onboarding'));
 import { UserProfile } from './types';
 import { auth, db } from './lib/firebase';
 import { signOut, onAuthStateChanged, User as FirebaseUser } from 'firebase/auth';
@@ -223,29 +225,29 @@ export default function App() {
 
     switch (activeTab) {
       case 'feed':
-        return <Feed userProfile={userProfile} isAdmin={isAdmin} isVip={isVip} authReady={authReady} isGuest={isGuest} />;
+        return <Suspense fallback={<div className="flex justify-center p-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-500"></div></div>}><Feed userProfile={userProfile} isAdmin={isAdmin} isVip={isVip} authReady={authReady} isGuest={isGuest} /></Suspense>;
       case 'sofia':
-        return <SofiaIA />;
+        return <Suspense fallback={<div className="flex justify-center p-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-500"></div></div>}><SofiaIA /></Suspense>;
       case 'videos':
-        return <VideosPage />;
+        return <Suspense fallback={<div className="flex justify-center p-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-500"></div></div>}><VideosPage /></Suspense>;
       case 'triagem':
-        return <TriagemTeaIa />;
+        return <Suspense fallback={<div className="flex justify-center p-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-500"></div></div>}><TriagemTeaIa /></Suspense>;
       case 'vip':
-        return <AreaVip isAdmin={isAdmin} isVip={isVip} authReady={authReady} onNavigate={(tab) => setActiveTab(tab as any)} isGuest={isGuest} />;
+        return <Suspense fallback={<div className="flex justify-center p-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-500"></div></div>}><AreaVip isAdmin={isAdmin} isVip={isVip} authReady={authReady} onNavigate={(tab) => setActiveTab(tab as any)} isGuest={isGuest} /></Suspense>;
       case 'settings':
-        return <Settings userProfile={userProfile} isAdmin={isAdmin} isVip={isVip} isDeveloper={isDeveloper} onNavigate={(tab) => setActiveTab(tab as any)} isGuest={isGuest} />;
+        return <Suspense fallback={<div className="flex justify-center p-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-500"></div></div>}><Settings userProfile={userProfile} isAdmin={isAdmin} isVip={isVip} isDeveloper={isDeveloper} onNavigate={(tab) => setActiveTab(tab as any)} isGuest={isGuest} /></Suspense>;
       case 'carteirinha':
-        return <SosPage userProfile={userProfile} authReady={authReady} onLoginClick={() => setIsGuest(false)} onNavigate={(tab) => setActiveTab(tab as any)} isGuest={isGuest} isAdmin={isAdmin} isVip={isVip} initialSection="card" />;
+        return <Suspense fallback={<div className="flex justify-center p-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-500"></div></div>}><SosPage userProfile={userProfile} authReady={authReady} onLoginClick={() => setIsGuest(false)} onNavigate={(tab) => setActiveTab(tab as any)} isGuest={isGuest} isAdmin={isAdmin} isVip={isVip} initialSection="card" /></Suspense>;
       case 'sos':
-        return <SosPage userProfile={userProfile} authReady={authReady} onLoginClick={() => setIsGuest(false)} onNavigate={(tab) => setActiveTab(tab as any)} isGuest={isGuest} isAdmin={isAdmin} isVip={isVip} initialSection="tools" />;
+        return <Suspense fallback={<div className="flex justify-center p-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-500"></div></div>}><SosPage userProfile={userProfile} authReady={authReady} onLoginClick={() => setIsGuest(false)} onNavigate={(tab) => setActiveTab(tab as any)} isGuest={isGuest} isAdmin={isAdmin} isVip={isVip} initialSection="tools" /></Suspense>;
       case 'termos':
-        return <TermosDeUso onBack={() => setActiveTab('settings')} />;
+        return <Suspense fallback={<div className="flex justify-center p-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-500"></div></div>}><TermosDeUso onBack={() => setActiveTab('settings')} /></Suspense>;
       case 'privacidade':
-        return <Privacidade onBack={() => setActiveTab('settings')} />;
+        return <Suspense fallback={<div className="flex justify-center p-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-500"></div></div>}><Privacidade onBack={() => setActiveTab('settings')} /></Suspense>;
       case 'contato':
-        return <Contato onBack={() => setActiveTab('settings')} />;
+        return <Suspense fallback={<div className="flex justify-center p-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-500"></div></div>}><Contato onBack={() => setActiveTab('settings')} /></Suspense>;
       default:
-        return <Feed userProfile={userProfile} isAdmin={isAdmin} isVip={isVip} isGuest={isGuest} />;
+        return <Suspense fallback={<div className="flex justify-center p-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-500"></div></div>}><Feed userProfile={userProfile} isAdmin={isAdmin} isVip={isVip} isGuest={isGuest} /></Suspense>;
     }
   };
 
@@ -284,11 +286,11 @@ export default function App() {
               <div className="flex items-center gap-1 sm:gap-4 overflow-x-auto no-scrollbar">
                 <button onClick={() => setActiveTab('settings')} className={`p-2 sm:px-4 sm:py-2 rounded-full flex items-center gap-2 transition-all shrink-0 ${activeTab === 'settings' ? 'bg-sky-100 text-sky-700 font-bold' : 'hover:bg-gray-100 text-gray-600'}`}>
                   <User size={20} />
-                  <span className="hidden sm:inline">Perfil</span>
+                  <span className="hidden sm:inline">{t('nav.profile')}</span>
                 </button>
                 <button onClick={() => setActiveTab('carteirinha')} className={`p-2 sm:px-4 sm:py-2 rounded-full flex items-center gap-2 transition-all shrink-0 ${activeTab === 'carteirinha' ? 'bg-blue-100 text-blue-700 font-bold' : 'hover:bg-gray-100 text-gray-600'}`}>
                   <IdCard size={20} />
-                  <span className="hidden sm:inline">Carteirinha</span>
+                  <span className="hidden sm:inline">{t('nav.sos')}</span>
                 </button>
                 <button onClick={() => setActiveTab('sos')} className={`p-2 sm:px-4 sm:py-2 rounded-full flex items-center gap-2 transition-all shrink-0 ${activeTab === 'sos' ? 'bg-red-100 text-red-700 font-bold' : 'hover:bg-gray-100 text-gray-600'}`}>
                   <AlertTriangle size={20} />
@@ -296,7 +298,7 @@ export default function App() {
                 </button>
                 <button onClick={() => setActiveTab('feed')} className={`p-2 sm:px-4 sm:py-2 rounded-full flex items-center gap-2 transition-all shrink-0 ${activeTab === 'feed' ? 'bg-sky-100 text-sky-700 font-bold' : 'hover:bg-gray-100 text-gray-600'}`}>
                   <Home size={20} />
-                  <span className="hidden sm:inline">Comunidade</span>
+                  <span className="hidden sm:inline">{t('nav.communities')}</span>
                 </button>
                 <button onClick={() => setActiveTab('sofia')} className={`p-2 sm:px-4 sm:py-2 rounded-full flex items-center gap-2 transition-all shrink-0 ${(activeTab as string) === 'sofia' ? 'bg-sky-100 text-sky-700 font-bold' : 'hover:bg-gray-100 text-gray-600'}`}>
                   <MessageCircle size={20} />
@@ -304,15 +306,15 @@ export default function App() {
                 </button>
                 <button onClick={() => setActiveTab('videos')} className={`p-2 sm:px-4 sm:py-2 rounded-full flex items-center gap-2 transition-all shrink-0 ${(activeTab as string) === 'videos' ? 'bg-sky-100 text-sky-700 font-bold' : 'hover:bg-gray-100 text-gray-600'}`}>
                   <Video size={20} />
-                  <span className="hidden sm:inline">Vídeos</span>
+                  <span className="hidden sm:inline">{t('nav.videos')}</span>
                 </button>
                 <button onClick={() => setActiveTab('triagem')} className={`p-2 sm:px-4 sm:py-2 rounded-full flex items-center gap-2 transition-all shrink-0 ${(activeTab as string) === 'triagem' ? 'bg-sky-100 text-sky-700 font-bold' : 'hover:bg-gray-100 text-gray-600'}`}>
                   <Brain size={20} />
-                  <span className="hidden sm:inline">Triagem IA</span>
+                  <span className="hidden sm:inline">{t('nav.triagem')}</span>
                 </button>
                 <button onClick={() => setActiveTab('vip')} className={`p-2 sm:px-4 sm:py-2 rounded-full flex items-center gap-2 transition-all shrink-0 ${(activeTab as string) === 'vip' ? 'bg-amber-100 text-amber-700 font-bold' : 'hover:bg-gray-100 text-gray-600'}`}>
                   <Crown size={20} />
-                  <span className="hidden sm:inline">Membro VIP</span>
+                  <span className="hidden sm:inline">{t('nav.vip')}</span>
                 </button>
               </div>
 
