@@ -13,7 +13,7 @@ export const useSofiaOrchestrator = () => {
   // Initialize session
   useEffect(() => {
     const initSession = async () => {
-      if (auth.currentUser && !sessionId) {
+      if (auth.currentUser?.uid && !sessionId) {
         try {
           const sessionRef = await addDoc(collection(db, 'sofia_sessions'), {
             userId: auth.currentUser.uid,

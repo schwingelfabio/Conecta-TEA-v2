@@ -25,9 +25,7 @@ import ReactMarkdown from 'react-markdown';
 import { useTranslation } from 'react-i18next';
 import PostComments from './PostComments';
 import ActiveCommunities from './ActiveCommunities';
-import ExternalNews from './ExternalNews';
 import { useInView } from 'react-intersection-observer';
-import { GoogleGenAI } from "@google/genai";
 import Avatar from './Avatar';
 import { 
   Send, 
@@ -125,7 +123,6 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
   const [lastVisible, setLastVisible] = useState<QueryDocumentSnapshot<DocumentData> | null>(null);
   const [hasMore, setHasMore] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
-  const [generatingAiNews, setGeneratingAiNews] = useState(false);
   const [expandedComments, setExpandedComments] = useState<string | null>(null);
   const { ref, inView } = useInView({
     threshold: 0.5,
@@ -386,7 +383,6 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
     { id: 'geral', label: 'Geral', icon: <Tag size={16} /> },
     { id: 'cidade', label: 'Minha Cidade', icon: <MapPin size={16} /> },
     { id: 'estado', label: 'Meu Estado', icon: <MapPin size={16} /> },
-    { id: 'noticias_externas', label: 'Notícias Web', icon: <Globe size={16} /> },
     { id: 'duvidas', label: 'Dúvidas', icon: <MessageCircle size={16} /> },
     { id: 'conquistas', label: 'Conquistas', icon: <Heart size={16} /> },
     { id: 'eventos', label: 'Eventos', icon: <MapPin size={16} /> },
@@ -396,7 +392,6 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
     geral: 'Tudo o que está rolando na comunidade',
     cidade: 'Conecte-se com famílias perto de você',
     estado: 'Rede de apoio em todo o seu estado',
-    noticias_externas: 'Últimas atualizações e descobertas',
     duvidas: 'Ninguém sabe tudo. Pergunte aqui!',
     conquistas: 'Cada pequeno passo merece ser celebrado',
     eventos: 'Encontros e atividades inclusivas',
@@ -566,11 +561,8 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
         </p>
       </div>
 
-      {/* Post List or External News */}
-      {topic === 'noticias_externas' ? (
-        <ExternalNews />
-      ) : (
-        <div className="space-y-6">
+      {/* Post List */}
+      <div className="space-y-6">
           {loading ? (
             <LogoLoader />
           ) : posts.length > 0 ? (
@@ -784,7 +776,6 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
             </motion.div>
           )}
         </div>
-      )}
     </div>
   );
 };

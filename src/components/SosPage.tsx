@@ -18,9 +18,10 @@ interface SosPageProps {
   isGuest?: boolean;
   isAdmin?: boolean;
   isVip?: boolean;
+  initialSection?: 'card' | 'tools';
 }
 
-const SosPage: React.FC<SosPageProps> = ({ userProfile, authReady, onLoginClick, onNavigate, isGuest, isAdmin, isVip }) => {
+const SosPage: React.FC<SosPageProps> = ({ userProfile, authReady, onLoginClick, onNavigate, isGuest, isAdmin, isVip, initialSection = 'card' }) => {
   const { t, i18n } = useTranslation();
   const effectiveVip = Boolean(isVip || isAdmin);
   const [sosCard, setSosCard] = useState<SosCard | null>(null);
@@ -297,7 +298,7 @@ const SosPage: React.FC<SosPageProps> = ({ userProfile, authReady, onLoginClick,
       </div>
 
       {/* SOS Sensorial Section */}
-      {!isEditing && (
+      {!isEditing && initialSection === 'tools' && (
         <div className="mb-12 print:hidden">
           <div className="bg-red-50 border border-red-100 rounded-3xl p-6 md:p-8 relative overflow-hidden">
             <div className="relative z-10">
@@ -581,7 +582,7 @@ const SosPage: React.FC<SosPageProps> = ({ userProfile, authReady, onLoginClick,
             )}
           </form>
         </motion.div>
-      ) : (
+      ) : initialSection === 'card' ? (
         <motion.div
           initial={{ opacity: 0, scale: 0.98 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -784,7 +785,7 @@ const SosPage: React.FC<SosPageProps> = ({ userProfile, authReady, onLoginClick,
             }
           `}} />
         </motion.div>
-      )}
+      ) : null}
     </div>
   );
 };

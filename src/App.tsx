@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense, lazy } from 'react';
 import {
   Home,
   User,
@@ -13,7 +13,9 @@ import {
   Mail,
   Map as MapIcon,
   PlayCircle,
-  HeartHandshake
+  HeartHandshake,
+  IdCard,
+  AlertTriangle
 } from 'lucide-react';
 import Feed from './components/Feed';
 import AreaVip from './components/AreaVip';
@@ -39,7 +41,7 @@ import Avatar from './components/Avatar';
 
 export default function App() {
   const { t } = useTranslation();
-  const [activeTab, setActiveTab] = useState<'feed' | 'vip' | 'settings' | 'sos' | 'termos' | 'privacidade' | 'contato' | 'map' | 'videos' | 'acolhe' | 'sofia'>('feed');
+  const [activeTab, setActiveTab] = useState<'feed' | 'vip' | 'settings' | 'sos' | 'termos' | 'privacidade' | 'contato' | 'map' | 'videos' | 'acolhe' | 'sofia' | 'carteirinha'>('feed');
   const [user, setUser] = useState<FirebaseUser | null>(null);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -221,22 +223,14 @@ export default function App() {
     switch (activeTab) {
       case 'feed':
         return <Feed userProfile={userProfile} isAdmin={isAdmin} isVip={isVip} authReady={authReady} isGuest={isGuest} />;
-      case 'vip':
-        console.log('[ACCESS] VIP requested. Decision:', { authReady, isVip });
-        return <AreaVip isAdmin={isAdmin} isVip={isVip} authReady={authReady} onNavigate={(tab) => setActiveTab(tab as any)} isGuest={isGuest} />;
-      case 'map':
-        return <NetworkMap />;
-      case 'videos':
-        return <VideosPage />;
       case 'sofia':
         return <SofiaIA />;
-      case 'acolhe':
-        return <AcolheTEA isDirectEntry={!user && !isGuest} isUrgent={isAcolheUrgent} onRequireLogin={(!user || isGuest) ? () => { setIsGuest(false); setActiveTab('feed'); } : undefined} />;
       case 'settings':
         return <Settings userProfile={userProfile} isAdmin={isAdmin} isVip={isVip} isDeveloper={isDeveloper} onNavigate={(tab) => setActiveTab(tab as any)} isGuest={isGuest} />;
+      case 'carteirinha':
+        return <SosPage userProfile={userProfile} authReady={authReady} onLoginClick={() => setIsGuest(false)} onNavigate={(tab) => setActiveTab(tab as any)} isGuest={isGuest} isAdmin={isAdmin} isVip={isVip} initialSection="card" />;
       case 'sos':
-        console.log('[ACCESS] SOS requested. Decision:', { authReady, user: !!user });
-        return <SosPage userProfile={userProfile} authReady={authReady} onLoginClick={() => setIsGuest(false)} onNavigate={(tab) => setActiveTab(tab as any)} isGuest={isGuest} isAdmin={isAdmin} isVip={isVip} />;
+        return <SosPage userProfile={userProfile} authReady={authReady} onLoginClick={() => setIsGuest(false)} onNavigate={(tab) => setActiveTab(tab as any)} isGuest={isGuest} isAdmin={isAdmin} isVip={isVip} initialSection="tools" />;
       case 'termos':
         return <TermosDeUso onBack={() => setActiveTab('settings')} />;
       case 'privacidade':
@@ -268,7 +262,7 @@ export default function App() {
     <ErrorBoundary>
       <div className="min-h-screen bg-gradient-to-b from-sky-50 to-white font-sans text-gray-900">
         {showOnboarding && <Onboarding onComplete={() => setShowOnboarding(false)} />}
-        {(user || isGuest) && activeTab !== 'acolhe' && (
+        {(user || isGuest) && (
           <nav className="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-gray-100">
             <div className="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
               <div className="flex items-center gap-2 cursor-pointer" onClick={() => setActiveTab('feed')}>
@@ -281,33 +275,25 @@ export default function App() {
               </div>
 
               <div className="flex items-center gap-1 sm:gap-4 overflow-x-auto no-scrollbar">
-                <button onClick={() => setActiveTab('feed')} className={`p-2 sm:px-4 sm:py-2 rounded-full flex items-center gap-2 transition-all shrink-0 ${activeTab === 'feed' ? 'bg-sky-100 text-sky-700 font-bold' : 'hover:bg-gray-100 text-gray-600'}`}>
-                  <Home size={20} />
-                  <span className="hidden sm:inline">{t('nav.feed')}</span>
+                <button onClick={() => setActiveTab('settings')} className={`p-2 sm:px-4 sm:py-2 rounded-full flex items-center gap-2 transition-all shrink-0 ${activeTab === 'settings' ? 'bg-sky-100 text-sky-700 font-bold' : 'hover:bg-gray-100 text-gray-600'}`}>
+                  <User size={20} />
+                  <span className="hidden sm:inline">Perfil</span>
+                </button>
+                <button onClick={() => setActiveTab('carteirinha')} className={`p-2 sm:px-4 sm:py-2 rounded-full flex items-center gap-2 transition-all shrink-0 ${activeTab === 'carteirinha' ? 'bg-blue-100 text-blue-700 font-bold' : 'hover:bg-gray-100 text-gray-600'}`}>
+                  <IdCard size={20} />
+                  <span className="hidden sm:inline">Carteirinha</span>
                 </button>
                 <button onClick={() => setActiveTab('sos')} className={`p-2 sm:px-4 sm:py-2 rounded-full flex items-center gap-2 transition-all shrink-0 ${activeTab === 'sos' ? 'bg-red-100 text-red-700 font-bold' : 'hover:bg-gray-100 text-gray-600'}`}>
-                  <ShieldCheck size={20} />
-                  <span className="hidden sm:inline">{t('nav.sos')}</span>
+                  <AlertTriangle size={20} />
+                  <span className="hidden sm:inline">SOS</span>
                 </button>
-                <button onClick={() => setActiveTab('map')} className={`p-2 sm:px-4 sm:py-2 rounded-full flex items-center gap-2 transition-all shrink-0 ${activeTab === 'map' ? 'bg-emerald-100 text-emerald-700 font-bold' : 'hover:bg-gray-100 text-gray-600'}`}>
-                  <MapIcon size={20} />
-                  <span className="hidden sm:inline">{t('nav.map')}</span>
-                </button>
-                <button onClick={() => setActiveTab('videos')} className={`p-2 sm:px-4 sm:py-2 rounded-full flex items-center gap-2 transition-all shrink-0 ${activeTab === 'videos' ? 'bg-purple-100 text-purple-700 font-bold' : 'hover:bg-gray-100 text-gray-600'}`}>
-                  <PlayCircle size={20} />
-                  <span className="hidden sm:inline">{t('nav.videos')}</span>
+                <button onClick={() => setActiveTab('feed')} className={`p-2 sm:px-4 sm:py-2 rounded-full flex items-center gap-2 transition-all shrink-0 ${activeTab === 'feed' ? 'bg-sky-100 text-sky-700 font-bold' : 'hover:bg-gray-100 text-gray-600'}`}>
+                  <Home size={20} />
+                  <span className="hidden sm:inline">Comunidade</span>
                 </button>
                 <button onClick={() => setActiveTab('sofia')} className={`p-2 sm:px-4 sm:py-2 rounded-full flex items-center gap-2 transition-all shrink-0 ${(activeTab as string) === 'sofia' ? 'bg-sky-100 text-sky-700 font-bold' : 'hover:bg-gray-100 text-gray-600'}`}>
                   <MessageCircle size={20} />
                   <span className="hidden sm:inline">Sofia IA</span>
-                </button>
-                <button onClick={() => setActiveTab('acolhe')} className={`p-2 sm:px-4 sm:py-2 rounded-full flex items-center gap-2 transition-all shrink-0 ${(activeTab as string) === 'acolhe' ? 'bg-rose-100 text-rose-700 font-bold' : 'hover:bg-gray-100 text-gray-600'}`}>
-                  <HeartHandshake size={20} />
-                  <span className="hidden sm:inline">Acolhe TEA</span>
-                </button>
-                <button onClick={() => setActiveTab('vip')} className={`p-2 sm:px-4 sm:py-2 rounded-full flex items-center gap-2 transition-all shrink-0 ${activeTab === 'vip' ? 'bg-amber-100 text-amber-700 font-bold' : 'hover:bg-gray-100 text-gray-600'}`}>
-                  <Crown size={20} />
-                  <span className="hidden sm:inline">{t('nav.vip')}</span>
                 </button>
               </div>
 
@@ -317,14 +303,14 @@ export default function App() {
                     {t('nav.createAccount')}
                   </button>
                 ) : (
-                  <button onClick={() => setActiveTab('settings')} className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full border-2 overflow-hidden transition-all ${activeTab === 'settings' ? 'border-sky-500' : 'border-sky-100'}`}>
+                  <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full border-2 overflow-hidden transition-all ${activeTab === 'settings' ? 'border-sky-500' : 'border-sky-100'}`}>
                     <Avatar 
                       src={userProfile?.photoURL || user?.photoURL} 
                       name={userProfile?.displayName || user?.displayName} 
                       size="md" 
                       className="w-full h-full border-none shadow-none"
                     />
-                  </button>
+                  </div>
                 )}
                 <button onClick={handleLogout} className="p-1.5 sm:p-2 text-gray-400 hover:text-red-500 transition-colors">
                   <LogOut size={20} />
@@ -334,17 +320,19 @@ export default function App() {
           </nav>
         )}
 
-        <main className={(!user && !isGuest && activeTab !== 'acolhe') ? '' : 'max-w-5xl mx-auto px-4 py-8'}>
-          {(!user && !isGuest && activeTab !== 'acolhe') ? (
-            <LandingPage 
-              onLogin={handleLoginSuccess} 
-              onShowTerms={() => setActiveTab('termos')} 
-              onGuestLogin={() => setIsGuest(true)} 
-              onOpenAcolhe={(urgent) => { setIsAcolheUrgent(urgent); setActiveTab('acolhe'); }} 
-            />
-          ) : (
-            renderContent()
-          )}
+        <main className={(!user && !isGuest) ? '' : 'max-w-5xl mx-auto px-4 py-8'}>
+          <Suspense fallback={<div className="flex items-center justify-center min-h-[60vh]"><div className="w-12 h-12 border-4 border-sky-200 border-t-sky-500 rounded-full animate-spin" /></div>}>
+            {(!user && !isGuest) ? (
+              <LandingPage 
+                onLogin={handleLoginSuccess} 
+                onShowTerms={() => setActiveTab('termos')} 
+                onGuestLogin={() => setIsGuest(true)} 
+                onOpenAcolhe={() => setActiveTab('sofia')} 
+              />
+            ) : (
+              renderContent()
+            )}
+          </Suspense>
         </main>
 
         {!user && !isGuest && showAuth && (

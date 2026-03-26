@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { PhoneOff, Send, MessageSquare, Loader2, AlertCircle } from 'lucide-react';
+import { PhoneOff, Send, MessageSquare, Loader2, AlertCircle, Mic, MicOff } from 'lucide-react';
 import { Virtuoso } from 'react-virtuoso';
 import { useSofiaOrchestrator } from '../hooks/useSofiaOrchestrator';
 import { SofiaState } from '../types';
@@ -9,8 +9,48 @@ export const SofiaCallScreen = ({ onEndCall }: { onEndCall: () => void }) => {
   const [sofiaState, setSofiaState] = useState<SofiaState>('idle');
   const [textInput, setTextInput] = useState('');
   const [messages, setMessages] = useState<{sender: 'user' | 'sofia', text: string}[]>([]);
+  const [isListening, setIsListening] = useState(false);
+  const [recognition, setRecognition] = useState<any>(null);
   const hasInitialized = useRef(false);
   const virtuosoRef = useRef<any>(null);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined' && ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
+      const SpeechRecognition = (window as any).webkitSpeechRecognition || (window as any).SpeechRecognition;
+      const rec = new SpeechRecognition();
+      rec.continuous = false;
+      rec.interimResults = false;
+      rec.lang = 'pt-BR';
+
+      rec.onresult = (event: any) => {
+        const transcript = event.results[0][0].transcript;
+        setTextInput(transcript);
+        setIsListening(false);
+      };
+
+      rec.onerror = (event: any) => {
+        console.error('Speech recognition error:', event.error);
+        setIsListening(false);
+      };
+
+      rec.onend = () => {
+        setIsListening(false);
+      };
+
+      setRecognition(rec);
+    }
+  }, []);
+
+  const toggleListening = () => {
+    if (!recognition) return;
+
+    if (isListening) {
+      recognition.stop();
+    } else {
+      recognition.start();
+      setIsListening(true);
+    }
+  };
 
   const initConversation = useCallback(async () => {
     if (hasInitialized.current) return;
@@ -41,7 +81,7 @@ export const SofiaCallScreen = ({ onEndCall }: { onEndCall: () => void }) => {
       console.error("Error in Sofia response:", err);
       setMessages(prev => [...prev, {
         sender: 'sofia', 
-        text: "Desculpe, tive um probleminha técnico momentâneo. Mas estou aqui! Pode tentar falar comigo de novo?" 
+        text: "Estamos com instabilidade, tente novamente." 
       }]);
       setSofiaState('error');
     }
@@ -126,12 +166,22 @@ export const SofiaCallScreen = ({ onEndCall }: { onEndCall: () => void }) => {
               )}
               
               <div className="flex gap-2 bg-slate-900/90 p-2 rounded-2xl border border-white/10 shadow-2xl mt-4 backdrop-blur-xl focus-within:border-sky-500/50 transition-all">
+                {recognition && (
+                  <button 
+                    onClick={toggleListening}
+                    className={`p-3 rounded-xl transition-all flex items-center justify-center min-w-[48px] ${
+                      isListening ? 'bg-red-500 text-white animate-pulse' : 'bg-slate-800 text-slate-400 hover:bg-slate-700'
+                    }`}
+                  >
+                    {isListening ? <MicOff size={20} /> : <Mic size={20} />}
+                  </button>
+                )}
                 <input 
                   value={textInput} 
                   onChange={(e) => setTextInput(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && handleTextSubmit()}
                   className="flex-1 bg-transparent px-4 py-3 text-sm md:text-base text-white outline-none placeholder:text-slate-500"
-                  placeholder="Escreva sua mensagem..."
+                  placeholder={isListening ? "Ouvindo..." : "Escreva sua mensagem..."}
                   autoFocus
                 />
                 <button 

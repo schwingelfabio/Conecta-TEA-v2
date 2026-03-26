@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { auth, db } from '../lib/firebase';
-import { doc, getDoc, updateDoc } from 'firebase/firestore';
-import { signOut, sendPasswordResetEmail } from 'firebase/auth';
+import { auth, db, storage } from '../lib/firebase';
+import { doc, getDoc, updateDoc, serverTimestamp } from 'firebase/firestore';
+import { signOut, sendPasswordResetEmail, updateProfile } from 'firebase/auth';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import {
   User,
   Mail,
@@ -78,7 +79,7 @@ export default function Settings({
 
   const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (!file) return;
+    if (!file || !user) return;
 
     // Check file size (limit to 5MB)
     if (file.size > 5 * 1024 * 1024) {
@@ -87,22 +88,28 @@ export default function Settings({
     }
 
     setIsUploading(true);
-    const formData = new FormData();
-    formData.append('file', file);
-
     try {
-      const response = await fetch('/api/upload', {
-        method: 'POST',
-        body: formData,
+      if (!storage) {
+        throw new Error('Firebase Storage is not available. Please contact support.');
+      }
+      const storageRef = ref(storage, `users/${user.uid}/profile.jpg`);
+      await uploadBytes(storageRef, file);
+      const downloadURL = await getDownloadURL(storageRef);
+
+      // Update Firebase Auth
+      await updateProfile(user, { photoURL: downloadURL });
+      
+      // Update Firestore
+      await updateDoc(doc(db, 'users', user.uid), {
+        photoURL: downloadURL,
+        updatedAt: serverTimestamp()
       });
 
-      if (!response.ok) throw new Error('Upload failed');
-
-      const data = await response.json();
-      setPhotoURL(data.url);
+      setPhotoURL(downloadURL);
+      alert(t('settings.photoSuccess') || 'Foto atualizada com sucesso!');
     } catch (error) {
       console.error('Error uploading photo:', error);
-      alert(t('settings.uploadError') || 'Erro ao enviar foto');
+      alert(t('settings.uploadError') || 'Erro ao enviar foto. Verifique sua conexão.');
     } finally {
       setIsUploading(false);
     }
@@ -197,7 +204,7 @@ export default function Settings({
                   </div>
                 )}
               </div>
-              {isEditing && (
+              {isEditing && storage && (
                 <button
                   onClick={() => fileInputRef.current?.click()}
                   disabled={isUploading}
