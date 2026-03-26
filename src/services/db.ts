@@ -42,11 +42,27 @@ function handleFirestoreError(error: unknown, operationType: OperationType, path
   throw new Error(JSON.stringify(errInfo));
 }
 
+function cleanData(obj: any): any {
+  if (obj === null || typeof obj !== 'object') return obj;
+  if (obj instanceof Date) return obj;
+  
+  const newObj: any = Array.isArray(obj) ? [] : {};
+  for (const key in obj) {
+    if (Object.prototype.hasOwnProperty.call(obj, key)) {
+      const value = obj[key];
+      if (value !== undefined) {
+        newObj[key] = cleanData(value);
+      }
+    }
+  }
+  return newObj;
+}
+
 class FirebaseDatabase {
   async saveUser(user: SofiaUser) {
     const path = `sofia_users/${user.id}`;
     try {
-      await setDoc(doc(firestore, 'sofia_users', user.id), user);
+      await setDoc(doc(firestore, 'sofia_users', user.id), cleanData(user));
       logger.info('Database', 'User saved', { id: user.id });
     } catch (error) {
       handleFirestoreError(error, OperationType.WRITE, path);
@@ -56,7 +72,7 @@ class FirebaseDatabase {
   async saveSession(session: SofiaSession) {
     const path = `sofia_sessions/${session.id}`;
     try {
-      await setDoc(doc(firestore, 'sofia_sessions', session.id), session);
+      await setDoc(doc(firestore, 'sofia_sessions', session.id), cleanData(session));
       logger.info('Database', 'Session saved', { id: session.id });
     } catch (error) {
       handleFirestoreError(error, OperationType.WRITE, path);
@@ -66,7 +82,7 @@ class FirebaseDatabase {
   async updateSession(sessionId: string, updates: Partial<SofiaSession>) {
     const path = `sofia_sessions/${sessionId}`;
     try {
-      await updateDoc(doc(firestore, 'sofia_sessions', sessionId), updates);
+      await updateDoc(doc(firestore, 'sofia_sessions', sessionId), cleanData(updates));
       logger.info('Database', 'Session updated', { id: sessionId });
     } catch (error) {
       handleFirestoreError(error, OperationType.UPDATE, path);
@@ -76,7 +92,7 @@ class FirebaseDatabase {
   async saveMessage(message: SofiaMessage) {
     const path = `sofia_messages/${message.id}`;
     try {
-      await setDoc(doc(firestore, 'sofia_messages', message.id), message);
+      await setDoc(doc(firestore, 'sofia_messages', message.id), cleanData(message));
       logger.info('Database', 'Message saved', { id: message.id });
     } catch (error) {
       handleFirestoreError(error, OperationType.WRITE, path);
@@ -86,7 +102,7 @@ class FirebaseDatabase {
   async saveSummary(summary: SofiaSummary) {
     const path = `sofia_summaries/${summary.id}`;
     try {
-      await setDoc(doc(firestore, 'sofia_summaries', summary.id), summary);
+      await setDoc(doc(firestore, 'sofia_summaries', summary.id), cleanData(summary));
       logger.info('Database', 'Summary saved', { id: summary.id });
     } catch (error) {
       handleFirestoreError(error, OperationType.WRITE, path);
@@ -96,7 +112,7 @@ class FirebaseDatabase {
   async saveSafetyEvent(event: SofiaSafetyEvent) {
     const path = `sofia_safety_events/${event.id}`;
     try {
-      await setDoc(doc(firestore, 'sofia_safety_events', event.id), event);
+      await setDoc(doc(firestore, 'sofia_safety_events', event.id), cleanData(event));
       logger.info('Database', 'Safety Event saved', { id: event.id });
     } catch (error) {
       handleFirestoreError(error, OperationType.WRITE, path);

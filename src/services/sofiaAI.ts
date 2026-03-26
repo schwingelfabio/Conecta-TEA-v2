@@ -1,5 +1,6 @@
 import { GoogleGenAI, Type, Modality } from '@google/genai';
 import { db } from './db';
+import { auth } from '../firebase';
 import { logger, analytics } from './logger';
 import { SofiaMode, SofiaResponse, SofiaSession, SofiaMessage, SofiaSummary, SofiaSafetyEvent } from '../types/sofia';
 
@@ -115,7 +116,7 @@ export class SofiaService {
 
     const session: SofiaSession = {
       id: this.currentSessionId,
-      userId,
+      userId: userId || auth.currentUser?.uid,
       startedAt: new Date(),
       mode: initialMode,
       urgentFlag: initialMode === 'urgencia' || initialMode === 'crise'
