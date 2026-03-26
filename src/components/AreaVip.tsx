@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { auth, db } from '../lib/firebase';
 import { doc, getDoc, collection, addDoc, serverTimestamp } from 'firebase/firestore';
-import { Lock, Crown, Loader2, Download, Heart, BookOpen, ShieldCheck, ExternalLink, ShieldAlert } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { Lock, Crown, Loader2, Download, Heart, BookOpen, ShieldCheck, ExternalLink, ShieldAlert, Video, PlayCircle } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import PlanosVip from './PlanosVip';
 import { useTranslation } from 'react-i18next';
 
@@ -25,6 +25,7 @@ export default function AreaVip({
   const [suggestionText, setSuggestionText] = useState('');
   const [isSending, setIsSending] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [selectedVideo, setSelectedVideo] = useState<string | null>(null);
   const user = auth.currentUser;
   
   const effectiveVip = Boolean(isVip || isAdmin);
@@ -151,6 +152,33 @@ export default function AreaVip({
       url: 'https://drive.google.com/file/d/1aFcrP3_-16aRFRypJ-tlrqO1WdXygBNC/view?usp=drivesdk',
       color: 'border-sky-100 bg-sky-50/30',
       btnColor: 'bg-sky-500 hover:bg-sky-600'
+    }
+  ];
+
+  const vipVideos = [
+    {
+      id: 'v1',
+      title: 'Estratégias Avançadas de Regulação Sensorial',
+      description: 'Aprenda técnicas práticas para ajudar na regulação sensorial no dia a dia.',
+      videoId: 'TW2Y33Tqja8',
+      color: 'border-purple-100 bg-purple-50/30',
+      btnColor: 'bg-purple-500 hover:bg-purple-600'
+    },
+    {
+      id: 'v2',
+      title: 'Comunicação Alternativa e Aumentativa (CAA)',
+      description: 'Como introduzir e utilizar sistemas de comunicação alternativa.',
+      videoId: 'k382m4l-yq0',
+      color: 'border-rose-100 bg-rose-50/30',
+      btnColor: 'bg-rose-500 hover:bg-rose-600'
+    },
+    {
+      id: 'v3',
+      title: 'Manejo de Comportamentos Desafiadores',
+      description: 'Entendendo a função do comportamento e estratégias de intervenção.',
+      videoId: 'gM218B11B8w',
+      color: 'border-amber-100 bg-amber-50/30',
+      btnColor: 'bg-amber-500 hover:bg-amber-600'
     }
   ];
 
@@ -321,6 +349,52 @@ export default function AreaVip({
           </div>
         </div>
 
+        <div className="mt-16">
+          <div className="flex items-center gap-3 mb-8 px-4">
+            <Video className="text-lavender-600" size={32} />
+            <h3 className="text-2xl font-bold text-gray-900">Vídeos Exclusivos VIP</h3>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {vipVideos.map((video) => (
+              <div
+                key={video.id}
+                className={`flex flex-col p-8 rounded-[2.5rem] border transition-all hover:shadow-xl hover:-translate-y-1 ${video.color}`}
+              >
+                <div className="bg-white p-4 rounded-2xl w-fit mb-6 shadow-sm">
+                  <PlayCircle size={32} className="text-lavender-600" />
+                </div>
+
+                <div className="flex-grow mb-6">
+                  <p className="text-xs font-bold uppercase tracking-wider text-lavender-400 mb-2">Vídeo VIP</p>
+                  <h4 className="text-xl font-bold text-gray-900 mb-2 leading-tight">{video.title}</h4>
+                  <p className="text-gray-500 text-sm line-clamp-2">{video.description}</p>
+                </div>
+
+                {effectiveVip ? (
+                  <button
+                    onClick={() => setSelectedVideo(video.videoId)}
+                    className={`flex items-center justify-center gap-2 py-4 rounded-2xl text-white font-bold transition-all shadow-md active:scale-95 ${video.btnColor}`}
+                  >
+                    <PlayCircle size={20} />
+                    Assistir Agora
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => {
+                      alert(t('vip.subscribeToDownload'));
+                    }}
+                    className="flex items-center justify-center gap-2 py-4 rounded-2xl text-gray-400 bg-gray-100 font-bold transition-all cursor-not-allowed"
+                  >
+                    <Lock size={20} />
+                    {t('vip.vipOnly')}
+                  </button>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+
         {!effectiveVip && (
           <div className="mt-12 bg-lavender-100/50 border border-lavender-200 rounded-3xl p-8 text-center">
             <h3 className="text-xl font-bold text-lavender-800 mb-2">{t('vip.viewingLibrary')}</h3>
@@ -363,6 +437,41 @@ export default function AreaVip({
           )}
         </div>
       </motion.div>
+
+      <AnimatePresence>
+        {selectedVideo && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/90 backdrop-blur-sm"
+            onClick={() => setSelectedVideo(null)}
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              className="relative w-full max-w-4xl aspect-video bg-black rounded-2xl overflow-hidden shadow-2xl"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button
+                onClick={() => setSelectedVideo(null)}
+                className="absolute top-4 right-4 z-10 p-2 bg-black/50 hover:bg-black/70 text-white rounded-full transition-colors"
+              >
+                <Lock size={24} className="hidden" /> {/* Just to keep import used if needed, but actually I'll use a close icon, wait, I didn't import X. Let me just use text or a simple SVG */}
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+              </button>
+              <iframe
+                src={`https://www.youtube.com/embed/${selectedVideo}?autoplay=1`}
+                title="YouTube video player"
+                className="w-full h-full border-0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              ></iframe>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

@@ -15,7 +15,9 @@ import {
   PlayCircle,
   HeartHandshake,
   IdCard,
-  AlertTriangle
+  AlertTriangle,
+  Video,
+  Brain
 } from 'lucide-react';
 import Feed from './components/Feed';
 import AreaVip from './components/AreaVip';
@@ -25,6 +27,7 @@ import SosPage from './components/SosPage';
 import EmergencyPage from './components/EmergencyPage';
 import LandingPage from './components/LandingPage';
 import VideosPage from './components/VideosPage';
+import TriagemTeaIa from './components/TriagemTeaIa';
 import { SofiaIA } from './components/SofiaIA';
 import { TermosDeUso, Privacidade, Contato } from './components/LegalPages';
 import AuthForm from './components/AuthForm';
@@ -40,7 +43,7 @@ import Avatar from './components/Avatar';
 
 export default function App() {
   const { t } = useTranslation();
-  const [activeTab, setActiveTab] = useState<'feed' | 'vip' | 'settings' | 'sos' | 'termos' | 'privacidade' | 'contato' | 'map' | 'videos' | 'sofia' | 'carteirinha'>('feed');
+  const [activeTab, setActiveTab] = useState<'feed' | 'vip' | 'settings' | 'sos' | 'termos' | 'privacidade' | 'contato' | 'map' | 'videos' | 'sofia' | 'carteirinha' | 'triagem'>('feed');
   const [user, setUser] = useState<FirebaseUser | null>(null);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -223,6 +226,12 @@ export default function App() {
         return <Feed userProfile={userProfile} isAdmin={isAdmin} isVip={isVip} authReady={authReady} isGuest={isGuest} />;
       case 'sofia':
         return <SofiaIA />;
+      case 'videos':
+        return <VideosPage />;
+      case 'triagem':
+        return <TriagemTeaIa />;
+      case 'vip':
+        return <AreaVip isAdmin={isAdmin} isVip={isVip} authReady={authReady} onNavigate={(tab) => setActiveTab(tab as any)} isGuest={isGuest} />;
       case 'settings':
         return <Settings userProfile={userProfile} isAdmin={isAdmin} isVip={isVip} isDeveloper={isDeveloper} onNavigate={(tab) => setActiveTab(tab as any)} isGuest={isGuest} />;
       case 'carteirinha':
@@ -292,6 +301,18 @@ export default function App() {
                 <button onClick={() => setActiveTab('sofia')} className={`p-2 sm:px-4 sm:py-2 rounded-full flex items-center gap-2 transition-all shrink-0 ${(activeTab as string) === 'sofia' ? 'bg-sky-100 text-sky-700 font-bold' : 'hover:bg-gray-100 text-gray-600'}`}>
                   <MessageCircle size={20} />
                   <span className="hidden sm:inline">Sofia IA</span>
+                </button>
+                <button onClick={() => setActiveTab('videos')} className={`p-2 sm:px-4 sm:py-2 rounded-full flex items-center gap-2 transition-all shrink-0 ${(activeTab as string) === 'videos' ? 'bg-sky-100 text-sky-700 font-bold' : 'hover:bg-gray-100 text-gray-600'}`}>
+                  <Video size={20} />
+                  <span className="hidden sm:inline">Vídeos</span>
+                </button>
+                <button onClick={() => setActiveTab('triagem')} className={`p-2 sm:px-4 sm:py-2 rounded-full flex items-center gap-2 transition-all shrink-0 ${(activeTab as string) === 'triagem' ? 'bg-sky-100 text-sky-700 font-bold' : 'hover:bg-gray-100 text-gray-600'}`}>
+                  <Brain size={20} />
+                  <span className="hidden sm:inline">Triagem IA</span>
+                </button>
+                <button onClick={() => setActiveTab('vip')} className={`p-2 sm:px-4 sm:py-2 rounded-full flex items-center gap-2 transition-all shrink-0 ${(activeTab as string) === 'vip' ? 'bg-amber-100 text-amber-700 font-bold' : 'hover:bg-gray-100 text-gray-600'}`}>
+                  <Crown size={20} />
+                  <span className="hidden sm:inline">Membro VIP</span>
                 </button>
               </div>
 
