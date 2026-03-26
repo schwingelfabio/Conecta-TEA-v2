@@ -44,23 +44,48 @@ const PostComments: React.FC<PostCommentsProps> = ({ postId, userProfile, isGues
     e.preventDefault();
     if (!newComment.trim() || !userProfile || isGuest) return;
 
+    const commentText = newComment.trim();
+    setNewComment(''); // Clear input immediately
+
+    // Create optimistic comment
+    const optimisticComment: Comment = {
+      id: `temp-${Date.now()}`,
+      postId,
+      authorId: userProfile.uid,
+      authorName: userProfile.displayName,
+      authorPhoto: userProfile.photoURL,
+      text: commentText,
+      timestamp: new Date() as any,
+    };
+
+    // Optimistically update local state
+    setComments(prev => [...prev, optimisticComment]);
+
     try {
-      await addDoc(collection(db, 'posts', postId, 'comments'), {
+      const newCommentData = {
         postId,
         authorId: userProfile.uid,
         authorName: userProfile.displayName,
         authorPhoto: userProfile.photoURL,
-        text: newComment.trim(),
+        text: commentText,
         timestamp: serverTimestamp()
-      });
+      };
+
+      const docRef = await addDoc(collection(db, 'posts', postId, 'comments'), newCommentData);
 
       await updateDoc(doc(db, 'posts', postId), {
         commentsCount: increment(1)
       });
 
-      setNewComment('');
+      // Update the temporary ID with the real one
+      setComments(prev => prev.map(c => c.id === optimisticComment.id ? { ...c, id: docRef.id } : c));
+
     } catch (err) {
       console.error('Error adding comment:', err);
+      // Revert optimistic update on error
+      setComments(prev => prev.filter(c => c.id !== optimisticComment.id));
+      setNewComment(commentText); // Restore input text
+      alert('Não foi possível enviar o comentário. Tente novamente.');
     }
   };
 

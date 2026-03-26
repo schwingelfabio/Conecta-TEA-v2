@@ -283,9 +283,12 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
       return;
     }
 
+    const postText = newPost;
+    setNewPost(''); // Clear immediately for better UX
+
     const payload = {
-      text: newPost,
-      content: newPost,
+      text: postText,
+      content: postText,
       authorId: userProfile.uid,
       userId: userProfile.uid,
       authorName: userProfile.displayName,
@@ -306,21 +309,30 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
     try {
       const docRef = await addDoc(collection(db, 'posts'), payload);
       console.log('[Feed/Post] SUCCESS! Doc ID:', docRef.id);
-      setNewPost('');
       // Refresh feed immediately
       await fetchPosts();
     } catch (err: any) {
       console.error("[Feed/Post] FAILED to save post:", err);
+      setNewPost(postText); // Restore on failure
       alert(`Erro ao publicar post: ${err.message || 'Erro desconhecido'}`);
     }
   };
 
   const handleDeletePost = async (postId: string) => {
     if (window.confirm('Tem certeza que deseja apagar este post?')) {
+      const postToDelete = posts.find(p => p.id === postId);
+      if (!postToDelete) return;
+
+      // Optimistically update UI
+      setPosts(prev => prev.filter(p => p.id !== postId));
+
       try {
         await deleteDoc(doc(db, 'posts', postId));
       } catch (err) {
         console.error("Error deleting post:", err);
+        // Revert optimistic update
+        setPosts(prev => [postToDelete, ...prev].sort((a, b) => b.timestamp - a.timestamp));
+        alert("Não foi possível excluir agora. Tente novamente.");
       }
     }
   };

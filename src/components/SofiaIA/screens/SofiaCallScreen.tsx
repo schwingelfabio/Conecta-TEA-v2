@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { PhoneOff, Send, MessageSquare, Loader2, AlertCircle } from 'lucide-react';
-import { Virtuoso } from 'react-virtuoso';
 import { useSofiaOrchestrator } from '../hooks/useSofiaOrchestrator';
 import { SofiaState } from '../types';
 
@@ -10,7 +9,15 @@ export const SofiaCallScreen = ({ onEndCall }: { onEndCall: () => void }) => {
   const [textInput, setTextInput] = useState('');
   const [messages, setMessages] = useState<{sender: 'user' | 'sofia', text: string}[]>([]);
   const hasInitialized = useRef(false);
-  const virtuosoRef = useRef<any>(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages, sofiaState]);
 
   const initConversation = useCallback(async () => {
     if (hasInitialized.current) return;
@@ -26,22 +33,34 @@ export const SofiaCallScreen = ({ onEndCall }: { onEndCall: () => void }) => {
   }, [initConversation]);
 
   const handleTextSubmit = async () => {
-    if (!textInput.trim() || sofiaState === 'processing') return;
+    console.log('[SofiaCallScreen] handleTextSubmit called with text:', textInput);
+    if (!textInput.trim() || sofiaState === 'processing') {
+      console.log('[SofiaCallScreen] Ignoring submit. textInput empty or already processing.');
+      return;
+    }
     
     const userText = textInput;
-    setMessages(prev => [...prev, {sender: 'user', text: userText}]);
+    setMessages(prev => {
+      console.log('[SofiaCallScreen] Adding user message to state:', userText);
+      return [...prev, {sender: 'user', text: userText}];
+    });
     setTextInput('');
     setSofiaState('processing');
 
     try {
+      console.log('[SofiaCallScreen] Calling processTurn...');
       const res = await processTurn(userText);
-      setMessages(prev => [...prev, {sender: 'sofia', text: res.response}]);
+      console.log('[SofiaCallScreen] processTurn returned:', res);
+      setMessages(prev => {
+        console.log('[SofiaCallScreen] Adding sofia message to state:', res.response);
+        return [...prev, {sender: 'sofia', text: res.response}];
+      });
       setSofiaState('ready');
     } catch (err) {
-      console.error("Error in Sofia response:", err);
+      console.error("[SofiaCallScreen] Error in Sofia response:", err);
       setMessages(prev => [...prev, {
         sender: 'sofia', 
-        text: "Estamos com instabilidade, tente novamente." 
+        text: "Estamos com instabilidade no momento. Tente novamente em instantes." 
       }]);
       setSofiaState('error');
     }
@@ -87,28 +106,23 @@ export const SofiaCallScreen = ({ onEndCall }: { onEndCall: () => void }) => {
             </div>
           ) : (
             <>
-              <div className="flex-1 overflow-hidden flex flex-col">
-                <Virtuoso
-                  ref={virtuosoRef}
-                  data={messages}
-                  followOutput="smooth"
-                  initialTopMostItemIndex={messages.length > 0 ? messages.length - 1 : 0}
-                  className="flex-1 pr-2 custom-scrollbar"
-                  itemContent={(index, m) => (
-                    <div 
-                      className={`flex ${m.sender === 'user' ? 'justify-end' : 'justify-start'} mb-6`}
-                    >
-                      <div className={`relative p-4 md:p-5 rounded-2xl max-w-[85%] text-sm md:text-base leading-relaxed shadow-lg ${
-                        m.sender === 'user' 
-                          ? 'bg-sky-600 text-white rounded-tr-none shadow-sky-900/20' 
-                          : 'bg-slate-800 text-slate-100 rounded-tl-none border border-white/5 shadow-black/40'
-                      }`}>
-                        {m.text}
-                        <div className={`absolute top-0 ${m.sender === 'user' ? '-right-1 border-l-sky-600' : '-left-1 border-r-slate-800'} w-0 h-0 border-t-[8px] border-t-transparent border-b-[8px] border-b-transparent border-l-[8px]`} />
-                      </div>
+              <div className="flex-1 overflow-y-auto flex flex-col pr-2 custom-scrollbar space-y-6 pb-4">
+                {messages.map((m, index) => (
+                  <div 
+                    key={index}
+                    className={`flex ${m.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+                  >
+                    <div className={`relative p-4 md:p-5 rounded-2xl max-w-[85%] text-sm md:text-base leading-relaxed shadow-lg ${
+                      m.sender === 'user' 
+                        ? 'bg-sky-600 text-white rounded-tr-none shadow-sky-900/20' 
+                        : 'bg-slate-800 text-slate-100 rounded-tl-none border border-white/5 shadow-black/40'
+                    }`}>
+                      {m.text}
+                      <div className={`absolute top-0 ${m.sender === 'user' ? '-right-1 border-l-sky-600' : '-left-1 border-r-slate-800'} w-0 h-0 border-t-[8px] border-t-transparent border-b-[8px] border-b-transparent border-l-[8px]`} />
                     </div>
-                  )}
-                />
+                  </div>
+                ))}
+                <div ref={messagesEndRef} />
               </div>
               
               <div className="mt-4">
