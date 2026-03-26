@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import VideoGallery from './VideoGallery';
 import { PlayCircle, Sparkles, Video } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { db, auth } from '../lib/firebase';
+import { db } from '../lib/firebase';
 import { 
   collection, 
   query, 
@@ -11,30 +11,29 @@ import {
   addDoc, 
   serverTimestamp 
 } from 'firebase/firestore';
-import { onAuthStateChanged } from 'firebase/auth';
 
-const SHORTS_VIDEOS = [
-  { videoId: 'TW2Y33Tqja8', title: 'Dicas de Autismo 1' },
-  { videoId: 'tNuM5SI_UxE', title: 'Dicas de Autismo 2' },
-  { videoId: 'bQ9HwhO9voc', title: 'Dicas de Autismo 3' },
-  { videoId: 'nVtBctQhXwI', title: 'Dicas de Autismo 4' },
-  { videoId: 'oM5pUsG6p0s', title: 'Dicas de Autismo 5' },
-  { videoId: 'A3855OOeM_4', title: 'Dicas de Autismo 6' },
-  { videoId: 'AKFKCj9hM_Q', title: 'Dicas de Autismo 7' },
-  { videoId: 'lKkbO2ABKL4', title: 'Dicas de Autismo 8' },
+const AUTISM_VIDEOS = [
+  { videoId: 'TW2Y33Tqja8', title: 'Sinais de Autismo em Bebês' },
+  { videoId: 'tNuM5SI_UxE', title: 'Como lidar com crises de autismo' },
+  { videoId: 'bQ9HwhO9voc', title: 'A importância da rotina' },
+  { videoId: 'nVtBctQhXwI', title: 'Dicas de comunicação' },
+  { videoId: 'oM5pUsG6p0s', title: 'Autismo e seletividade alimentar' },
+  { videoId: 'A3855OOeM_4', title: 'Brincadeiras inclusivas' },
+  { videoId: 'AKFKCj9hM_Q', title: 'Direitos do autista' },
+  { videoId: 'lKkbO2ABKL4', title: 'Autismo na escola' },
+  { videoId: '9bZkp7q19f0', title: 'Entendendo o espectro' },
+  { videoId: '3JZ_D3ELwOQ', title: 'Terapias e intervenções' },
+  { videoId: 'V-_O7nl0Ii0', title: 'Apoio aos pais e cuidadores' },
+  { videoId: 'C0DPdy98e4c', title: 'Mitos e verdades sobre o autismo' },
 ];
-
-const ADMIN_EMAIL = 'fabiopalacioschwingel@gmail.com';
 
 export default function VideosPage() {
   const { t } = useTranslation();
   useEffect(() => {
-    const seedVideos = async (userEmail: string) => {
-      if (userEmail !== ADMIN_EMAIL) return;
-
+    const seedVideos = async () => {
       console.log('Iniciando semeadura de vídeos...');
       
-      for (const video of SHORTS_VIDEOS) {
+      for (const video of AUTISM_VIDEOS) {
         try {
           const q = query(collection(db, 'videos'), where('videoId', '==', video.videoId));
           const snapshot = await getDocs(q);
@@ -42,7 +41,7 @@ export default function VideosPage() {
           if (snapshot.empty) {
             await addDoc(collection(db, 'videos'), {
               videoId: video.videoId,
-              url: `https://youtube.com/shorts/${video.videoId}`,
+              url: `https://youtube.com/watch?v=${video.videoId}`,
               title: video.title,
               thumbnail: `https://img.youtube.com/vi/${video.videoId}/hqdefault.jpg`,
               createdAt: serverTimestamp()
@@ -57,13 +56,7 @@ export default function VideosPage() {
       }
     };
 
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user && user.email) {
-        seedVideos(user.email);
-      }
-    });
-
-    return () => unsubscribe();
+    seedVideos();
   }, []);
 
   return (
