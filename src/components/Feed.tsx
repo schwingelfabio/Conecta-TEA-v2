@@ -370,24 +370,31 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
 
     const postRef = doc(db, 'posts', postId);
     const isLiked = likes.includes(userProfile.uid);
+    const newLikes = isLiked 
+      ? likes.filter(id => id !== userProfile.uid)
+      : [...likes, userProfile.uid];
+
+    // Optimistically update local state
+    setPosts(prev => prev.map(p => {
+      if (p.id === postId) {
+        return { ...p, likes: newLikes };
+      }
+      return p;
+    }));
 
     try {
       await updateDoc(postRef, {
         likes: isLiked ? arrayRemove(userProfile.uid) : arrayUnion(userProfile.uid)
       });
-      
-      // Optimistically update local state
+    } catch (err) {
+      console.error("Error toggling like:", err);
+      // Revert optimistic update
       setPosts(prev => prev.map(p => {
         if (p.id === postId) {
-          const newLikes = isLiked 
-            ? likes.filter(id => id !== userProfile.uid)
-            : [...likes, userProfile.uid];
-          return { ...p, likes: newLikes };
+          return { ...p, likes: likes };
         }
         return p;
       }));
-    } catch (err) {
-      console.error("Error toggling like:", err);
     }
   };
 

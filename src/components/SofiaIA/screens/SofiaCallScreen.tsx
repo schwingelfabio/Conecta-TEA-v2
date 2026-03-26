@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { PhoneOff, Send, MessageSquare, Loader2, AlertCircle } from 'lucide-react';
 import { useSofiaOrchestrator } from '../hooks/useSofiaOrchestrator';
 import { SofiaState } from '../types';
+import Markdown from 'react-markdown';
 
 export const SofiaCallScreen = ({ onEndCall }: { onEndCall: () => void }) => {
   const { processTurn, state: orchestratorState } = useSofiaOrchestrator();
@@ -117,7 +118,13 @@ export const SofiaCallScreen = ({ onEndCall }: { onEndCall: () => void }) => {
                         ? 'bg-sky-600 text-white rounded-tr-none shadow-sky-900/20' 
                         : 'bg-slate-800 text-slate-100 rounded-tl-none border border-white/5 shadow-black/40'
                     }`}>
-                      {m.text}
+                      {m.sender === 'user' ? (
+                        m.text
+                      ) : (
+                        <div className="markdown-body text-slate-100 prose prose-invert prose-sm max-w-none">
+                          <Markdown>{m.text}</Markdown>
+                        </div>
+                      )}
                       <div className={`absolute top-0 ${m.sender === 'user' ? '-right-1 border-l-sky-600' : '-left-1 border-r-slate-800'} w-0 h-0 border-t-[8px] border-t-transparent border-b-[8px] border-b-transparent border-l-[8px]`} />
                     </div>
                   </div>

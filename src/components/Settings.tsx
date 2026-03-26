@@ -117,18 +117,24 @@ export default function Settings({
 
   const handleSave = async () => {
     if (!user) return;
+    
+    if (!firstName.trim() || !lastName.trim() || !state.trim() || !city.trim() || !role.trim()) {
+      alert('Por favor, preencha todos os campos obrigatórios (Nome, Sobrenome, Estado, Cidade e Perfil).');
+      return;
+    }
+
     setIsSaving(true);
     try {
       await updateDoc(doc(db, 'users', user.uid), {
         displayName: `${firstName} ${lastName}`.trim() || name,
-        firstName,
-        lastName,
-        address,
-        phoneNumber,
+        firstName: firstName.trim(),
+        lastName: lastName.trim(),
+        address: address.trim(),
+        phoneNumber: phoneNumber.trim(),
         photoURL,
-        state,
-        city,
-        bio,
+        state: state.trim(),
+        city: city.trim(),
+        bio: bio.trim(),
         role
       });
       setIsEditing(false);
