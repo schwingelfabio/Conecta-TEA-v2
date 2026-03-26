@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { PhoneOff, Send, MessageSquare, Loader2, AlertCircle, Mic, MicOff } from 'lucide-react';
+import { PhoneOff, Send, MessageSquare, Loader2, AlertCircle } from 'lucide-react';
 import { Virtuoso } from 'react-virtuoso';
 import { useSofiaOrchestrator } from '../hooks/useSofiaOrchestrator';
 import { SofiaState } from '../types';
@@ -9,48 +9,8 @@ export const SofiaCallScreen = ({ onEndCall }: { onEndCall: () => void }) => {
   const [sofiaState, setSofiaState] = useState<SofiaState>('idle');
   const [textInput, setTextInput] = useState('');
   const [messages, setMessages] = useState<{sender: 'user' | 'sofia', text: string}[]>([]);
-  const [isListening, setIsListening] = useState(false);
-  const [recognition, setRecognition] = useState<any>(null);
   const hasInitialized = useRef(false);
   const virtuosoRef = useRef<any>(null);
-
-  useEffect(() => {
-    if (typeof window !== 'undefined' && ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
-      const SpeechRecognition = (window as any).webkitSpeechRecognition || (window as any).SpeechRecognition;
-      const rec = new SpeechRecognition();
-      rec.continuous = false;
-      rec.interimResults = false;
-      rec.lang = 'pt-BR';
-
-      rec.onresult = (event: any) => {
-        const transcript = event.results[0][0].transcript;
-        setTextInput(transcript);
-        setIsListening(false);
-      };
-
-      rec.onerror = (event: any) => {
-        console.error('Speech recognition error:', event.error);
-        setIsListening(false);
-      };
-
-      rec.onend = () => {
-        setIsListening(false);
-      };
-
-      setRecognition(rec);
-    }
-  }, []);
-
-  const toggleListening = () => {
-    if (!recognition) return;
-
-    if (isListening) {
-      recognition.stop();
-    } else {
-      recognition.start();
-      setIsListening(true);
-    }
-  };
 
   const initConversation = useCallback(async () => {
     if (hasInitialized.current) return;
@@ -111,7 +71,15 @@ export const SofiaCallScreen = ({ onEndCall }: { onEndCall: () => void }) => {
 
       {/* Chat Area */}
       <div className="flex-1 flex flex-col relative overflow-hidden bg-[radial-gradient(circle_at_50%_50%,_#0f172a_0%,_#020617_100%)]">
-        <div className="flex-1 flex flex-col p-4 md:p-6 overflow-hidden">
+        <div className="flex-1 flex flex-col p-4 md:p-8 overflow-hidden max-w-4xl mx-auto w-full">
+          {/* Explanatory Text */}
+          <div className="mb-8 text-center">
+            <h1 className="text-3xl font-black text-white mb-2 tracking-tight">Sofia IA</h1>
+            <p className="text-slate-400 text-sm md:text-base max-w-md mx-auto">
+              Estou aqui para te ouvir e apoiar em sua jornada. Sinta-se à vontade para compartilhar o que estiver sentindo.
+            </p>
+          </div>
+
           {sofiaState === 'connecting' ? (
             <div className="flex-1 flex flex-col items-center justify-center space-y-4">
               <Loader2 className="w-8 h-8 text-sky-500 animate-spin" />
@@ -119,78 +87,72 @@ export const SofiaCallScreen = ({ onEndCall }: { onEndCall: () => void }) => {
             </div>
           ) : (
             <>
-              <Virtuoso
-                ref={virtuosoRef}
-                data={messages}
-                followOutput="smooth"
-                initialTopMostItemIndex={messages.length > 0 ? messages.length - 1 : 0}
-                className="flex-1 pr-2 custom-scrollbar"
-                itemContent={(index, m) => (
-                  <div 
-                    className={`flex ${m.sender === 'user' ? 'justify-end' : 'justify-start'} mb-6`}
-                  >
-                    <div className={`relative p-4 rounded-2xl max-w-[85%] text-sm md:text-base leading-relaxed shadow-lg ${
-                      m.sender === 'user' 
-                        ? 'bg-sky-600 text-white rounded-tr-none shadow-sky-900/20' 
-                        : 'bg-slate-800 text-slate-100 rounded-tl-none border border-white/5 shadow-black/40'
-                    }`}>
-                      {m.text}
-                      <div className={`absolute top-0 ${m.sender === 'user' ? '-right-1 border-l-sky-600' : '-left-1 border-r-slate-800'} w-0 h-0 border-t-[8px] border-t-transparent border-b-[8px] border-b-transparent border-l-[8px]`} />
+              <div className="flex-1 overflow-hidden flex flex-col">
+                <Virtuoso
+                  ref={virtuosoRef}
+                  data={messages}
+                  followOutput="smooth"
+                  initialTopMostItemIndex={messages.length > 0 ? messages.length - 1 : 0}
+                  className="flex-1 pr-2 custom-scrollbar"
+                  itemContent={(index, m) => (
+                    <div 
+                      className={`flex ${m.sender === 'user' ? 'justify-end' : 'justify-start'} mb-6`}
+                    >
+                      <div className={`relative p-4 md:p-5 rounded-2xl max-w-[85%] text-sm md:text-base leading-relaxed shadow-lg ${
+                        m.sender === 'user' 
+                          ? 'bg-sky-600 text-white rounded-tr-none shadow-sky-900/20' 
+                          : 'bg-slate-800 text-slate-100 rounded-tl-none border border-white/5 shadow-black/40'
+                      }`}>
+                        {m.text}
+                        <div className={`absolute top-0 ${m.sender === 'user' ? '-right-1 border-l-sky-600' : '-left-1 border-r-slate-800'} w-0 h-0 border-t-[8px] border-t-transparent border-b-[8px] border-b-transparent border-l-[8px]`} />
+                      </div>
                     </div>
-                  </div>
-                )}
-              />
-              
-              {sofiaState === 'processing' && (
-                <div className="flex justify-start mb-6 animate-in fade-in slide-in-from-left-2 duration-300">
-                  <div className="bg-slate-800/50 p-4 rounded-2xl rounded-tl-none border border-white/5 flex items-center gap-2">
-                    <div className="flex gap-1">
-                      <span className="w-1.5 h-1.5 bg-sky-500 rounded-full animate-bounce [animation-delay:-0.3s]" />
-                      <span className="w-1.5 h-1.5 bg-sky-500 rounded-full animate-bounce [animation-delay:-0.15s]" />
-                      <span className="w-1.5 h-1.5 bg-sky-500 rounded-full animate-bounce" />
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {sofiaState === 'error' && (
-                <div className="flex justify-center mb-4">
-                  <button 
-                    onClick={() => setSofiaState('ready')}
-                    className="flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-full text-xs text-slate-400 transition-all border border-white/5"
-                  >
-                    <AlertCircle size={14} />
-                    Limpar erro e continuar
-                  </button>
-                </div>
-              )}
-              
-              <div className="flex gap-2 bg-slate-900/90 p-2 rounded-2xl border border-white/10 shadow-2xl mt-4 backdrop-blur-xl focus-within:border-sky-500/50 transition-all">
-                {recognition && (
-                  <button 
-                    onClick={toggleListening}
-                    className={`p-3 rounded-xl transition-all flex items-center justify-center min-w-[48px] ${
-                      isListening ? 'bg-red-500 text-white animate-pulse' : 'bg-slate-800 text-slate-400 hover:bg-slate-700'
-                    }`}
-                  >
-                    {isListening ? <MicOff size={20} /> : <Mic size={20} />}
-                  </button>
-                )}
-                <input 
-                  value={textInput} 
-                  onChange={(e) => setTextInput(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && handleTextSubmit()}
-                  className="flex-1 bg-transparent px-4 py-3 text-sm md:text-base text-white outline-none placeholder:text-slate-500"
-                  placeholder={isListening ? "Ouvindo..." : "Escreva sua mensagem..."}
-                  autoFocus
+                  )}
                 />
-                <button 
-                  onClick={handleTextSubmit} 
-                  disabled={!textInput.trim() || sofiaState === 'processing'}
-                  className="p-3 bg-sky-500 hover:bg-sky-400 disabled:opacity-30 disabled:hover:bg-sky-500 rounded-xl transition-all shadow-lg shadow-sky-500/20 flex items-center justify-center min-w-[48px]"
-                >
-                  {sofiaState === 'processing' ? <Loader2 size={20} className="animate-spin" /> : <Send size={20} />}
-                </button>
+              </div>
+              
+              <div className="mt-4">
+                {sofiaState === 'processing' && (
+                  <div className="flex justify-start mb-6 animate-in fade-in slide-in-from-left-2 duration-300">
+                    <div className="bg-slate-800/50 p-4 rounded-2xl rounded-tl-none border border-white/5 flex items-center gap-2">
+                      <div className="flex gap-1">
+                        <span className="w-1.5 h-1.5 bg-sky-500 rounded-full animate-bounce [animation-delay:-0.3s]" />
+                        <span className="w-1.5 h-1.5 bg-sky-500 rounded-full animate-bounce [animation-delay:-0.15s]" />
+                        <span className="w-1.5 h-1.5 bg-sky-500 rounded-full animate-bounce" />
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {sofiaState === 'error' && (
+                  <div className="flex justify-center mb-4">
+                    <button 
+                      onClick={() => setSofiaState('ready')}
+                      className="flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-full text-xs text-slate-400 transition-all border border-white/5"
+                    >
+                      <AlertCircle size={14} />
+                      Limpar erro e continuar
+                    </button>
+                  </div>
+                )}
+                
+                <div className="flex gap-2 bg-slate-900/90 p-2 rounded-2xl border border-white/10 shadow-2xl backdrop-blur-xl focus-within:border-sky-500/50 transition-all">
+                  <input 
+                    value={textInput} 
+                    onChange={(e) => setTextInput(e.target.value)}
+                    onKeyPress={(e) => e.key === 'Enter' && handleTextSubmit()}
+                    className="flex-1 bg-transparent px-4 py-4 text-sm md:text-base text-white outline-none placeholder:text-slate-500"
+                    placeholder="Escreva sua mensagem..."
+                    autoFocus
+                  />
+                  <button 
+                    onClick={handleTextSubmit} 
+                    disabled={!textInput.trim() || sofiaState === 'processing'}
+                    className="p-4 bg-sky-500 hover:bg-sky-400 disabled:opacity-30 disabled:hover:bg-sky-500 rounded-xl transition-all shadow-lg shadow-sky-500/20 flex items-center justify-center min-w-[56px]"
+                  >
+                    {sofiaState === 'processing' ? <Loader2 size={24} className="animate-spin" /> : <Send size={24} />}
+                  </button>
+                </div>
               </div>
             </>
           )}

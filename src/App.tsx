@@ -25,7 +25,6 @@ import SosPage from './components/SosPage';
 import EmergencyPage from './components/EmergencyPage';
 import LandingPage from './components/LandingPage';
 import VideosPage from './components/VideosPage';
-import AcolheTEA from './components/AcolheTEA';
 import { SofiaIA } from './components/SofiaIA';
 import { TermosDeUso, Privacidade, Contato } from './components/LegalPages';
 import AuthForm from './components/AuthForm';
@@ -41,7 +40,7 @@ import Avatar from './components/Avatar';
 
 export default function App() {
   const { t } = useTranslation();
-  const [activeTab, setActiveTab] = useState<'feed' | 'vip' | 'settings' | 'sos' | 'termos' | 'privacidade' | 'contato' | 'map' | 'videos' | 'acolhe' | 'sofia' | 'carteirinha'>('feed');
+  const [activeTab, setActiveTab] = useState<'feed' | 'vip' | 'settings' | 'sos' | 'termos' | 'privacidade' | 'contato' | 'map' | 'videos' | 'sofia' | 'carteirinha'>('feed');
   const [user, setUser] = useState<FirebaseUser | null>(null);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -53,7 +52,6 @@ export default function App() {
   const [showAuth, setShowAuth] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [isGuest, setIsGuest] = useState(false);
-  const [isAcolheUrgent, setIsAcolheUrgent] = useState(false);
 
   useEffect(() => {
     const path = window.location.pathname;
