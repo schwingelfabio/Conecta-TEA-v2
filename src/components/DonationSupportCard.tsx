@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Heart, Copy, CheckCircle2 } from 'lucide-react';
 import QRCode from 'react-qr-code';
+import { trackEvent } from '../lib/monitoring';
 
 export default function DonationSupportCard() {
   const { t, i18n } = useTranslation();
@@ -12,10 +13,12 @@ export default function DonationSupportCard() {
   const pixKey = "01244056065";
 
   const handleDonate = () => {
+    trackEvent('paypal_click');
     window.open(donationUrl, "_blank", "noopener,noreferrer");
   };
 
   const handleCopyPix = () => {
+    trackEvent('pix_copy_click');
     navigator.clipboard.writeText(pixKey);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);

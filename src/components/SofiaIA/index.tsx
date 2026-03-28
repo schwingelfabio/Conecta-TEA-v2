@@ -1,9 +1,14 @@
 import React, { useState } from 'react';
 import { MessageCircle } from 'lucide-react';
 import { SofiaCallScreen } from './screens/SofiaCallScreen';
+import { trackEvent } from '../../lib/monitoring';
 
 export const SofiaIA = () => {
   const [screen, setScreen] = useState<'call' | 'landing'>('call');
+
+  React.useEffect(() => {
+    trackEvent('sofia_open');
+  }, []);
 
   return (
     <div className="w-full h-full min-h-[calc(100vh-64px)] bg-slate-950">

@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import PlanosVip from './PlanosVip';
 import DonationSupportCard from './DonationSupportCard';
 import { useTranslation } from 'react-i18next';
+import { trackEvent } from '../lib/monitoring';
 
 export default function AreaVip({
   isAdmin,
@@ -32,6 +33,7 @@ export default function AreaVip({
   const effectiveVip = Boolean(isVip || isAdmin);
 
   useEffect(() => {
+    trackEvent('vip_view');
     console.log('[VIP] AreaVip props:', { isAdmin, isVip, authReady });
     console.log('[VIP] AreaVip effectiveVip:', effectiveVip);
     console.log('[VIP] ebook access decision:', { effectiveVip, authReady });

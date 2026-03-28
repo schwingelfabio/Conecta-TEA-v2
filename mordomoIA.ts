@@ -1,0 +1,223 @@
+import { GoogleGenAI, Type } from "@google/genai";
+import nodemailer from "nodemailer";
+import cron from "node-cron";
+import admin from "firebase-admin";
+
+// Initialize Gemini
+const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || "" });
+
+// Initialize Nodemailer
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: process.env.SMTP_USER || "fabiopalacioschwingel@gmail.com",
+    pass: process.env.SMTP_PASS || "", // User needs to provide an App Password
+  },
+});
+
+export async function logSystemError(db: admin.firestore.Firestore, errorData: any) {
+  try {
+    let collectionName = "system_logs";
+    if (errorData.type === "performance" || errorData.type === "conversion") {
+      collectionName = "system_metrics";
+    } else if (errorData.type === "ux") {
+      collectionName = "system_audits";
+    }
+
+    try {
+      await db.collection(collectionName).add({
+        ...errorData,
+        timestamp: admin.firestore.FieldValue.serverTimestamp(),
+        status: "pending", // pending analysis
+      });
+      console.log(`[Mordomo TEA IA] Novo log registrado em ${collectionName}.`);
+    } catch (err: any) {
+      if (err.code === 7 || err.message?.includes('PERMISSION_DENIED')) {
+        console.warn(`[Mordomo TEA IA] PERMISSION_DENIED on named database. Falling back to (default) database for ${collectionName}...`);
+        const defaultDb = admin.firestore();
+        await defaultDb.collection(collectionName).add({
+          ...errorData,
+          timestamp: admin.firestore.FieldValue.serverTimestamp(),
+          status: "pending", // pending analysis
+        });
+        console.log(`[Mordomo TEA IA] Novo log registrado em ${collectionName} (default database).`);
+      } else {
+        throw err;
+      }
+    }
+  } catch (err) {
+    console.error("[Mordomo TEA IA] Falha ao registrar log:", err);
+  }
+}
+
+export function startMordomoIA(db: admin.firestore.Firestore) {
+  console.log("[Mordomo TEA IA] Assistente iniciado. Monitorando o sistema silenciosamente...");
+
+  // Run analysis every day at 00:00 (or every minute for testing if needed, but let's do daily)
+  // For the sake of the user seeing it work, let's also expose an endpoint to trigger it manually.
+  cron.schedule("0 0 * * *", async () => {
+    await runAnalysisAndReport(db);
+  });
+}
+
+export async function runAnalysisAndReport(db: admin.firestore.Firestore) {
+  console.log("[Mordomo TEA IA] Iniciando análise do sistema...");
+
+  try {
+    // 1. Gather pending logs from all collections
+    const [logsSnap, metricsSnap, auditsSnap] = await Promise.all([
+      db.collection("system_logs").where("status", "==", "pending").limit(50).get(),
+      db.collection("system_metrics").where("status", "==", "pending").limit(50).get(),
+      db.collection("system_audits").where("status", "==", "pending").limit(50).get(),
+    ]);
+    
+    if (logsSnap.empty && metricsSnap.empty && auditsSnap.empty) {
+      console.log("[Mordomo TEA IA] Nenhum log novo encontrado. Sistema operando perfeitamente.");
+      return;
+    }
+
+    const errors = logsSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    const metrics = metricsSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    const audits = auditsSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+    const allData = { errors, metrics, audits };
+
+    // 2. Analyze with Gemini and request JSON output
+    const prompt = `
+      Você é o "Mordomo TEA IA", um Engenheiro de Software Sênior e Arquiteto de Sistemas trabalhando na plataforma "Conecta TEA".
+      Sua função é analisar os logs recentes do sistema (Erros, Performance, Conversões e UX), identificar gargalos, causas raiz e propor melhorias ou soluções.
+      
+      REGRAS DE SEGURANÇA:
+      - Você NUNCA deve alterar o código de produção automaticamente.
+      - Suas sugestões devem ser claras, acionáveis e seguras.
+      
+      Aqui estão os logs recentes do sistema (formato JSON):
+      ${JSON.stringify(allData, null, 2)}
+      
+      Por favor, gere um relatório e sugestões de correção.
+      A resposta DEVE ser um JSON válido com a seguinte estrutura:
+      {
+        "report": {
+          "criticalErrors": "Resumo dos erros críticos",
+          "recurringErrors": "Resumo dos erros recorrentes",
+          "brokenFlows": "Resumo de fluxos quebrados (UX)",
+          "slowPages": "Resumo de páginas lentas",
+          "conversionDropPoints": "Resumo de quedas de conversão",
+          "top3UrgentActions": ["Ação 1", "Ação 2", "Ação 3"],
+          "emailText": "O texto completo que será enviado por e-mail para o admin, formatado de forma profissional, incluindo todas as seções acima."
+        },
+        "suggestions": [
+          {
+            "problemSummary": "Resumo do problema",
+            "rootCauseHypothesis": "Hipótese da causa raiz",
+            "impactedFiles": ["arquivo1.ts", "arquivo2.tsx"],
+            "recommendedFix": "Correção recomendada",
+            "codePatchProposal": "Proposta de código (opcional)",
+            "severity": "low" | "medium" | "high" | "critical"
+          }
+        ]
+      }
+    `;
+
+    const response = await ai.models.generateContent({
+      model: "gemini-3.1-pro-preview",
+      contents: prompt,
+      config: {
+        responseMimeType: "application/json",
+        responseSchema: {
+          type: Type.OBJECT,
+          properties: {
+            report: {
+              type: Type.OBJECT,
+              properties: {
+                criticalErrors: { type: Type.STRING },
+                recurringErrors: { type: Type.STRING },
+                brokenFlows: { type: Type.STRING },
+                slowPages: { type: Type.STRING },
+                conversionDropPoints: { type: Type.STRING },
+                top3UrgentActions: {
+                  type: Type.ARRAY,
+                  items: { type: Type.STRING }
+                },
+                emailText: { type: Type.STRING }
+              }
+            },
+            suggestions: {
+              type: Type.ARRAY,
+              items: {
+                type: Type.OBJECT,
+                properties: {
+                  problemSummary: { type: Type.STRING },
+                  rootCauseHypothesis: { type: Type.STRING },
+                  impactedFiles: {
+                    type: Type.ARRAY,
+                    items: { type: Type.STRING }
+                  },
+                  recommendedFix: { type: Type.STRING },
+                  codePatchProposal: { type: Type.STRING },
+                  severity: { type: Type.STRING }
+                }
+              }
+            }
+          }
+        }
+      }
+    });
+
+    const resultText = response.text;
+    if (!resultText) throw new Error("No response from Gemini");
+    
+    const result = JSON.parse(resultText);
+
+    // 3. Save Suggestions
+    if (result.suggestions && Array.isArray(result.suggestions)) {
+      const batch = db.batch();
+      result.suggestions.forEach((suggestion: any) => {
+        const ref = db.collection("system_fix_suggestions").doc();
+        batch.set(ref, {
+          ...suggestion,
+          createdAt: admin.firestore.FieldValue.serverTimestamp(),
+          status: "open"
+        });
+      });
+      await batch.commit();
+    }
+
+    // 4. Save Report
+    if (result.report) {
+      await db.collection("system_reports").add({
+        ...result.report,
+        createdAt: admin.firestore.FieldValue.serverTimestamp(),
+      });
+    }
+
+    // 5. Send Email
+    const emailText = result.report?.emailText || "Relatório gerado, mas sem texto de e-mail.";
+    if (process.env.SMTP_PASS) {
+      await transporter.sendMail({
+        from: '"Mordomo TEA IA" <' + (process.env.SMTP_USER || "fabiopalacioschwingel@gmail.com") + '>',
+        to: "fabiopalacioschwingel@gmail.com",
+        subject: "[Conecta TEA] Relatório Diário de Auditoria - Mordomo TEA IA",
+        text: emailText,
+      });
+      console.log("[Mordomo TEA IA] Relatório enviado por e-mail com sucesso.");
+    } else {
+      console.log("[Mordomo TEA IA] E-mail não enviado: SMTP_PASS não configurado no .env.");
+    }
+
+    // 6. Mark logs as analyzed
+    const updateBatch = db.batch();
+    const markAnalyzed = (docs: admin.firestore.QueryDocumentSnapshot[]) => {
+      docs.forEach(doc => {
+        updateBatch.update(doc.ref, { status: "analyzed", analyzedAt: admin.firestore.FieldValue.serverTimestamp() });
+      });
+    };
+    markAnalyzed(logsSnap.docs);
+    markAnalyzed(metricsSnap.docs);
+    markAnalyzed(auditsSnap.docs);
+    await updateBatch.commit();
+
+  } catch (error) {
+    console.error("[Mordomo TEA IA] Erro durante a análise:", error);
+  }
+}

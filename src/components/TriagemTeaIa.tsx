@@ -2,9 +2,14 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Brain, ArrowRight, ShieldCheck, Sparkles } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { trackEvent } from '../lib/monitoring';
 
 export default function TriagemTeaIa() {
   const { t } = useTranslation();
+
+  React.useEffect(() => {
+    trackEvent('triagem_open');
+  }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-sky-50 to-white py-12 px-4">
@@ -58,6 +63,7 @@ export default function TriagemTeaIa() {
             href="https://sites.google.com/view/triagemteaia/portugu%C3%AAs" 
             target="_blank" 
             rel="noopener noreferrer"
+            onClick={() => trackEvent('triagem_start')}
             className="inline-flex items-center justify-center gap-3 bg-sky-500 text-white px-8 py-5 rounded-2xl font-bold text-xl hover:bg-sky-600 transition-all shadow-xl shadow-sky-200 hover:-translate-y-1 active:scale-95 w-full md:w-auto"
           >
             {t('triagem.cta')}

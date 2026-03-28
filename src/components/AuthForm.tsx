@@ -13,6 +13,7 @@ import {
   signInAnonymously
 } from 'firebase/auth';
 import { useTranslation } from 'react-i18next';
+import { trackEvent } from '../lib/monitoring';
 
 interface AuthFormProps {
   onSuccess: () => void;
@@ -66,6 +67,7 @@ export default function AuthForm({ onSuccess, onShowTerms }: AuthFormProps) {
   const [isSignUp, setIsSignUp] = useState(false);
 
   useEffect(() => {
+    trackEvent('signup_start');
     const checkRedirect = async () => {
       try {
         console.log('[AuthForm] Checking redirect result...');
@@ -77,6 +79,7 @@ export default function AuthForm({ onSuccess, onShowTerms }: AuthFormProps) {
             email: result.user.email,
             displayName: result.user.displayName
           });
+          trackEvent('signup_complete', { method: 'redirect' });
           onSuccess();
         } else {
           console.log('[AuthForm] Nenhum resultado de redirect');
@@ -159,6 +162,7 @@ export default function AuthForm({ onSuccess, onShowTerms }: AuthFormProps) {
       setLoading(true);
       setError(null);
       await signInAnonymously(auth);
+      trackEvent('signup_complete', { method: 'anonymous' });
       onSuccess();
     } catch (err: any) {
       console.error('[AuthForm] Anonymous Auth Error:', err);
@@ -176,8 +180,10 @@ export default function AuthForm({ onSuccess, onShowTerms }: AuthFormProps) {
 
       if (isSignUp) {
         await createUserWithEmailAndPassword(auth, email.trim(), password);
+        trackEvent('signup_complete', { method: 'email' });
       } else {
         await signInWithEmailAndPassword(auth, email.trim(), password);
+        trackEvent('login_complete', { method: 'email' });
       }
 
       onSuccess();

@@ -10,6 +10,8 @@ import multer from "multer";
 import OpenAI from "openai";
 import { ElevenLabsClient } from "elevenlabs";
 import fs from "fs";
+import { startMordomoIA, logSystemError, runAnalysisAndReport } from "./mordomoIA.js";
+import { trackMonetizationEvent, startMonetizationEngine } from "./monetizationEngine.js";
 
 const firebaseConfig = JSON.parse(fs.readFileSync(new URL("./firebase-applet-config.json", import.meta.url), "utf-8"));
 
@@ -28,20 +30,9 @@ if (projectId) {
 async function initAdmin() {
   if (!admin.apps.length) {
     try {
-      // Prioritize the projectId from our config file
-      if (projectId) {
-        admin.initializeApp({
-          projectId: projectId,
-          // When running in AI Studio, applicationDefault() should pick up the 
-          // ambient credentials which should have access to the provisioned project.
-          credential: admin.credential.applicationDefault()
-        });
-        console.log(`[Server] Firebase Admin initialized with config project: ${projectId}`);
-      } else {
-        // Fallback to default initialization if no config
-        admin.initializeApp();
-        console.log(`[Server] Firebase Admin initialized (default). Project: ${admin.app().options.projectId}`);
-      }
+      // Initialize with default credentials, which should have the necessary permissions
+      admin.initializeApp();
+      console.log(`[Server] Firebase Admin initialized (default). Project: ${admin.app().options.projectId}`);
     } catch (error) {
       console.error('[Server] Firebase Admin initialization failed:', error);
     }
@@ -53,6 +44,7 @@ await initAdmin();
 // Get Firestore instance with error handling
 let db: admin.firestore.Firestore;
 try {
+  // Always use the databaseId from the config, not '(default)' unless it's explicitly '(default)'
   db = getFirestore(admin.app(), databaseId);
   console.log(`[Server] Firestore initialized. Database: ${databaseId}, Project: ${admin.app().options.projectId}`);
 } catch (error) {
@@ -63,7 +55,7 @@ try {
 // Test connection and provide helpful error message for PERMISSION_DENIED
 async function testFirestoreConnection() {
   try {
-    console.log(`[Server] Testing Firestore connection for project: ${admin.app().options.projectId}...`);
+    console.log(`[Server] Testing Firestore connection for project: ${admin.app().options.projectId}, database: ${databaseId}...`);
     await db.collection('test_connection').limit(1).get();
     console.log('[Server] Firestore connection test (read) successful.');
   } catch (error: any) {
@@ -138,6 +130,7 @@ async function initializeSystemData() {
 
 async function startServer() {
   await initializeSystemData();
+  startMonetizationEngine();
   const app = express();
   const PORT = 3000;
 
@@ -174,6 +167,38 @@ async function startServer() {
   });
 
   app.use('/uploads', express.static('uploads'));
+
+  // API Route: Mordomo IA Error Logging
+  app.post("/api/mordomo/log", async (req, res) => {
+    try {
+      await logSystemError(db, req.body);
+      res.status(200).json({ success: true });
+    } catch (err) {
+      res.status(500).json({ error: "Failed to log error" });
+    }
+  });
+
+  // API Route: Trigger Mordomo IA Analysis Manually (for testing)
+  app.post("/api/mordomo/trigger", async (req, res) => {
+    try {
+      await runAnalysisAndReport(db);
+      res.status(200).json({ success: true, message: "Análise do Mordomo TEA IA iniciada." });
+    } catch (err) {
+      res.status(500).json({ error: "Failed to trigger analysis" });
+    }
+  });
+
+  // API Route: Monetization Engine Logging
+  app.post("/api/monetization/log", async (req, res) => {
+    try {
+      const { userId, eventType, pageUrl, deviceType, metadata } = req.body;
+      await trackMonetizationEvent({ userId, eventType, pageUrl, deviceType, metadata });
+      res.status(200).json({ success: true });
+    } catch (error) {
+      console.error("Error logging monetization event:", error);
+      res.status(500).json({ error: "Failed to log event" });
+    }
+  });
 
   // API Route: Speech-to-Text (Whisper)
   app.post("/api/stt", upload.single('audio'), async (req, res) => {
@@ -286,6 +311,9 @@ async function startServer() {
       res.sendFile("dist/index.html", { root: "." });
     });
   }
+
+  // Start Mordomo IA background tasks
+  startMordomoIA(db);
 
   app.listen(PORT, "0.0.0.0", () => {
     console.log(`Server running on http://localhost:${PORT}`);

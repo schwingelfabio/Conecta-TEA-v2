@@ -27,6 +27,7 @@ import PostComments from './PostComments';
 import ActiveCommunities from './ActiveCommunities';
 import { useInView } from 'react-intersection-observer';
 import Avatar from './Avatar';
+import { trackEvent } from '../lib/monitoring';
 import { 
   Send, 
   MessageCircle, 
@@ -115,6 +116,10 @@ interface FeedProps {
 
 const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isGuest }) => {
   const { t } = useTranslation();
+
+  useEffect(() => {
+    trackEvent('feed_view');
+  }, []);
   const [posts, setPosts] = useState<Post[]>([]);
   const [newPost, setNewPost] = useState('');
   const [topic, setTopic] = useState<string>('geral');
