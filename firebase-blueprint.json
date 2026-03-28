@@ -16,6 +16,21 @@
       },
       "required": ["uid", "email"]
     },
+    "PublicProfile": {
+      "title": "PublicProfile",
+      "description": "Public user profile information for maps and communities",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "displayName": { "type": "string" },
+        "photoURL": { "type": "string" },
+        "role": { "type": "string", "enum": ["admin", "user", "vip"] },
+        "city": { "type": "string" },
+        "state": { "type": "string" },
+        "isVip": { "type": "boolean" }
+      },
+      "required": ["uid"]
+    },
     "Post": {
       "title": "Post",
       "description": "Community post",
@@ -151,6 +166,10 @@
     "/users/{userId}": {
       "schema": "User",
       "description": "User profiles"
+    },
+    "/public_profiles/{userId}": {
+      "schema": "PublicProfile",
+      "description": "Public user profiles for map and community views"
     },
     "/posts/{postId}": {
       "schema": "Post",

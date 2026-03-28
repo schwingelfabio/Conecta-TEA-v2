@@ -18,7 +18,7 @@ const ActiveCommunities: React.FC = () => {
   useEffect(() => {
     const fetchCounts = async () => {
       try {
-        const usersSnapshot = await getDocs(collection(db, 'users'));
+        const usersSnapshot = await getDocs(collection(db, 'public_profiles'));
         const counts: Record<string, number> = {};
 
         usersSnapshot.forEach((doc) => {

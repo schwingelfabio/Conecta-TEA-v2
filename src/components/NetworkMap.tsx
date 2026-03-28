@@ -53,7 +53,7 @@ export default function NetworkMap() {
     async function fetchData() {
       try {
         // Fetch users
-        const usersSnapshot = await getDocs(collection(db, 'users'));
+        const usersSnapshot = await getDocs(collection(db, 'public_profiles'));
         const users = usersSnapshot.docs.map(doc => doc.data());
         
         // Fetch posts

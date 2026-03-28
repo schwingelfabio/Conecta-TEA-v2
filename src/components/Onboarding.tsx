@@ -40,6 +40,10 @@ export default function Onboarding({ onComplete }: { onComplete: () => void }) {
         city: selectedCity,
         updatedAt: serverTimestamp()
       });
+      await setDoc(doc(db, 'public_profiles', auth.currentUser.uid), {
+        state: selectedState,
+        city: selectedCity
+      }, { merge: true }).catch(e => console.error('Error updating public profile:', e));
 
       // Criar tópicos de comunidade se não existirem
       const topicsRef = collection(db, 'topics');

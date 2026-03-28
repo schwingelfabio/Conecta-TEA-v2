@@ -64,6 +64,29 @@ service cloud.firestore {
     // Domain Validators
     // ===============================================================
 
+    function isValidUser(data) {
+      return data.keys().hasAll(['uid', 'email']) &&
+             data.uid is string &&
+             data.email is string &&
+             (!('role' in data) || data.role in ['admin', 'user', 'vip', 'parent', 'professional', 'autistic', 'other']) &&
+             (!('displayName' in data) || data.displayName is string && data.displayName.size() < 100) &&
+             (!('photoURL' in data) || data.photoURL is string && data.photoURL.size() < 1000) &&
+             (!('city' in data) || data.city is string && data.city.size() < 100) &&
+             (!('state' in data) || data.state is string && data.state.size() < 100) &&
+             (!('isVip' in data) || data.isVip is bool);
+    }
+
+    function isValidPublicProfile(data) {
+      return data.keys().hasAll(['uid']) &&
+             data.uid is string &&
+             (!('role' in data) || data.role in ['admin', 'user', 'vip', 'parent', 'professional', 'autistic', 'other']) &&
+             (!('displayName' in data) || data.displayName is string && data.displayName.size() < 100) &&
+             (!('photoURL' in data) || data.photoURL is string && data.photoURL.size() < 1000) &&
+             (!('city' in data) || data.city is string && data.city.size() < 100) &&
+             (!('state' in data) || data.state is string && data.state.size() < 100) &&
+             (!('isVip' in data) || data.isVip is bool);
+    }
+
     function isValidSofiaUser(data) {
       return data.keys().hasOnly(['id', 'name', 'childName', 'childAge', 'mainConcerns', 'createdAt']) &&
              data.id is string &&
@@ -79,7 +102,22 @@ service cloud.firestore {
 
     match /users/{userId} {
       allow read: if isOwner(userId) || isAdmin();
-      allow write: if isOwner(userId) || isAdmin();
+      allow create: if isOwner(userId) && isValidUser(request.resource.data) && 
+                    (isAdmin() || ((!('role' in request.resource.data) || request.resource.data.role != 'admin') && (!('isVip' in request.resource.data) || request.resource.data.isVip == false)));
+      allow update: if (isOwner(userId) && isValidUser(request.resource.data) && 
+                    (!('role' in request.resource.data) || request.resource.data.role in ['parent', 'professional', 'autistic', 'other', 'user'] || request.resource.data.role == resource.data.role) &&
+                    (!('isVip' in request.resource.data) || request.resource.data.isVip == resource.data.isVip)) || isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    match /public_profiles/{userId} {
+      allow read: if isAuthenticated();
+      allow create: if isOwner(userId) && isValidPublicProfile(request.resource.data) && 
+                    (isAdmin() || ((!('role' in request.resource.data) || request.resource.data.role != 'admin') && (!('isVip' in request.resource.data) || request.resource.data.isVip == false)));
+      allow update: if (isOwner(userId) && isValidPublicProfile(request.resource.data) && 
+                    (!('role' in request.resource.data) || request.resource.data.role in ['parent', 'professional', 'autistic', 'other', 'user'] || request.resource.data.role == resource.data.role) &&
+                    (!('isVip' in request.resource.data) || request.resource.data.isVip == resource.data.isVip)) || isAdmin();
+      allow delete: if isAdmin();
     }
 
     match /sofia_users/{userId} {

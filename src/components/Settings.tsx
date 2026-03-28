@@ -104,6 +104,9 @@ export default function Settings({
         photoURL: downloadURL,
         updatedAt: serverTimestamp()
       });
+      await updateDoc(doc(db, 'public_profiles', user.uid), {
+        photoURL: downloadURL
+      }).catch(e => console.error('Error updating public profile photo:', e));
 
       setPhotoURL(downloadURL);
       alert(t('settings.photoSuccess') || 'Foto atualizada com sucesso!');
@@ -137,6 +140,13 @@ export default function Settings({
         bio: bio.trim(),
         role
       });
+      await updateDoc(doc(db, 'public_profiles', user.uid), {
+        displayName: `${firstName} ${lastName}`.trim() || name,
+        photoURL,
+        state: state.trim(),
+        city: city.trim(),
+        role
+      }).catch(e => console.error('Error updating public profile:', e));
       setIsEditing(false);
       alert(t('settings.profileSaved'));
     } catch (error) {

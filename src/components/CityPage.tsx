@@ -25,7 +25,7 @@ export default function CityPage({ city, state, onBack }: CityPageProps) {
       try {
         // Fetch users in city
         const usersQuery = query(
-          collection(db, 'users'),
+          collection(db, 'public_profiles'),
           where('city', '==', city),
           where('state', '==', state)
         );

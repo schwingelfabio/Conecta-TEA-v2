@@ -133,6 +133,18 @@ export default function App() {
             } else {
               setShowOnboarding(false);
             }
+
+            // Sync public profile
+            const publicData = {
+              uid: u.uid,
+              displayName: data.displayName || u.displayName || 'Usuário',
+              photoURL: data.photoURL || u.photoURL || '',
+              isVip: vipStatus,
+              role: adminStatus ? 'admin' : (data.role || 'parent'),
+              city: data.city || '',
+              state: data.state || ''
+            };
+            setDoc(doc(db, 'public_profiles', u.uid), publicData, { merge: true }).catch(e => console.error(e));
           } else {
             console.log('[App/Auth] New user, creating profile and showing onboarding');
             setShowOnboarding(true);
@@ -148,11 +160,21 @@ export default function App() {
               city: '',
               state: ''
             };
+            const publicData = {
+              uid: u.uid,
+              displayName: u.displayName || 'Usuário',
+              photoURL: u.photoURL || '',
+              isVip: vipStatus,
+              role: adminStatus ? 'admin' : 'parent',
+              city: '',
+              state: ''
+            };
             setUserProfile(initialData as any);
             // Disparar setDoc em background para não travar a UI
             setDoc(userDocRef, initialData, { merge: true }).catch(err => {
               console.error('[App/Auth] Error creating profile in background:', err);
             });
+            setDoc(doc(db, 'public_profiles', u.uid), publicData, { merge: true }).catch(e => console.error(e));
           }
         } catch (err) {
           console.error('[App/Auth] Error fetching user profile, using fallback:', err);
@@ -169,8 +191,18 @@ export default function App() {
             city: '',
             state: ''
           };
+          const publicFallbackData = {
+            uid: u.uid,
+            displayName: u.displayName || 'Usuário',
+            photoURL: u.photoURL || '',
+            isVip: vipStatus,
+            role: adminStatus ? 'admin' : 'parent',
+            city: '',
+            state: ''
+          };
           setUserProfile(fallbackData as any);
           setDoc(userDocRef, fallbackData, { merge: true }).catch(e => console.error(e));
+          setDoc(doc(db, 'public_profiles', u.uid), publicFallbackData, { merge: true }).catch(e => console.error(e));
         }
 
         setIsAdmin(adminStatus);
