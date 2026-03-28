@@ -10,8 +10,8 @@ import multer from "multer";
 import OpenAI from "openai";
 import { ElevenLabsClient } from "elevenlabs";
 import fs from "fs";
-import { startMordomoIA, logSystemError, runAnalysisAndReport } from "./mordomoIA.js";
-import { trackMonetizationEvent, startMonetizationEngine } from "./monetizationEngine.js";
+import { startMordomoIA, logSystemError, runAnalysisAndReport } from "./mordomoIA.ts";
+import { trackMonetizationEvent, startMonetizationEngine } from "./monetizationEngine.ts";
 
 const firebaseConfig = JSON.parse(fs.readFileSync(new URL("./firebase-applet-config.json", import.meta.url), "utf-8"));
 
