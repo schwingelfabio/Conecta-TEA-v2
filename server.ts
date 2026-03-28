@@ -6,11 +6,12 @@ import { parseStringPromise } from "xml2js";
 import dotenv from "dotenv";
 import path from "path";
 import { getFirestore } from "firebase-admin/firestore";
-import firebaseConfig from "./firebase-applet-config.json";
 import multer from "multer";
 import OpenAI from "openai";
 import { ElevenLabsClient } from "elevenlabs";
 import fs from "fs";
+
+const firebaseConfig = JSON.parse(fs.readFileSync(new URL("./firebase-applet-config.json", import.meta.url), "utf-8"));
 
 dotenv.config();
 

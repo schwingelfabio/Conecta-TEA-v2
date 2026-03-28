@@ -86,6 +86,7 @@ export default function App() {
       }
 
       setUser(u);
+      setIsGuest(u.isAnonymous);
       const rawEmail = u.email || '';
       const normalizedEmail = rawEmail.toLowerCase().trim();
       console.log('[AUTH] raw email:', rawEmail);

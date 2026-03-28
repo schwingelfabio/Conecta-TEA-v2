@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Mail, Phone, Loader2 } from 'lucide-react';
-import { auth, googleProvider } from '../lib/firebase';
+import { auth, googleProvider, appleProvider } from '../lib/firebase';
 import {
   signInWithRedirect,
   getRedirectResult,
@@ -9,7 +9,8 @@ import {
   createUserWithEmailAndPassword,
   RecaptchaVerifier,
   signInWithPhoneNumber,
-  ConfirmationResult
+  ConfirmationResult,
+  signInAnonymously
 } from 'firebase/auth';
 import { useTranslation } from 'react-i18next';
 
@@ -54,7 +55,7 @@ function getFriendlyErrorMessage(err: any, t: any): string {
 
 export default function AuthForm({ onSuccess, onShowTerms }: AuthFormProps) {
   const { t } = useTranslation();
-  const [method, setMethod] = useState<'google' | 'email' | 'phone'>('google');
+  const [method, setMethod] = useState<'google' | 'apple' | 'anonymous' | 'email' | 'phone'>('google');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [phone, setPhone] = useState('');
@@ -128,11 +129,39 @@ export default function AuthForm({ onSuccess, onShowTerms }: AuthFormProps) {
 
   const handleGoogleLogin = async () => {
     try {
+      setMethod('google');
       setLoading(true);
       setError(null);
       await signInWithRedirect(auth, googleProvider);
     } catch (err: any) {
       console.error('[AuthForm] Google Auth Error:', err);
+      setError(`${getFriendlyErrorMessage(err, t)} [${err.code}: ${err.message}]`);
+      setLoading(false);
+    }
+  };
+
+  const handleAppleLogin = async () => {
+    try {
+      setMethod('apple');
+      setLoading(true);
+      setError(null);
+      await signInWithRedirect(auth, appleProvider);
+    } catch (err: any) {
+      console.error('[AuthForm] Apple Auth Error:', err);
+      setError(`${getFriendlyErrorMessage(err, t)} [${err.code}: ${err.message}]`);
+      setLoading(false);
+    }
+  };
+
+  const handleAnonymousLogin = async () => {
+    try {
+      setMethod('anonymous');
+      setLoading(true);
+      setError(null);
+      await signInAnonymously(auth);
+      onSuccess();
+    } catch (err: any) {
+      console.error('[AuthForm] Anonymous Auth Error:', err);
       setError(`${getFriendlyErrorMessage(err, t)} [${err.code}: ${err.message}]`);
       setLoading(false);
     }
@@ -206,19 +235,42 @@ export default function AuthForm({ onSuccess, onShowTerms }: AuthFormProps) {
         </div>
       )}
 
-      <button
-        onClick={handleGoogleLogin}
-        disabled={loading}
-        className="w-full flex items-center justify-center gap-3 bg-white border-2 border-gray-200 text-gray-700 font-bold py-4 rounded-2xl hover:bg-gray-50 hover:border-gray-300 transition-all active:scale-95 mb-6 disabled:opacity-50"
-      >
-        <img
-          src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
-          alt="Google"
-          className="w-6 h-6"
-        />
-        {loading && method === 'google' ? <Loader2 className="animate-spin" size={18} /> : null}
-        {t('auth.google')}
-      </button>
+      <div className="space-y-3 mb-6">
+        <button
+          onClick={handleGoogleLogin}
+          disabled={loading}
+          className="w-full flex items-center justify-center gap-3 bg-white border-2 border-gray-200 text-gray-700 font-bold py-3 rounded-2xl hover:bg-gray-50 hover:border-gray-300 transition-all active:scale-95 disabled:opacity-50"
+        >
+          <img
+            src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
+            alt="Google"
+            className="w-5 h-5"
+          />
+          {loading && method === 'google' ? <Loader2 className="animate-spin" size={18} /> : null}
+          {t('auth.google')}
+        </button>
+
+        <button
+          onClick={handleAppleLogin}
+          disabled={loading}
+          className="w-full flex items-center justify-center gap-3 bg-black text-white font-bold py-3 rounded-2xl hover:bg-gray-900 transition-all active:scale-95 disabled:opacity-50"
+        >
+          <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.19 2.31-.88 3.5-.84 1.5.05 2.78.65 3.5 1.73-3.04 1.75-2.56 5.74.35 6.94-.68 1.75-1.57 3.42-2.43 4.34zm-3.15-14.3c.65-1.05 1.11-2.34.95-3.63-1.14.07-2.52.74-3.24 1.68-.65.86-1.21 2.2-1.02 3.46 1.28.14 2.54-.5 3.31-1.51z"/>
+          </svg>
+          {loading && method === 'apple' ? <Loader2 className="animate-spin" size={18} /> : null}
+          {t('auth.apple', 'Entrar com Apple')}
+        </button>
+
+        <button
+          onClick={handleAnonymousLogin}
+          disabled={loading}
+          className="w-full flex items-center justify-center gap-3 bg-gray-100 text-gray-700 font-bold py-3 rounded-2xl hover:bg-gray-200 transition-all active:scale-95 disabled:opacity-50"
+        >
+          {loading && method === 'anonymous' ? <Loader2 className="animate-spin" size={18} /> : null}
+          {t('auth.anonymous', 'Entrar como Visitante')}
+        </button>
+      </div>
 
       <div className="relative flex items-center py-2 mb-6">
         <div className="flex-grow border-t border-gray-200"></div>

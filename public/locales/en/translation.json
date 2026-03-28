@@ -20,6 +20,8 @@
     "guestLogin": "Login as guest",
     "welcome": "Welcome to Conecta TEA",
     "google": "Sign in with Google",
+    "apple": "Sign in with Apple",
+    "anonymous": "Continue as Guest",
     "emailPlaceholder": "your@email.com",
     "orContinue": "or continue with",
     "phone": "Phone",

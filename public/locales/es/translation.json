@@ -20,6 +20,8 @@
     "guestLogin": "Iniciar sesión como invitado",
     "welcome": "Bienvenido a Conecta TEA",
     "google": "Continuar con Google",
+    "apple": "Continuar con Apple",
+    "anonymous": "Continuar como Invitado",
     "emailPlaceholder": "tu@email.com",
     "orContinue": "o continúa con",
     "phone": "Celular",
