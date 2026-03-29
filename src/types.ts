@@ -42,6 +42,9 @@ export interface Post {
   id: string;
   text: string;
   content: string;
+  text_pt?: string;
+  text_en?: string;
+  text_es?: string;
   authorId: string;
   userId: string;
   authorName: string;

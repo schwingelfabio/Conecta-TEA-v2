@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { GoogleGenAI } from "@google/genai";
 import { db, auth } from '../lib/firebase';
 import { 
   collection, 
@@ -115,7 +116,7 @@ interface FeedProps {
 }
 
 const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isGuest }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   useEffect(() => {
     trackEvent('feed_view');
@@ -291,9 +292,28 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
     const postText = newPost;
     setNewPost(''); // Clear immediately for better UX
 
+    let text_en = postText;
+    let text_es = postText;
+
+    try {
+      const response = await ai.models.generateContent({
+        model: "gemini-3-flash-preview",
+        contents: `Translate the following text to English and Spanish. Return JSON format: {"en": "...", "es": "..."}. Text: "${postText}"`,
+        config: { responseMimeType: "application/json" }
+      });
+      const translations = JSON.parse(response.text);
+      text_en = translations.en;
+      text_es = translations.es;
+    } catch (e) {
+      console.error("Translation failed", e);
+    }
+
     const payload = {
       text: postText,
       content: postText,
+      text_pt: postText,
+      text_en: text_en,
+      text_es: text_es,
       authorId: userProfile.uid,
       userId: userProfile.uid,
       authorName: userProfile.displayName,
@@ -662,7 +682,11 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
                       </div>
 
                       <div className="markdown-body text-slate-700 mb-6">
-                        <ReactMarkdown>{post.text}</ReactMarkdown>
+                        <ReactMarkdown>
+                          {i18n.language === 'en' ? post.text_en || post.text : 
+                           i18n.language === 'es' ? post.text_es || post.text : 
+                           post.text_pt || post.text}
+                        </ReactMarkdown>
                       </div>
 
                       {post.mediaUrl && post.mediaType === 'image' && (

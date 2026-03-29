@@ -8,7 +8,10 @@ import PayPalSubscriptionButton from './PayPalSubscriptionButton';
 const PAYPAL_CLIENT_ID = "ASX2fdt9OoW_vzYFtOU18lrGbkLSsR_mIxrVB2tjswOG7W5ZayY9Df39wW-TVGNo0jQia67yGMPgq4uf";
 
 export default function PlanosVip({ isVip }: { isVip?: boolean }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const currency = i18n.language === 'en' ? 'USD $' : i18n.language === 'es' ? 'EUR €' : 'R$';
+  const priceMonthly = i18n.language === 'en' ? '3.99' : i18n.language === 'es' ? '3.49' : '19,90';
+  const priceAnnual = i18n.language === 'en' ? '39.99' : i18n.language === 'es' ? '34.99' : '199,00';
 
   const handleCheckout = (url: string) => {
     const user = auth.currentUser;
@@ -36,7 +39,7 @@ export default function PlanosVip({ isVip }: { isVip?: boolean }) {
           <div className="bg-white rounded-3xl p-8 shadow-sm border border-sky-100 hover:shadow-md transition-shadow relative overflow-hidden flex flex-col">
             <h3 className="text-xl font-bold mb-2">{t('vip.monthlyPlan')}</h3>
             <div className="flex items-baseline gap-1 mb-6">
-              <span className="text-4xl font-bold text-gray-900">R$ 19,90</span>
+              <span className="text-4xl font-bold text-gray-900">{currency} {priceMonthly}</span>
               <span className="text-gray-500">{t('vip.perMonth')}</span>
             </div>
 
@@ -82,7 +85,7 @@ export default function PlanosVip({ isVip }: { isVip?: boolean }) {
 
             <h3 className="text-xl font-bold mb-2">{t('vip.annualPlan')}</h3>
             <div className="flex items-baseline gap-1 mb-6">
-              <span className="text-4xl font-bold text-gray-900">R$ 199,00</span>
+              <span className="text-4xl font-bold text-gray-900">{currency} {priceAnnual}</span>
               <span className="text-gray-500">{t('vip.perYear')}</span>
             </div>
 
