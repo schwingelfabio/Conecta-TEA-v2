@@ -1,7 +1,8 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import nodemailer from "nodemailer";
 import cron from "node-cron";
-import admin from "firebase-admin";
+import { db as clientDb } from "./src/lib/firebase.ts";
+import { collection, addDoc, serverTimestamp, getDocs, query, where, limit, writeBatch, doc } from "firebase/firestore";
 
 // Initialize Gemini
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || "" });
@@ -15,7 +16,7 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-export async function logSystemError(db: admin.firestore.Firestore, errorData: any) {
+export async function logSystemError(db: any, errorData: any) {
   try {
     let collectionName = "system_logs";
     if (errorData.type === "performance" || errorData.type === "conversion") {
@@ -25,32 +26,21 @@ export async function logSystemError(db: admin.firestore.Firestore, errorData: a
     }
 
     try {
-      await db.collection(collectionName).add({
+      await addDoc(collection(clientDb, collectionName), {
         ...errorData,
-        timestamp: admin.firestore.FieldValue.serverTimestamp(),
+        timestamp: serverTimestamp(),
         status: "pending", // pending analysis
       });
       console.log(`[Mordomo TEA IA] Novo log registrado em ${collectionName}.`);
     } catch (err: any) {
-      if (err.code === 7 || err.message?.includes('PERMISSION_DENIED')) {
-        console.warn(`[Mordomo TEA IA] PERMISSION_DENIED on named database. Falling back to (default) database for ${collectionName}...`);
-        const defaultDb = admin.firestore();
-        await defaultDb.collection(collectionName).add({
-          ...errorData,
-          timestamp: admin.firestore.FieldValue.serverTimestamp(),
-          status: "pending", // pending analysis
-        });
-        console.log(`[Mordomo TEA IA] Novo log registrado em ${collectionName} (default database).`);
-      } else {
-        throw err;
-      }
+      console.error(`[Mordomo TEA IA] Falha ao registrar log no Firestore:`, err);
     }
   } catch (err) {
     console.error("[Mordomo TEA IA] Falha ao registrar log:", err);
   }
 }
 
-export function startMordomoIA(db: admin.firestore.Firestore) {
+export function startMordomoIA(db: any) {
   console.log("[Mordomo TEA IA] Assistente iniciado. Monitorando o sistema silenciosamente...");
 
   // Run analysis every day at 00:00 (or every minute for testing if needed, but let's do daily)
@@ -60,15 +50,19 @@ export function startMordomoIA(db: admin.firestore.Firestore) {
   });
 }
 
-export async function runAnalysisAndReport(db: admin.firestore.Firestore) {
+export async function runAnalysisAndReport(db: any) {
   console.log("[Mordomo TEA IA] Iniciando análise do sistema...");
 
   try {
     // 1. Gather pending logs from all collections
+    const logsQuery = query(collection(clientDb, "system_logs"), where("status", "==", "pending"), limit(50));
+    const metricsQuery = query(collection(clientDb, "system_metrics"), where("status", "==", "pending"), limit(50));
+    const auditsQuery = query(collection(clientDb, "system_audits"), where("status", "==", "pending"), limit(50));
+
     const [logsSnap, metricsSnap, auditsSnap] = await Promise.all([
-      db.collection("system_logs").where("status", "==", "pending").limit(50).get(),
-      db.collection("system_metrics").where("status", "==", "pending").limit(50).get(),
-      db.collection("system_audits").where("status", "==", "pending").limit(50).get(),
+      getDocs(logsQuery),
+      getDocs(metricsQuery),
+      getDocs(auditsQuery),
     ]);
     
     if (logsSnap.empty && metricsSnap.empty && auditsSnap.empty) {
@@ -171,12 +165,12 @@ export async function runAnalysisAndReport(db: admin.firestore.Firestore) {
 
     // 3. Save Suggestions
     if (result.suggestions && Array.isArray(result.suggestions)) {
-      const batch = db.batch();
+      const batch = writeBatch(clientDb);
       result.suggestions.forEach((suggestion: any) => {
-        const ref = db.collection("system_fix_suggestions").doc();
+        const ref = doc(collection(clientDb, "system_fix_suggestions"));
         batch.set(ref, {
           ...suggestion,
-          createdAt: admin.firestore.FieldValue.serverTimestamp(),
+          createdAt: serverTimestamp(),
           status: "open"
         });
       });
@@ -185,9 +179,9 @@ export async function runAnalysisAndReport(db: admin.firestore.Firestore) {
 
     // 4. Save Report
     if (result.report) {
-      await db.collection("system_reports").add({
+      await addDoc(collection(clientDb, "system_reports"), {
         ...result.report,
-        createdAt: admin.firestore.FieldValue.serverTimestamp(),
+        createdAt: serverTimestamp(),
       });
     }
 
@@ -206,10 +200,10 @@ export async function runAnalysisAndReport(db: admin.firestore.Firestore) {
     }
 
     // 6. Mark logs as analyzed
-    const updateBatch = db.batch();
-    const markAnalyzed = (docs: admin.firestore.QueryDocumentSnapshot[]) => {
-      docs.forEach(doc => {
-        updateBatch.update(doc.ref, { status: "analyzed", analyzedAt: admin.firestore.FieldValue.serverTimestamp() });
+    const updateBatch = writeBatch(clientDb);
+    const markAnalyzed = (docs: any[]) => {
+      docs.forEach(d => {
+        updateBatch.update(d.ref, { status: "analyzed", analyzedAt: serverTimestamp() });
       });
     };
     markAnalyzed(logsSnap.docs);
