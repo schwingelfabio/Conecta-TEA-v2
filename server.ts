@@ -4,6 +4,7 @@ import admin from "firebase-admin";
 import axios from "axios";
 import { parseStringPromise } from "xml2js";
 import dotenv from "dotenv";
+dotenv.config();
 import path from "path";
 import { getFirestore as getAdminFirestore } from "firebase-admin/firestore";
 import { initializeApp as initializeClientApp } from "firebase/app";
@@ -16,8 +17,6 @@ import { startMordomoIA, logSystemError, runAnalysisAndReport } from "./mordomoI
 import { trackMonetizationEvent, startMonetizationEngine } from "./monetizationEngine.ts";
 
 const firebaseConfig = JSON.parse(fs.readFileSync(new URL("./firebase-applet-config.json", import.meta.url), "utf-8"));
-
-dotenv.config();
 
 // Initialize Firebase Client SDK for backend operations that need to bypass IAM restrictions via security rules
 const clientApp = initializeClientApp(firebaseConfig);
@@ -136,7 +135,7 @@ async function initializeSystemData() {
 
 async function startServer() {
   await initializeSystemData();
-  startMonetizationEngine(db);
+  startMonetizationEngine(clientDb);
   const app = express();
   const PORT = 3000;
 

@@ -18,7 +18,7 @@ export async function trackMonetizationEvent(db: Firestore, eventData: {
     await addDoc(collection(db, 'monetization_logs'), {
       ...eventData,
       timestamp: serverTimestamp(),
-      secretKey: process.env.SYSTEM_SECRET_KEY || "conecta-tea-system-secret-key"
+      secretKey: "conecta-tea-system-secret-key"
     });
   } catch (error) {
     console.error("[Monetization Engine] Error tracking event:", error);

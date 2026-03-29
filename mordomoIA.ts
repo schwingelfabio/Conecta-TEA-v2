@@ -29,7 +29,7 @@ export async function logSystemError(db: Firestore, errorData: any) {
         ...errorData,
         timestamp: serverTimestamp(),
         status: "pending", // pending analysis
-        secretKey: process.env.SYSTEM_SECRET_KEY || "conecta-tea-system-secret-key"
+        secretKey: "conecta-tea-system-secret-key"
       });
       console.log(`[Mordomo TEA IA] Novo log registrado em ${collectionName}.`);
     } catch (err: any) {
@@ -182,7 +182,7 @@ export async function runAnalysisAndReport(db: Firestore, providedLogsData?: any
           ...suggestion,
           createdAt: serverTimestamp(),
           status: "open",
-          secretKey: process.env.SYSTEM_SECRET_KEY || "conecta-tea-system-secret-key"
+          secretKey: "conecta-tea-system-secret-key"
         });
       });
       await batch.commit();
@@ -193,7 +193,7 @@ export async function runAnalysisAndReport(db: Firestore, providedLogsData?: any
       await addDoc(collection(db, "system_reports"), {
         ...result.report,
         createdAt: serverTimestamp(),
-        secretKey: process.env.SYSTEM_SECRET_KEY || "conecta-tea-system-secret-key"
+        secretKey: "conecta-tea-system-secret-key"
       });
     }
 

@@ -33,7 +33,7 @@ const TermosDeUso = lazy(() => import('./components/LegalPages').then(module => 
 const Privacidade = lazy(() => import('./components/LegalPages').then(module => ({ default: module.Privacidade })));
 const Contato = lazy(() => import('./components/LegalPages').then(module => ({ default: module.Contato })));
 const AuthForm = lazy(() => import('./components/AuthForm'));
-const Onboarding = lazy(() => import('./components/Onboarding'));
+const Onboarding = lazy(() => import('./components/OnboardingModal'));
 const MordomoDashboard = lazy(() => import('./components/MordomoDashboard'));
 import { UserProfile } from './types';
 import { auth, db } from './lib/firebase';

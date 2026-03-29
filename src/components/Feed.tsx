@@ -374,10 +374,11 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
     if (!userProfile) return;
 
     const postRef = doc(db, 'posts', postId);
-    const isLiked = likes.includes(userProfile.uid);
+    const safeLikes = Array.isArray(likes) ? likes : [];
+    const isLiked = safeLikes.includes(userProfile.uid);
     const newLikes = isLiked 
-      ? likes.filter(id => id !== userProfile.uid)
-      : [...likes, userProfile.uid];
+      ? safeLikes.filter(id => id !== userProfile.uid)
+      : [...safeLikes, userProfile.uid];
 
     // Optimistically update local state
     setPosts(prev => prev.map(p => {
@@ -396,7 +397,7 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
       // Revert optimistic update
       setPosts(prev => prev.map(p => {
         if (p.id === postId) {
-          return { ...p, likes: likes };
+          return { ...p, likes: safeLikes };
         }
         return p;
       }));
@@ -680,16 +681,16 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
                             <button 
                               onClick={() => handleLike(post.id, post.likes)}
                               className={`flex items-center space-x-2 transition-colors group ${
-                                post.likes?.includes(userProfile?.uid || '') 
+                                post.likes && Array.isArray(post.likes) && post.likes.includes(userProfile?.uid || '') 
                                   ? 'text-brand-secondary' 
                                   : 'text-slate-400 hover:text-brand-secondary'
                               }`}
                             >
                               <Heart 
                                 size={20} 
-                                className={`${post.likes?.includes(userProfile?.uid || '') ? 'fill-brand-secondary' : 'group-hover:fill-brand-secondary'}`} 
+                                className={`${post.likes && Array.isArray(post.likes) && post.likes.includes(userProfile?.uid || '') ? 'fill-brand-secondary' : 'group-hover:fill-brand-secondary'}`} 
                               />
-                              <span className="text-sm font-medium">{post.likes?.length || 0}</span>
+                              <span className="text-sm font-medium">{Array.isArray(post.likes) ? post.likes.length : 0}</span>
                             </button>
                             <button 
                             onClick={() => setExpandedComments(expandedComments === post.id ? null : post.id)}
