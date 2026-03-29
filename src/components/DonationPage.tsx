@@ -1,8 +1,10 @@
 import React from 'react';
 import { motion } from 'motion/react';
 import { ShieldCheck, Heart, Users } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 const DonationPage = () => {
+  const { i18n } = useTranslation();
   return (
     <div className="min-h-screen bg-sky-50 pb-20">
       {/* Hero Section */}
@@ -52,17 +54,28 @@ const DonationPage = () => {
       </motion.div>
 
       {/* QR Code */}
-      <motion.div 
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        className="mt-12 flex flex-col items-center px-6"
-      >
-        <div className="relative rounded-2xl bg-white p-4 shadow-lg">
-          <div className="absolute inset-0 animate-pulse rounded-2xl border-2 border-emerald-300 opacity-50" />
-          <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://stripe.com" alt="QR Code" className="h-32 w-32" referrerPolicy="no-referrer" />
-        </div>
-        <p className="mt-4 font-medium text-sky-900">Scan to donate instantly</p>
-      </motion.div>
+      {i18n.language === 'en' && (
+        <motion.div 
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          className="mt-12 flex flex-col items-center px-6"
+        >
+          <div className="relative rounded-2xl bg-white p-4 shadow-lg">
+            <motion.div 
+              animate={{ scale: [1, 1.05, 1] }}
+              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+              className="absolute inset-0 rounded-2xl border-2 border-emerald-300 opacity-50" 
+            />
+            <img 
+              src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://donate.stripe.com/cNi00k7E59XMdE47L52wU00" 
+              alt="QR Code" 
+              className="h-32 w-32" 
+              referrerPolicy="no-referrer" 
+            />
+          </div>
+          <p className="mt-4 font-medium text-sky-900">Scan to donate instantly</p>
+        </motion.div>
+      )}
 
       {/* Trust Section */}
       <div className="mt-12 grid grid-cols-1 gap-4 px-6">
