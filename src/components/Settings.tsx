@@ -57,8 +57,14 @@ export default function Settings({
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
+  const [message, setMessage] = useState<{text: string, type: 'success' | 'error'} | null>(null);
 
   const fileInputRef = React.useRef<HTMLInputElement>(null);
+
+  const showMessage = (text: string, type: 'success' | 'error') => {
+    setMessage({ text, type });
+    setTimeout(() => setMessage(null), 5000);
+  };
 
   const effectiveVip = Boolean(isVip || isAdmin);
 
@@ -83,7 +89,7 @@ export default function Settings({
 
     // Check file size (limit to 5MB)
     if (file.size > 5 * 1024 * 1024) {
-      alert(t('settings.photoTooLarge') || 'A foto deve ter menos de 5MB');
+      showMessage(t('settings.photoTooLarge') || 'A foto deve ter menos de 5MB', 'error');
       return;
     }
 
@@ -109,10 +115,10 @@ export default function Settings({
       }).catch(e => console.error('Error updating public profile photo:', e));
 
       setPhotoURL(downloadURL);
-      alert(t('settings.photoSuccess') || 'Foto atualizada com sucesso!');
+      showMessage(t('settings.photoSuccess') || 'Foto atualizada com sucesso!', 'success');
     } catch (error) {
       console.error('Error uploading photo:', error);
-      alert(t('settings.uploadError') || 'Erro ao enviar foto. Verifique sua conexão.');
+      showMessage(t('settings.uploadError') || 'Erro ao enviar foto. Verifique sua conexão.', 'error');
     } finally {
       setIsUploading(false);
     }
@@ -122,7 +128,7 @@ export default function Settings({
     if (!user) return;
     
     if (!firstName.trim() || !lastName.trim() || !state.trim() || !city.trim() || !role.trim()) {
-      alert('Por favor, preencha todos os campos obrigatórios (Nome, Sobrenome, Estado, Cidade e Perfil).');
+      showMessage('Por favor, preencha todos os campos obrigatórios (Nome, Sobrenome, Estado, Cidade e Perfil).', 'error');
       return;
     }
 
@@ -148,10 +154,10 @@ export default function Settings({
         role
       }).catch(e => console.error('Error updating public profile:', e));
       setIsEditing(false);
-      alert(t('settings.profileSaved'));
+      showMessage(t('settings.profileSaved'), 'success');
     } catch (error) {
       console.error(error);
-      alert(t('settings.saveError') || 'Erro ao salvar perfil');
+      showMessage(t('settings.saveError') || 'Erro ao salvar perfil', 'error');
     } finally {
       setIsSaving(false);
     }
@@ -161,10 +167,10 @@ export default function Settings({
     if (!user?.email) return;
     try {
       await sendPasswordResetEmail(auth, user.email);
-      alert(t('settings.passwordResetSent'));
+      showMessage(t('settings.passwordResetSent'), 'success');
     } catch (error) {
       console.error(error);
-      alert(t('settings.passwordResetError'));
+      showMessage(t('settings.passwordResetError'), 'error');
     }
   };
 
@@ -178,6 +184,20 @@ export default function Settings({
       animate={{ opacity: 1, y: 0 }}
       className="max-w-2xl mx-auto space-y-6 pb-24"
     >
+      {message && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className={`p-4 rounded-2xl font-bold border text-center ${
+            message.type === 'success' 
+              ? 'bg-emerald-50 text-emerald-700 border-emerald-100' 
+              : 'bg-red-50 text-red-700 border-red-100'
+          }`}
+        >
+          {message.text}
+        </motion.div>
+      )}
+
       <div className="bg-white rounded-3xl p-8 shadow-sm border border-gray-100">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-bold text-gray-900">{t('settings.title')}</h2>

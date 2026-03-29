@@ -27,6 +27,7 @@ export default function AreaVip({
   const [suggestionText, setSuggestionText] = useState('');
   const [isSending, setIsSending] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
   const [selectedVideo, setSelectedVideo] = useState<string | null>(null);
   const user = auth.currentUser;
   
@@ -43,6 +44,7 @@ export default function AreaVip({
     if (!suggestionText.trim() || !user) return;
 
     setIsSending(true);
+    setErrorMsg('');
     try {
       await addDoc(collection(db, 'suggestions'), {
         texto: suggestionText,
@@ -55,7 +57,8 @@ export default function AreaVip({
       setTimeout(() => setShowSuccess(false), 5000);
     } catch (error) {
       console.error('Erro ao enviar sugestão:', error);
-      alert(t('vip.suggestionError'));
+      setErrorMsg(t('vip.suggestionError'));
+      setTimeout(() => setErrorMsg(''), 5000);
     } finally {
       setIsSending(false);
     }
@@ -303,6 +306,16 @@ export default function AreaVip({
           <div className="absolute -left-20 -bottom-20 w-64 h-64 bg-emerald-400/20 rounded-full blur-3xl"></div>
         </div>
 
+        {errorMsg && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-8 bg-red-50 text-red-700 p-4 rounded-2xl font-bold border border-red-100 text-center"
+          >
+            {errorMsg}
+          </motion.div>
+        )}
+
         <div>
           <div className="flex items-center gap-3 mb-8 px-4">
             <BookOpen className="text-lavender-600" size={32} />
@@ -339,7 +352,8 @@ export default function AreaVip({
                   <button
                     onClick={() => {
                       console.log('[VIP] download blocked for non-vip');
-                      alert(t('vip.subscribeToDownload'));
+                      setErrorMsg(t('vip.subscribeToDownload'));
+                      setTimeout(() => setErrorMsg(''), 5000);
                     }}
                     className="flex items-center justify-center gap-2 py-4 rounded-2xl text-gray-400 bg-gray-100 font-bold transition-all cursor-not-allowed"
                   >
@@ -385,7 +399,8 @@ export default function AreaVip({
                 ) : (
                   <button
                     onClick={() => {
-                      alert(t('vip.subscribeToDownload'));
+                      setErrorMsg(t('vip.subscribeToDownload'));
+                      setTimeout(() => setErrorMsg(''), 5000);
                     }}
                     className="flex items-center justify-center gap-2 py-4 rounded-2xl text-gray-400 bg-gray-100 font-bold transition-all cursor-not-allowed"
                   >

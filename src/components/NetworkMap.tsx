@@ -36,6 +36,7 @@ export default function NetworkMap() {
   const [topCities, setTopCities] = useState<CityData[]>([]);
   const [selectedState, setSelectedState] = useState<string | null>(null);
   const [selectedCity, setSelectedCity] = useState<CityData | null>(null);
+  const [errorMsg, setErrorMsg] = useState('');
 
   const handleShare = (title: string, text: string) => {
     if (navigator.share) {
@@ -45,7 +46,8 @@ export default function NetworkMap() {
         url: window.location.href,
       }).catch((error) => console.log('Error sharing', error));
     } else {
-      alert(t('map.shareNotSupported'));
+      setErrorMsg(t('map.shareNotSupported') || 'Compartilhamento não suportado neste navegador.');
+      setTimeout(() => setErrorMsg(''), 5000);
     }
   };
 
@@ -153,6 +155,16 @@ export default function NetworkMap() {
       animate={{ opacity: 1, y: 0 }}
       className="max-w-4xl mx-auto space-y-8 pb-24"
     >
+      {errorMsg && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-red-50 text-red-700 p-4 rounded-2xl font-bold border border-red-100 text-center"
+        >
+          {errorMsg}
+        </motion.div>
+      )}
+
       <div className="bg-gradient-to-br from-sky-500 to-indigo-600 rounded-[2rem] p-8 text-white shadow-xl relative overflow-hidden">
         <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="space-y-4 max-w-lg">

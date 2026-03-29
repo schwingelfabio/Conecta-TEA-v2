@@ -10,6 +10,7 @@ export default function Onboarding({ onComplete }: { onComplete: () => void }) {
   const [selectedState, setSelectedState] = useState('');
   const [selectedCity, setSelectedCity] = useState('');
   const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
 
   useEffect(() => {
     fetch('https://servicodados.ibge.gov.br/api/v1/localidades/estados?orderBy=nome')
@@ -31,6 +32,7 @@ export default function Onboarding({ onComplete }: { onComplete: () => void }) {
       return;
     }
     setLoading(true);
+    setErrorMsg('');
     
     try {
       console.log('[Onboarding] Saving state/city for user:', auth.currentUser.uid);
@@ -75,7 +77,7 @@ export default function Onboarding({ onComplete }: { onComplete: () => void }) {
       onComplete();
     } catch (err: any) {
       console.error("[Onboarding] Error saving onboarding:", err);
-      alert(`${t('onboarding.saveError')}: ${err.message}`);
+      setErrorMsg(`${t('onboarding.saveError')}: ${err.message}`);
     } finally {
       setLoading(false);
     }
@@ -86,6 +88,12 @@ export default function Onboarding({ onComplete }: { onComplete: () => void }) {
       <div className="max-w-md w-full bg-white p-8 rounded-3xl shadow-xl border border-gray-100">
         <h2 className="text-2xl font-bold mb-6">{t('onboarding.welcome')}</h2>
         
+        {errorMsg && (
+          <div className="mb-4 p-3 bg-red-50 text-red-700 rounded-xl text-sm border border-red-100">
+            {errorMsg}
+          </div>
+        )}
+
         <select 
           className="w-full p-4 mb-4 rounded-xl border border-gray-200"
           onChange={(e) => setSelectedState(e.target.value)}

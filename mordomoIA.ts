@@ -1,8 +1,7 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import nodemailer from "nodemailer";
 import cron from "node-cron";
-import { db as clientDb } from "./src/lib/firebase.ts";
-import { collection, addDoc, serverTimestamp, getDocs, query, where, limit, writeBatch, doc } from "firebase/firestore";
+import admin from "firebase-admin";
 
 // Initialize Gemini
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || "" });
@@ -16,7 +15,7 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-export async function logSystemError(db: any, errorData: any) {
+export async function logSystemError(db: admin.firestore.Firestore, errorData: any) {
   try {
     let collectionName = "system_logs";
     if (errorData.type === "performance" || errorData.type === "conversion") {
@@ -26,9 +25,9 @@ export async function logSystemError(db: any, errorData: any) {
     }
 
     try {
-      await addDoc(collection(clientDb, collectionName), {
+      await db.collection(collectionName).add({
         ...errorData,
-        timestamp: serverTimestamp(),
+        timestamp: admin.firestore.FieldValue.serverTimestamp(),
         status: "pending", // pending analysis
       });
       console.log(`[Mordomo TEA IA] Novo log registrado em ${collectionName}.`);
@@ -40,7 +39,7 @@ export async function logSystemError(db: any, errorData: any) {
   }
 }
 
-export function startMordomoIA(db: any) {
+export function startMordomoIA(db: admin.firestore.Firestore) {
   console.log("[Mordomo TEA IA] Assistente iniciado. Monitorando o sistema silenciosamente...");
 
   // Run analysis every day at 00:00 (or every minute for testing if needed, but let's do daily)
@@ -50,7 +49,7 @@ export function startMordomoIA(db: any) {
   });
 }
 
-export async function runAnalysisAndReport(db: any, providedLogsData?: any) {
+export async function runAnalysisAndReport(db: admin.firestore.Firestore, providedLogsData?: any) {
   console.log("[Mordomo TEA IA] Iniciando análise do sistema...");
 
   try {
@@ -59,14 +58,14 @@ export async function runAnalysisAndReport(db: any, providedLogsData?: any) {
 
     if (!allData) {
       // 1. Gather pending logs from all collections
-      const logsQuery = query(collection(clientDb, "system_logs"), where("status", "==", "pending"), limit(50));
-      const metricsQuery = query(collection(clientDb, "system_metrics"), where("status", "==", "pending"), limit(50));
-      const auditsQuery = query(collection(clientDb, "system_audits"), where("status", "==", "pending"), limit(50));
+      const logsQuery = db.collection("system_logs").where("status", "==", "pending").limit(50);
+      const metricsQuery = db.collection("system_metrics").where("status", "==", "pending").limit(50);
+      const auditsQuery = db.collection("system_audits").where("status", "==", "pending").limit(50);
 
       [logsSnap, metricsSnap, auditsSnap] = await Promise.all([
-        getDocs(logsQuery),
-        getDocs(metricsQuery),
-        getDocs(auditsQuery),
+        logsQuery.get(),
+        metricsQuery.get(),
+        auditsQuery.get(),
       ]);
       
       if (logsSnap.empty && metricsSnap.empty && auditsSnap.empty) {
@@ -74,9 +73,9 @@ export async function runAnalysisAndReport(db: any, providedLogsData?: any) {
         return { status: 'no_logs' };
       }
 
-      const errors = logsSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      const metrics = metricsSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      const audits = auditsSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      const errors = logsSnap.docs.map((doc: any) => ({ id: doc.id, ...doc.data() }));
+      const metrics = metricsSnap.docs.map((doc: any) => ({ id: doc.id, ...doc.data() }));
+      const audits = auditsSnap.docs.map((doc: any) => ({ id: doc.id, ...doc.data() }));
 
       allData = { errors, metrics, audits };
     } else {
@@ -175,12 +174,12 @@ export async function runAnalysisAndReport(db: any, providedLogsData?: any) {
 
     // 3. Save Suggestions
     if (result.suggestions && Array.isArray(result.suggestions)) {
-      const batch = writeBatch(clientDb);
+      const batch = db.batch();
       result.suggestions.forEach((suggestion: any) => {
-        const ref = doc(collection(clientDb, "system_fix_suggestions"));
+        const ref = db.collection("system_fix_suggestions").doc();
         batch.set(ref, {
           ...suggestion,
-          createdAt: serverTimestamp(),
+          createdAt: admin.firestore.FieldValue.serverTimestamp(),
           status: "open"
         });
       });
@@ -189,9 +188,9 @@ export async function runAnalysisAndReport(db: any, providedLogsData?: any) {
 
     // 4. Save Report
     if (result.report) {
-      await addDoc(collection(clientDb, "system_reports"), {
+      await db.collection("system_reports").add({
         ...result.report,
-        createdAt: serverTimestamp(),
+        createdAt: admin.firestore.FieldValue.serverTimestamp(),
       });
     }
 
@@ -210,7 +209,7 @@ export async function runAnalysisAndReport(db: any, providedLogsData?: any) {
     }
 
     // 6. Mark logs as analyzed
-    const updateBatch = writeBatch(clientDb);
+    const updateBatch = db.batch();
     
     if (providedLogsData) {
       // Use IDs from provided logs
@@ -218,8 +217,8 @@ export async function runAnalysisAndReport(db: any, providedLogsData?: any) {
         if (!items) return;
         items.forEach(item => {
           if (item.id) {
-            const ref = doc(clientDb, collectionName, item.id);
-            updateBatch.update(ref, { status: "analyzed", analyzedAt: serverTimestamp() });
+            const ref = db.collection(collectionName).doc(item.id);
+            updateBatch.update(ref, { status: "analyzed", analyzedAt: admin.firestore.FieldValue.serverTimestamp() });
           }
         });
       };
@@ -231,7 +230,7 @@ export async function runAnalysisAndReport(db: any, providedLogsData?: any) {
       const markAnalyzed = (docs: any[]) => {
         if (!docs) return;
         docs.forEach(d => {
-          updateBatch.update(d.ref, { status: "analyzed", analyzedAt: serverTimestamp() });
+          updateBatch.update(d.ref, { status: "analyzed", analyzedAt: admin.firestore.FieldValue.serverTimestamp() });
         });
       };
       markAnalyzed(logsSnap?.docs);

@@ -15,6 +15,7 @@ const PostComments: React.FC<PostCommentsProps> = ({ postId, userProfile, isGues
   const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState('');
   const [loading, setLoading] = useState(true);
+  const [errorMsg, setErrorMsg] = useState('');
 
   useEffect(() => {
     const fetchComments = async () => {
@@ -46,6 +47,7 @@ const PostComments: React.FC<PostCommentsProps> = ({ postId, userProfile, isGues
 
     const commentText = newComment.trim();
     setNewComment(''); // Clear input immediately
+    setErrorMsg('');
 
     // Create optimistic comment
     const optimisticComment: Comment = {
@@ -85,7 +87,8 @@ const PostComments: React.FC<PostCommentsProps> = ({ postId, userProfile, isGues
       // Revert optimistic update on error
       setComments(prev => prev.filter(c => c.id !== optimisticComment.id));
       setNewComment(commentText); // Restore input text
-      alert('Não foi possível enviar o comentário. Tente novamente.');
+      setErrorMsg('Não foi possível enviar o comentário. Tente novamente.');
+      setTimeout(() => setErrorMsg(''), 5000);
     }
   };
 
@@ -96,6 +99,12 @@ const PostComments: React.FC<PostCommentsProps> = ({ postId, userProfile, isGues
         Comentários ({comments.length})
       </h4>
       
+      {errorMsg && (
+        <div className="mb-4 p-3 bg-red-50 text-red-700 rounded-xl text-sm border border-red-100">
+          {errorMsg}
+        </div>
+      )}
+
       <div className="space-y-4 mb-4">
         {comments.map(comment => (
           <div key={comment.id} className="flex space-x-3">
