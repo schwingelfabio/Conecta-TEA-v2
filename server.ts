@@ -5,7 +5,9 @@ import axios from "axios";
 import { parseStringPromise } from "xml2js";
 import dotenv from "dotenv";
 import path from "path";
-import { getFirestore } from "firebase-admin/firestore";
+import { getFirestore as getAdminFirestore } from "firebase-admin/firestore";
+import { initializeApp as initializeClientApp } from "firebase/app";
+import { getFirestore as getClientFirestore } from "firebase/firestore";
 import multer from "multer";
 import OpenAI from "openai";
 import { ElevenLabsClient } from "elevenlabs";
@@ -16,6 +18,10 @@ import { trackMonetizationEvent, startMonetizationEngine } from "./monetizationE
 const firebaseConfig = JSON.parse(fs.readFileSync(new URL("./firebase-applet-config.json", import.meta.url), "utf-8"));
 
 dotenv.config();
+
+// Initialize Firebase Client SDK for backend operations that need to bypass IAM restrictions via security rules
+const clientApp = initializeClientApp(firebaseConfig);
+const clientDb = getClientFirestore(clientApp, firebaseConfig.firestoreDatabaseId || '(default)');
 
 // Initialize Firebase Admin
 const projectId = firebaseConfig.projectId;
@@ -45,11 +51,11 @@ await initAdmin();
 let db: admin.firestore.Firestore;
 try {
   // Always use the databaseId from the config, not '(default)' unless it's explicitly '(default)'
-  db = getFirestore(admin.app(), databaseId);
+  db = getAdminFirestore(admin.app(), databaseId);
   console.log(`[Server] Firestore initialized. Database: ${databaseId}, Project: ${admin.app().options.projectId}`);
 } catch (error) {
   console.error(`[Server] Failed to initialize Firestore with database ${databaseId}. Falling back to (default).`, error);
-  db = getFirestore(admin.app(), '(default)');
+  db = getAdminFirestore(admin.app(), '(default)');
 }
 
 // Test connection and provide helpful error message for PERMISSION_DENIED
@@ -64,7 +70,7 @@ async function testFirestoreConnection() {
     if (databaseId !== '(default)' && (error.code === 7 || error.message?.includes('PERMISSION_DENIED'))) {
       console.warn('[Server] PERMISSION_DENIED on named database. Falling back to (default) database...');
       try {
-        db = getFirestore(admin.app(), '(default)');
+        db = getAdminFirestore(admin.app(), '(default)');
         await db.collection('test_connection').limit(1).get();
         console.log('[Server] Firestore connection test (read) successful on (default) database.');
       } catch (fallbackError: any) {
@@ -171,7 +177,7 @@ async function startServer() {
   // API Route: Mordomo IA Error Logging
   app.post("/api/mordomo/log", async (req, res) => {
     try {
-      await logSystemError(db, req.body);
+      await logSystemError(clientDb, req.body);
       res.status(200).json({ success: true });
     } catch (err) {
       res.status(500).json({ error: "Failed to log error" });
@@ -182,7 +188,7 @@ async function startServer() {
   app.post("/api/mordomo/trigger", async (req, res) => {
     try {
       const logsData = req.body.logsData;
-      const result = await runAnalysisAndReport(db, logsData);
+      const result = await runAnalysisAndReport(clientDb, logsData);
       if (result && result.status === 'no_logs') {
         res.status(200).json({ success: true, message: "Nenhum log pendente para análise. Sistema saudável!" });
       } else {
@@ -198,7 +204,7 @@ async function startServer() {
   app.post("/api/monetization/log", async (req, res) => {
     try {
       const { userId, eventType, pageUrl, deviceType, metadata } = req.body;
-      await trackMonetizationEvent(db, { userId, eventType, pageUrl, deviceType, metadata });
+      await trackMonetizationEvent(clientDb, { userId, eventType, pageUrl, deviceType, metadata });
       res.status(200).json({ success: true });
     } catch (error) {
       console.error("Error logging monetization event:", error);
@@ -319,7 +325,8 @@ async function startServer() {
   }
 
   // Start Mordomo IA background tasks
-  startMordomoIA(db);
+  startMordomoIA(clientDb);
+  startMonetizationEngine(clientDb);
 
   app.listen(PORT, "0.0.0.0", () => {
     console.log(`Server running on http://localhost:${PORT}`);

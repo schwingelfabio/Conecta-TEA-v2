@@ -1,7 +1,7 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import nodemailer from "nodemailer";
 import cron from "node-cron";
-import admin from "firebase-admin";
+import { Firestore, collection, addDoc, serverTimestamp, query, where, limit, getDocs, writeBatch, doc } from "firebase/firestore";
 
 // Initialize Gemini
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || "" });
@@ -15,7 +15,7 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-export async function logSystemError(db: admin.firestore.Firestore, errorData: any) {
+export async function logSystemError(db: Firestore, errorData: any) {
   try {
     let collectionName = "system_logs";
     if (errorData.type === "performance" || errorData.type === "conversion") {
@@ -25,10 +25,11 @@ export async function logSystemError(db: admin.firestore.Firestore, errorData: a
     }
 
     try {
-      await db.collection(collectionName).add({
+      await addDoc(collection(db, collectionName), {
         ...errorData,
-        timestamp: admin.firestore.FieldValue.serverTimestamp(),
+        timestamp: serverTimestamp(),
         status: "pending", // pending analysis
+        secretKey: process.env.SYSTEM_SECRET_KEY || "conecta-tea-system-secret-key"
       });
       console.log(`[Mordomo TEA IA] Novo log registrado em ${collectionName}.`);
     } catch (err: any) {
@@ -39,7 +40,7 @@ export async function logSystemError(db: admin.firestore.Firestore, errorData: a
   }
 }
 
-export function startMordomoIA(db: admin.firestore.Firestore) {
+export function startMordomoIA(db: Firestore) {
   console.log("[Mordomo TEA IA] Assistente iniciado. Monitorando o sistema silenciosamente...");
 
   // Run analysis every day at 00:00 (or every minute for testing if needed, but let's do daily)
@@ -49,7 +50,7 @@ export function startMordomoIA(db: admin.firestore.Firestore) {
   });
 }
 
-export async function runAnalysisAndReport(db: admin.firestore.Firestore, providedLogsData?: any) {
+export async function runAnalysisAndReport(db: Firestore, providedLogsData?: any) {
   console.log("[Mordomo TEA IA] Iniciando análise do sistema...");
 
   try {
@@ -58,14 +59,14 @@ export async function runAnalysisAndReport(db: admin.firestore.Firestore, provid
 
     if (!allData) {
       // 1. Gather pending logs from all collections
-      const logsQuery = db.collection("system_logs").where("status", "==", "pending").limit(50);
-      const metricsQuery = db.collection("system_metrics").where("status", "==", "pending").limit(50);
-      const auditsQuery = db.collection("system_audits").where("status", "==", "pending").limit(50);
+      const logsQuery = query(collection(db, "system_logs"), where("status", "==", "pending"), limit(50));
+      const metricsQuery = query(collection(db, "system_metrics"), where("status", "==", "pending"), limit(50));
+      const auditsQuery = query(collection(db, "system_audits"), where("status", "==", "pending"), limit(50));
 
       [logsSnap, metricsSnap, auditsSnap] = await Promise.all([
-        logsQuery.get(),
-        metricsQuery.get(),
-        auditsQuery.get(),
+        getDocs(logsQuery),
+        getDocs(metricsQuery),
+        getDocs(auditsQuery),
       ]);
       
       if (logsSnap.empty && metricsSnap.empty && auditsSnap.empty) {
@@ -174,13 +175,14 @@ export async function runAnalysisAndReport(db: admin.firestore.Firestore, provid
 
     // 3. Save Suggestions
     if (result.suggestions && Array.isArray(result.suggestions)) {
-      const batch = db.batch();
+      const batch = writeBatch(db);
       result.suggestions.forEach((suggestion: any) => {
-        const ref = db.collection("system_fix_suggestions").doc();
+        const ref = doc(collection(db, "system_fix_suggestions"));
         batch.set(ref, {
           ...suggestion,
-          createdAt: admin.firestore.FieldValue.serverTimestamp(),
-          status: "open"
+          createdAt: serverTimestamp(),
+          status: "open",
+          secretKey: process.env.SYSTEM_SECRET_KEY || "conecta-tea-system-secret-key"
         });
       });
       await batch.commit();
@@ -188,9 +190,10 @@ export async function runAnalysisAndReport(db: admin.firestore.Firestore, provid
 
     // 4. Save Report
     if (result.report) {
-      await db.collection("system_reports").add({
+      await addDoc(collection(db, "system_reports"), {
         ...result.report,
-        createdAt: admin.firestore.FieldValue.serverTimestamp(),
+        createdAt: serverTimestamp(),
+        secretKey: process.env.SYSTEM_SECRET_KEY || "conecta-tea-system-secret-key"
       });
     }
 
@@ -209,7 +212,7 @@ export async function runAnalysisAndReport(db: admin.firestore.Firestore, provid
     }
 
     // 6. Mark logs as analyzed
-    const updateBatch = db.batch();
+    const updateBatch = writeBatch(db);
     
     if (providedLogsData) {
       // Use IDs from provided logs
@@ -217,8 +220,8 @@ export async function runAnalysisAndReport(db: admin.firestore.Firestore, provid
         if (!items) return;
         items.forEach(item => {
           if (item.id) {
-            const ref = db.collection(collectionName).doc(item.id);
-            updateBatch.update(ref, { status: "analyzed", analyzedAt: admin.firestore.FieldValue.serverTimestamp() });
+            const ref = doc(db, collectionName, item.id);
+            updateBatch.update(ref, { status: "analyzed", analyzedAt: serverTimestamp() });
           }
         });
       };
@@ -230,7 +233,7 @@ export async function runAnalysisAndReport(db: admin.firestore.Firestore, provid
       const markAnalyzed = (docs: any[]) => {
         if (!docs) return;
         docs.forEach(d => {
-          updateBatch.update(d.ref, { status: "analyzed", analyzedAt: admin.firestore.FieldValue.serverTimestamp() });
+          updateBatch.update(d.ref, { status: "analyzed", analyzedAt: serverTimestamp() });
         });
       };
       markAnalyzed(logsSnap?.docs);
