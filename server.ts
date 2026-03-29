@@ -181,13 +181,15 @@ async function startServer() {
   // API Route: Trigger Mordomo IA Analysis Manually (for testing)
   app.post("/api/mordomo/trigger", async (req, res) => {
     try {
-      const result = await runAnalysisAndReport(db);
+      const logsData = req.body.logsData;
+      const result = await runAnalysisAndReport(db, logsData);
       if (result && result.status === 'no_logs') {
         res.status(200).json({ success: true, message: "Nenhum log pendente para análise. Sistema saudável!" });
       } else {
         res.status(200).json({ success: true, message: "Análise concluída. Verifique seu e-mail e o painel." });
       }
     } catch (err) {
+      console.error("Error triggering analysis:", err);
       res.status(500).json({ error: "Failed to trigger analysis" });
     }
   });

@@ -50,6 +50,7 @@ export default function App() {
   const [user, setUser] = useState<FirebaseUser | null>(null);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isSuperAdmin, setIsSuperAdmin] = useState(false);
   const [isVip, setIsVip] = useState(false);
   const [isDeveloper, setIsDeveloper] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -207,6 +208,7 @@ export default function App() {
         }
 
         setIsAdmin(adminStatus);
+        setIsSuperAdmin(normalizedEmail === 'fabiopalacioschwingel@gmail.com');
         setIsVip(vipStatus);
         setIsDeveloper(developerStatus);
         console.log(`[AUTH] derived roles applied: isAdmin=${adminStatus}, isVip=${vipStatus}, isDeveloper=${developerStatus}`);
@@ -281,7 +283,7 @@ export default function App() {
       case 'contato':
         return <Suspense fallback={<div className="flex justify-center p-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-500"></div></div>}><Contato onBack={() => setActiveTab('settings')} /></Suspense>;
       case 'mordomo':
-        return isAdmin ? <Suspense fallback={<div className="flex justify-center p-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-500"></div></div>}><MordomoDashboard /></Suspense> : <Feed userProfile={userProfile} isAdmin={isAdmin} isVip={isVip} isGuest={isGuest} />;
+        return isSuperAdmin ? <Suspense fallback={<div className="flex justify-center p-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-500"></div></div>}><MordomoDashboard /></Suspense> : <Feed userProfile={userProfile} isAdmin={isAdmin} isVip={isVip} isGuest={isGuest} />;
       default:
         return <Suspense fallback={<div className="flex justify-center p-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-500"></div></div>}><Feed userProfile={userProfile} isAdmin={isAdmin} isVip={isVip} isGuest={isGuest} /></Suspense>;
     }
@@ -352,7 +354,7 @@ export default function App() {
                   <Crown size={20} />
                   <span className="hidden sm:inline">{t('nav.vip')}</span>
                 </button>
-                {isAdmin && (
+                {isSuperAdmin && (
                   <button onClick={() => setActiveTab('mordomo')} className={`p-2 sm:px-4 sm:py-2 rounded-full flex items-center gap-2 transition-all shrink-0 ${(activeTab as string) === 'mordomo' ? 'bg-indigo-100 text-indigo-700 font-bold' : 'hover:bg-gray-100 text-gray-600'}`}>
                     <ShieldCheck size={20} />
                     <span className="hidden sm:inline">Mordomo IA</span>

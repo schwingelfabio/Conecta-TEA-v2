@@ -48,14 +48,14 @@ export const useSofiaOrchestrator = () => {
             sender: 'user',
             text: transcript,
             timestamp: serverTimestamp(),
-            detectedEmotion: triage.intent
+            detectedEmotion: triage?.intent || 'unknown'
           });
           await addDoc(collection(db, 'sofia_messages'), {
             sessionId,
             sender: 'sofia',
             text: result.text,
             timestamp: serverTimestamp(),
-            detectedEmotion: triage.intent
+            detectedEmotion: triage?.intent || 'unknown'
           });
         } catch (error) {
           handleFirestoreError(error, OperationType.CREATE, 'sofia_messages');

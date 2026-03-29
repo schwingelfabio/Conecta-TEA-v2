@@ -26,29 +26,39 @@ export const TRIAGE_SCHEMA = {
 };
 
 export const analyzeTriage = async (transcript: string): Promise<any> => {
-  const response: GenerateContentResponse = await ai.models.generateContent({
-    model: "gemini-3-flash-preview",
-    contents: transcript,
-    config: {
-      systemInstruction: TRIAGE_INSTRUCTION,
-      responseMimeType: "application/json",
-      responseSchema: TRIAGE_SCHEMA,
-    },
-  });
-  return JSON.parse(response.text || "{}");
+  try {
+    const response: GenerateContentResponse = await ai.models.generateContent({
+      model: "gemini-3-flash-preview",
+      contents: transcript,
+      config: {
+        systemInstruction: TRIAGE_INSTRUCTION,
+        responseMimeType: "application/json",
+        responseSchema: TRIAGE_SCHEMA,
+      },
+    });
+    return JSON.parse(response.text || "{}");
+  } catch (err) {
+    console.error("Error in analyzeTriage:", err);
+    return { urgency: "low", intent: "unknown", isEmergency: false };
+  }
 };
 
 export const generateResponse = async (triage: any, transcript: string, context: string[]): Promise<any> => {
-  const response: GenerateContentResponse = await ai.models.generateContent({
-    model: "gemini-3-flash-preview",
-    contents: `Triage: ${JSON.stringify(triage)}\nUsuário: ${transcript}\nContexto: ${context.join('\n')}`,
-    config: {
-      systemInstruction: RESPONSE_INSTRUCTION,
-    },
-  });
-  
-  return {
-    text: response.text || "Sinto muito, não consegui processar sua solicitação.",
-    grounding: response.candidates?.[0]?.groundingMetadata?.groundingChunks || []
-  };
+  try {
+    const response: GenerateContentResponse = await ai.models.generateContent({
+      model: "gemini-3-flash-preview",
+      contents: `Triage: ${JSON.stringify(triage)}\nUsuário: ${transcript}\nContexto: ${context.join('\n')}`,
+      config: {
+        systemInstruction: RESPONSE_INSTRUCTION,
+      },
+    });
+    
+    return {
+      text: response.text || "Sinto muito, não consegui processar sua solicitação.",
+      grounding: response.candidates?.[0]?.groundingMetadata?.groundingChunks || []
+    };
+  } catch (err) {
+    console.error("Error in generateResponse:", err);
+    throw err;
+  }
 };

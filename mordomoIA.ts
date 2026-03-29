@@ -50,31 +50,41 @@ export function startMordomoIA(db: any) {
   });
 }
 
-export async function runAnalysisAndReport(db: any) {
+export async function runAnalysisAndReport(db: any, providedLogsData?: any) {
   console.log("[Mordomo TEA IA] Iniciando análise do sistema...");
 
   try {
-    // 1. Gather pending logs from all collections
-    const logsQuery = query(collection(clientDb, "system_logs"), where("status", "==", "pending"), limit(50));
-    const metricsQuery = query(collection(clientDb, "system_metrics"), where("status", "==", "pending"), limit(50));
-    const auditsQuery = query(collection(clientDb, "system_audits"), where("status", "==", "pending"), limit(50));
+    let allData = providedLogsData;
+    let logsSnap: any, metricsSnap: any, auditsSnap: any;
 
-    const [logsSnap, metricsSnap, auditsSnap] = await Promise.all([
-      getDocs(logsQuery),
-      getDocs(metricsQuery),
-      getDocs(auditsQuery),
-    ]);
-    
-    if (logsSnap.empty && metricsSnap.empty && auditsSnap.empty) {
-      console.log("[Mordomo TEA IA] Nenhum log novo encontrado. Sistema operando perfeitamente.");
-      return { status: 'no_logs' };
+    if (!allData) {
+      // 1. Gather pending logs from all collections
+      const logsQuery = query(collection(clientDb, "system_logs"), where("status", "==", "pending"), limit(50));
+      const metricsQuery = query(collection(clientDb, "system_metrics"), where("status", "==", "pending"), limit(50));
+      const auditsQuery = query(collection(clientDb, "system_audits"), where("status", "==", "pending"), limit(50));
+
+      [logsSnap, metricsSnap, auditsSnap] = await Promise.all([
+        getDocs(logsQuery),
+        getDocs(metricsQuery),
+        getDocs(auditsQuery),
+      ]);
+      
+      if (logsSnap.empty && metricsSnap.empty && auditsSnap.empty) {
+        console.log("[Mordomo TEA IA] Nenhum log novo encontrado. Sistema operando perfeitamente.");
+        return { status: 'no_logs' };
+      }
+
+      const errors = logsSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      const metrics = metricsSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      const audits = auditsSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+      allData = { errors, metrics, audits };
+    } else {
+      if (!allData.errors?.length && !allData.metrics?.length && !allData.audits?.length) {
+        console.log("[Mordomo TEA IA] Nenhum log novo encontrado (via client). Sistema operando perfeitamente.");
+        return { status: 'no_logs' };
+      }
     }
-
-    const errors = logsSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    const metrics = metricsSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    const audits = auditsSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-
-    const allData = { errors, metrics, audits };
 
     // 2. Analyze with Gemini and request JSON output
     const prompt = `
@@ -201,14 +211,34 @@ export async function runAnalysisAndReport(db: any) {
 
     // 6. Mark logs as analyzed
     const updateBatch = writeBatch(clientDb);
-    const markAnalyzed = (docs: any[]) => {
-      docs.forEach(d => {
-        updateBatch.update(d.ref, { status: "analyzed", analyzedAt: serverTimestamp() });
-      });
-    };
-    markAnalyzed(logsSnap.docs);
-    markAnalyzed(metricsSnap.docs);
-    markAnalyzed(auditsSnap.docs);
+    
+    if (providedLogsData) {
+      // Use IDs from provided logs
+      const markAnalyzedById = (collectionName: string, items: any[]) => {
+        if (!items) return;
+        items.forEach(item => {
+          if (item.id) {
+            const ref = doc(clientDb, collectionName, item.id);
+            updateBatch.update(ref, { status: "analyzed", analyzedAt: serverTimestamp() });
+          }
+        });
+      };
+      markAnalyzedById("system_logs", allData.errors);
+      markAnalyzedById("system_metrics", allData.metrics);
+      markAnalyzedById("system_audits", allData.audits);
+    } else {
+      // Use refs from snaps
+      const markAnalyzed = (docs: any[]) => {
+        if (!docs) return;
+        docs.forEach(d => {
+          updateBatch.update(d.ref, { status: "analyzed", analyzedAt: serverTimestamp() });
+        });
+      };
+      markAnalyzed(logsSnap?.docs);
+      markAnalyzed(metricsSnap?.docs);
+      markAnalyzed(auditsSnap?.docs);
+    }
+    
     await updateBatch.commit();
     return { status: 'success' };
   } catch (error) {

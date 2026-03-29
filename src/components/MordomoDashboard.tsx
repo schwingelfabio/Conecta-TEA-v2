@@ -32,12 +32,31 @@ export default function MordomoDashboard() {
   const triggerAnalysis = async () => {
     try {
       setFeedbackMessage(null);
-      const res = await fetch('/api/mordomo/trigger', { method: 'POST' });
+      
+      // 1. Gather pending logs from all collections
+      const logsSnap = await getDocs(query(collection(db, 'system_logs'), where('status', '==', 'pending'), limit(50)));
+      const metricsSnap = await getDocs(query(collection(db, 'system_metrics'), where('status', '==', 'pending'), limit(50)));
+      const auditsSnap = await getDocs(query(collection(db, 'system_audits'), where('status', '==', 'pending'), limit(50)));
+      
+      const errors = logsSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      const metrics = metricsSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      const audits = auditsSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      
+      const allData = { errors, metrics, audits };
+
+      const res = await fetch('/api/mordomo/trigger', { 
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ logsData: allData })
+      });
       const data = await res.json();
       setFeedbackMessage({ text: data.message || 'Análise iniciada!', type: 'success' });
       fetchData();
       setTimeout(() => setFeedbackMessage(null), 5000);
     } catch (e) {
+      console.error("Error triggering analysis:", e);
       setFeedbackMessage({ text: 'Erro ao iniciar análise.', type: 'error' });
       setTimeout(() => setFeedbackMessage(null), 5000);
     }
