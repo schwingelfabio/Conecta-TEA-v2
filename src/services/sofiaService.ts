@@ -44,7 +44,6 @@ export const generateResponse = async (triage: any, transcript: string, context:
     contents: `Triage: ${JSON.stringify(triage)}\nUsuário: ${transcript}\nContexto: ${context.join('\n')}`,
     config: {
       systemInstruction: RESPONSE_INSTRUCTION,
-      tools: [{ googleSearch: {} }],
     },
   });
   

@@ -73,7 +73,7 @@ export async function runAnalysisAndReport(db: admin.firestore.Firestore) {
     
     if (logsSnap.empty && metricsSnap.empty && auditsSnap.empty) {
       console.log("[Mordomo TEA IA] Nenhum log novo encontrado. Sistema operando perfeitamente.");
-      return;
+      return { status: 'no_logs' };
     }
 
     const errors = logsSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
@@ -216,7 +216,7 @@ export async function runAnalysisAndReport(db: admin.firestore.Firestore) {
     markAnalyzed(metricsSnap.docs);
     markAnalyzed(auditsSnap.docs);
     await updateBatch.commit();
-
+    return { status: 'success' };
   } catch (error) {
     console.error("[Mordomo TEA IA] Erro durante a análise:", error);
   }

@@ -1,4 +1,4 @@
-import * as admin from 'firebase-admin';
+import admin from 'firebase-admin';
 import nodemailer from 'nodemailer';
 import cron from 'node-cron';
 
@@ -6,10 +6,8 @@ import cron from 'node-cron';
 // Focus: Revenue, Donations, Conversion
 // Safety: No payment processing, no internal data exposure
 
-const db = admin.firestore();
-
 // 1) DONATION TRACKING
-export async function trackMonetizationEvent(eventData: {
+export async function trackMonetizationEvent(db: admin.firestore.Firestore, eventData: {
   userId: string;
   eventType: string; // donation_card_view, paypal_click, etc.
   pageUrl: string;
@@ -27,7 +25,7 @@ export async function trackMonetizationEvent(eventData: {
 }
 
 // 7) DAILY REVENUE REPORT
-export async function sendDailyRevenueReport() {
+export async function sendDailyRevenueReport(db: admin.firestore.Firestore) {
   const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
@@ -36,7 +34,7 @@ export async function sendDailyRevenueReport() {
     },
   });
 
-  const report = await generateReportData(); 
+  const report = await generateReportData(db); 
 
   await transporter.sendMail({
     from: '"Mordomo TEA IA" <noreply@conecta-tea.com>',
@@ -47,26 +45,26 @@ export async function sendDailyRevenueReport() {
 }
 
 // 8) PRIORITY ALERTS
-export async function checkPriorityAlerts() {
+export async function checkPriorityAlerts(db: admin.firestore.Firestore) {
   // Logic to detect drops/breaks and alert
   // ...
 }
 
-async function generateReportData() {
+async function generateReportData(db: admin.firestore.Firestore) {
   // Aggregate data from monetization_metrics
   return "Daily report content...";
 }
 
-export function startMonetizationEngine() {
+export function startMonetizationEngine(db: admin.firestore.Firestore) {
   console.log("[Monetization Engine] Iniciado.");
   
   // Daily report at 00:00
   cron.schedule("0 0 * * *", async () => {
-    await sendDailyRevenueReport();
+    await sendDailyRevenueReport(db);
   });
 
   // Check alerts every hour
   cron.schedule("0 * * * *", async () => {
-    await checkPriorityAlerts();
+    await checkPriorityAlerts(db);
   });
 }

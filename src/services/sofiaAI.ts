@@ -99,9 +99,7 @@ export class SofiaService {
             detectedMode: { type: Type.STRING, description: 'Modo detectado: normal, exaustao, crise, suspeita_tea, culpa, urgencia' }
           },
           required: ['text', 'emotion', 'isEmergency']
-        },
-        tools: [{ googleSearch: {} }], // Enable live web search
-        toolConfig: { includeServerSideToolInvocations: true } as any
+        }
       }
     });
   }

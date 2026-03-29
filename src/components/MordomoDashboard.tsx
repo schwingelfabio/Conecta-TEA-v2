@@ -8,31 +8,38 @@ export default function MordomoDashboard() {
   const [suggestions, setSuggestions] = useState<any[]>([]);
   const [reports, setReports] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [feedbackMessage, setFeedbackMessage] = useState<{text: string, type: 'success' | 'error'} | null>(null);
+
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      const suggSnap = await getDocs(query(collection(db, 'system_fix_suggestions'), orderBy('createdAt', 'desc'), limit(20)));
+      setSuggestions(suggSnap.docs.map(d => ({ id: d.id, ...d.data() })));
+
+      const repSnap = await getDocs(query(collection(db, 'system_reports'), orderBy('createdAt', 'desc'), limit(10)));
+      setReports(repSnap.docs.map(d => ({ id: d.id, ...d.data() })));
+    } catch (e) {
+      console.error("Error fetching Mordomo data", e);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        const suggSnap = await getDocs(query(collection(db, 'system_fix_suggestions'), orderBy('createdAt', 'desc'), limit(20)));
-        setSuggestions(suggSnap.docs.map(d => ({ id: d.id, ...d.data() })));
-
-        const repSnap = await getDocs(query(collection(db, 'system_reports'), orderBy('createdAt', 'desc'), limit(10)));
-        setReports(repSnap.docs.map(d => ({ id: d.id, ...d.data() })));
-      } catch (e) {
-        console.error("Error fetching Mordomo data", e);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchData();
   }, []);
 
   const triggerAnalysis = async () => {
     try {
-      await fetch('/api/mordomo/trigger', { method: 'POST' });
-      alert('Análise iniciada! Verifique seu e-mail em alguns minutos.');
+      setFeedbackMessage(null);
+      const res = await fetch('/api/mordomo/trigger', { method: 'POST' });
+      const data = await res.json();
+      setFeedbackMessage({ text: data.message || 'Análise iniciada!', type: 'success' });
+      fetchData();
+      setTimeout(() => setFeedbackMessage(null), 5000);
     } catch (e) {
-      alert('Erro ao iniciar análise.');
+      setFeedbackMessage({ text: 'Erro ao iniciar análise.', type: 'error' });
+      setTimeout(() => setFeedbackMessage(null), 5000);
     }
   };
 
@@ -56,13 +63,20 @@ export default function MordomoDashboard() {
           </h1>
           <p className="text-gray-500 mt-1">Painel de Controle e Auditoria de Sistemas</p>
         </div>
-        <button 
-          onClick={triggerAnalysis}
-          className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 flex items-center gap-2"
-        >
-          <Zap className="w-4 h-4" />
-          Forçar Análise Agora
-        </button>
+        <div className="flex flex-col items-end gap-2">
+          <button 
+            onClick={triggerAnalysis}
+            className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 flex items-center gap-2"
+          >
+            <Zap className="w-4 h-4" />
+            Forçar Análise Agora
+          </button>
+          {feedbackMessage && (
+            <div className={`text-sm px-3 py-1 rounded-md ${feedbackMessage.type === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+              {feedbackMessage.text}
+            </div>
+          )}
+        </div>
       </div>
 
       <div className="flex gap-4 mb-6 border-b border-gray-200 pb-2">
