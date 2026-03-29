@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { GoogleGenAI } from "@google/genai";
 import { db, auth } from '../lib/firebase';
+
+const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || '' });
 import { 
   collection, 
   query, 
