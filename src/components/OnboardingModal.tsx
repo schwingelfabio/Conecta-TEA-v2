@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { db, auth } from '../lib/firebase';
 import { useTranslation } from 'react-i18next';
 import { doc, updateDoc, collection, query, where, getDocs, setDoc, serverTimestamp, addDoc } from 'firebase/firestore';
-import LocationSelector from './LocationSelector';
+import LocationSelectorGlobal from './LocationSelectorGlobal';
 
 export default function Onboarding({ onComplete }: { onComplete: () => void }) {
   const { t } = useTranslation();
@@ -84,7 +84,7 @@ export default function Onboarding({ onComplete }: { onComplete: () => void }) {
         )}
 
         <div className="mb-8">
-          <LocationSelector onChange={setLocationData} />
+          <LocationSelectorGlobal onChange={setLocationData} />
         </div>
 
         <button 

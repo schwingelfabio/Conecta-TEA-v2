@@ -3,7 +3,7 @@ import { auth, db, storage } from '../lib/firebase';
 import { doc, getDoc, updateDoc, serverTimestamp } from 'firebase/firestore';
 import { signOut, sendPasswordResetEmail, updateProfile } from 'firebase/auth';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import LocationSelector from './LocationSelector';
+import LocationSelectorGlobal from './LocationSelectorGlobal';
 import {
   User,
   Mail,
@@ -382,7 +382,7 @@ export default function Settings({
 
               <div className="p-4 bg-gray-50 rounded-2xl border border-gray-100">
                 <label className="block text-sm font-medium text-gray-700 mb-2">{t('map.locationTitle') || 'Localização'}</label>
-                <LocationSelector 
+                <LocationSelectorGlobal 
                   initialState={state}
                   initialCity={city}
                   initialRegion={region}

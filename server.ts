@@ -35,9 +35,11 @@ if (projectId) {
 async function initAdmin() {
   if (!admin.apps.length) {
     try {
-      // Initialize with default credentials, which should have the necessary permissions
-      admin.initializeApp();
-      console.log(`[Server] Firebase Admin initialized (default). Project: ${admin.app().options.projectId}`);
+      // Initialize with explicit project ID to ensure we are targeting the correct project
+      admin.initializeApp({
+        projectId: projectId
+      });
+      console.log(`[Server] Firebase Admin initialized. Project: ${projectId}`);
     } catch (error) {
       console.error('[Server] Firebase Admin initialization failed:', error);
     }

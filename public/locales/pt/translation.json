@@ -442,24 +442,24 @@
       "terms": "Termos de Uso e Privacidade"
     }
   },
-  "onboarding": {
-    "welcome": "Bem-vindo! Para começar, onde você mora?",
-    "selectCountry": "Selecione o País",
-    "selectState": "Selecione o Estado",
-    "selectCity": "Selecione a Cidade",
-    "button": "Começar",
-    "saveError": "Erro ao salvar localização",
-    "system": "Sistema",
-    "community": "Comunidade",
-    "cantFind": "Não encontrou?",
-    "searchGoogle": "Buscar com Google",
-    "searchPlaceholder": "Digite sua cidade ou estado...",
-    "backToList": "Voltar para a lista",
-    "searching": "Buscando...",
-    "noResults": "Nenhum resultado encontrado no Google.",
-    "stateLabel": "Estado",
-    "cityLabel": "Cidade"
-  },
+    "onboarding": {
+      "welcome": "Bem-vindo! Para começar, onde você mora?",
+      "selectCountry": "Selecione o País",
+      "selectState": "Selecione o Estado",
+      "selectCity": "Selecione a Cidade",
+      "button": "Começar",
+      "saveError": "Erro ao salvar localização",
+      "system": "Sistema",
+      "community": "Comunidade",
+      "cantFind": "Não encontrou?",
+      "searchGoogle": "Buscar com Google",
+      "searchPlaceholder": "Digite sua cidade ou estado...",
+      "backToList": "Voltar para a lista",
+      "searching": "Buscando...",
+      "noResults": "Nenhum resultado encontrado no Google.",
+      "stateLabel": "Estado",
+      "cityLabel": "Cidade"
+    },
   "donation": {
     "title": "Apoie o Projeto",
     "description": "Sua contribuição ajuda a manter e melhorar o aplicativo.",
