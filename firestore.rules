@@ -213,42 +213,50 @@ service cloud.firestore {
     }
     match /system_logs/{logId} {
       allow read: if isAdmin();
-      allow write: if isAdmin() || request.resource.data.secretKey == 'conecta-tea-system-secret-key';
+      allow create: if request.resource.data.secretKey == 'conecta-tea-system-secret-key';
+      allow update, delete: if isAdmin();
     }
 
     match /system_audits/{auditId} {
       allow read: if isAdmin();
-      allow write: if isAdmin() || request.resource.data.secretKey == 'conecta-tea-system-secret-key';
+      allow create: if request.resource.data.secretKey == 'conecta-tea-system-secret-key';
+      allow update, delete: if isAdmin();
     }
 
     match /system_fix_suggestions/{suggestionId} {
       allow read: if isAdmin();
-      allow write: if isAdmin() || request.resource.data.secretKey == 'conecta-tea-system-secret-key';
+      allow create: if request.resource.data.secretKey == 'conecta-tea-system-secret-key';
+      allow update, delete: if isAdmin();
     }
 
     match /system_reports/{reportId} {
       allow read: if isAdmin();
-      allow write: if isAdmin() || request.resource.data.secretKey == 'conecta-tea-system-secret-key';
+      allow create: if request.resource.data.secretKey == 'conecta-tea-system-secret-key';
+      allow update, delete: if isAdmin();
     }
 
     match /system_metrics/{metricId} {
       allow read: if isAdmin();
-      allow write: if isAdmin() || request.resource.data.secretKey == 'conecta-tea-system-secret-key';
+      allow create: if request.resource.data.secretKey == 'conecta-tea-system-secret-key';
+      allow update, delete: if isAdmin();
     }
 
     match /monetization_logs/{logId} {
       allow read: if isAdmin();
-      allow write: if isAdmin() || request.resource.data.secretKey == 'conecta-tea-system-secret-key';
+      allow create: if request.resource.data.secretKey == 'conecta-tea-system-secret-key';
+      allow update, delete: if isAdmin();
     }
 
     match /monetization_metrics/{metricId} {
       allow read: if isAdmin();
-      allow write: if isAdmin() || request.resource.data.secretKey == 'conecta-tea-system-secret-key';
+      allow create: if request.resource.data.secretKey == 'conecta-tea-system-secret-key';
+      allow update, delete: if isAdmin();
     }
 
     match /monetization_suggestions/{suggestionId} {
       allow read: if isAdmin();
-      allow write: if isAdmin() || request.resource.data.secretKey == 'conecta-tea-system-secret-key';
+      allow create: if request.resource.data.secretKey == 'conecta-tea-system-secret-key';
+      allow update, delete: if isAdmin();
     }
   }
 }

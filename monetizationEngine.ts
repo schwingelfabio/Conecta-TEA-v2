@@ -15,13 +15,15 @@ export async function trackMonetizationEvent(db: admin.firestore.Firestore, even
   metadata?: any;
 }) {
   try {
-    await db.collection('monetization_logs').add({
+    const docRef = await db.collection('monetization_logs').add({
       ...eventData,
       timestamp: admin.firestore.FieldValue.serverTimestamp(),
       secretKey: "conecta-tea-system-secret-key"
     });
-  } catch (error) {
-    console.error("[Monetization Engine] Error tracking event:", error);
+    console.log(`[Monetization Engine] Evento registrado: ${eventData.eventType} (ID: ${docRef.id})`);
+  } catch (error: any) {
+    const projectId = admin.app().options.projectId || 'unknown';
+    console.error(`[Monetization Engine] Error tracking event (Project: ${projectId}):`, error.message || error);
   }
 }
 

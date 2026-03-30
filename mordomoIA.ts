@@ -25,15 +25,16 @@ export async function logSystemError(db: admin.firestore.Firestore, errorData: a
     }
 
     try {
-      await db.collection(collectionName).add({
+      const docRef = await db.collection(collectionName).add({
         ...errorData,
         timestamp: admin.firestore.FieldValue.serverTimestamp(),
         status: "pending", // pending analysis
         secretKey: "conecta-tea-system-secret-key"
       });
-      console.log(`[Mordomo TEA IA] Novo log registrado em ${collectionName}.`);
+      console.log(`[Mordomo TEA IA] Novo log registrado em ${collectionName} (ID: ${docRef.id}).`);
     } catch (err: any) {
-      console.error(`[Mordomo TEA IA] Falha ao registrar log no Firestore:`, err);
+      const projectId = admin.app().options.projectId || 'unknown';
+      console.error(`[Mordomo TEA IA] Falha ao registrar log no Firestore (Project: ${projectId}, Collection: ${collectionName}):`, err.message || err);
     }
   } catch (err) {
     console.error("[Mordomo TEA IA] Falha ao registrar log:", err);

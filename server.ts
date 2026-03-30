@@ -22,20 +22,17 @@ const firebaseConfig = JSON.parse(fs.readFileSync(new URL("./firebase-applet-con
 const projectId = firebaseConfig.projectId;
 const databaseId = firebaseConfig.firestoreDatabaseId || '(default)';
 
-// Force environment variables to match our target project
-if (projectId) {
-  process.env.GOOGLE_CLOUD_PROJECT = projectId;
-  process.env.FIREBASE_PROJECT_ID = projectId;
-}
-
 async function initAdmin() {
   if (!admin.apps.length) {
     try {
-      // Initialize with explicit project ID to ensure we are targeting the correct project
-      admin.initializeApp({
-        projectId: projectId
-      });
-      console.log(`[Server] Firebase Admin initialized. Project: ${projectId}`);
+      // Initialize with explicit project ID if available, otherwise use ADC
+      const options: admin.AppOptions = {};
+      if (projectId) {
+        options.projectId = projectId;
+      }
+      
+      admin.initializeApp(options);
+      console.log(`[Server] Firebase Admin initialized. Project: ${admin.app().options.projectId || 'ADC'}`);
     } catch (error) {
       console.error('[Server] Firebase Admin initialization failed:', error);
     }
@@ -59,17 +56,28 @@ try {
 async function testFirestoreConnection() {
   try {
     console.log(`[Server] Testing Firestore connection for project: ${admin.app().options.projectId}, database: ${databaseId}...`);
-    await db.collection('test_connection').limit(1).get();
-    console.log('[Server] Firestore connection test (read) successful.');
+    // Use a simple write/read test
+    const testRef = db.collection('test_connection').doc('server_test');
+    await testRef.set({ 
+      timestamp: admin.firestore.FieldValue.serverTimestamp(),
+      message: 'Server connection test'
+    });
+    await testRef.get();
+    console.log('[Server] Firestore connection test (write/read) successful.');
   } catch (error: any) {
     console.error('[Server] Firestore connection test failed:', error.message || error);
     
+    // If we get PERMISSION_DENIED on a named database, it's often a configuration issue
     if (databaseId !== '(default)' && (error.code === 7 || error.message?.includes('PERMISSION_DENIED'))) {
       console.warn('[Server] PERMISSION_DENIED on named database. Falling back to (default) database...');
       try {
-        db = getAdminFirestore(admin.app(), '(default)');
-        await db.collection('test_connection').limit(1).get();
-        console.log('[Server] Firestore connection test (read) successful on (default) database.');
+        const fallbackDb = getAdminFirestore(admin.app(), '(default)');
+        await fallbackDb.collection('test_connection').doc('server_test_fallback').set({
+          timestamp: admin.firestore.FieldValue.serverTimestamp(),
+          message: 'Fallback connection test'
+        });
+        db = fallbackDb;
+        console.log('[Server] Firestore connection test (write/read) successful on (default) database. Fallback active.');
       } catch (fallbackError: any) {
         console.error('[Server] Fallback to (default) database also failed:', fallbackError.message || fallbackError);
       }
