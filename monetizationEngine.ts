@@ -1,13 +1,13 @@
 import nodemailer from 'nodemailer';
 import cron from 'node-cron';
-import { Firestore, collection, addDoc, serverTimestamp } from "firebase/firestore";
+import admin from 'firebase-admin';
 
 // Monetization Engine Service
 // Focus: Revenue, Donations, Conversion
 // Safety: No payment processing, no internal data exposure
 
 // 1) DONATION TRACKING
-export async function trackMonetizationEvent(db: Firestore, eventData: {
+export async function trackMonetizationEvent(db: admin.firestore.Firestore, eventData: {
   userId: string;
   eventType: string; // donation_card_view, paypal_click, etc.
   pageUrl: string;
@@ -15,9 +15,9 @@ export async function trackMonetizationEvent(db: Firestore, eventData: {
   metadata?: any;
 }) {
   try {
-    await addDoc(collection(db, 'monetization_logs'), {
+    await db.collection('monetization_logs').add({
       ...eventData,
-      timestamp: serverTimestamp(),
+      timestamp: admin.firestore.FieldValue.serverTimestamp(),
       secretKey: "conecta-tea-system-secret-key"
     });
   } catch (error) {
@@ -26,7 +26,7 @@ export async function trackMonetizationEvent(db: Firestore, eventData: {
 }
 
 // 7) DAILY REVENUE REPORT
-export async function sendDailyRevenueReport(db: Firestore) {
+export async function sendDailyRevenueReport(db: admin.firestore.Firestore) {
   const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
@@ -46,17 +46,17 @@ export async function sendDailyRevenueReport(db: Firestore) {
 }
 
 // 8) PRIORITY ALERTS
-export async function checkPriorityAlerts(db: Firestore) {
+export async function checkPriorityAlerts(db: admin.firestore.Firestore) {
   // Logic to detect drops/breaks and alert
   // ...
 }
 
-async function generateReportData(db: Firestore) {
+async function generateReportData(db: admin.firestore.Firestore) {
   // Aggregate data from monetization_metrics
   return "Daily report content...";
 }
 
-export function startMonetizationEngine(db: Firestore) {
+export function startMonetizationEngine(db: admin.firestore.Firestore) {
   console.log("[Monetization Engine] Iniciado.");
   
   // Daily report at 00:00

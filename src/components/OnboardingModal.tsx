@@ -3,6 +3,7 @@ import { db, auth } from '../lib/firebase';
 import { useTranslation } from 'react-i18next';
 import { doc, updateDoc, collection, query, where, getDocs, setDoc, serverTimestamp, addDoc } from 'firebase/firestore';
 import LocationSelectorGlobal from './LocationSelectorGlobal';
+import { handleFirestoreError, OperationType } from '../lib/firestoreErrorHandler';
 
 export default function Onboarding({ onComplete }: { onComplete: () => void }) {
   const { t } = useTranslation();
@@ -22,19 +23,28 @@ export default function Onboarding({ onComplete }: { onComplete: () => void }) {
     try {
       console.log('[Onboarding] Saving state/city for user:', auth.currentUser.uid);
       const userRef = doc(db, 'users', auth.currentUser.uid);
-      await updateDoc(userRef, {
-        state: locationData.state,
-        city: locationData.city,
-        region: locationData.region,
-        google_result: locationData.google_result,
-        updatedAt: serverTimestamp()
-      });
-      await setDoc(doc(db, 'public_profiles', auth.currentUser.uid), {
-        state: locationData.state,
-        city: locationData.city,
-        region: locationData.region,
-        google_result: locationData.google_result
-      }, { merge: true }).catch(e => console.error('Error updating public profile:', e));
+      try {
+        await updateDoc(userRef, {
+          state: locationData.state,
+          city: locationData.city,
+          region: locationData.region,
+          google_result: locationData.google_result,
+          updatedAt: serverTimestamp()
+        });
+      } catch (e) {
+        handleFirestoreError(e, OperationType.UPDATE, `users/${auth.currentUser.uid}`);
+      }
+
+      try {
+        await setDoc(doc(db, 'public_profiles', auth.currentUser.uid), {
+          state: locationData.state,
+          city: locationData.city,
+          region: locationData.region,
+          google_result: locationData.google_result
+        }, { merge: true });
+      } catch (e) {
+        handleFirestoreError(e, OperationType.WRITE, `public_profiles/${auth.currentUser.uid}`);
+      }
 
       // Criar tópicos de comunidade se não existirem
       const topicsRef = collection(db, 'topics');
@@ -45,17 +55,27 @@ export default function Onboarding({ onComplete }: { onComplete: () => void }) {
           where('titulo', '==', title), 
           where(type === 'state' ? 'state' : 'city', '==', locationValue)
         );
-        const snapshot = await getDocs(q);
-        if (snapshot.empty) {
+        let snapshot;
+        try {
+          snapshot = await getDocs(q);
+        } catch (e) {
+          handleFirestoreError(e, OperationType.GET, 'topics');
+        }
+
+        if (snapshot && snapshot.empty) {
           console.log(`[Onboarding] Creating new topic: ${title}`);
-          await addDoc(topicsRef, {
-            titulo: title,
-            state: type === 'state' ? locationValue : locationData.state,
-            city: type === 'city' ? locationValue : '',
-            type: type,
-            author: t('onboarding.system'),
-            createdAt: serverTimestamp()
-          });
+          try {
+            await addDoc(topicsRef, {
+              titulo: title,
+              state: type === 'state' ? locationValue : locationData.state,
+              city: type === 'city' ? locationValue : '',
+              type: type,
+              author: t('onboarding.system'),
+              createdAt: serverTimestamp()
+            });
+          } catch (e) {
+            handleFirestoreError(e, OperationType.CREATE, 'topics');
+          }
         }
       };
 

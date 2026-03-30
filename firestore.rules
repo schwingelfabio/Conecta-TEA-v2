@@ -190,6 +190,18 @@ service cloud.firestore {
       allow write: if isAdmin();
     }
 
+    match /topics/{topicId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated();
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    match /admins/{email} {
+      allow read: if isAdmin();
+      allow write: if isAdmin();
+    }
+
     match /test_connection/{docId} {
       allow read, write: if true;
     }

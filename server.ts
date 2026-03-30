@@ -18,10 +18,6 @@ import { trackMonetizationEvent, startMonetizationEngine } from "./monetizationE
 
 const firebaseConfig = JSON.parse(fs.readFileSync(new URL("./firebase-applet-config.json", import.meta.url), "utf-8"));
 
-// Initialize Firebase Client SDK for backend operations that need to bypass IAM restrictions via security rules
-const clientApp = initializeClientApp(firebaseConfig);
-const clientDb = getClientFirestore(clientApp, firebaseConfig.firestoreDatabaseId || '(default)');
-
 // Initialize Firebase Admin
 const projectId = firebaseConfig.projectId;
 const databaseId = firebaseConfig.firestoreDatabaseId || '(default)';
@@ -137,7 +133,7 @@ async function initializeSystemData() {
 
 async function startServer() {
   await initializeSystemData();
-  startMonetizationEngine(clientDb);
+  startMonetizationEngine(db);
   const app = express();
   const PORT = 3000;
 
@@ -178,7 +174,7 @@ async function startServer() {
   // API Route: Mordomo IA Error Logging
   app.post("/api/mordomo/log", async (req, res) => {
     try {
-      await logSystemError(clientDb, req.body);
+      await logSystemError(db, req.body);
       res.status(200).json({ success: true });
     } catch (err) {
       res.status(500).json({ error: "Failed to log error" });
@@ -189,7 +185,7 @@ async function startServer() {
   app.post("/api/mordomo/trigger", async (req, res) => {
     try {
       const logsData = req.body.logsData;
-      const result = await runAnalysisAndReport(clientDb, logsData);
+      const result = await runAnalysisAndReport(db, logsData);
       if (result && result.status === 'no_logs') {
         res.status(200).json({ success: true, message: "Nenhum log pendente para análise. Sistema saudável!" });
       } else {
@@ -205,7 +201,7 @@ async function startServer() {
   app.post("/api/monetization/log", async (req, res) => {
     try {
       const { userId, eventType, pageUrl, deviceType, metadata } = req.body;
-      await trackMonetizationEvent(clientDb, { userId, eventType, pageUrl, deviceType, metadata });
+      await trackMonetizationEvent(db, { userId, eventType, pageUrl, deviceType, metadata });
       res.status(200).json({ success: true });
     } catch (error) {
       console.error("Error logging monetization event:", error);
@@ -326,8 +322,8 @@ async function startServer() {
   }
 
   // Start Mordomo IA background tasks
-  startMordomoIA(clientDb);
-  startMonetizationEngine(clientDb);
+  startMordomoIA(db);
+  startMonetizationEngine(db);
 
   app.listen(PORT, "0.0.0.0", () => {
     console.log(`Server running on http://localhost:${PORT}`);

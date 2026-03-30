@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { auth, db, storage } from '../lib/firebase';
 import { doc, getDoc, updateDoc, serverTimestamp } from 'firebase/firestore';
 import { signOut, sendPasswordResetEmail, updateProfile } from 'firebase/auth';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import LocationSelectorGlobal from './LocationSelectorGlobal';
+import { handleFirestoreError, OperationType } from '../lib/firestoreErrorHandler';
 import {
   User,
   Mail,
@@ -59,6 +60,14 @@ export default function Settings({
   const [role, setRole] = useState(userProfile?.role || '');
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+
+  const handleLocationChange = useCallback((data: { state: string; city: string; region: string; google_result: boolean }) => {
+    setState(data.state);
+    setCity(data.city);
+    setRegion(data.region);
+    setGoogleResult(data.google_result);
+  }, []);
+
   const [isUploading, setIsUploading] = useState(false);
   const [message, setMessage] = useState<{text: string, type: 'success' | 'error'} | null>(null);
 
@@ -139,29 +148,38 @@ export default function Settings({
 
     setIsSaving(true);
     try {
-      await updateDoc(doc(db, 'users', user.uid), {
-        displayName: `${firstName} ${lastName}`.trim() || name,
-        firstName: firstName.trim(),
-        lastName: lastName.trim(),
-        address: address.trim(),
-        phoneNumber: phoneNumber.trim(),
-        photoURL,
-        state: state.trim(),
-        city: city.trim(),
-        region,
-        google_result: googleResult,
-        bio: bio.trim(),
-        role
-      });
-      await updateDoc(doc(db, 'public_profiles', user.uid), {
-        displayName: `${firstName} ${lastName}`.trim() || name,
-        photoURL,
-        state: state.trim(),
-        city: city.trim(),
-        region,
-        google_result: googleResult,
-        role
-      }).catch(e => console.error('Error updating public profile:', e));
+      try {
+        await updateDoc(doc(db, 'users', user.uid), {
+          displayName: `${firstName} ${lastName}`.trim() || name,
+          firstName: firstName.trim(),
+          lastName: lastName.trim(),
+          address: address.trim(),
+          phoneNumber: phoneNumber.trim(),
+          photoURL,
+          state: state.trim(),
+          city: city.trim(),
+          region,
+          google_result: googleResult,
+          bio: bio.trim(),
+          role
+        });
+      } catch (e) {
+        handleFirestoreError(e, OperationType.UPDATE, `users/${user.uid}`);
+      }
+
+      try {
+        await updateDoc(doc(db, 'public_profiles', user.uid), {
+          displayName: `${firstName} ${lastName}`.trim() || name,
+          photoURL,
+          state: state.trim(),
+          city: city.trim(),
+          region,
+          google_result: googleResult,
+          role
+        });
+      } catch (e) {
+        handleFirestoreError(e, OperationType.UPDATE, `public_profiles/${user.uid}`);
+      }
       setIsEditing(false);
       showMessage(t('settings.profileSaved'), 'success');
     } catch (error) {
@@ -386,12 +404,7 @@ export default function Settings({
                   initialState={state}
                   initialCity={city}
                   initialRegion={region}
-                  onChange={(data) => {
-                    setState(data.state);
-                    setCity(data.city);
-                    setRegion(data.region);
-                    setGoogleResult(data.google_result);
-                  }}
+                  onChange={handleLocationChange}
                 />
               </div>
 
