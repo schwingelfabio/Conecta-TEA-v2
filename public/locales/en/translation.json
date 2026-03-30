@@ -450,7 +450,15 @@
     "button": "Start",
     "saveError": "Error saving location",
     "system": "System",
-    "community": "Community"
+    "community": "Community",
+    "cantFind": "Can't find it?",
+    "searchGoogle": "Search with Google",
+    "searchPlaceholder": "Type your city or state...",
+    "backToList": "Back to list",
+    "searching": "Searching...",
+    "noResults": "No results found on Google.",
+    "stateLabel": "State",
+    "cityLabel": "City"
   },
   "donation": {
     "title": "Support the Project",

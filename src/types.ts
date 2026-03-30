@@ -13,6 +13,7 @@ export interface UserProfile {
   state?: string;
   city?: string;
   region?: string;
+  google_result?: boolean;
   country?: string;
   bio?: string;
   role?: 'parent' | 'professional' | 'autistic' | 'other' | 'admin';

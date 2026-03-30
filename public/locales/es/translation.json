@@ -450,7 +450,15 @@
     "button": "Empezar",
     "saveError": "Error al guardar la ubicación",
     "system": "Sistema",
-    "community": "Comunidad"
+    "community": "Comunidad",
+    "cantFind": "¿No lo encontraste?",
+    "searchGoogle": "Buscar con Google",
+    "searchPlaceholder": "Escribe tu ciudad o estado...",
+    "backToList": "Volver a la lista",
+    "searching": "Buscando...",
+    "noResults": "No se encontraron resultados en Google.",
+    "stateLabel": "Estado",
+    "cityLabel": "Ciudad"
   },
   "donation": {
     "title": "Apoya el Proyecto",

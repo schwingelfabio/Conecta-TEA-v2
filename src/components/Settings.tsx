@@ -3,6 +3,7 @@ import { auth, db, storage } from '../lib/firebase';
 import { doc, getDoc, updateDoc, serverTimestamp } from 'firebase/firestore';
 import { signOut, sendPasswordResetEmail, updateProfile } from 'firebase/auth';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import LocationSelector from './LocationSelector';
 import {
   User,
   Mail,
@@ -52,6 +53,8 @@ export default function Settings({
   const [photoURL, setPhotoURL] = useState(userProfile?.photoURL || user?.photoURL || '');
   const [state, setState] = useState(userProfile?.state || '');
   const [city, setCity] = useState(userProfile?.city || '');
+  const [region, setRegion] = useState(userProfile?.region || '');
+  const [googleResult, setGoogleResult] = useState(userProfile?.google_result || false);
   const [bio, setBio] = useState(userProfile?.bio || '');
   const [role, setRole] = useState(userProfile?.role || '');
   const [isEditing, setIsEditing] = useState(false);
@@ -78,6 +81,8 @@ export default function Settings({
       setPhotoURL(userProfile.photoURL || user?.photoURL || '');
       setState(userProfile.state || '');
       setCity(userProfile.city || '');
+      setRegion(userProfile.region || '');
+      setGoogleResult(userProfile.google_result || false);
       setBio(userProfile.bio || '');
       setRole(userProfile.role || '');
     }
@@ -128,7 +133,7 @@ export default function Settings({
     if (!user) return;
     
     if (!firstName.trim() || !lastName.trim() || !state.trim() || !city.trim() || !role.trim()) {
-      showMessage('Por favor, preencha todos os campos obrigatórios (Nome, Sobrenome, Estado, Cidade e Perfil).', 'error');
+      showMessage(t('settings.fillRequired') || 'Por favor, preencha todos os campos obrigatórios (Nome, Sobrenome, Estado, Cidade e Perfil).', 'error');
       return;
     }
 
@@ -143,6 +148,8 @@ export default function Settings({
         photoURL,
         state: state.trim(),
         city: city.trim(),
+        region,
+        google_result: googleResult,
         bio: bio.trim(),
         role
       });
@@ -151,6 +158,8 @@ export default function Settings({
         photoURL,
         state: state.trim(),
         city: city.trim(),
+        region,
+        google_result: googleResult,
         role
       }).catch(e => console.error('Error updating public profile:', e));
       setIsEditing(false);
@@ -371,25 +380,19 @@ export default function Settings({
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">{t('settings.state')}</label>
-                  <input 
-                    type="text" 
-                    value={state} 
-                    onChange={(e) => setState(e.target.value)}
-                    className="w-full p-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-sky-500 focus:border-transparent outline-none transition-all"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">{t('settings.city')}</label>
-                  <input 
-                    type="text" 
-                    value={city} 
-                    onChange={(e) => setCity(e.target.value)}
-                    className="w-full p-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-sky-500 focus:border-transparent outline-none transition-all"
-                  />
-                </div>
+              <div className="p-4 bg-gray-50 rounded-2xl border border-gray-100">
+                <label className="block text-sm font-medium text-gray-700 mb-2">{t('map.locationTitle') || 'Localização'}</label>
+                <LocationSelector 
+                  initialState={state}
+                  initialCity={city}
+                  initialRegion={region}
+                  onChange={(data) => {
+                    setState(data.state);
+                    setCity(data.city);
+                    setRegion(data.region);
+                    setGoogleResult(data.google_result);
+                  }}
+                />
               </div>
 
               <div className="flex gap-3 pt-2">
