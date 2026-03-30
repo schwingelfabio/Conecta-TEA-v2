@@ -12,6 +12,8 @@ export interface UserProfile {
   lastPaymentStatus?: string;
   state?: string;
   city?: string;
+  region?: string;
+  country?: string;
   bio?: string;
   role?: 'parent' | 'professional' | 'autistic' | 'other' | 'admin';
 }

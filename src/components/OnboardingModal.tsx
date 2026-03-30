@@ -2,29 +2,25 @@ import React, { useState, useEffect } from 'react';
 import { db, auth } from '../lib/firebase';
 import { useTranslation } from 'react-i18next';
 import { doc, updateDoc, collection, query, where, getDocs, setDoc, serverTimestamp, addDoc } from 'firebase/firestore';
+import { locations } from '../lib/locations';
 
 export default function Onboarding({ onComplete }: { onComplete: () => void }) {
-  const { t } = useTranslation();
-  const [states, setStates] = useState<{ id: number, sigla: string, nome: string }[]>([]);
-  const [cities, setCities] = useState<{ id: number, nome: string }[]>([]);
+  const { t, i18n } = useTranslation();
+  const region = i18n.language === 'en' ? 'US' : i18n.language === 'es' ? 'LATAM' : 'BR';
+  
+  const [selectedCountry, setSelectedCountry] = useState('');
   const [selectedState, setSelectedState] = useState('');
   const [selectedCity, setSelectedCity] = useState('');
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
 
-  useEffect(() => {
-    fetch('https://servicodados.ibge.gov.br/api/v1/localidades/estados?orderBy=nome')
-      .then(res => res.json())
-      .then(data => setStates(data));
-  }, []);
+  const regionData = locations[region as keyof typeof locations];
 
   useEffect(() => {
-    if (selectedState) {
-      fetch(`https://servicodados.ibge.gov.br/api/v1/localidades/estados/${selectedState}/municipios?orderBy=nome`)
-        .then(res => res.json())
-        .then(data => setCities(data));
-    }
-  }, [selectedState]);
+    setSelectedCountry('');
+    setSelectedState('');
+    setSelectedCity('');
+  }, [region]);
 
   const handleSave = async () => {
     if (!selectedState || !selectedCity || !auth.currentUser) {
@@ -40,11 +36,13 @@ export default function Onboarding({ onComplete }: { onComplete: () => void }) {
       await updateDoc(userRef, {
         state: selectedState,
         city: selectedCity,
+        region: region,
         updatedAt: serverTimestamp()
       });
       await setDoc(doc(db, 'public_profiles', auth.currentUser.uid), {
         state: selectedState,
-        city: selectedCity
+        city: selectedCity,
+        region: region
       }, { merge: true }).catch(e => console.error('Error updating public profile:', e));
 
       // Criar tópicos de comunidade se não existirem
@@ -94,21 +92,37 @@ export default function Onboarding({ onComplete }: { onComplete: () => void }) {
           </div>
         )}
 
+        {region === 'LATAM' && 'countries' in regionData && (
+          <select 
+            className="w-full p-4 mb-4 rounded-xl border border-gray-200"
+            onChange={(e) => { setSelectedCountry(e.target.value); setSelectedState(''); setSelectedCity(''); }}
+            value={selectedCountry}
+          >
+            <option value="">{t('onboarding.selectCountry')}</option>
+            {(regionData as any).countries.map((c: any) => <option key={c.id} value={c.id}>{c.name}</option>)}
+          </select>
+        )}
+
         <select 
           className="w-full p-4 mb-4 rounded-xl border border-gray-200"
-          onChange={(e) => setSelectedState(e.target.value)}
+          disabled={region === 'LATAM' && !selectedCountry}
+          onChange={(e) => { setSelectedState(e.target.value); setSelectedCity(''); }}
+          value={selectedState}
         >
           <option value="">{t('onboarding.selectState')}</option>
-          {states.map(s => <option key={s.id} value={s.sigla}>{s.nome}</option>)}
+          {region === 'BR' && 'states' in regionData && Array.isArray(regionData.states) && regionData.states.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
+          {region === 'US' && 'states' in regionData && Array.isArray(regionData.states) && regionData.states.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
+          {region === 'LATAM' && selectedCountry && 'states' in regionData && !Array.isArray(regionData.states) && (regionData.states as any)[selectedCountry]?.map((s: any) => <option key={s.id} value={s.id}>{s.name}</option>)}
         </select>
 
         <select 
           className="w-full p-4 mb-6 rounded-xl border border-gray-200"
           disabled={!selectedState}
           onChange={(e) => setSelectedCity(e.target.value)}
+          value={selectedCity}
         >
           <option value="">{t('onboarding.selectCity')}</option>
-          {cities.map(c => <option key={c.id} value={c.nome}>{c.nome}</option>)}
+          {selectedState && 'cities' in regionData && (regionData.cities as any)[selectedState]?.map((c: any) => <option key={c.id} value={c.name}>{c.name}</option>)}
         </select>
 
         <button 

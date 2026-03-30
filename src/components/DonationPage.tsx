@@ -44,11 +44,10 @@ const DonationPage = () => {
         className="px-6"
       >
         <div className="rounded-2xl bg-white p-6 shadow-xl shadow-sky-100 border border-sky-100">
-          <stripe-buy-button
-            buy-button-id="buy_btn_1TGRepJoBWafcL0qbT2pOLpH"
-            publishable-key="pk_live_51TFiJBJoBWafcL0qGp8gLIvB2t0wN8G4RsIXhxOfQurbrfGJqQmVOrve2bljMVwfLUP17WV1o5xAfNU3UUaiO09M00rjKTixzM"
-          >
-          </stripe-buy-button>
+          {React.createElement('stripe-buy-button', {
+            'buy-button-id': "buy_btn_1TGRepJoBWafcL0qbT2pOLpH",
+            'publishable-key': "pk_live_51TFiJBJoBWafcL0qGp8gLIvB2t0wN8G4RsIXhxOfQurbrfGJqQmVOrve2bljMVwfLUP17WV1o5xAfNU3UUaiO09M00rjKTixzM"
+          } as any)}
           <p className="mt-4 text-center text-sm text-sky-600">Even $5 makes a difference</p>
         </div>
       </motion.div>

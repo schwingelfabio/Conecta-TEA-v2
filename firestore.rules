@@ -73,6 +73,8 @@ service cloud.firestore {
              (!('photoURL' in data) || data.photoURL is string && data.photoURL.size() < 1000) &&
              (!('city' in data) || data.city is string && data.city.size() < 100) &&
              (!('state' in data) || data.state is string && data.state.size() < 100) &&
+             (!('region' in data) || data.region is string && data.region.size() < 100) &&
+             (!('country' in data) || data.country is string && data.country.size() < 100) &&
              (!('isVip' in data) || data.isVip is bool);
     }
 
@@ -84,6 +86,8 @@ service cloud.firestore {
              (!('photoURL' in data) || data.photoURL is string && data.photoURL.size() < 1000) &&
              (!('city' in data) || data.city is string && data.city.size() < 100) &&
              (!('state' in data) || data.state is string && data.state.size() < 100) &&
+             (!('region' in data) || data.region is string && data.region.size() < 100) &&
+             (!('country' in data) || data.country is string && data.country.size() < 100) &&
              (!('isVip' in data) || data.isVip is bool);
     }
 

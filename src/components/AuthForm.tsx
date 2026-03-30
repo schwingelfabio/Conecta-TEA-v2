@@ -265,7 +265,7 @@ export default function AuthForm({ onSuccess, onShowTerms }: AuthFormProps) {
             <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.19 2.31-.88 3.5-.84 1.5.05 2.78.65 3.5 1.73-3.04 1.75-2.56 5.74.35 6.94-.68 1.75-1.57 3.42-2.43 4.34zm-3.15-14.3c.65-1.05 1.11-2.34.95-3.63-1.14.07-2.52.74-3.24 1.68-.65.86-1.21 2.2-1.02 3.46 1.28.14 2.54-.5 3.31-1.51z"/>
           </svg>
           {loading && method === 'apple' ? <Loader2 className="animate-spin" size={18} /> : null}
-          {t('auth.apple', 'Entrar com Apple')}
+          {t('auth.apple')}
         </button>
 
         <button
@@ -274,7 +274,7 @@ export default function AuthForm({ onSuccess, onShowTerms }: AuthFormProps) {
           className="w-full flex items-center justify-center gap-3 bg-gray-100 text-gray-700 font-bold py-3 rounded-2xl hover:bg-gray-200 transition-all active:scale-95 disabled:opacity-50"
         >
           {loading && method === 'anonymous' ? <Loader2 className="animate-spin" size={18} /> : null}
-          {t('auth.anonymous', 'Entrar como Visitante')}
+          {t('auth.anonymous')}
         </button>
       </div>
 
@@ -419,9 +419,9 @@ export default function AuthForm({ onSuccess, onShowTerms }: AuthFormProps) {
       
       {onShowTerms && (
         <div className="mt-8 text-center text-xs text-gray-500">
-          Ao continuar, você concorda com os{' '}
+          {t('auth.termsNotice')}{' '}
           <button onClick={onShowTerms} className="text-sky-600 hover:underline">
-            Termos de Uso e Privacidade
+            {t('auth.termsLink')}
           </button>
           .
         </div>

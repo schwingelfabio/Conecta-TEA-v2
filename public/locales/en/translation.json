@@ -38,6 +38,8 @@
     "alreadyHaveAccount": "Already have an account? Login.",
     "noAccount": "Don't have an account? Create now.",
     "readAndAccept": "I read and accept the",
+    "termsNotice": "By continuing, you agree to the",
+    "termsLink": "Terms of Use and Privacy Policy",
     "errors": {
       "popupClosed": "Google login was closed before completion.",
       "popupBlocked": "The browser blocked the login window. Try again.",
@@ -358,74 +360,91 @@
     "noTitle": "No title",
     "loadMore": "Load more videos"
   },
+  "supportModal": {
+    "title": "Support the Project",
+    "pixLabel": "Pix (Brazil)",
+    "pixDesc": "Your donation helps keep the app free for thousands of families.",
+    "paypalButton": "Donate with PayPal",
+    "footer": "All funds raised are used for app improvements and servers."
+  },
   "landing": {
-    "title": "Your autism support and connection network.",
-    "subtitle": "Connecting families, communities, and technology to transform lives.",
-    "heroTitle": "Your child may be showing early signs of autism… and you might not notice.",
-    "heroSubtitle": "Conecta TEA uses technology and AI to help families identify early signs and find support.",
-    "heroCTA": "Start free screening",
-    "supportButton": "Support this project",
-    "trustElement": "Supporting families in early autism identification with accessible technology.",
-    "impact": {
-      "title": "The earlier autism signs are identified, the greater the chances of child development.",
-      "subtitle": "Our technology helps families take action at the right time."
-    },
-    "supportModalTitle": "Support Conecta TEA",
-    "supportModalPix": "Pix Key (CPF): 01244056065",
-    "supportModalPayPal": "Donate via PayPal",
-    "login": "Login",
-    "createAccount": "Create free account",
-    "triagemLink": "Discover Triagem TEA IA",
-    "termsAlert": "Please accept the Terms of Use and Privacy to continue.",
-    "termsAlertTop": "Please accept the Terms of Use and Privacy at the top of the page to continue.",
-    "readAndAccept": "I have read and accept the",
-    "termsLink": "Terms of Use and Privacy Policy",
-    "features": {
-      "communities": {
-        "title": "Local Communities",
-        "desc": "Connect with families and professionals in your own city. Exchange experiences and find support near you."
-      },
-      "vip": {
-        "title": "Exclusive VIP Area",
-        "desc": "Access to premium content, mentoring, and specialized resources to boost development."
-      },
-      "triagem": {
-        "title": "Triagem TEA IA",
-        "desc": "Use our artificial intelligence technology to assist in the screening and monitoring process."
-      }
+    "hero": {
+      "title": "Do you notice something might be different about your child… but don't know what to do?",
+      "badge": "You are not alone. This happens to many families.",
+      "subtitle": "You just need to take the first step. We help you with the rest.",
+      "cta": "I want help now",
+      "feature1": "No complicated registration. Start in seconds.",
+      "feature2": "If it's not useful, you can leave at any time.",
+      "socialProof": "Real families are already using and finding support.",
+      "warning": "Ignoring this can delay the child's development."
     },
     "howItWorks": {
-      "title": "How does Conecta TEA work?",
+      "title": "How it works?",
       "step1": {
-        "title": "Identification",
-        "desc": "Use our AI to identify signs and behaviors."
+        "title": "Understand the signs",
+        "desc": "Identify important behaviors simply."
       },
       "step2": {
-        "title": "Connection",
-        "desc": "Find families and professionals in your city."
+        "title": "Connect",
+        "desc": "Find families and support in your city."
       },
       "step3": {
-        "title": "Support",
-        "desc": "Receive exclusive guidance and materials for development."
+        "title": "Act safely",
+        "desc": "Receive practical guidance for next steps."
       }
     },
-    "network": {
-      "badge": "BUILDING A SUPPORT NETWORK FOR ASD FAMILIES",
-      "title": "Together we are stronger."
+    "whyUs": {
+      "badge": "If you've come this far, you're probably looking for answers.",
+      "title": "This app is for you if:",
+      "item1": "You have doubts about your child's development",
+      "item2": "You want to better understand autism signs",
+      "item3": "You seek reliable support and guidance",
+      "item4": "You feel lost and need direction",
+      "highlight": "If you're in doubt… it's already a sign that it's worth investigating."
     },
-    "cta": {
-      "title": "Ready to start?",
-      "subtitle": "Join other families and be part of a support network made with welcoming, information, and technology.",
-      "button": "Start Now for Free",
-      "triagemButton": "Meet Triagem TEA IA",
-      "termsHint": "Check the terms of use box above to continue."
+    "features": {
+      "title": "What you will find",
+      "item1": {
+        "title": "Local communities",
+        "desc": "Connection with families and professionals"
+      },
+      "item2": {
+        "title": "Digital ID card",
+        "desc": "Quick identification and support"
+      },
+      "item3": {
+        "title": "Sensory SOS",
+        "desc": "Immediate help in crises"
+      },
+      "item4": {
+        "title": "Initial Support",
+        "desc": "Technology to help understand early signs"
+      }
+    },
+    "impact": {
+      "title": "The earlier autism signs are identified, the greater the child's chances of development.",
+      "highlight": "Every month makes a difference in development.",
+      "subtitle": "Our technology helps you act at the right time."
+    },
+    "trust": {
+      "title": "Created for real families, by those who understand this journey.",
+      "subtitle": "Building a support network for TEA families in Brazil 🇧🇷",
+      "badge": "Based on best practices used by professionals."
+    },
+    "finalCta": {
+      "title": "You've come this far for a reason.",
+      "subtitle": "Now you can take the first step.",
+      "warning": "Ignoring this today can turn into regret tomorrow."
     },
     "footer": {
-      "rights": "© 2026 Conecta TEA. All rights reserved."
+      "rights": "© 2026 Conecta TEA. All rights reserved.",
+      "support": "Support Project",
+      "terms": "Terms of Use and Privacy"
     }
   },
   "onboarding": {
     "welcome": "Welcome! To start, where do you live?",
+    "selectCountry": "Select Country",
     "selectState": "Select State",
     "selectCity": "Select City",
     "button": "Start",

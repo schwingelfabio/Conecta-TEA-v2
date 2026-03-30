@@ -40,12 +40,12 @@ function SupportModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => voi
         </button>
 
         <h3 className="text-2xl font-bold text-gray-900 mb-6 pr-8">
-          Apoiar o Projeto
+          {t('supportModal.title')}
         </h3>
 
         <div className="space-y-4">
           <div className="p-6 bg-sky-50 rounded-2xl border border-sky-100">
-            <p className="text-sm font-bold text-sky-700 uppercase tracking-wider mb-3">Pix (Brasil)</p>
+            <p className="text-sm font-bold text-sky-700 uppercase tracking-wider mb-3">{t('supportModal.pixLabel')}</p>
             <div className="flex items-center justify-between gap-3 bg-white p-3 rounded-xl border border-sky-200">
               <code className="text-sky-900 font-mono text-sm">{pixKey}</code>
               <button 
@@ -57,7 +57,7 @@ function SupportModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => voi
               </button>
             </div>
             <p className="text-xs text-sky-600 mt-3 italic">
-              Sua doação ajuda a manter o app gratuito para milhares de famílias.
+              {t('supportModal.pixDesc')}
             </p>
           </div>
 
@@ -68,12 +68,12 @@ function SupportModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => voi
             className="flex items-center justify-center gap-3 w-full py-4 bg-[#0070ba] text-white rounded-2xl font-bold hover:bg-[#005ea6] transition-colors shadow-lg shadow-blue-100"
           >
             <ExternalLink size={20} />
-            Doar com PayPal
+            {t('supportModal.paypalButton')}
           </a>
         </div>
 
         <p className="mt-6 text-center text-gray-500 text-sm">
-          Todo valor arrecadado é revertido para melhorias no app e servidores.
+          {t('supportModal.footer')}
         </p>
       </motion.div>
     </div>
@@ -81,7 +81,7 @@ function SupportModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => voi
 }
 
 export default function LandingPage({ onLogin, onShowTerms, onGuestLogin, onOpenAcolhe }: LandingPageProps) {
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [showAuthForm, setShowAuthForm] = useState(false);
   const [isSupportModalOpen, setIsSupportModalOpen] = useState(false);
   const [showSticky, setShowSticky] = useState(false);
@@ -130,15 +130,15 @@ export default function LandingPage({ onLogin, onShowTerms, onGuestLogin, onOpen
             </div>
 
             <h1 className="text-3xl md:text-5xl font-black text-slate-900 mb-6 tracking-tight leading-[1.2]">
-              Você percebe que algo pode estar diferente no seu filho… mas não sabe o que fazer?
+              {t('landing.hero.title')}
             </h1>
 
             <div className="space-y-4 mb-8">
               <p className="text-lg md:text-xl font-bold text-sky-700 bg-sky-50 inline-block px-6 py-2 rounded-full">
-                Você não está sozinho(a). Isso acontece com muitas famílias.
+                {t('landing.hero.badge')}
               </p>
               <p className="text-lg md:text-xl text-slate-600 leading-relaxed px-2">
-                Você só precisa dar o primeiro passo. Nós te ajudamos no resto.
+                {t('landing.hero.subtitle')}
               </p>
             </div>
 
@@ -153,7 +153,7 @@ export default function LandingPage({ onLogin, onShowTerms, onGuestLogin, onOpen
                   onClick={() => setShowAuthForm(false)}
                   className="mb-6 text-slate-500 hover:text-slate-700 font-medium transition-colors"
                 >
-                  Voltar
+                  {t('common.back')}
                 </button>
               </motion.div>
             ) : (
@@ -166,27 +166,27 @@ export default function LandingPage({ onLogin, onShowTerms, onGuestLogin, onOpen
                   onClick={handleMainAction}
                   className="w-full px-8 py-5 bg-sky-500 text-white rounded-2xl font-bold text-xl shadow-lg shadow-sky-500/30 flex items-center justify-center gap-2"
                 >
-                  Quero ajuda agora
+                  {t('landing.hero.cta')}
                   <ArrowRight size={20} />
                 </motion.button>
 
                 <div className="flex flex-col items-center gap-2 mt-2 w-full">
                   <div className="flex items-center gap-2 text-slate-600 font-medium text-sm bg-slate-50 px-4 py-3 rounded-xl w-full justify-center border border-slate-100">
                     <Zap size={18} className="text-amber-500" />
-                    Sem cadastro complicado. Comece em segundos.
+                    {t('landing.hero.feature1')}
                   </div>
                   <div className="flex items-center gap-2 text-slate-600 font-medium text-sm bg-slate-50 px-4 py-3 rounded-xl w-full justify-center text-center border border-slate-100">
                     <ShieldCheck size={18} className="text-emerald-500 shrink-0" />
-                    Se não for útil, você pode sair a qualquer momento.
+                    {t('landing.hero.feature2')}
                   </div>
                 </div>
 
                 <div className="mt-4 flex flex-col items-center gap-1">
                   <p className="text-sm text-slate-500 font-medium">
-                    Famílias reais já estão usando e encontrando apoio.
+                    {t('landing.hero.socialProof')}
                   </p>
                   <p className="text-sm text-slate-400 font-medium italic border-b border-slate-200 pb-1 mt-2">
-                    Ignorar isso pode atrasar o desenvolvimento da criança.
+                    {t('landing.hero.warning')}
                   </p>
                 </div>
               </div>
@@ -199,7 +199,7 @@ export default function LandingPage({ onLogin, onShowTerms, onGuestLogin, onOpen
       <section className="py-16 bg-slate-50 px-4">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-10">
-            <h2 className="text-2xl md:text-3xl font-black text-slate-900 mb-3">Como funciona?</h2>
+            <h2 className="text-2xl md:text-3xl font-black text-slate-900 mb-3">{t('landing.howItWorks.title')}</h2>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
@@ -207,9 +207,9 @@ export default function LandingPage({ onLogin, onShowTerms, onGuestLogin, onOpen
               <div className="w-16 h-16 bg-sky-100 text-sky-600 rounded-2xl flex items-center justify-center mb-4">
                 <Search size={32} />
               </div>
-              <h3 className="text-xl font-bold text-slate-900 mb-2">Entenda os sinais</h3>
+              <h3 className="text-xl font-bold text-slate-900 mb-2">{t('landing.howItWorks.step1.title')}</h3>
               <p className="text-slate-600 text-sm leading-relaxed">
-                Identifique comportamentos importantes de forma simples.
+                {t('landing.howItWorks.step1.desc')}
               </p>
             </div>
 
@@ -217,9 +217,9 @@ export default function LandingPage({ onLogin, onShowTerms, onGuestLogin, onOpen
               <div className="w-16 h-16 bg-purple-100 text-purple-600 rounded-2xl flex items-center justify-center mb-4">
                 <Users size={32} />
               </div>
-              <h3 className="text-xl font-bold text-slate-900 mb-2">Conecte-se</h3>
+              <h3 className="text-xl font-bold text-slate-900 mb-2">{t('landing.howItWorks.step2.title')}</h3>
               <p className="text-slate-600 text-sm leading-relaxed">
-                Encontre famílias e apoio na sua cidade.
+                {t('landing.howItWorks.step2.desc')}
               </p>
             </div>
 
@@ -227,9 +227,9 @@ export default function LandingPage({ onLogin, onShowTerms, onGuestLogin, onOpen
               <div className="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center mb-4">
                 <Shield size={32} />
               </div>
-              <h3 className="text-xl font-bold text-slate-900 mb-2">Aja com segurança</h3>
+              <h3 className="text-xl font-bold text-slate-900 mb-2">{t('landing.howItWorks.step3.title')}</h3>
               <p className="text-slate-600 text-sm leading-relaxed">
-                Receba orientação prática para os próximos passos.
+                {t('landing.howItWorks.step3.desc')}
               </p>
             </div>
           </div>
@@ -239,7 +239,7 @@ export default function LandingPage({ onLogin, onShowTerms, onGuestLogin, onOpen
               onClick={handleMainAction}
               className="px-8 py-4 bg-sky-100 text-sky-700 rounded-2xl font-bold text-lg hover:bg-sky-200 transition-all active:scale-95 flex items-center justify-center gap-2"
             >
-              Quero ajuda agora
+              {t('landing.hero.cta')}
               <ArrowRight size={20} />
             </button>
           </div>
@@ -251,8 +251,8 @@ export default function LandingPage({ onLogin, onShowTerms, onGuestLogin, onOpen
         <div className="max-w-3xl mx-auto">
           <div className="bg-sky-50 rounded-[2.5rem] p-8 md:p-12 border border-sky-100">
             <div className="text-center mb-10">
-              <p className="text-sky-600 font-bold mb-3 uppercase tracking-wider text-sm">Se você chegou até aqui, provavelmente está buscando respostas.</p>
-              <h2 className="text-3xl md:text-4xl font-black text-slate-900">Esse app é para você se:</h2>
+              <p className="text-sky-600 font-bold mb-3 uppercase tracking-wider text-sm">{t('landing.whyUs.badge')}</p>
+              <h2 className="text-3xl md:text-4xl font-black text-slate-900">{t('landing.whyUs.title')}</h2>
             </div>
             
             <div className="space-y-4 max-w-xl mx-auto mb-10">
@@ -260,35 +260,35 @@ export default function LandingPage({ onLogin, onShowTerms, onGuestLogin, onOpen
                 <div className="w-8 h-8 bg-sky-500 text-white rounded-full flex items-center justify-center shrink-0">
                   <Check size={18} />
                 </div>
-                <p className="text-slate-700 font-medium pt-1">Você tem dúvidas sobre o desenvolvimento do seu filho</p>
+                <p className="text-slate-700 font-medium pt-1">{t('landing.whyUs.item1')}</p>
               </div>
               
               <div className="flex items-start gap-4 bg-white p-4 rounded-2xl shadow-sm">
                 <div className="w-8 h-8 bg-sky-500 text-white rounded-full flex items-center justify-center shrink-0">
                   <Check size={18} />
                 </div>
-                <p className="text-slate-700 font-medium pt-1">Quer entender melhor sinais de autismo</p>
+                <p className="text-slate-700 font-medium pt-1">{t('landing.whyUs.item2')}</p>
               </div>
               
               <div className="flex items-start gap-4 bg-white p-4 rounded-2xl shadow-sm">
                 <div className="w-8 h-8 bg-sky-500 text-white rounded-full flex items-center justify-center shrink-0">
                   <Check size={18} />
                 </div>
-                <p className="text-slate-700 font-medium pt-1">Busca apoio e orientação confiável</p>
+                <p className="text-slate-700 font-medium pt-1">{t('landing.whyUs.item3')}</p>
               </div>
               
               <div className="flex items-start gap-4 bg-white p-4 rounded-2xl shadow-sm">
                 <div className="w-8 h-8 bg-sky-500 text-white rounded-full flex items-center justify-center shrink-0">
                   <Check size={18} />
                 </div>
-                <p className="text-slate-700 font-medium pt-1">Se sente perdido(a) e precisa de direção</p>
+                <p className="text-slate-700 font-medium pt-1">{t('landing.whyUs.item4')}</p>
               </div>
 
               <div className="flex items-start gap-4 bg-sky-500 p-5 rounded-2xl shadow-md mt-6">
                 <div className="w-8 h-8 bg-white text-sky-600 rounded-full flex items-center justify-center shrink-0">
                   <Search size={18} />
                 </div>
-                <p className="text-white font-bold pt-1 text-lg">Se você está em dúvida… já é um sinal de que vale investigar.</p>
+                <p className="text-white font-bold pt-1 text-lg">{t('landing.whyUs.highlight')}</p>
               </div>
             </div>
             
@@ -297,7 +297,7 @@ export default function LandingPage({ onLogin, onShowTerms, onGuestLogin, onOpen
                 onClick={handleMainAction}
                 className="w-full sm:w-auto px-8 py-4 bg-sky-500 text-white rounded-2xl font-bold text-lg shadow-lg shadow-sky-500/30 hover:bg-sky-600 transition-all active:scale-95 flex items-center justify-center gap-2"
               >
-                Quero ajuda agora
+                {t('landing.hero.cta')}
                 <ArrowRight size={20} />
               </button>
             </div>
@@ -309,7 +309,7 @@ export default function LandingPage({ onLogin, onShowTerms, onGuestLogin, onOpen
       <section className="py-16 bg-slate-50 px-4">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-10">
-            <h2 className="text-2xl md:text-3xl font-black text-slate-900 mb-3">O que você vai encontrar</h2>
+            <h2 className="text-2xl md:text-3xl font-black text-slate-900 mb-3">{t('landing.features.title')}</h2>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10">
@@ -318,8 +318,8 @@ export default function LandingPage({ onLogin, onShowTerms, onGuestLogin, onOpen
                 <MapPin size={24} />
               </div>
               <div>
-                <h3 className="font-bold text-slate-900 text-lg">Comunidades locais</h3>
-                <p className="text-slate-500 text-sm">Conexão com famílias e profissionais</p>
+                <h3 className="font-bold text-slate-900 text-lg">{t('landing.features.item1.title')}</h3>
+                <p className="text-slate-500 text-sm">{t('landing.features.item1.desc')}</p>
               </div>
             </div>
 
@@ -328,8 +328,8 @@ export default function LandingPage({ onLogin, onShowTerms, onGuestLogin, onOpen
                 <Smartphone size={24} />
               </div>
               <div>
-                <h3 className="font-bold text-slate-900 text-lg">Carteirinha digital</h3>
-                <p className="text-slate-500 text-sm">Identificação e suporte rápido</p>
+                <h3 className="font-bold text-slate-900 text-lg">{t('landing.features.item2.title')}</h3>
+                <p className="text-slate-500 text-sm">{t('landing.features.item2.desc')}</p>
               </div>
             </div>
 
@@ -338,8 +338,8 @@ export default function LandingPage({ onLogin, onShowTerms, onGuestLogin, onOpen
                 <Activity size={24} />
               </div>
               <div>
-                <h3 className="font-bold text-slate-900 text-lg">SOS Sensorial</h3>
-                <p className="text-slate-500 text-sm">Ajuda imediata em crises</p>
+                <h3 className="font-bold text-slate-900 text-lg">{t('landing.features.item3.title')}</h3>
+                <p className="text-slate-500 text-sm">{t('landing.features.item3.desc')}</p>
               </div>
             </div>
 
@@ -348,8 +348,8 @@ export default function LandingPage({ onLogin, onShowTerms, onGuestLogin, onOpen
                 <Zap size={24} />
               </div>
               <div>
-                <h3 className="font-bold text-slate-900 text-lg">Apoio Inicial</h3>
-                <p className="text-slate-500 text-sm">Tecnologia para ajudar a entender os sinais precoces</p>
+                <h3 className="font-bold text-slate-900 text-lg">{t('landing.features.item4.title')}</h3>
+                <p className="text-slate-500 text-sm">{t('landing.features.item4.desc')}</p>
               </div>
             </div>
           </div>
@@ -359,7 +359,7 @@ export default function LandingPage({ onLogin, onShowTerms, onGuestLogin, onOpen
               onClick={handleMainAction}
               className="px-8 py-4 bg-sky-100 text-sky-700 rounded-2xl font-bold text-lg hover:bg-sky-200 transition-all active:scale-95 flex items-center justify-center gap-2"
             >
-              Quero ajuda agora
+              {t('landing.hero.cta')}
               <ArrowRight size={20} />
             </button>
           </div>
@@ -370,24 +370,24 @@ export default function LandingPage({ onLogin, onShowTerms, onGuestLogin, onOpen
       <section className="py-16 bg-sky-500 px-4 text-center">
         <div className="max-w-3xl mx-auto">
           <h2 className="text-2xl md:text-4xl font-black text-white mb-6 leading-tight">
-            Quanto antes os sinais do autismo são identificados, maiores são as chances de desenvolvimento da criança.
+            {t('landing.impact.title')}
           </h2>
           
           <div className="bg-white/20 inline-block px-6 py-4 rounded-2xl mb-8 border border-white/30 shadow-inner">
             <p className="text-white text-xl md:text-2xl font-bold">
-              Cada mês faz diferença no desenvolvimento.
+              {t('landing.impact.highlight')}
             </p>
           </div>
 
           <p className="text-sky-100 text-lg mb-10">
-            Nossa tecnologia ajuda você a agir no momento certo.
+            {t('landing.impact.subtitle')}
           </p>
           
           <button
             onClick={handleMainAction}
             className="w-full sm:w-auto px-10 py-5 bg-white text-sky-600 rounded-2xl font-bold text-xl shadow-xl hover:bg-sky-50 hover:-translate-y-1 transition-all active:scale-95 flex items-center justify-center gap-2 mx-auto"
           >
-            Quero ajuda agora
+            {t('landing.hero.cta')}
             <ArrowRight size={20} />
           </button>
         </div>
@@ -404,15 +404,15 @@ export default function LandingPage({ onLogin, onShowTerms, onGuestLogin, onOpen
             </div>
           </div>
           <h2 className="text-xl md:text-2xl font-bold text-slate-900 mb-2">
-            Criado para famílias reais, por quem entende essa jornada.
+            {t('landing.trust.title')}
           </h2>
           <p className="text-slate-500 font-medium mb-6">
-            Construindo uma rede de apoio para famílias TEA no Brasil 🇧🇷
+            {t('landing.trust.subtitle')}
           </p>
           
           <div className="inline-flex items-center gap-2 text-emerald-700 bg-emerald-50 px-5 py-3 rounded-full text-sm font-bold border border-emerald-100 mb-8">
             <ShieldCheck size={18} />
-            Baseado em boas práticas utilizadas por profissionais.
+            {t('landing.trust.badge')}
           </div>
           
           <div className="flex justify-center">
@@ -420,7 +420,7 @@ export default function LandingPage({ onLogin, onShowTerms, onGuestLogin, onOpen
               onClick={handleMainAction}
               className="px-8 py-4 bg-sky-100 text-sky-700 rounded-2xl font-bold text-lg hover:bg-sky-200 transition-all active:scale-95 flex items-center justify-center gap-2"
             >
-              Quero ajuda agora
+              {t('landing.hero.cta')}
               <ArrowRight size={20} />
             </button>
           </div>
@@ -431,14 +431,14 @@ export default function LandingPage({ onLogin, onShowTerms, onGuestLogin, onOpen
       <section className="py-20 bg-slate-50 px-4">
         <div className="max-w-3xl mx-auto text-center">
           <h2 className="text-3xl md:text-4xl font-black text-slate-900 mb-4">
-            Você chegou até aqui por um motivo.
+            {t('landing.finalCta.title')}
           </h2>
           <p className="text-lg text-slate-600 mb-8">
-            Agora você pode dar o primeiro passo.
+            {t('landing.finalCta.subtitle')}
           </p>
           
           <p className="text-lg font-bold text-amber-600 mb-8">
-            Ignorar isso hoje pode virar arrependimento amanhã.
+            {t('landing.finalCta.warning')}
           </p>
 
           <motion.button
@@ -449,7 +449,7 @@ export default function LandingPage({ onLogin, onShowTerms, onGuestLogin, onOpen
             onClick={handleMainAction}
             className="w-full sm:w-auto px-10 py-5 bg-sky-500 text-white rounded-2xl font-bold text-xl shadow-lg shadow-sky-500/30 flex items-center justify-center gap-2 mx-auto"
           >
-            Quero ajuda agora
+            {t('landing.hero.cta')}
             <ArrowRight size={20} />
           </motion.button>
         </div>
@@ -463,11 +463,11 @@ export default function LandingPage({ onLogin, onShowTerms, onGuestLogin, onOpen
         <div className="flex flex-col items-center gap-4 text-slate-400">
           <button onClick={() => setIsSupportModalOpen(true)} className="text-sm font-medium hover:text-sky-500 transition-colors flex items-center gap-2">
             <Heart size={16} className="text-emerald-500" />
-            Apoiar Projeto
+            {t('landing.footer.support')}
           </button>
           <p className="text-sm">© {new Date().getFullYear()} Conecta TEA.</p>
           <button onClick={onShowTerms} className="text-xs hover:text-sky-500 transition-colors">
-            Termos de Uso e Privacidade
+            {t('landing.footer.terms')}
           </button>
         </div>
       </footer>

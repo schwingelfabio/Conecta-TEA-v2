@@ -38,6 +38,8 @@
     "alreadyHaveAccount": "¿Ya tienes una cuenta? Iniciar sesión.",
     "noAccount": "¿No tienes cuenta? Crear ahora.",
     "readAndAccept": "He leído y acepto los",
+    "termsNotice": "Al continuar, aceptas los",
+    "termsLink": "Términos de Uso y Privacidad",
     "errors": {
       "popupClosed": "El inicio de sesión con Google se cerró antes de completarse.",
       "popupBlocked": "El navegador bloqueó la ventana de inicio de sesión. Inténtalo de nuevo.",
@@ -358,74 +360,91 @@
     "noTitle": "Sin título",
     "loadMore": "Cargar más vídeos"
   },
+  "supportModal": {
+    "title": "Apoyar el Proyecto",
+    "pixLabel": "Pix (Brasil)",
+    "pixDesc": "Su donación ayuda a mantener la aplicación gratuita para miles de familias.",
+    "paypalButton": "Donar con PayPal",
+    "footer": "Todos los fondos recaudados se utilizan para mejoras de la aplicación y servidores."
+  },
   "landing": {
-    "title": "Tu red de apoyo e conexión para el autismo.",
-    "subtitle": "Conectando familias, comunidades y tecnología para transformar vidas.",
-    "heroTitle": "Su hijo puede estar mostrando señales de autismo… y usted puede no notarlo.",
-    "heroSubtitle": "Conecta TEA utiliza tecnología e inteligencia artificial para ayudar a las familias a identificar señales tempranas y encontrar apoyo.",
-    "heroCTA": "Comenzar evaluación gratuita",
-    "supportButton": "Apoyar este proyecto",
-    "trustElement": "Apoyando a las familias en la identificación temprana del autismo con tecnología accesible.",
-    "impact": {
-      "title": "Cuanto antes se identifiquen las señales del autismo, mayores serán las oportunidades de desarrollo del niño.",
-      "subtitle": "Nuestra tecnología ayuda a las familias a actuar en el momento adecuado."
-    },
-    "supportModalTitle": "Apoye a Conecta TEA",
-    "supportModalPix": "Clave Pix (CPF): 01244056065",
-    "supportModalPayPal": "Donar vía PayPal",
-    "login": "Iniciar sesión",
-    "createAccount": "Crear cuenta gratuita",
-    "triagemLink": "Conoce Triagem TEA IA",
-    "termsAlert": "Por favor, acepta los Términos de Uso y Privacidad para continuar.",
-    "termsAlertTop": "Por favor, acepta los Términos de Uso y Privacidad en la parte superior de la página para continuar.",
-    "readAndAccept": "He leído y acepto los",
-    "termsLink": "Términos de Uso y Privacidad",
-    "features": {
-      "communities": {
-        "title": "Comunidades Locales",
-        "desc": "Conéctate con familias y profesionales de tu propia ciudad. Intercambia experiencias y encuentra apoyo cerca de ti."
-      },
-      "vip": {
-        "title": "Área VIP Exclusiva",
-        "desc": "Acceso a contenido premium, mentorías y recursos especializados para potenciar el desarrollo."
-      },
-      "triagem": {
-        "title": "Triagem TEA IA",
-        "desc": "Utiliza nuestra tecnología de inteligencia artificial para ayudar en el proceso de detección y seguimiento."
-      }
+    "hero": {
+      "title": "¿Notas que algo puede ser diferente en tu hijo… mas no sabes qué hacer?",
+      "badge": "No estás solo(a). Esto le sucede a muchas familias.",
+      "subtitle": "Solo necesitas dar el primer paso. Nosotros te ayudamos con el resto.",
+      "cta": "Quero ayuda ahora",
+      "feature1": "Sin registros complicados. Comienza en segundos.",
+      "feature2": "Si no es útil, puedes salir en cualquier momento.",
+      "socialProof": "Famílias reales ya están usando y encontrando apoyo.",
+      "warning": "Ignorar esto puede retrasar el desarrollo del niño."
     },
     "howItWorks": {
-      "title": "¿Cómo funciona Conecta TEA?",
+      "title": "¿Cómo funciona?",
       "step1": {
-        "title": "Identificación",
-        "desc": "Use nuestra IA para identificar señales y comportamientos."
+        "title": "Entiende las señales",
+        "desc": "Identifica comportamientos importantes de forma sencilla."
       },
       "step2": {
-        "title": "Conexión",
-        "desc": "Encuentre familias y profesionales en su ciudad."
+        "title": "Conéctate",
+        "desc": "Encuentra familias y apoyo en tu ciudad."
       },
       "step3": {
-        "title": "Apoyo",
-        "desc": "Reciba orientación y materiales exclusivos para el desarrollo."
+        "title": "Actúa con seguridad",
+        "desc": "Recibe orientación práctica para los próximos pasos."
       }
     },
-    "network": {
-      "badge": "CONSTRUYENDO UNA RED DE APOYO PARA FAMILIAS TEA",
-      "title": "Juntos somos más fuertes."
+    "whyUs": {
+      "badge": "Si has llegado hasta aquí, probablemente estés buscando respuestas.",
+      "title": "Esta aplicación es para ti si:",
+      "item1": "Tienes dudas sobre el desarrollo de tu hijo",
+      "item2": "Quieres entender mejor las señales de autismo",
+      "item3": "Buscas apoyo y orientación confiable",
+      "item4": "Te sientes perdido(a) y necesitas dirección",
+      "highlight": "Si tienes dudas… ya es una señal de que vale la pena investigar."
     },
-    "cta": {
-      "title": "¿Listo para empezar?",
-      "subtitle": "Únete a otras familias y sé parte de una red de apoyo hecha con acogida, información y tecnología.",
-      "button": "Empezar Ahora Gratis",
-      "triagemButton": "Conocer Triagem TEA IA",
-      "termsHint": "Marca la casilla de términos de uso arriba para continuar."
+    "features": {
+      "title": "Qué vas a encontrar",
+      "item1": {
+        "title": "Comunidades locales",
+        "desc": "Conexión con familias e profesionales"
+      },
+      "item2": {
+        "title": "Tarjeta digital",
+        "desc": "Identificación y soporte rápido"
+      },
+      "item3": {
+        "title": "SOS Sensorial",
+        "desc": "Ayuda inmediata en crisis"
+      },
+      "item4": {
+        "title": "Apoyo Inicial",
+        "desc": "Tecnología para ayudar a entender las señales tempranas"
+      }
+    },
+    "impact": {
+      "title": "Cuanto antes se identifiquen las señales del autismo, mayores serán las posibilidades de desarrollo del niño.",
+      "highlight": "Cada mes marca la diferencia en el desarrollo.",
+      "subtitle": "Nuestra tecnología te ayuda a actuar en el momento adecuado."
+    },
+    "trust": {
+      "title": "Creado para familias reales, por quienes entienden este camino.",
+      "subtitle": "Construyendo una red de apoyo para familias TEA en Brasil 🇧🇷",
+      "badge": "Basado en buenas prácticas utilizadas por profesionales."
+    },
+    "finalCta": {
+      "title": "Has llegado hasta aquí por una razón.",
+      "subtitle": "Ahora puedes dar el primer paso.",
+      "warning": "Ignorar esto hoy puede convertirse en arrepentimiento mañana."
     },
     "footer": {
-      "rights": "© 2026 Conecta TEA. Todos los derechos reservados."
+      "rights": "© 2026 Conecta TEA. Todos los derechos reservados.",
+      "support": "Apoyar Proyecto",
+      "terms": "Términos de Uso y Privacidad"
     }
   },
   "onboarding": {
     "welcome": "¡Bienvenido! Para empezar, ¿dónde vives?",
+    "selectCountry": "Seleccione el País",
     "selectState": "Seleccione el Estado",
     "selectCity": "Seleccione la Ciudad",
     "button": "Empezar",
