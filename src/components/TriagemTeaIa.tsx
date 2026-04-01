@@ -60,7 +60,7 @@ export default function TriagemTeaIa() {
           </div>
 
           <a 
-            href="https://sites.google.com/view/triagemteaia/portugu%C3%AAs" 
+            href="https://triagem-tea-ia-oficial.vercel.app/" 
             target="_blank" 
             rel="noopener noreferrer"
             onClick={() => trackEvent('triagem_start')}

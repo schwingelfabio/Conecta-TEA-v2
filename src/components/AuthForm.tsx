@@ -49,6 +49,8 @@ function getFriendlyErrorMessage(err: any, t: any): string {
       return t('auth.errors.codeExpired');
     case 'auth/invalid-verification-code':
       return t('auth.errors.invalidCode');
+    case 'auth/unauthorized-domain':
+      return t('auth.errors.unauthorizedDomain', 'Domínio não autorizado. Adicione este domínio no Firebase Console.');
     default:
       return t('auth.errors.default');
   }
@@ -99,30 +101,36 @@ export default function AuthForm({ onSuccess, onShowTerms }: AuthFormProps) {
     checkRedirect();
   }, [onSuccess, t]);
 
-  useEffect(() => {
+  const recaptchaContainerRef = React.useRef<HTMLDivElement>(null);
+  const recaptchaVerifierRef = React.useRef<RecaptchaVerifier | null>(null);
+
+  const initRecaptcha = () => {
+    if (!auth || !recaptchaContainerRef.current) return;
     try {
-      // @ts-ignore
-      if (!window.recaptchaVerifier) {
-        // @ts-ignore
-        window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
-          size: 'invisible',
-          callback: () => {}
-        });
-        // @ts-ignore
-        window.recaptchaVerifier.render();
+      if (recaptchaVerifierRef.current) {
+        recaptchaVerifierRef.current.clear();
+        recaptchaVerifierRef.current = null;
       }
+      recaptchaVerifierRef.current = new RecaptchaVerifier(auth, recaptchaContainerRef.current, {
+        size: 'invisible',
+        callback: () => {}
+      });
+      recaptchaVerifierRef.current.render().catch(err => {
+        console.error('Erro ao renderizar reCAPTCHA:', err);
+      });
     } catch (err) {
       console.error('Erro ao inicializar reCAPTCHA:', err);
     }
+  };
+
+  useEffect(() => {
+    initRecaptcha();
 
     return () => {
       try {
-        // @ts-ignore
-        if (window.recaptchaVerifier) {
-          // @ts-ignore
-          window.recaptchaVerifier.clear();
-          // @ts-ignore
-          window.recaptchaVerifier = null;
+        if (recaptchaVerifierRef.current) {
+          recaptchaVerifierRef.current.clear();
+          recaptchaVerifierRef.current = null;
         }
       } catch (e) {
         console.error('Erro ao limpar reCAPTCHA:', e);
@@ -201,13 +209,17 @@ export default function AuthForm({ onSuccess, onShowTerms }: AuthFormProps) {
     try {
       setLoading(true);
       setError(null);
-      const formattedPhone = phone.startsWith('+') ? phone : `+55${phone.replace(/\D/g, '')}`;
-      // @ts-ignore
-      const appVerifier = window.recaptchaVerifier;
+      const cleanPhone = phone.replace(/[^\d+]/g, '');
+      const formattedPhone = cleanPhone.startsWith('+') ? cleanPhone : `+55${cleanPhone}`;
+      const appVerifier = recaptchaVerifierRef.current;
+      if (!appVerifier) {
+        throw new Error('reCAPTCHA não inicializado. Tente novamente.');
+      }
       const confirmation = await signInWithPhoneNumber(auth, formattedPhone, appVerifier);
       setConfirmationResult(confirmation);
     } catch (err: any) {
       setError(`${getFriendlyErrorMessage(err, t)} [${err.code}: ${err.message}]`);
+      initRecaptcha();
     } finally {
       setLoading(false);
     }
@@ -364,6 +376,20 @@ export default function AuthForm({ onSuccess, onShowTerms }: AuthFormProps) {
               >
                 {loading ? <Loader2 className="animate-spin" size={20} /> : t('auth.verifyCode')}
               </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setConfirmationResult(null);
+                  setVerificationCode('');
+                  setError(null);
+                  initRecaptcha();
+                }}
+                disabled={loading}
+                className="w-full bg-gray-100 text-gray-700 font-bold py-3 rounded-xl hover:bg-gray-200 transition-all disabled:opacity-50"
+              >
+                {t('common.back') || 'Voltar'}
+              </button>
             </form>
           )}
         </motion.div>
@@ -427,7 +453,7 @@ export default function AuthForm({ onSuccess, onShowTerms }: AuthFormProps) {
         </div>
       )}
 
-      <div id="recaptcha-container"></div>
+      <div ref={recaptchaContainerRef}></div>
     </div>
   );
 }

@@ -264,7 +264,7 @@ export default function AreaVip({
 
               <div className="flex flex-col sm:flex-row gap-4">
                 <a
-                  href="https://sites.google.com/view/triagemteaia/portugu%C3%AAs"
+                  href="https://triagem-tea-ia-oficial.vercel.app/"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="bg-white text-emerald-700 px-8 py-4 rounded-2xl font-bold text-lg hover:bg-emerald-50 transition-all flex items-center justify-center gap-2 shadow-lg"
