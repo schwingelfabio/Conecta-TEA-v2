@@ -132,6 +132,18 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
   const [hasMore, setHasMore] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [expandedComments, setExpandedComments] = useState<string | null>(null);
+  const [isHuman, setIsHuman] = useState(false);
+  const [guestDeviceId, setGuestDeviceId] = useState('');
+
+  useEffect(() => {
+    let deviceId = localStorage.getItem('conecta_guest_device_id');
+    if (!deviceId) {
+      deviceId = 'guest_' + Math.random().toString(36).substring(2, 15);
+      localStorage.setItem('conecta_guest_device_id', deviceId);
+    }
+    setGuestDeviceId(deviceId);
+  }, []);
+
   const { ref, inView } = useInView({
     threshold: 0.5,
   });
@@ -271,13 +283,44 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
     console.log('[Feed/Post] Post submit clicked. authReady:', authReady, 'userProfile:', !!userProfile, 'newPost:', !!newPost.trim());
     
     if (isGuest) {
-      alert('Crie sua conta para liberar este recurso.');
-      return;
-    }
+      const now = Date.now();
+      const lastPostTime = parseInt(localStorage.getItem('conecta_last_post_time') || '0');
+      const dailyPosts = parseInt(localStorage.getItem('conecta_daily_posts') || '0');
+      const dailyPostsDate = localStorage.getItem('conecta_daily_posts_date');
+      const violations = parseInt(localStorage.getItem('conecta_violations') || '0');
+      const today = new Date().toDateString();
 
-    if (!authReady) {
-      alert('Aguarde o carregamento do sistema...');
-      return;
+      if (violations >= 3) {
+        setNewPost('');
+        setIsHuman(false);
+        return;
+      }
+
+      if (now - lastPostTime < 120000) {
+        alert(i18n.language === 'en' ? 'Please wait 2 minutes before posting again.' : 'Aguarde 2 minutos antes de publicar novamente.');
+        return;
+      }
+
+      if (dailyPostsDate === today && dailyPosts >= 10) {
+        alert(i18n.language === 'en' ? 'Daily post limit reached.' : 'Limite diário de publicações atingido.');
+        return;
+      }
+
+      if (!isHuman) {
+        alert(i18n.language === 'en' ? 'Please confirm you are human.' : 'Por favor, confirme que você é humano.');
+        return;
+      }
+    } else {
+      if (!authReady) {
+        alert('Aguarde o carregamento do sistema...');
+        return;
+      }
+
+      if (!userProfile) {
+        console.error('[Feed/Post] CRITICAL: No user profile found even though auth is ready.');
+        alert('Erro: Perfil de usuário não encontrado. Tente fazer login novamente.');
+        return;
+      }
     }
 
     if (!newPost.trim()) {
@@ -285,14 +328,44 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
       return;
     }
 
-    if (!userProfile) {
-      console.error('[Feed/Post] CRITICAL: No user profile found even though auth is ready.');
-      alert('Erro: Perfil de usuário não encontrado. Tente fazer login novamente.');
-      return;
-    }
-
     const postText = newPost;
     setNewPost(''); // Clear immediately for better UX
+    if (isGuest) setIsHuman(false);
+
+    // AI Moderation
+    try {
+      const modResponse = await ai.models.generateContent({
+        model: "gemini-3-flash-preview",
+        contents: `Analyze this text for hate speech, abuse, explicit content, or spam (links repetition, emojis flooding). Reply with a JSON object: {"flagged": boolean, "reason": "string"}. Text: "${postText}"`,
+        config: { responseMimeType: "application/json" }
+      });
+      const modResult = JSON.parse(modResponse.text);
+      if (modResult.flagged) {
+        if (isGuest) {
+          const violations = parseInt(localStorage.getItem('conecta_violations') || '0');
+          localStorage.setItem('conecta_violations', (violations + 1).toString());
+        }
+        alert(i18n.language === 'en' ? "Your post could not be published due to safety rules." : "Seu post não pôde ser publicado por regras de segurança.");
+        return;
+      }
+    } catch (e) {
+      console.error("Moderation failed", e);
+    }
+
+    if (isGuest) {
+      const dailyPosts = parseInt(localStorage.getItem('conecta_daily_posts') || '0');
+      const dailyPostsDate = localStorage.getItem('conecta_daily_posts_date');
+      const today = new Date().toDateString();
+      
+      localStorage.setItem('conecta_last_post_time', Date.now().toString());
+      if (dailyPostsDate === today) {
+        localStorage.setItem('conecta_daily_posts', (dailyPosts + 1).toString());
+      } else {
+        localStorage.setItem('conecta_daily_posts_date', today);
+        localStorage.setItem('conecta_daily_posts', '1');
+      }
+      trackEvent('guest_post_submit');
+    }
 
     let text_en = postText;
     let text_es = postText;
@@ -310,24 +383,28 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
       console.error("Translation failed", e);
     }
 
+    const authorId = isGuest ? guestDeviceId : userProfile?.uid;
+    const authorName = isGuest ? 'Visitante' : userProfile?.displayName;
+    const authorPhoto = isGuest ? `https://api.dicebear.com/7.x/avataaars/svg?seed=${guestDeviceId}` : (userProfile?.photoURL || `https://api.dicebear.com/7.x/avataaars/svg?seed=${userProfile?.uid}`);
+
     const payload = {
       text: postText,
       content: postText,
       text_pt: postText,
       text_en: text_en,
       text_es: text_es,
-      authorId: userProfile.uid,
-      userId: userProfile.uid,
-      authorName: userProfile.displayName,
-      authorPhoto: userProfile.photoURL || `https://api.dicebear.com/7.x/avataaars/svg?seed=${userProfile.uid}`,
+      authorId: authorId,
+      userId: authorId,
+      authorName: authorName,
+      authorPhoto: authorPhoto,
       mediaType: 'text',
       topic: topic === 'geral' ? 'geral' : topic,
-      state: userProfile.state || 'Geral',
-      city: userProfile.city || 'Geral',
-      location: userProfile.city ? `${userProfile.city}, ${userProfile.state}` : 'Brasil',
+      state: isGuest ? 'Geral' : (userProfile?.state || 'Geral'),
+      city: isGuest ? 'Geral' : (userProfile?.city || 'Geral'),
+      location: isGuest ? 'Brasil' : (userProfile?.city ? `${userProfile?.city}, ${userProfile?.state}` : 'Brasil'),
       timestamp: serverTimestamp(),
       createdAt: serverTimestamp(),
-      isVip: userProfile.isVip || isAdmin || isVip,
+      isVip: isGuest ? false : (userProfile?.isVip || isAdmin || isVip),
       isGlobal: true
     };
 
@@ -490,36 +567,16 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
 
       {/* Post Creation */}
       <div className="bg-white rounded-[2rem] shadow-sm border border-slate-100 p-6 mb-8 relative overflow-hidden">
-        {isGuest && (
-          <div className="absolute inset-0 bg-white/60 backdrop-blur-sm z-10 flex items-center justify-center">
-            <div className="bg-white px-8 py-6 rounded-3xl shadow-xl border border-sky-100 flex flex-col items-center gap-4 text-center max-w-sm mx-4">
-              <div className="w-14 h-14 bg-sky-100 text-sky-600 rounded-full flex items-center justify-center mb-2">
-                <LogIn size={28} />
-              </div>
-              <div>
-                <h3 className="text-xl font-bold text-slate-800 mb-1">Crie uma conta para publicar</h3>
-                <p className="text-slate-500 text-sm">Junte-se à comunidade para interagir, curtir e comentar.</p>
-              </div>
-              <button 
-                onClick={() => window.location.reload()} 
-                className="w-full bg-sky-500 text-white px-6 py-3.5 rounded-2xl font-bold hover:bg-sky-600 transition-colors shadow-lg shadow-sky-200 mt-2"
-              >
-                Fazer Login
-              </button>
-            </div>
-          </div>
-        )}
         <div className="flex items-start space-x-4">
           <Avatar 
-            src={userProfile?.photoURL} 
-            name={userProfile?.displayName || 'Usuário'} 
+            src={isGuest ? `https://api.dicebear.com/7.x/avataaars/svg?seed=${guestDeviceId}` : userProfile?.photoURL} 
+            name={isGuest ? 'Visitante' : (userProfile?.displayName || 'Usuário')} 
             size="md"
           />
           <form onSubmit={handlePost} className="flex-1">
             <textarea
               value={newPost}
               onChange={(e) => setNewPost(e.target.value)}
-              disabled={isGuest}
               placeholder="O que está acontecendo na sua jornada?"
               className="w-full p-4 bg-slate-50/50 border border-slate-100 rounded-2xl focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 outline-none resize-none min-h-[120px] transition-all text-slate-700 placeholder:text-slate-400"
             />
@@ -531,13 +588,27 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
                     key={idx}
                     type="button"
                     onClick={() => setNewPost(suggestion)}
-                    disabled={isGuest}
                     className="text-xs font-medium bg-sky-50 text-sky-700 px-4 py-2 rounded-full hover:bg-sky-100 transition-colors disabled:opacity-50 border border-sky-100/50 flex items-center gap-1.5"
                   >
                     <MessageSquare size={12} />
                     {suggestion}
                   </button>
                 ))}
+              </div>
+            )}
+
+            {isGuest && (
+              <div className="mt-3 flex items-center gap-2">
+                <input 
+                  type="checkbox" 
+                  id="human-check" 
+                  checked={isHuman} 
+                  onChange={(e) => setIsHuman(e.target.checked)}
+                  className="w-4 h-4 text-sky-500 rounded border-slate-300 focus:ring-sky-500"
+                />
+                <label htmlFor="human-check" className="text-sm text-slate-600 font-medium">
+                  {i18n.language === 'en' ? 'I am human' : 'Sou humano'}
+                </label>
               </div>
             )}
 
@@ -548,7 +619,6 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
                   <select 
                     value={topic}
                     onChange={(e) => setTopic(e.target.value)}
-                    disabled={isGuest}
                     className="appearance-none bg-slate-50 text-slate-600 text-sm font-medium px-4 py-2.5 pr-10 rounded-xl border border-slate-200 focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 cursor-pointer transition-all disabled:opacity-50"
                   >
                     {topics.map(t => (
@@ -564,7 +634,7 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
               </div>
               <button
                 type="submit"
-                disabled={!newPost.trim() || isGuest}
+                disabled={!newPost.trim() || (isGuest && !isHuman)}
                 className="bg-sky-500 text-white px-8 py-2.5 rounded-xl font-bold flex items-center space-x-2 hover:bg-sky-600 transition-all disabled:opacity-50 disabled:hover:bg-sky-500 shadow-md shadow-sky-200"
               >
                 <span>{t('feed.post')}</span>
@@ -615,13 +685,33 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
           ) : posts.length > 0 ? (
             <>
               <AnimatePresence mode="popLayout">
-                {posts.map((post) => (
+                {posts.map((post, index) => (
+                  <React.Fragment key={post.id}>
+                    {index === 2 && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="bg-gradient-to-r from-sky-50 to-indigo-50 rounded-[2rem] p-6 mb-6 border border-sky-100 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm"
+                      >
+                        <div className="flex items-center gap-3">
+                          <Heart className="w-8 h-8 text-rose-500 fill-rose-500 shrink-0" />
+                          <p className="text-slate-800 font-bold text-lg">
+                            {i18n.language === 'en' ? 'Help us keep this free for families ❤️' : 'Ajude a manter isso gratuito ❤️'}
+                          </p>
+                        </div>
+                        <button 
+                          onClick={() => window.open('https://buy.stripe.com/28E9AU1fH3zobvWfdx2wU01', '_blank')}
+                          className="w-full sm:w-auto px-6 py-3 bg-white text-sky-600 font-bold rounded-xl shadow-sm hover:shadow-md transition-all border border-sky-100 whitespace-nowrap"
+                        >
+                          {i18n.language === 'en' ? 'Support now' : 'Apoiar agora'}
+                        </button>
+                      </motion.div>
+                    )}
                   <motion.div
-                    key={post.id}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, scale: 0.95 }}
-                    className={`bg-white rounded-[2rem] shadow-sm border ${post.isVip ? 'border-amber-300 ring-4 ring-amber-50' : 'border-slate-100'} overflow-hidden hover:shadow-md transition-shadow`}
+                    className={`bg-white rounded-[2rem] shadow-sm border ${post.isVip ? 'border-amber-300 ring-4 ring-amber-50' : 'border-slate-100'} overflow-hidden hover:shadow-md transition-shadow mb-6`}
                   >
                     <div className="p-6">
                       <div className="flex items-center justify-between mb-4">
@@ -745,6 +835,7 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
                       </AnimatePresence>
                     </div>
                   </motion.div>
+                  </React.Fragment>
                 ))}
               </AnimatePresence>
 

@@ -21,7 +21,7 @@ export default function AreaVip({
   onNavigate?: (tab: string) => void,
   isGuest?: boolean
 }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const loading = !authReady;
 
   const [suggestionText, setSuggestionText] = useState('');
@@ -207,11 +207,16 @@ export default function AreaVip({
                 <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">
                   {effectiveVip ? t('vip.welcomeVip') : t('vip.welcomeLibrary')}
                 </h2>
-                <p className="text-gray-600 text-xl leading-relaxed">
+                <p className="text-gray-600 text-xl leading-relaxed mb-2">
                   {effectiveVip 
                     ? t('vip.thanksVip')
                     : t('vip.exploreLibrary')}
                 </p>
+                {!effectiveVip && (
+                  <p className="text-amber-600 font-bold text-lg">
+                    {i18n.language === 'en' ? 'Support the mission + get early access' : 'Apoie o projeto + acesso antecipado'}
+                  </p>
+                )}
               </div>
             </div>
           </div>
@@ -413,6 +418,10 @@ export default function AreaVip({
           </div>
         </div>
 
+        <div className="mt-12">
+          <DonationSupportCard />
+        </div>
+
         {!effectiveVip && (
           <div className="mt-12 bg-lavender-100/50 border border-lavender-200 rounded-3xl p-8 text-center">
             <h3 className="text-xl font-bold text-lavender-800 mb-2">{t('vip.viewingLibrary')}</h3>
@@ -420,10 +429,6 @@ export default function AreaVip({
             <PlanosVip isVip={effectiveVip} />
           </div>
         )}
-
-        <div className="mt-12">
-          <DonationSupportCard />
-        </div>
 
         <div className="mt-20 p-12 bg-white rounded-[3rem] border-2 border-dashed border-lavender-200 text-center">
           <h3 className="text-2xl font-bold text-gray-900 mb-4">{t('vip.suggestionTitle')}</h3>

@@ -4,6 +4,7 @@ import { auth } from '../lib/firebase';
 import { useTranslation } from 'react-i18next';
 import { PayPalScriptProvider } from '@paypal/react-paypal-js';
 import PayPalSubscriptionButton from './PayPalSubscriptionButton';
+import { analytics } from '../services/logger';
 
 const PAYPAL_CLIENT_ID = "ASX2fdt9OoW_vzYFtOU18lrGbkLSsR_mIxrVB2tjswOG7W5ZayY9Df39wW-TVGNo0jQia67yGMPgq4uf";
 
@@ -13,7 +14,13 @@ export default function PlanosVip({ isVip }: { isVip?: boolean }) {
   const priceMonthly = i18n.language === 'en' ? '3.99' : i18n.language === 'es' ? '3.49' : '19,90';
   const priceAnnual = i18n.language === 'en' ? '39.99' : i18n.language === 'es' ? '34.99' : '199,00';
 
-  const handleCheckout = (url: string) => {
+  const handleCheckout = (url: string, planType: 'monthly' | 'annual') => {
+    if (planType === 'monthly') {
+      analytics.trackEvent('vip_monthly_click');
+    } else {
+      analytics.trackEvent('vip_annual_click');
+    }
+
     const user = auth.currentUser;
     if (!user) {
       alert(t('vip.loginToSubscribe'));
@@ -55,7 +62,7 @@ export default function PlanosVip({ isVip }: { isVip?: boolean }) {
             </ul>
 
             <button
-              onClick={() => handleCheckout('https://pag.ae/81AiqTpHL')}
+              onClick={() => handleCheckout('https://pag.ae/81AiqTpHL', 'monthly')}
               disabled={isVip}
               className={`w-full font-bold py-4 rounded-2xl transition-all shadow-md active:scale-95 mb-4 ${
                 isVip
@@ -105,7 +112,7 @@ export default function PlanosVip({ isVip }: { isVip?: boolean }) {
             </ul>
 
             <button
-              onClick={() => handleCheckout('https://pag.ae/81AirzxhL')}
+              onClick={() => handleCheckout('https://pag.ae/81AirzxhL', 'annual')}
               disabled={isVip}
               className={`w-full font-bold py-4 rounded-2xl transition-all shadow-md active:scale-95 mb-4 ${
                 isVip

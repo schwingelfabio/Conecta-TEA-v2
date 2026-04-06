@@ -95,8 +95,7 @@ export default function LandingPage({ onLogin, onShowTerms, onGuestLogin, onOpen
   }, []);
 
   const handleMainAction = () => {
-    setShowAuthForm(true);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    onGuestLogin();
   };
 
   return (
@@ -158,6 +157,14 @@ export default function LandingPage({ onLogin, onShowTerms, onGuestLogin, onOpen
               </motion.div>
             ) : (
               <div className="flex flex-col items-center justify-center gap-4 w-full max-w-md mx-auto">
+                <button
+                  onClick={() => setIsSupportModalOpen(true)}
+                  className="w-full px-8 py-4 bg-rose-500 text-white rounded-2xl font-bold text-lg shadow-lg shadow-rose-500/30 flex items-center justify-center gap-2 hover:bg-rose-600 transition-colors"
+                >
+                  <Heart size={20} className="fill-white" />
+                  {i18n.language === 'en' ? 'Support this project ❤️' : 'Apoie este projeto ❤️'}
+                </button>
+
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
@@ -169,6 +176,16 @@ export default function LandingPage({ onLogin, onShowTerms, onGuestLogin, onOpen
                   {t('landing.hero.cta')}
                   <ArrowRight size={20} />
                 </motion.button>
+
+                <button
+                  onClick={() => {
+                    setShowAuthForm(true);
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                  className="text-sky-600 font-bold text-sm hover:underline"
+                >
+                  {i18n.language === 'en' ? 'Already have an account? Log in' : 'Já tem uma conta? Entrar'}
+                </button>
 
                 <div className="flex flex-col items-center gap-2 mt-2 w-full">
                   <div className="flex items-center gap-2 text-slate-600 font-medium text-sm bg-slate-50 px-4 py-3 rounded-xl w-full justify-center border border-slate-100">
