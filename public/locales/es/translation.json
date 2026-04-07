@@ -479,5 +479,18 @@
     "successGenerate": "¡{{count}} publicaciones generadas y publicadas con éxito!",
     "errorTimeout": "La generación tardó más de lo esperado. Inténtalo de nuevo.",
     "errorGenerate": "Error en la generación. Inténtalo de nuevo."
+  },
+  "common": {
+    "user": "Usuario",
+    "loading": "Cargando...",
+    "error": "Ocurrió un error",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "back": "Volver",
+    "next": "Siguiente",
+    "finish": "Finalizar",
+    "notInformed": "No informado"
   }
 }

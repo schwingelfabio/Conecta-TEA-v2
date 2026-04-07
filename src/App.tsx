@@ -52,6 +52,7 @@ import AiContentAdmin from './components/AiContentAdmin';
 import { useTranslation } from 'react-i18next';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import Avatar from './components/Avatar';
+import BackButton from './components/BackButton';
 import { useAiContentEngine } from './hooks/useAiContentEngine';
 
 export default function App() {
@@ -302,19 +303,54 @@ export default function App() {
       case 'feed':
         return <Suspense fallback={<div className="flex justify-center p-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-500"></div></div>}><Feed userProfile={userProfile} isAdmin={isAdmin} isVip={isVip} authReady={authReady} isGuest={isGuest} /></Suspense>;
       case 'sofia':
-        return <Suspense fallback={<div className="flex justify-center p-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-500"></div></div>}><SofiaIA /></Suspense>;
+        return (
+          <div className="space-y-4">
+            <BackButton onClick={() => setActiveTab('feed')} />
+            <Suspense fallback={<div className="flex justify-center p-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-500"></div></div>}><SofiaIA /></Suspense>
+          </div>
+        );
       case 'videos':
-        return <Suspense fallback={<div className="flex justify-center p-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-500"></div></div>}><VideosPage /></Suspense>;
+        return (
+          <div className="space-y-4">
+            <BackButton onClick={() => setActiveTab('feed')} />
+            <Suspense fallback={<div className="flex justify-center p-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-500"></div></div>}><VideosPage /></Suspense>
+          </div>
+        );
       case 'triagem':
-        return <Suspense fallback={<div className="flex justify-center p-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-500"></div></div>}><TriagemTeaIa /></Suspense>;
+        return (
+          <div className="space-y-4">
+            <BackButton onClick={() => setActiveTab('feed')} />
+            <Suspense fallback={<div className="flex justify-center p-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-500"></div></div>}><TriagemTeaIa /></Suspense>
+          </div>
+        );
       case 'vip':
-        return <Suspense fallback={<div className="flex justify-center p-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-500"></div></div>}><AreaVip isAdmin={isAdmin} isVip={isVip} authReady={authReady} onNavigate={(tab) => setActiveTab(tab as any)} isGuest={isGuest} /></Suspense>;
+        return (
+          <div className="space-y-4">
+            <BackButton onClick={() => setActiveTab('feed')} />
+            <Suspense fallback={<div className="flex justify-center p-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-500"></div></div>}><AreaVip isAdmin={isAdmin} isVip={isVip} authReady={authReady} onNavigate={(tab) => setActiveTab(tab as any)} isGuest={isGuest} /></Suspense>
+          </div>
+        );
       case 'settings':
-        return <Suspense fallback={<div className="flex justify-center p-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-500"></div></div>}><Settings userProfile={userProfile} isAdmin={isAdmin} isVip={isVip} isDeveloper={isDeveloper} onNavigate={(tab) => setActiveTab(tab as any)} isGuest={isGuest} /></Suspense>;
+        return (
+          <div className="space-y-4">
+            <BackButton onClick={() => setActiveTab('feed')} />
+            <Suspense fallback={<div className="flex justify-center p-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-500"></div></div>}><Settings userProfile={userProfile} isAdmin={isAdmin} isVip={isVip} isDeveloper={isDeveloper} onNavigate={(tab) => setActiveTab(tab as any)} isGuest={isGuest} /></Suspense>
+          </div>
+        );
       case 'carteirinha':
-        return <Suspense fallback={<div className="flex justify-center p-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-500"></div></div>}><SosPage userProfile={userProfile} authReady={authReady} onLoginClick={() => setIsGuest(false)} onNavigate={(tab) => setActiveTab(tab as any)} isGuest={isGuest} isAdmin={isAdmin} isVip={isVip} initialSection="card" /></Suspense>;
+        return (
+          <div className="space-y-4">
+            <BackButton onClick={() => setActiveTab('feed')} />
+            <Suspense fallback={<div className="flex justify-center p-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-500"></div></div>}><SosPage userProfile={userProfile} authReady={authReady} onLoginClick={() => setIsGuest(false)} onNavigate={(tab) => setActiveTab(tab as any)} isGuest={isGuest} isAdmin={isAdmin} isVip={isVip} initialSection="card" /></Suspense>
+          </div>
+        );
       case 'sos':
-        return <Suspense fallback={<div className="flex justify-center p-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-500"></div></div>}><SosPage userProfile={userProfile} authReady={authReady} onLoginClick={() => setIsGuest(false)} onNavigate={(tab) => setActiveTab(tab as any)} isGuest={isGuest} isAdmin={isAdmin} isVip={isVip} initialSection="tools" /></Suspense>;
+        return (
+          <div className="space-y-4">
+            <BackButton onClick={() => setActiveTab('feed')} />
+            <Suspense fallback={<div className="flex justify-center p-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-500"></div></div>}><SosPage userProfile={userProfile} authReady={authReady} onLoginClick={() => setIsGuest(false)} onNavigate={(tab) => setActiveTab(tab as any)} isGuest={isGuest} isAdmin={isAdmin} isVip={isVip} initialSection="tools" /></Suspense>
+          </div>
+        );
       case 'termos':
         return <Suspense fallback={<div className="flex justify-center p-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-500"></div></div>}><TermosDeUso onBack={() => setActiveTab('settings')} /></Suspense>;
       case 'privacidade':
@@ -322,13 +358,33 @@ export default function App() {
       case 'contato':
         return <Suspense fallback={<div className="flex justify-center p-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-500"></div></div>}><Contato onBack={() => setActiveTab('settings')} /></Suspense>;
       case 'mordomo':
-        return isSuperAdmin ? <Suspense fallback={<div className="flex justify-center p-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-500"></div></div>}><MordomoDashboard /></Suspense> : <Feed userProfile={userProfile} isAdmin={isAdmin} isVip={isVip} isGuest={isGuest} />;
+        return (
+          <div className="space-y-4">
+            <BackButton onClick={() => setActiveTab('feed')} />
+            {isSuperAdmin ? <Suspense fallback={<div className="flex justify-center p-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-500"></div></div>}><MordomoDashboard /></Suspense> : <Feed userProfile={userProfile} isAdmin={isAdmin} isVip={isVip} isGuest={isGuest} />}
+          </div>
+        );
       case 'admin-engagement':
-        return isAdmin ? <AdminEngagementPanel /> : <Feed userProfile={userProfile} isAdmin={isAdmin} isVip={isVip} isGuest={isGuest} />;
+        return (
+          <div className="space-y-4">
+            <BackButton onClick={() => setActiveTab('feed')} />
+            {isAdmin ? <AdminEngagementPanel /> : <Feed userProfile={userProfile} isAdmin={isAdmin} isVip={isVip} isGuest={isGuest} />}
+          </div>
+        );
       case 'doacao':
-        return <DonationPage />;
+        return (
+          <div className="space-y-4">
+            <BackButton onClick={() => setActiveTab('feed')} />
+            <DonationPage />
+          </div>
+        );
       case 'ai-engine':
-        return isAdmin ? <AiContentAdmin /> : <Feed userProfile={userProfile} isAdmin={isAdmin} isVip={isVip} isGuest={isGuest} />;
+        return (
+          <div className="space-y-4">
+            <BackButton onClick={() => setActiveTab('feed')} />
+            {isAdmin ? <AiContentAdmin /> : <Feed userProfile={userProfile} isAdmin={isAdmin} isVip={isVip} isGuest={isGuest} />}
+          </div>
+        );
       default:
         return <Suspense fallback={<div className="flex justify-center p-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-500"></div></div>}><Feed userProfile={userProfile} isAdmin={isAdmin} isVip={isVip} isGuest={isGuest} /></Suspense>;
     }

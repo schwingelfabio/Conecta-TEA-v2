@@ -51,5 +51,18 @@
     "successGenerate": "{{count}} posts generated and published successfully!",
     "errorTimeout": "Generation took longer than expected. Please try again.",
     "errorGenerate": "Generation error. Please try again."
+  },
+  "common": {
+    "user": "User",
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "back": "Back",
+    "next": "Next",
+    "finish": "Finish",
+    "notInformed": "Not informed"
   }
 }
