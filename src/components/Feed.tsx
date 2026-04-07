@@ -146,9 +146,6 @@ interface FeedProps {
 const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isGuest }) => {
   const { t, i18n } = useTranslation();
 
-  useEffect(() => {
-    trackEvent('feed_view');
-  }, []);
   const [simulatedPosts] = useState<Post[]>(() => generateSimulatedPosts());
   const [posts, setPosts] = useState<Post[]>([]);
   const [feedMode, setFeedMode] = useState<'forYou' | 'following'>('forYou');
@@ -162,6 +159,16 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
   const [expandedComments, setExpandedComments] = useState<string | null>(null);
   const [isHuman, setIsHuman] = useState(false);
   const [guestDeviceId, setGuestDeviceId] = useState('');
+
+  const getLocalizedPost = (post: Post) => {
+    const lang = i18n.language;
+    let text = post.text;
+    if (lang === 'en' && post.text_en) text = post.text_en;
+    else if (lang === 'es' && post.text_es) text = post.text_es;
+    else if (lang === 'pt' && post.text_pt) text = post.text_pt;
+    
+    return { ...post, text };
+  };
 
   useEffect(() => {
     let deviceId = localStorage.getItem('conecta_guest_device_id');
@@ -273,7 +280,7 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
 
       const validPosts = uniquePosts
         .filter(post => (post.text || post.content) && (post.authorId || post.userId) && post.topic)
-        .map(post => ({
+        .map(post => getLocalizedPost({
           ...post,
           authorId: post.authorId || post.userId,
           text: post.text || post.content
@@ -290,10 +297,10 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
       }
 
       if (!isLoadMore) {
-        currentSimulated = topicSimulatedPosts.slice(0, 10);
+        currentSimulated = topicSimulatedPosts.slice(0, 10).map(getLocalizedPost);
       } else {
         const currentLength = posts.filter(p => p.id.startsWith('simulated-')).length;
-        currentSimulated = topicSimulatedPosts.slice(currentLength, currentLength + 10);
+        currentSimulated = topicSimulatedPosts.slice(currentLength, currentLength + 10).map(getLocalizedPost);
       }
 
       const combinedPosts = [...validPosts, ...currentSimulated].sort((a, b) => {
@@ -983,10 +990,10 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
                 </div>
                 <div className="space-y-2">
                   <h3 className="text-2xl font-black text-slate-900">
-                    Silêncio por aqui...
+                    {t('feed.emptyStateTitle')}
                   </h3>
                   <p className="text-slate-500 max-w-xs mx-auto">
-                    Parece que ainda não há posts neste tópico. Seja a primeira pessoa a quebrar o gelo!
+                    {t('feed.emptyStateSubtitle')}
                   </p>
                 </div>
                 <button 
