@@ -42,24 +42,23 @@ export function useAiContentEngine(isAdmin: boolean) {
         
         const prompt = `
           You are the lead content editor for "Conecta TEA", a global, premium social platform for autism support.
-          Generate a JSON array of ${config.postsPerDay || 5} highly engaging, emotional, and helpful social media posts.
-          The posts MUST be in ${i18n.language === 'en' ? 'natural global English' : i18n.language === 'es' ? 'natural neutral Spanish' : 'natural Brazilian Portuguese'}.
-          Themes to prioritize: ${config.priorityThemes || 'Autism support, early signs, daily life'}.
+          Generate a JSON array of 3 highly engaging, emotional, and helpful social media posts for today.
           
-          Include a diverse mix of content types:
-          - Educational content (tips, routines, behavior understanding)
-          - Emotional support ("You are not alone", hopeful stories)
-          - Community questions (conversation starters, polls)
-          - Viral/High-engagement (relatable parenting pain points)
-          - Monetization-aware (soft prompts to support the mission, e.g., "Help us keep this free for families")
-          - Video scripts (short 15-30s TikTok/Reels style scripts with hook and CTA)
+          The 3 posts MUST be:
+          1. An emotional story (relatable, empathetic).
+          2. A practical autism tip (actionable, simple).
+          3. A hope/positive outcome post (inspiring).
+          
+          Rotate topics daily among: Early signs, Communication, Sensory, Parenting struggles, Small wins.
+          
+          The posts MUST be in ${i18n.language === 'en' ? 'natural global English' : i18n.language === 'es' ? 'natural neutral Spanish' : 'natural Brazilian Portuguese'}.
           
           Each post object must have:
-          - "text": The main content of the post. Make it warm, supportive, and human. Use emojis. If it's a video script, format it clearly with [HOOK], [BODY], [CTA].
-          - "topic": One of ["Dúvidas", "Conquistas", "Desabafos", "Dicas", "geral"]
-          - "authorName": A realistic user name from diverse cultures.
+          - "text": The main content of the post. Make it warm, supportive, and human. Use emojis.
+          - "topic": One of the rotating topics above.
+          - "authorName": A realistic user name.
           - "authorRole": e.g., "Mãe", "Pai", "Cuidador", "Especialista"
-          - "contentType": One of ["text", "video_script", "educational_card", "engagement_question"]
+          - "contentType": "text"
           
           Safety Rules:
           - No dangerous medical claims.

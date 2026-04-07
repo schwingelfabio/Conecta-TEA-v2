@@ -604,21 +604,22 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
 
   const firstName = userProfile?.displayName?.split(' ')[0] || 'Família';
 
-  const [showScrollModal, setShowScrollModal] = useState(false);
-  const [modalShown, setModalShown] = useState(false);
+  const [interactionCount, setInteractionCount] = useState(0);
+  const [showVipModal, setShowVipModal] = useState(false);
 
-  useEffect(() => {
-    const handleScroll = () => {
-      if (modalShown) return;
-      const scrollPercentage = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
-      if (scrollPercentage > 30) {
-        setShowScrollModal(true);
-        setModalShown(true);
+  const trackInteraction = () => {
+    setInteractionCount(prev => {
+      const newCount = prev + 1;
+      if (newCount === 3) {
+        setShowVipModal(true);
       }
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [modalShown]);
+      return newCount;
+    });
+  };
+
+  // ... inside render loop for posts
+  // Add onClick={trackInteraction} to buttons like Like, Comment, Share
+
 
   return (
     <div className="max-w-2xl mx-auto py-8 px-4">
@@ -672,9 +673,14 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
 
       <ActiveCommunities />
 
+      {/* Social Proof */}
       <div className="bg-sky-50 text-sky-700 font-bold py-3 px-6 rounded-2xl mb-8 flex items-center justify-center gap-2 border border-sky-100">
         <span className="text-xl">🔵</span>
-        {i18n.language === 'en' ? '127+ families supported today' : i18n.language === 'es' ? 'Más de 127 familias ayudadas hoy' : '+127 famílias ajudadas hoje'}
+        {i18n.language === 'en' 
+          ? `${127 + Math.floor(Date.now() / 1000000 % 50)} families supported today` 
+          : i18n.language === 'es' 
+            ? `Más de ${127 + Math.floor(Date.now() / 1000000 % 50)} familias ayudadas hoy` 
+            : `+${127 + Math.floor(Date.now() / 1000000 % 50)} famílias ajudadas hoje`}
       </div>
 
       {/* Post Creation */}
@@ -799,7 +805,7 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
               <AnimatePresence mode="popLayout">
                 {posts.flatMap((post, index) => {
                   const items = [];
-                  if (index === 2) {
+                  if ((index + 1) % 3 === 0) {
                     items.push(
                       <motion.div
                         key={`support-banner-${post.id}`}
@@ -809,14 +815,14 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
                       >
                         <Heart className="w-12 h-12 text-sky-500 mx-auto mb-4" />
                         <h3 className="text-xl font-bold text-slate-900 mb-4">
-                          {i18n.language === 'en' ? 'Help keep this platform free for families 💙' : i18n.language === 'es' ? 'Ayuda a mantener esta plataforma gratuita para familias 💙' : 'Mantenha essa plataforma gratuita para outras famílias 💙'}
+                          {i18n.language === 'en' ? 'This platform helps families every day. If this helped you, you can help another family too 💙' : i18n.language === 'es' ? 'Esta plataforma ayuda a las familias todos los días. Si esto te ayudó, puedes ayudar a otra familia también 💙' : 'Esse espaço ajuda famílias todos os dias. Se isso te ajudou, você pode ajudar outra família também 💙'}
                         </h3>
                         <div className="flex flex-col sm:flex-row gap-3 justify-center">
                           <button onClick={() => window.open('https://buy.stripe.com/28E9AU1fH3zobvWfdx2wU01', '_blank')} className="px-6 py-3 bg-sky-500 text-white rounded-xl font-bold hover:bg-sky-600 transition-all">
-                            {i18n.language === 'en' ? 'Donate' : i18n.language === 'es' ? 'Donar' : 'Doar'}
+                            {i18n.language === 'en' ? 'Support now' : i18n.language === 'es' ? 'Apoyar ahora' : 'Apoiar agora'}
                           </button>
-                          <button onClick={() => window.open('https://buy.stripe.com/28E9AU1fH3zobvWfdx2wU01', '_blank')} className="px-6 py-3 bg-amber-500 text-white rounded-xl font-bold hover:bg-amber-600 transition-all">
-                            {i18n.language === 'en' ? 'Become VIP' : i18n.language === 'es' ? 'Acceso VIP' : 'VIP acesso completo'}
+                          <button onClick={() => {}} className="px-6 py-3 bg-slate-100 text-slate-600 rounded-xl font-bold hover:bg-slate-200 transition-all">
+                            {i18n.language === 'en' ? 'Continue' : i18n.language === 'es' ? 'Continuar' : 'Continuar'}
                           </button>
                         </div>
                       </motion.div>
@@ -922,7 +928,7 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
                         <div className="flex items-center justify-between pt-4 border-t border-slate-100">
                           <div className="flex items-center space-x-6">
                             <button 
-                              onClick={() => handleLike(post.id, post.likes)}
+                              onClick={() => { handleLike(post.id, post.likes); trackInteraction(); }}
                               className={`flex items-center space-x-2 transition-colors group ${
                                 post.likes && Array.isArray(post.likes) && post.likes.includes(userProfile?.uid || '') 
                                   ? 'text-brand-secondary' 
@@ -936,17 +942,35 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
                               <span className="text-sm font-medium">{Array.isArray(post.likes) ? post.likes.length : 0}</span>
                             </button>
                             <button 
-                            onClick={() => setExpandedComments(expandedComments === post.id ? null : post.id)}
+                            onClick={() => { setExpandedComments(expandedComments === post.id ? null : post.id); trackInteraction(); }}
                             className="flex items-center space-x-2 text-slate-400 hover:text-brand-primary transition-colors"
                           >
                             <MessageCircle size={20} />
                             <span className="text-sm font-medium">{post.commentsCount || 0}</span>
                           </button>
                         </div>
-                        <button className="text-slate-400 hover:text-slate-600 transition-colors">
+                        <button onClick={trackInteraction} className="text-slate-400 hover:text-slate-600 transition-colors">
                           <Share2 size={20} />
                         </button>
                       </div>
+
+                      {/* VIP Modal */}
+                      {showVipModal && (
+                        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+                          <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="bg-white rounded-3xl p-8 max-w-sm w-full text-center">
+                            <Crown className="w-16 h-16 text-amber-500 mx-auto mb-4" />
+                            <h3 className="text-xl font-bold text-slate-900 mb-6">
+                              {i18n.language === 'en' ? 'Get full access and help even more families.' : 'Tenha acesso completo e ajude ainda mais famílias.'}
+                            </h3>
+                            <button onClick={() => { setShowVipModal(false); window.open('https://buy.stripe.com/28E9AU1fH3zobvWfdx2wU01', '_blank'); }} className="w-full py-4 bg-amber-500 text-white rounded-xl font-bold mb-3">
+                              {i18n.language === 'en' ? 'Become VIP' : 'Tornar-se VIP'}
+                            </button>
+                            <button onClick={() => setShowVipModal(false)} className="w-full py-4 text-slate-500 font-bold">
+                              {i18n.language === 'en' ? 'Maybe later' : 'Talvez mais tarde'}
+                            </button>
+                          </motion.div>
+                        </div>
+                      )}
 
                       <AnimatePresence>
                         {expandedComments === post.id && (

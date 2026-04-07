@@ -93,7 +93,7 @@ const DonationPage = () => {
       {/* Impact Message */}
       <div className="mt-12 px-6 text-center">
         <p className="text-lg font-medium text-sky-900">
-          Your support helps create moments of joy, therapy access, and a better future.
+          {i18n.language === 'en' ? 'Each contribution helps a family right now.' : i18n.language === 'es' ? 'Cada contribución ayuda a una familia ahora mismo.' : 'Cada contribuição ajuda uma família agora.'}
         </p>
       </div>
 
