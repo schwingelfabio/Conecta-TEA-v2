@@ -65,6 +65,15 @@ export interface Post {
   isPinned?: boolean;
   likes?: string[];
   commentsCount?: number;
+  isAiGenerated?: boolean;
+  contentType?: 'text' | 'video_script' | 'educational_card' | 'engagement_question';
+  authorRole?: string;
+  likesCount?: number;
+  trendingScore?: number;
+  isTrending?: boolean;
+  isHelpful?: boolean;
+  isCommunityFavorite?: boolean;
+  isNewRising?: boolean;
 }
 
 export interface Comment {

@@ -19,7 +19,8 @@ import {
   Edit2,
   Camera,
   X,
-  Loader2
+  Loader2,
+  Settings as SettingsIcon
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import LanguageSelector from './LanguageSelector';
@@ -470,6 +471,29 @@ export default function Settings({
           </div>
         </div>
       </div>
+
+      {isAdmin && (
+        <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 mb-6">
+          <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+            <SettingsIcon size={20} className="text-indigo-500" />
+            Admin Controls
+          </h3>
+          <button 
+            onClick={() => onNavigate('ai-engine')}
+            className="w-full bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold py-4 rounded-2xl flex items-center justify-center gap-2 border border-indigo-100 transition-all"
+          >
+            <SettingsIcon size={20} />
+            AI Content Engine
+          </button>
+          <button 
+            onClick={() => onNavigate('admin-engagement')}
+            className="w-full bg-purple-50 hover:bg-purple-100 text-purple-700 font-bold py-4 rounded-2xl flex items-center justify-center gap-2 border border-purple-100 transition-all mt-2"
+          >
+            <SettingsIcon size={20} />
+            Engagement Engine
+          </button>
+        </div>
+      )}
 
       <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100">
         <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">

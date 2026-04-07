@@ -37,19 +37,22 @@ const Contato = lazy(() => import('./components/LegalPages').then(module => ({ d
 const AuthForm = lazy(() => import('./components/AuthForm'));
 import Onboarding from './components/OnboardingModal';
 const MordomoDashboard = lazy(() => import('./components/MordomoDashboard'));
+import AdminEngagementPanel from './components/AdminEngagementPanel';
 import { UserProfile } from './types';
 import { auth, db } from './lib/firebase';
 import { signOut, onAuthStateChanged, User as FirebaseUser } from 'firebase/auth';
 import { doc, getDoc, setDoc, collection, query, where, getDocs, serverTimestamp } from 'firebase/firestore';
 import { checkIsAdmin } from './lib/admin';
 import DonationPage from './components/DonationPage';
+import AiContentAdmin from './components/AiContentAdmin';
 import { useTranslation } from 'react-i18next';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import Avatar from './components/Avatar';
+import { useAiContentEngine } from './hooks/useAiContentEngine';
 
 export default function App() {
   const { t } = useTranslation();
-  const [activeTab, setActiveTab] = useState<'feed' | 'vip' | 'settings' | 'sos' | 'termos' | 'privacidade' | 'contato' | 'map' | 'videos' | 'sofia' | 'carteirinha' | 'triagem' | 'mordomo' | 'doacao'>('feed');
+  const [activeTab, setActiveTab] = useState<'feed' | 'vip' | 'settings' | 'sos' | 'termos' | 'privacidade' | 'contato' | 'map' | 'videos' | 'sofia' | 'carteirinha' | 'triagem' | 'mordomo' | 'doacao' | 'ai-engine'>('feed');
   const [user, setUser] = useState<FirebaseUser | null>(null);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -63,6 +66,8 @@ export default function App() {
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [isGuest, setIsGuest] = useState(false);
   const navRef = useRef<HTMLDivElement>(null);
+
+  useAiContentEngine(isAdmin);
 
   useEffect(() => {
     if (navRef.current) {
@@ -297,8 +302,12 @@ export default function App() {
         return <Suspense fallback={<div className="flex justify-center p-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-500"></div></div>}><Contato onBack={() => setActiveTab('settings')} /></Suspense>;
       case 'mordomo':
         return isSuperAdmin ? <Suspense fallback={<div className="flex justify-center p-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-500"></div></div>}><MordomoDashboard /></Suspense> : <Feed userProfile={userProfile} isAdmin={isAdmin} isVip={isVip} isGuest={isGuest} />;
+      case 'admin-engagement':
+        return isAdmin ? <AdminEngagementPanel /> : <Feed userProfile={userProfile} isAdmin={isAdmin} isVip={isVip} isGuest={isGuest} />;
       case 'doacao':
         return <DonationPage />;
+      case 'ai-engine':
+        return isAdmin ? <AiContentAdmin /> : <Feed userProfile={userProfile} isAdmin={isAdmin} isVip={isVip} isGuest={isGuest} />;
       default:
         return <Suspense fallback={<div className="flex justify-center p-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-500"></div></div>}><Feed userProfile={userProfile} isAdmin={isAdmin} isVip={isVip} isGuest={isGuest} /></Suspense>;
     }

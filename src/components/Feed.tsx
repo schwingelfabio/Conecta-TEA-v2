@@ -75,7 +75,9 @@ import {
   Crown,
   Globe,
   MessageSquare,
-  LogIn
+  LogIn,
+  Bot,
+  Video
 } from 'lucide-react';
 
 const LogoLoader = () => (
@@ -230,21 +232,21 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
       let q;
       
       if (topic === 'cidade') {
-          q = query(collection(db, 'posts'), where('city', '==', userProfile?.city || ''), orderBy('timestamp', 'desc'), limit(10));
+          q = query(collection(db, 'posts'), where('city', '==', userProfile?.city || ''), orderBy('timestamp', 'desc'), limit(50));
       } else if (topic === 'estado') {
-          q = query(collection(db, 'posts'), where('state', '==', userProfile?.state || ''), orderBy('timestamp', 'desc'), limit(10));
+          q = query(collection(db, 'posts'), where('state', '==', userProfile?.state || ''), orderBy('timestamp', 'desc'), limit(50));
       } else if (topic !== 'geral') {
         q = query(
           collection(db, 'posts'),
           where('topic', '==', topic),
           orderBy('timestamp', 'desc'),
-          limit(10)
+          limit(50)
         );
       } else {
         q = query(
           collection(db, 'posts'),
           orderBy('timestamp', 'desc'),
-          limit(10)
+          limit(50)
         );
       }
 
@@ -296,7 +298,12 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
       const combinedPosts = [...validPosts, ...currentSimulated].sort((a, b) => {
         const timeA = a.timestamp?.toMillis ? a.timestamp.toMillis() : new Date(a.timestamp).getTime();
         const timeB = b.timestamp?.toMillis ? b.timestamp.toMillis() : new Date(b.timestamp).getTime();
-        return timeB - timeA;
+        
+        const scoreA = (a.trendingScore || 0) + (a.likesCount || 0) * 0.5;
+        const scoreB = (b.trendingScore || 0) + (b.likesCount || 0) * 0.5;
+        
+        // Simple ranking: prioritize trending score, then timestamp
+        return (scoreB - scoreA) || (timeB - timeA);
       });
 
       if (isLoadMore) {
@@ -794,8 +801,17 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
                               {post.isVip && (
                                 <span className="bg-amber-100 text-amber-700 text-[10px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider">VIP</span>
                               )}
-                              {post.authorId === 'ai-bot' && (
-                                <span className="bg-brand-primary/10 text-brand-primary text-[10px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider">IA</span>
+                              {(post.authorId === 'ai-bot' || post.isAiGenerated) && (
+                                <span className="bg-indigo-100 text-indigo-700 text-[10px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider flex items-center gap-1">
+                                  <Bot size={10} />
+                                  IA
+                                </span>
+                              )}
+                              {post.contentType === 'video_script' && (
+                                <span className="bg-rose-100 text-rose-700 text-[10px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider flex items-center gap-1">
+                                  <Video size={10} />
+                                  Script
+                                </span>
                               )}
                               {post.isPinned && (
                                 <span className="bg-sky-100 text-sky-700 text-[10px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider flex items-center gap-1">
