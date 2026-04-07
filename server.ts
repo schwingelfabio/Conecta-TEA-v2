@@ -33,6 +33,7 @@ async function initAdmin() {
       
       admin.initializeApp(options);
       console.log(`[Server] Firebase Admin initialized. Project: ${admin.app().options.projectId || 'ADC'}`);
+      console.log(`[Server] Admin app options:`, JSON.stringify(admin.app().options));
     } catch (error) {
       console.error('[Server] Firebase Admin initialization failed:', error);
     }
