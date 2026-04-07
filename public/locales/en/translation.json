@@ -44,5 +44,12 @@
       "trustElement": "Supporting families globally",
       "vipHighlight": "VIP members help us keep everything running and get early access to new features."
     }
+  },
+  "admin": {
+    "errorInvalidPosts": "Invalid number of posts per day.",
+    "successSave": "Settings saved successfully.",
+    "successGenerate": "{{count}} posts generated and published successfully!",
+    "errorTimeout": "Generation took longer than expected. Please try again.",
+    "errorGenerate": "Generation error. Please try again."
   }
 }

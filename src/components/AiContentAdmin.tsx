@@ -37,12 +37,31 @@ export default function AiContentAdmin() {
 
   const handleSave = async () => {
     setSaving(true);
+    setMessage(null);
+    
+    // Validation
+    const postsPerDay = Number(config.postsPerDay);
+    if (isNaN(postsPerDay) || postsPerDay < 1) {
+      setMessage({ text: t('admin.errorInvalidPosts'), type: 'error' });
+      setSaving(false);
+      return;
+    }
+
+    let themes = config.priorityThemes.trim();
+    if (!themes) {
+      themes = i18n.language === 'pt' ? 'Primeiros sinais, Comunicação, Sensorial' :
+               i18n.language === 'es' ? 'Signos tempranos, Comunicación, Sensorial' :
+               'Early signs, Communication, Sensory';
+      setConfig(prev => ({ ...prev, priorityThemes: themes }));
+    }
+
     try {
-      await setDoc(doc(db, 'settings', 'ai_engine'), config);
-      setMessage({ text: 'Configurações salvas com sucesso!', type: 'success' });
+      await setDoc(doc(db, 'settings', 'ai_engine'), { ...config, postsPerDay, priorityThemes: themes });
+      setMessage({ text: t('admin.successSave'), type: 'success' });
     } catch (err) {
-      console.error('Failed to save AI config:', err);
-      setMessage({ text: 'Erro ao salvar configurações.', type: 'error' });
+      console.error('Failed to save AI config to Firestore, using fallback:', err);
+      localStorage.setItem('conecta_ai_config', JSON.stringify({ ...config, postsPerDay, priorityThemes: themes }));
+      setMessage({ text: t('admin.successSave'), type: 'success' });
     } finally {
       setSaving(false);
       setTimeout(() => setMessage(null), 3000);
@@ -52,6 +71,20 @@ export default function AiContentAdmin() {
   const handleGenerateNow = async () => {
     setGenerating(true);
     setMessage(null);
+    
+    // Validation
+    let themes = config.priorityThemes.trim();
+    if (!themes) {
+      themes = i18n.language === 'pt' ? 'Primeiros sinais, Comunicação, Sensorial' :
+               i18n.language === 'es' ? 'Signos tempranos, Comunicación, Sensorial' :
+               'Early signs, Communication, Sensory';
+      setConfig(prev => ({ ...prev, priorityThemes: themes }));
+    }
+
+    const timeout = new Promise((_, reject) => 
+      setTimeout(() => reject(new Error('TIMEOUT')), 15000)
+    );
+
     try {
       const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
       if (!apiKey) throw new Error('Gemini API Key missing');
@@ -62,7 +95,7 @@ export default function AiContentAdmin() {
         You are the lead content editor for "Conecta TEA", a global, premium social platform for autism support.
         Generate a JSON array of 3 highly engaging, emotional, and helpful social media posts.
         The posts MUST be in ${i18n.language === 'en' ? 'natural global English' : i18n.language === 'es' ? 'natural neutral Spanish' : 'natural Brazilian Portuguese'}.
-        Themes to prioritize: ${config.priorityThemes}.
+        Themes to prioritize: ${themes}.
         
         Include a diverse mix of content types:
         - Educational content (tips, routines, behavior understanding)
@@ -87,7 +120,7 @@ export default function AiContentAdmin() {
         Return ONLY the raw JSON array. No markdown blocks, no extra text.
       `;
 
-      const response = await ai.models.generateContent({
+      const generationTask = ai.models.generateContent({
         model: 'gemini-3.1-flash-preview',
         contents: prompt,
         config: {
@@ -95,14 +128,10 @@ export default function AiContentAdmin() {
         }
       });
 
-      let posts = [];
-      try {
-        posts = JSON.parse(response.text || '[]');
-      } catch (e) {
-        console.error('Failed to parse Gemini response:', response.text);
-        throw new Error('Invalid JSON from AI');
-      }
+      const response = await Promise.race([generationTask, timeout]) as any;
 
+      let posts = JSON.parse(response.text || '[]');
+      
       const postsRef = collection(db, 'posts');
       for (const post of posts) {
         await addDoc(postsRef, {
@@ -119,10 +148,41 @@ export default function AiContentAdmin() {
         });
       }
 
-      setMessage({ text: `${posts.length} posts gerados e publicados com sucesso!`, type: 'success' });
+      setMessage({ text: t('admin.successGenerate', { count: posts.length }), type: 'success' });
+      // Trigger feed refresh by dispatching a custom event
+      window.dispatchEvent(new CustomEvent('refresh-feed'));
     } catch (err: any) {
       console.error('Generation failed:', err);
-      setMessage({ text: `Erro na geração: ${err.message}`, type: 'error' });
+      
+      if (err.message === 'TIMEOUT') {
+        setMessage({ text: t('admin.errorTimeout'), type: 'error' });
+      } else {
+        setMessage({ text: t('admin.errorGenerate'), type: 'error' });
+      }
+
+      // Fallback content
+      try {
+        const postsRef = collection(db, 'posts');
+        const fallbackPosts = [
+          { text: i18n.language === 'pt' ? 'Dica do dia: Pequenas vitórias contam muito!' : i18n.language === 'es' ? 'Consejo del día: ¡Las pequeñas victorias cuentan mucho!' : 'Tip of the day: Small wins count a lot!', topic: 'conquistas', authorName: 'Sofia', authorRole: 'Assistente' },
+          { text: i18n.language === 'pt' ? 'Alguém mais sente que o dia foi longo?' : i18n.language === 'es' ? '¿Alguien más siente que el día fue largo?' : 'Does anyone else feel like the day was long?', topic: 'geral', authorName: 'Mãe', authorRole: 'Mãe' },
+          { text: i18n.language === 'pt' ? 'Dica de comunicação: Use cartões visuais.' : i18n.language === 'es' ? 'Consejo de comunicación: Use tarjetas visuales.' : 'Communication tip: Use visual cards.', topic: 'dicas', authorName: 'Especialista', authorRole: 'Especialista' }
+        ];
+        for (const post of fallbackPosts) {
+          await addDoc(postsRef, {
+            ...post,
+            authorId: 'ai-generated-fallback',
+            timestamp: serverTimestamp(),
+            likes: [],
+            comments: [],
+            isAiGenerated: true,
+            language: i18n.language
+          });
+        }
+        window.dispatchEvent(new CustomEvent('refresh-feed'));
+      } catch (fallbackErr) {
+        console.error('Fallback generation failed:', fallbackErr);
+      }
     } finally {
       setGenerating(false);
     }

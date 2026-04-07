@@ -35,5 +35,12 @@
     "noVideos": "No se encontraron videos.",
     "noTitle": "Sin título",
     "loadMore": "Cargar más videos"
+  },
+  "admin": {
+    "errorInvalidPosts": "Número de publicaciones por día no válido.",
+    "successSave": "Configuración guardada con éxito.",
+    "successGenerate": "¡{{count}} publicaciones generadas y publicadas con éxito!",
+    "errorTimeout": "La generación tardó más de lo esperado. Inténtalo de nuevo.",
+    "errorGenerate": "Error en la generación. Inténtalo de nuevo."
   }
 }
