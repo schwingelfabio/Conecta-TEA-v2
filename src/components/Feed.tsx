@@ -622,6 +622,7 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
 
   const [interactionCount, setInteractionCount] = useState(0);
   const [showVipModal, setShowVipModal] = useState(false);
+  const [showScrollModal, setShowScrollModal] = useState(false);
 
   const trackInteraction = () => {
     setInteractionCount(prev => {
