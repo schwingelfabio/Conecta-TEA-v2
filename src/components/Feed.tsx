@@ -157,6 +157,8 @@ interface FeedProps {
   isGuest?: boolean;
 }
 
+import { ErrorBoundary } from './ErrorBoundary';
+
 const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isGuest }) => {
   const { t, i18n } = useTranslation();
 
@@ -229,7 +231,7 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
         setLoading(false);
       }
       if (loadingMore) setLoadingMore(false);
-    }, 8000); // 8 seconds safety timeout
+    }, 5000); // 5 seconds safety timeout
 
     try {
       // 1. Fetch Pinned Posts (only on initial load)
@@ -246,7 +248,7 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
         }
         
         const pinnedSnapshot = await getDocs(pinnedQuery);
-        pinnedPosts = pinnedSnapshot.docs.map(doc => ({ id: doc.id, ...(doc.data() as any) })) as Post[];
+        pinnedPosts = pinnedSnapshot.docs.map((doc: any) => ({ id: doc.id, ...(doc.data() as any) })) as Post[];
         console.log(`[Feed] Pinned posts fetched: ${pinnedPosts.length}`);
       }
 
@@ -636,7 +638,8 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
 
 
   return (
-    <div className="max-w-2xl mx-auto py-8 px-4">
+    <ErrorBoundary>
+      <div className="max-w-2xl mx-auto py-8 px-4">
       {showScrollModal && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
           <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="bg-white rounded-3xl p-8 max-w-sm w-full text-center">
@@ -1084,7 +1087,8 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
             </motion.div>
           )}
         </div>
-    </div>
+      </div>
+    </ErrorBoundary>
   );
 };
 

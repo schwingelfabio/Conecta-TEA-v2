@@ -94,7 +94,7 @@ export default function LocationSelectorGlobal({
     <div className="space-y-4">
       <div className="space-y-4">
         {/* Country Selector (LATAM only) */}
-        {region === 'LATAM' && 'countries' in regionData && (
+        {region === 'LATAM' && regionData && 'countries' in regionData && (
           <div>
             <label className="block text-xs font-bold text-gray-400 uppercase mb-1 ml-1">
               {t('onboarding.selectCountry')}
@@ -130,8 +130,8 @@ export default function LocationSelectorGlobal({
               >
                 <option value="">{t('onboarding.selectState')}</option>
                 {region === 'BR' && brStates.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
-                {region === 'US' && 'states' in regionData && Array.isArray(regionData.states) && regionData.states.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
-                {region === 'LATAM' && selectedCountry && 'states' in regionData && !Array.isArray(regionData.states) && [...((regionData.states as any)[selectedCountry] || [])].sort((a, b) => a.name.localeCompare(b.name)).map((s: any) => <option key={s.id} value={s.id}>{s.name}</option>)}
+                {region === 'US' && regionData && 'states' in regionData && Array.isArray(regionData.states) && regionData.states.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
+                {region === 'LATAM' && selectedCountry && regionData && 'states' in regionData && !Array.isArray(regionData.states) && [...((regionData.states as any)[selectedCountry] || [])].sort((a, b) => a.name.localeCompare(b.name)).map((s: any) => <option key={s.id} value={s.id}>{s.name}</option>)}
               </select>
               {region === 'BR' && loadingBr && brStates.length === 0 ? (
                 <Loader2 className="absolute right-10 top-1/2 -translate-y-1/2 text-sky-500 animate-spin" size={18} />
@@ -155,8 +155,8 @@ export default function LocationSelectorGlobal({
               >
                 <option value="">{t('onboarding.selectCity')}</option>
                 {region === 'BR' && brCities.map(c => <option key={c.id} value={c.name}>{c.name}</option>)}
-                {region === 'US' && selectedState && 'cities' in regionData && [...((regionData.cities as any)[selectedState] || [])].sort((a, b) => a.localeCompare(b)).map((c: any) => <option key={c} value={c}>{c}</option>)}
-                {region === 'LATAM' && selectedState && 'cities' in regionData && [...((regionData.cities as any)[selectedState] || [])].sort((a, b) => a.localeCompare(b)).map((c: any) => <option key={c} value={c}>{c}</option>)}
+                {region === 'US' && selectedState && regionData && 'cities' in regionData && [...((regionData.cities as any)[selectedState] || [])].sort((a, b) => a.localeCompare(b)).map((c: any) => <option key={c} value={c}>{c}</option>)}
+                {region === 'LATAM' && selectedState && regionData && 'cities' in regionData && [...((regionData.cities as any)[selectedState] || [])].sort((a, b) => a.localeCompare(b)).map((c: any) => <option key={c} value={c}>{c}</option>)}
               </select>
               {region === 'BR' && loadingBr && brCities.length === 0 ? (
                 <Loader2 className="absolute right-10 top-1/2 -translate-y-1/2 text-sky-500 animate-spin" size={18} />

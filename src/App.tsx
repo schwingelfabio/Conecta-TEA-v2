@@ -106,6 +106,17 @@ export default function App() {
       }
     }
 
+    const authTimeout = setTimeout(() => {
+      setAuthReady(prev => {
+        if (!prev) {
+          console.warn('[App] Auth timeout reached, forcing authReady to true.');
+          setLoading(false);
+          return true;
+        }
+        return prev;
+      });
+    }, 5000);
+
     const unsubscribe = onAuthStateChanged(auth, async (u) => {
       console.log('[App/Auth] onAuthStateChanged fired. User:', u?.email || 'null');
       
@@ -283,6 +294,20 @@ export default function App() {
       await signInAnonymously(auth);
     } catch (error) {
       console.error('Error signing in anonymously:', error);
+      // Fallback guest session if Firebase Auth is blocked or fails
+      const fallbackUid = 'guest_' + Math.random().toString(36).substring(2, 15);
+      setUser({ uid: fallbackUid, isAnonymous: true, email: '' } as any);
+      setIsGuest(true);
+      setUserProfile({
+        uid: fallbackUid,
+        displayName: 'Visitante',
+        role: 'parent',
+        isVip: false,
+        city: '',
+        state: ''
+      } as any);
+      setAuthReady(true);
+      setLoading(false);
     }
   };
 
@@ -418,7 +443,7 @@ export default function App() {
   }
 
   return (
-    <ErrorBoundary>
+    <ErrorBoundary fullScreen={true}>
       <div className="min-h-screen bg-gradient-to-b from-sky-50 to-white font-sans text-gray-900">
         {showEmotionalOverlay && <EmotionalOverlay onComplete={() => setShowEmotionalOverlay(false)} />}
         {showOnboarding && <Onboarding onComplete={() => setShowOnboarding(false)} />}
