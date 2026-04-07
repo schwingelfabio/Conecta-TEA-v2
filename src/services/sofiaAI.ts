@@ -5,7 +5,7 @@ import { logger, analytics } from './logger';
 import { SofiaMode, SofiaResponse, SofiaSession, SofiaMessage, SofiaSummary, SofiaSafetyEvent } from '../types/sofia';
 
 // Initialize Gemini API
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_GEMINI_API_KEY || '' });
 
 const SYSTEM_INSTRUCTION = `Você é a Sofia IA, uma assistente virtual integrada ao app Acolhe TEA (parte do Conecta TEA).
 Seu objetivo é agir como uma presença humana acolhedora, capaz de ouvir, entender, organizar emoções e orientar pais com empatia, clareza e segurança.

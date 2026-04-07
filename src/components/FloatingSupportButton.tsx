@@ -11,7 +11,7 @@ export default function FloatingSupportButton({ onClick }: { onClick: () => void
     es: "💙 Apoyar familias"
   };
 
-  const lang = i18n.language.split('-')[0] as 'pt' | 'en' | 'es';
+  const lang = (i18n.language || 'pt').split('-')[0] as 'pt' | 'en' | 'es';
   const label = labels[lang] || labels.pt;
 
   return (

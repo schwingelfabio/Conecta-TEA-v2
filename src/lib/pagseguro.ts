@@ -1,6 +1,6 @@
 export const getPixCopyPaste = () => {
   // Retorna a chave Pix configurada via variável de ambiente ou um placeholder
-  return process.env.VITE_PIX_KEY || '12345678900';
+  return import.meta.env.VITE_PIX_KEY || '12345678900';
 };
 
 export const createPagSeguroCheckout = async (planType: 'mensal' | 'anual', userId: string, userEmail: string) => {

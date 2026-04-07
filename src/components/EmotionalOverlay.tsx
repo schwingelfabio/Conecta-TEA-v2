@@ -20,7 +20,7 @@ export default function EmotionalOverlay({ onComplete }: { onComplete: () => voi
     es: "No estás solo(a). 💙\nMiles de familias están pasando por esto ahora."
   };
 
-  const lang = i18n.language.split('-')[0] as 'pt' | 'en' | 'es';
+  const lang = (i18n.language || 'pt').split('-')[0] as 'pt' | 'en' | 'es';
   const message = messages[lang] || messages.pt;
 
   return (

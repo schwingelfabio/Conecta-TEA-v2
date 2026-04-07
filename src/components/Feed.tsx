@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { GoogleGenAI } from "@google/genai";
 import { db, auth } from '../lib/firebase';
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || '' });
+const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_GEMINI_API_KEY || '' });
 import { 
   collection, 
   query, 
@@ -36,7 +36,21 @@ import { trackEvent } from '../lib/monitoring';
 const getRelativeTime = (date: Date | any, lang: string) => {
   if (!date) return lang === 'en' ? 'Now' : lang === 'es' ? 'Ahora' : 'Agora';
   
-  const d = date.toDate ? date.toDate() : (date instanceof Date ? date : new Date(date));
+  let d: Date;
+  if (date.toDate) {
+    d = date.toDate();
+  } else if (date instanceof Date) {
+    d = date;
+  } else if (typeof date === 'object' && date.seconds) {
+    d = new Date(date.seconds * 1000);
+  } else {
+    d = new Date(date);
+  }
+
+  if (isNaN(d.getTime())) {
+    return lang === 'en' ? 'Now' : lang === 'es' ? 'Ahora' : 'Agora';
+  }
+
   const now = new Date();
   const diffInSeconds = Math.floor((now.getTime() - d.getTime()) / 1000);
   
@@ -908,9 +922,9 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
 
                       <div className="markdown-body text-slate-700 mb-6">
                         <ReactMarkdown>
-                          {i18n.language === 'en' ? post.text_en || post.text : 
-                           i18n.language === 'es' ? post.text_es || post.text : 
-                           post.text_pt || post.text}
+                          {i18n.language === 'en' ? (post.text_en || post.text || '') : 
+                           i18n.language === 'es' ? (post.text_es || post.text || '') : 
+                           (post.text_pt || post.text || '')}
                         </ReactMarkdown>
                       </div>
 

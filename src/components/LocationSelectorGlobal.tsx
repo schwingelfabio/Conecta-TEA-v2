@@ -18,7 +18,8 @@ export default function LocationSelectorGlobal({
 }: LocationSelectorGlobalProps) {
   const { t, i18n } = useTranslation();
   
-  const getRegionFromLang = useCallback((lang: string) => {
+  const getRegionFromLang = useCallback((lang?: string) => {
+    if (!lang) return 'BR';
     if (lang.startsWith('en')) return 'US';
     if (lang.startsWith('es')) return 'LATAM';
     return 'BR';
