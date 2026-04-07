@@ -151,6 +151,7 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
   }, []);
   const [simulatedPosts] = useState<Post[]>(() => generateSimulatedPosts());
   const [posts, setPosts] = useState<Post[]>([]);
+  const [feedMode, setFeedMode] = useState<'forYou' | 'following'>('forYou');
   const [newPost, setNewPost] = useState('');
   const [topic, setTopic] = useState<string>('geral');
   const [loading, setLoading] = useState(true);

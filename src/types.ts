@@ -17,6 +17,10 @@ export interface UserProfile {
   country?: string;
   bio?: string;
   role?: 'parent' | 'professional' | 'autistic' | 'other' | 'admin';
+  followers?: string[];
+  following?: string[];
+  badges?: string[];
+  savedPosts?: string[];
 }
 
 export interface SosCard {
@@ -64,6 +68,7 @@ export interface Post {
   isGlobal: boolean;
   isPinned?: boolean;
   likes?: string[];
+  saves?: string[];
   commentsCount?: number;
   isAiGenerated?: boolean;
   contentType?: 'text' | 'video_script' | 'educational_card' | 'engagement_question';
