@@ -35,6 +35,8 @@ export default function VideoGallery() {
   const [lastVisible, setLastVisible] = useState<QueryDocumentSnapshot<DocumentData> | null>(null);
   const [hasMore, setHasMore] = useState(true);
   const [selectedVideo, setSelectedVideo] = useState<Video | null>(null);
+  const [videosWatched, setVideosWatched] = useState(0);
+  const [showCTA, setShowCTA] = useState(false);
 
   const fetchVideos = async (isLoadMore = false) => {
     if (isLoadMore) {
@@ -79,6 +81,15 @@ export default function VideoGallery() {
   useEffect(() => {
     fetchVideos();
   }, []);
+
+  const handleCloseVideo = () => {
+    const newCount = videosWatched + 1;
+    setVideosWatched(newCount);
+    if (newCount >= 2) {
+      setShowCTA(true);
+    }
+    setSelectedVideo(null);
+  };
 
   function getEmbedUrl(videoId: string) {
     return `https://www.youtube.com/embed/${videoId}?autoplay=1`;
@@ -162,6 +173,17 @@ export default function VideoGallery() {
               </button>
             </div>
           )}
+          
+          <div className="mt-16 text-center space-y-4">
+            <p className="text-slate-500 text-sm">{t('videos.cta.microEmotional')}</p>
+            <div className="flex justify-center gap-4 text-xs text-slate-400 font-bold uppercase tracking-widest">
+              <span>{t('videos.cta.trustElement')}</span>
+              <span>•</span>
+              <span>Built with purpose</span>
+              <span>•</span>
+              <span>Growing community</span>
+            </div>
+          </div>
         </>
       )}
 
@@ -183,20 +205,33 @@ export default function VideoGallery() {
               onClick={(e) => e.stopPropagation()}
             >
               <button
-                onClick={() => setSelectedVideo(null)}
+                onClick={handleCloseVideo}
                 className="absolute top-4 right-4 z-10 p-2 bg-white/10 hover:bg-white/20 rounded-full text-white transition-colors"
               >
                 <X size={24} />
               </button>
-              <iframe
-                src={getEmbedUrl(selectedVideo.videoId)}
-                title={selectedVideo.title}
-                width="100%"
-                height="100%"
-                className="w-full h-full"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-              />
+              
+              {showCTA ? (
+                <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-white p-8 text-center">
+                  <h3 className="text-2xl font-bold text-slate-900 mb-4">{t('videos.cta.emotionalMessage')}</h3>
+                  <div className="flex flex-col gap-3 w-full max-w-xs">
+                    <button className="w-full py-3 bg-brand-primary text-white rounded-full font-bold hover:bg-brand-primary/90 transition-colors">{t('videos.cta.supportButton')}</button>
+                    <button className="w-full py-3 bg-brand-secondary text-white rounded-full font-bold hover:bg-brand-secondary/90 transition-colors">{t('videos.cta.vipButton')}</button>
+                    <button className="w-full py-3 bg-slate-100 text-slate-700 rounded-full font-bold hover:bg-slate-200 transition-colors">{t('videos.cta.shareButton')}</button>
+                  </div>
+                  <p className="mt-6 text-sm text-slate-500">{t('videos.cta.microEmotional')}</p>
+                </div>
+              ) : (
+                <iframe
+                  src={getEmbedUrl(selectedVideo.videoId)}
+                  title={selectedVideo.title}
+                  width="100%"
+                  height="100%"
+                  className="w-full h-full"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
+              )}
             </motion.div>
           </motion.div>
         )}

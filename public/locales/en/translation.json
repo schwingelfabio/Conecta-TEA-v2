@@ -34,6 +34,15 @@
     "exclusiveVideos": "Exclusive Videos",
     "noVideos": "No videos found.",
     "noTitle": "No title",
-    "loadMore": "Load more videos"
+    "loadMore": "Load more videos",
+    "cta": {
+      "emotionalMessage": "If this helped you, support this project so we can help more families.",
+      "supportButton": "❤️ Support this project",
+      "vipButton": "⭐ Become VIP",
+      "shareButton": "🔗 Share with another parent",
+      "microEmotional": "This project exists because of people like you.",
+      "trustElement": "Supporting families globally",
+      "vipHighlight": "VIP members help us keep everything running and get early access to new features."
+    }
   }
 }
