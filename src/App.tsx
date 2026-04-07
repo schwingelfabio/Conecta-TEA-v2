@@ -162,7 +162,10 @@ export default function App() {
         const userDocRef = doc(db, 'users', u.uid);
         
         try {
-          const userDoc = await getDoc(userDocRef);
+          const timeoutPromise = new Promise((_, reject) => 
+            setTimeout(() => reject(new Error('Timeout fetching user profile')), 3000)
+          );
+          const userDoc = await Promise.race([getDoc(userDocRef), timeoutPromise]) as any;
           
           if (userDoc.exists()) {
             const data = userDoc.data() as UserProfile;
@@ -292,7 +295,10 @@ export default function App() {
 
   const handleGuestLogin = async () => {
     try {
-      await signInAnonymously(auth);
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Timeout signing in anonymously')), 3000)
+      );
+      await Promise.race([signInAnonymously(auth), timeoutPromise]);
     } catch (error) {
       console.error('Error signing in anonymously:', error);
       // Fallback guest session if Firebase Auth is blocked or fails

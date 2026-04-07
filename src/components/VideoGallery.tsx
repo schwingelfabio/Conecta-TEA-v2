@@ -38,12 +38,22 @@ export default function VideoGallery() {
   const [videosWatched, setVideosWatched] = useState(0);
   const [showCTA, setShowCTA] = useState(false);
 
+  const fallbackVideos: Video[] = [
+    { id: 'fallback-1', videoId: 'TW2Y33Tqja8', url: 'https://youtube.com/watch?v=TW2Y33Tqja8', title: 'Sinais de Autismo em Bebês', thumbnail: 'https://img.youtube.com/vi/TW2Y33Tqja8/hqdefault.jpg', createdAt: new Date(), description: 'Entenda os primeiros sinais.', duration: '2:30', category: 'Dicas' },
+    { id: 'fallback-2', videoId: 'tNuM5SI_UxE', url: 'https://youtube.com/watch?v=tNuM5SI_UxE', title: 'Como lidar com crises de autismo', thumbnail: 'https://img.youtube.com/vi/tNuM5SI_UxE/hqdefault.jpg', createdAt: new Date(), description: 'Estratégias práticas para acalmar.', duration: '3:00', category: 'Cenários Reais' },
+    { id: 'fallback-3', videoId: 'bQ9HwhO9voc', url: 'https://youtube.com/watch?v=bQ9HwhO9voc', title: 'A importância da rotina', thumbnail: 'https://img.youtube.com/vi/bQ9HwhO9voc/hqdefault.jpg', createdAt: new Date(), description: 'Por que a rotina importa no TEA.', duration: '1:45', category: 'Dicas' },
+  ];
+
   const fetchVideos = async (isLoadMore = false) => {
     if (isLoadMore) {
       setLoadingMore(true);
     } else {
       setLoading(true);
     }
+
+    const timeoutPromise = new Promise((_, reject) => 
+      setTimeout(() => reject(new Error('Timeout fetching videos')), 5000)
+    );
 
     try {
       let q = query(
@@ -56,8 +66,8 @@ export default function VideoGallery() {
         q = query(q, startAfter(lastVisible));
       }
 
-      const snapshot = await getDocs(q);
-      const fetchedVideos = snapshot.docs.map(doc => ({
+      const snapshot = await Promise.race([getDocs(q), timeoutPromise]) as any;
+      const fetchedVideos = snapshot.docs.map((doc: any) => ({
         id: doc.id,
         ...doc.data()
       })) as Video[];
@@ -65,13 +75,17 @@ export default function VideoGallery() {
       if (isLoadMore) {
         setVideos(prev => [...prev, ...fetchedVideos]);
       } else {
-        setVideos(fetchedVideos);
+        setVideos(fetchedVideos.length > 0 ? fetchedVideos : fallbackVideos);
       }
 
       setLastVisible(snapshot.docs[snapshot.docs.length - 1] || null);
       setHasMore(snapshot.docs.length === 6);
     } catch (error) {
       console.error('Erro ao buscar vídeos:', error);
+      if (!isLoadMore) {
+        setVideos(fallbackVideos);
+      }
+      setHasMore(false);
     } finally {
       setLoading(false);
       setLoadingMore(false);

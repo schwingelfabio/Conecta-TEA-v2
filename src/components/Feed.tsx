@@ -233,6 +233,12 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
       if (loadingMore) setLoadingMore(false);
     }, 5000); // 5 seconds safety timeout
 
+    const timeoutPromise = new Promise((_, reject) => 
+      setTimeout(() => reject(new Error('Timeout fetching posts')), 5000)
+    );
+
+    let validPosts: Post[] = [];
+
     try {
       // 1. Fetch Pinned Posts (only on initial load)
       let pinnedPosts: Post[] = [];
@@ -247,7 +253,7 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
           pinnedQuery = query(collection(db, 'posts'), where('isPinned', '==', true), where('topic', '==', topic));
         }
         
-        const pinnedSnapshot = await getDocs(pinnedQuery);
+        const pinnedSnapshot = await Promise.race([getDocs(pinnedQuery), timeoutPromise]) as any;
         pinnedPosts = pinnedSnapshot.docs.map((doc: any) => ({ id: doc.id, ...(doc.data() as any) })) as Post[];
         console.log(`[Feed] Pinned posts fetched: ${pinnedPosts.length}`);
       }
@@ -278,10 +284,10 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
         q = query(q, startAfter(lastVisible));
       }
 
-      const snapshot = await getDocs(q);
+      const snapshot = await Promise.race([getDocs(q), timeoutPromise]) as any;
       console.log(`[News] read query result count for topic ${topic}: ${snapshot.size}`);
       
-      const fetchedPosts = snapshot.docs.map(doc => ({
+      const fetchedPosts = snapshot.docs.map((doc: any) => ({
         id: doc.id,
         ...(doc.data() as any)
       })) as Post[];
@@ -294,7 +300,7 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
         index === self.findIndex((p) => p.id === post.id)
       );
 
-      const validPosts = uniquePosts
+      validPosts = uniquePosts
         .filter(post => (post.text || post.content) && (post.authorId || post.userId) && post.topic)
         .map(post => getLocalizedPost({
           ...post,
@@ -302,6 +308,14 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
           text: post.text || post.content
         }));
       
+      setLastVisible(snapshot.docs[snapshot.docs.length - 1] || null);
+      setHasMore(snapshot.docs.length === 50);
+    } catch (err) {
+      console.error("[Feed] News fetch failed, using fallback:", err);
+      // validPosts remains empty, so we fallback to simulated posts below
+    }
+
+    try {
       let currentSimulated: Post[] = [];
       let topicSimulatedPosts = simulatedPosts;
       if (topic !== 'geral' && topic !== 'cidade' && topic !== 'estado') {
@@ -320,8 +334,8 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
       }
 
       const combinedPosts = [...validPosts, ...currentSimulated].sort((a, b) => {
-        const timeA = a.timestamp?.toMillis ? a.timestamp.toMillis() : new Date(a.timestamp).getTime();
-        const timeB = b.timestamp?.toMillis ? b.timestamp.toMillis() : new Date(b.timestamp).getTime();
+        const timeA = a.timestamp?.toMillis ? a.timestamp.toMillis() : (a.timestamp ? new Date(a.timestamp).getTime() : 0);
+        const timeB = b.timestamp?.toMillis ? b.timestamp.toMillis() : (b.timestamp ? new Date(b.timestamp).getTime() : 0);
         
         const scoreA = (a.trendingScore || 0) + (a.likesCount || 0) * 0.5;
         const scoreB = (b.trendingScore || 0) + (b.likesCount || 0) * 0.5;
@@ -336,8 +350,8 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
           return newPosts.filter((post, index, self) => 
             index === self.findIndex((p) => p.id === post.id)
           ).sort((a, b) => {
-            const timeA = a.timestamp?.toMillis ? a.timestamp.toMillis() : new Date(a.timestamp).getTime();
-            const timeB = b.timestamp?.toMillis ? b.timestamp.toMillis() : new Date(b.timestamp).getTime();
+            const timeA = a.timestamp?.toMillis ? a.timestamp.toMillis() : (a.timestamp ? new Date(a.timestamp).getTime() : 0);
+            const timeB = b.timestamp?.toMillis ? b.timestamp.toMillis() : (b.timestamp ? new Date(b.timestamp).getTime() : 0);
             return timeB - timeA;
           });
         });
@@ -351,11 +365,11 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
         console.log(`[Feed] News fetch success. Total posts: ${validPosts.length}`);
       }
 
-      setLastVisible(snapshot.docs[snapshot.docs.length - 1] || null);
       const hasMoreSimulated = currentSimulated.length > 0 && topicSimulatedPosts.length > (isLoadMore ? posts.filter(p => p.id.startsWith('simulated-')).length + 10 : 10);
-      setHasMore(snapshot.docs.length === 10 || hasMoreSimulated);
+      // setHasMore is already called in the first try block for real posts, but we update it here for simulated ones if needed
+      if (validPosts.length === 0) setHasMore(hasMoreSimulated);
     } catch (err) {
-      console.error("[Feed] News fetch failed:", err);
+      console.error("[Feed] Error sorting/combining posts:", err);
     } finally {
       clearTimeout(fetchTimeout);
       setLoading(false);

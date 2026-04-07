@@ -20,19 +20,23 @@ const PostComments: React.FC<PostCommentsProps> = ({ postId, userProfile, isGues
   useEffect(() => {
     const fetchComments = async () => {
       setLoading(true);
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Timeout fetching comments')), 5000)
+      );
       try {
         const q = query(
           collection(db, 'posts', postId, 'comments'),
           orderBy('timestamp', 'asc')
         );
-        const snapshot = await getDocs(q);
-        const commentsData = snapshot.docs.map(doc => ({
+        const snapshot = await Promise.race([getDocs(q), timeoutPromise]) as any;
+        const commentsData = snapshot.docs.map((doc: any) => ({
           id: doc.id,
           ...doc.data()
         })) as Comment[];
         setComments(commentsData);
       } catch (err) {
         console.error('Error fetching comments:', err);
+        setComments([]);
       } finally {
         setLoading(false);
       }

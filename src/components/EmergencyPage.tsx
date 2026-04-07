@@ -19,9 +19,12 @@ const EmergencyPage: React.FC<EmergencyPageProps> = ({ id }) => {
   useEffect(() => {
     console.log('[EMERGENCY] page load start, id:', id);
     const fetchSosCard = async () => {
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Timeout fetching SOS card')), 5000)
+      );
       try {
         const docRef = doc(db, 'sos_cards', id);
-        const docSnap = await getDoc(docRef);
+        const docSnap = await Promise.race([getDoc(docRef), timeoutPromise]) as any;
 
         if (docSnap.exists()) {
           const data = { id: docSnap.id, ...docSnap.data() } as SosCard;

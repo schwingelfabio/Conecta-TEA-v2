@@ -30,12 +30,11 @@ export class ErrorBoundary extends Component<Props, State> {
       }
       
       const content = (
-        <div className="text-center p-8 bg-white rounded-3xl shadow-sm border border-slate-100">
-          <h1 className="text-xl font-bold mb-2 text-slate-900">Ops! Algo deu errado.</h1>
-          <p className="mb-4 text-slate-500">Não foi possível carregar este conteúdo.</p>
+        <div className="text-center p-4 bg-slate-50 rounded-2xl border border-slate-100 my-4">
+          <p className="mb-3 text-slate-500 text-sm">Tivemos um problema ao carregar esta parte.</p>
           <button 
-            onClick={() => window.location.reload()}
-            className="px-6 py-2 bg-sky-500 text-white font-bold rounded-full hover:bg-sky-600 transition-colors"
+            onClick={() => this.setState({ hasError: false })}
+            className="px-4 py-2 bg-white border border-slate-200 text-slate-700 text-sm font-medium rounded-full hover:bg-slate-50 transition-colors"
           >
             Tentar novamente
           </button>
