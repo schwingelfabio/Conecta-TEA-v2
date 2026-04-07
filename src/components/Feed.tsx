@@ -23,6 +23,7 @@ import {
   Timestamp
 } from 'firebase/firestore';
 import { Post, UserProfile } from '../types';
+import { generateSimulatedPosts } from '../lib/simulatedPosts';
 import { motion, AnimatePresence } from 'framer-motion';
 import ReactMarkdown from 'react-markdown';
 import { useTranslation } from 'react-i18next';
@@ -31,6 +32,29 @@ import ActiveCommunities from './ActiveCommunities';
 import { useInView } from 'react-intersection-observer';
 import Avatar from './Avatar';
 import { trackEvent } from '../lib/monitoring';
+
+const getRelativeTime = (date: Date | any, lang: string) => {
+  if (!date) return lang === 'en' ? 'Now' : lang === 'es' ? 'Ahora' : 'Agora';
+  
+  const d = date.toDate ? date.toDate() : (date instanceof Date ? date : new Date(date));
+  const now = new Date();
+  const diffInSeconds = Math.floor((now.getTime() - d.getTime()) / 1000);
+  
+  if (diffInSeconds < 60) return lang === 'en' ? 'Just now' : lang === 'es' ? 'Justo ahora' : 'Agora mesmo';
+  
+  const diffInMinutes = Math.floor(diffInSeconds / 60);
+  if (diffInMinutes < 60) return `${diffInMinutes}${lang === 'en' ? 'm ago' : lang === 'es' ? 'm' : 'm atrás'}`;
+  
+  const diffInHours = Math.floor(diffInMinutes / 60);
+  if (diffInHours < 24) return `${diffInHours}${lang === 'en' ? 'h ago' : lang === 'es' ? 'h' : 'h atrás'}`;
+  
+  const diffInDays = Math.floor(diffInHours / 24);
+  if (diffInDays === 1) return lang === 'en' ? '1 day ago' : lang === 'es' ? 'Hace 1 día' : '1 dia atrás';
+  if (diffInDays < 7) return `${diffInDays} ${lang === 'en' ? 'days ago' : lang === 'es' ? 'días' : 'dias atrás'}`;
+  
+  return d.toLocaleDateString(lang === 'en' ? 'en-US' : lang === 'es' ? 'es-ES' : 'pt-BR');
+};
+
 import { 
   Send, 
   MessageCircle, 
@@ -123,6 +147,7 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
   useEffect(() => {
     trackEvent('feed_view');
   }, []);
+  const [simulatedPosts] = useState<Post[]>(() => generateSimulatedPosts());
   const [posts, setPosts] = useState<Post[]>([]);
   const [newPost, setNewPost] = useState('');
   const [topic, setTopic] = useState<string>('geral');
@@ -251,10 +276,42 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
           text: post.text || post.content
         }));
       
-      if (isLoadMore) {
-        setPosts(prev => [...prev, ...validPosts]);
+      let currentSimulated: Post[] = [];
+      let topicSimulatedPosts = simulatedPosts;
+      if (topic !== 'geral' && topic !== 'cidade' && topic !== 'estado') {
+        topicSimulatedPosts = simulatedPosts.filter(p => p.topic === topic);
+      } else if (topic === 'cidade') {
+        topicSimulatedPosts = simulatedPosts.filter(p => p.city === userProfile?.city);
+      } else if (topic === 'estado') {
+        topicSimulatedPosts = simulatedPosts.filter(p => p.state === userProfile?.state);
+      }
+
+      if (!isLoadMore) {
+        currentSimulated = topicSimulatedPosts.slice(0, 10);
       } else {
-        setPosts(validPosts);
+        const currentLength = posts.filter(p => p.id.startsWith('simulated-')).length;
+        currentSimulated = topicSimulatedPosts.slice(currentLength, currentLength + 10);
+      }
+
+      const combinedPosts = [...validPosts, ...currentSimulated].sort((a, b) => {
+        const timeA = a.timestamp?.toMillis ? a.timestamp.toMillis() : new Date(a.timestamp).getTime();
+        const timeB = b.timestamp?.toMillis ? b.timestamp.toMillis() : new Date(b.timestamp).getTime();
+        return timeB - timeA;
+      });
+
+      if (isLoadMore) {
+        setPosts(prev => {
+          const newPosts = [...prev, ...combinedPosts];
+          return newPosts.filter((post, index, self) => 
+            index === self.findIndex((p) => p.id === post.id)
+          ).sort((a, b) => {
+            const timeA = a.timestamp?.toMillis ? a.timestamp.toMillis() : new Date(a.timestamp).getTime();
+            const timeB = b.timestamp?.toMillis ? b.timestamp.toMillis() : new Date(b.timestamp).getTime();
+            return timeB - timeA;
+          });
+        });
+      } else {
+        setPosts(combinedPosts);
       }
       
       if (validPosts.length === 0 && !isLoadMore) {
@@ -264,7 +321,8 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
       }
 
       setLastVisible(snapshot.docs[snapshot.docs.length - 1] || null);
-      setHasMore(snapshot.docs.length === 10);
+      const hasMoreSimulated = currentSimulated.length > 0 && topicSimulatedPosts.length > (isLoadMore ? posts.filter(p => p.id.startsWith('simulated-')).length + 10 : 10);
+      setHasMore(snapshot.docs.length === 10 || hasMoreSimulated);
     } catch (err) {
       console.error("[Feed] News fetch failed:", err);
     } finally {
@@ -750,7 +808,7 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
                               <MapPin size={10} />
                               <span>{post.location}</span>
                               <span>•</span>
-                              <span>{post.timestamp?.toDate ? post.timestamp.toDate().toLocaleDateString('pt-BR') : 'Agora'}</span>
+                              <span>{getRelativeTime(post.timestamp, i18n.language)}</span>
                             </p>
                           </div>
                         </div>
