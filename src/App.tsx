@@ -118,6 +118,7 @@ export default function App() {
     }, 5000);
 
     const unsubscribe = onAuthStateChanged(auth, async (u) => {
+      clearTimeout(authTimeout);
       console.log('[App/Auth] onAuthStateChanged fired. User:', u?.email || 'null');
       
       // Reset states while fetching
