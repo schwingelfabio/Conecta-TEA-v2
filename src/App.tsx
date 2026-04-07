@@ -19,7 +19,8 @@ import {
   AlertTriangle,
   Video,
   Heart,
-  Brain
+  Brain,
+  Globe
 } from 'lucide-react';
 const Feed = lazy(() => import('./components/Feed'));
 const AreaVip = lazy(() => import('./components/AreaVip'));
@@ -38,6 +39,7 @@ const AuthForm = lazy(() => import('./components/AuthForm'));
 import Onboarding from './components/OnboardingModal';
 import EmotionalOverlay from './components/EmotionalOverlay';
 import FloatingSupportButton from './components/FloatingSupportButton';
+import LanguageSelectorModal from './components/LanguageSelectorModal';
 const MordomoDashboard = lazy(() => import('./components/MordomoDashboard'));
 import AdminEngagementPanel from './components/AdminEngagementPanel';
 import { UserProfile } from './types';
@@ -56,6 +58,7 @@ export default function App() {
   const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<'feed' | 'vip' | 'settings' | 'sos' | 'termos' | 'privacidade' | 'contato' | 'map' | 'videos' | 'sofia' | 'carteirinha' | 'triagem' | 'mordomo' | 'doacao' | 'ai-engine' | 'admin-engagement'>('feed');
   const [user, setUser] = useState<FirebaseUser | null>(null);
+  const [showLanguageModal, setShowLanguageModal] = useState(false);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [isSuperAdmin, setIsSuperAdmin] = useState(false);
@@ -412,6 +415,9 @@ export default function App() {
                 </div>
 
                 <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+                  <button onClick={() => setShowLanguageModal(true)} className="p-2 hover:bg-gray-100 rounded-full text-gray-600">
+                    <Globe size={20} />
+                  </button>
                   {isGuest ? (
                     <button onClick={() => setIsGuest(false)} className="px-3 py-1.5 sm:px-4 sm:py-2 bg-sky-500 text-white rounded-full font-bold text-xs sm:text-sm hover:bg-sky-600 transition-colors">
                       {t('nav.createAccount')}
@@ -432,6 +438,8 @@ export default function App() {
                 </div>
               </div>
             </nav>
+
+            {showLanguageModal && <LanguageSelectorModal onClose={() => setShowLanguageModal(false)} />}
           </>
         )}
 
