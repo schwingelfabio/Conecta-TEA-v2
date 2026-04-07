@@ -40,7 +40,7 @@ const MordomoDashboard = lazy(() => import('./components/MordomoDashboard'));
 import AdminEngagementPanel from './components/AdminEngagementPanel';
 import { UserProfile } from './types';
 import { auth, db } from './lib/firebase';
-import { signOut, onAuthStateChanged, User as FirebaseUser } from 'firebase/auth';
+import { signOut, onAuthStateChanged, User as FirebaseUser, signInAnonymously } from 'firebase/auth';
 import { doc, getDoc, setDoc, collection, query, where, getDocs, serverTimestamp } from 'firebase/firestore';
 import { checkIsAdmin } from './lib/admin';
 import DonationPage from './components/DonationPage';
@@ -261,6 +261,14 @@ export default function App() {
     // The onAuthStateChanged listener will handle the state update
   };
 
+  const handleGuestLogin = async () => {
+    try {
+      await signInAnonymously(auth);
+    } catch (error) {
+      console.error('Error signing in anonymously:', error);
+    }
+  };
+
   const handleLogout = () => {
     setIsGuest(false);
     signOut(auth);
@@ -427,7 +435,7 @@ export default function App() {
                   <LandingPage 
                     onLogin={handleLoginSuccess} 
                     onShowTerms={() => setActiveTab('termos')} 
-                    onGuestLogin={() => setIsGuest(true)} 
+                    onGuestLogin={handleGuestLogin} 
                     onOpenAcolhe={() => setActiveTab('sofia')} 
                   />
                 ) : (

@@ -86,6 +86,8 @@ export default function LandingPage({ onLogin, onShowTerms, onGuestLogin, onOpen
   const [isSupportModalOpen, setIsSupportModalOpen] = useState(false);
   const [showSticky, setShowSticky] = useState(false);
 
+  const [isEntering, setIsEntering] = useState(false);
+
   useEffect(() => {
     const handleScroll = () => {
       setShowSticky(window.scrollY > 400);
@@ -94,8 +96,9 @@ export default function LandingPage({ onLogin, onShowTerms, onGuestLogin, onOpen
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const handleMainAction = () => {
-    onGuestLogin();
+  const handleMainAction = async () => {
+    setIsEntering(true);
+    await onGuestLogin();
   };
 
   return (
@@ -171,10 +174,11 @@ export default function LandingPage({ onLogin, onShowTerms, onGuestLogin, onOpen
                   animate={{ boxShadow: ["0px 0px 0px rgba(14, 165, 233, 0)", "0px 0px 20px rgba(14, 165, 233, 0.5)", "0px 0px 0px rgba(14, 165, 233, 0)"] }}
                   transition={{ duration: 2, repeat: Infinity }}
                   onClick={handleMainAction}
+                  disabled={isEntering}
                   className="w-full px-8 py-5 bg-sky-500 text-white rounded-2xl font-bold text-xl shadow-lg shadow-sky-500/30 flex items-center justify-center gap-2"
                 >
-                  {t('landing.hero.cta')}
-                  <ArrowRight size={20} />
+                  {isEntering ? (i18n.language === 'en' ? 'Entering...' : 'Entrando...') : t('landing.hero.cta')}
+                  {!isEntering && <ArrowRight size={20} />}
                 </motion.button>
 
                 <button
@@ -254,10 +258,11 @@ export default function LandingPage({ onLogin, onShowTerms, onGuestLogin, onOpen
           <div className="flex justify-center">
             <button
               onClick={handleMainAction}
+              disabled={isEntering}
               className="px-8 py-4 bg-sky-100 text-sky-700 rounded-2xl font-bold text-lg hover:bg-sky-200 transition-all active:scale-95 flex items-center justify-center gap-2"
             >
-              {t('landing.hero.cta')}
-              <ArrowRight size={20} />
+              {isEntering ? (i18n.language === 'en' ? 'Entering...' : 'Entrando...') : t('landing.hero.cta')}
+              {!isEntering && <ArrowRight size={20} />}
             </button>
           </div>
         </div>
@@ -312,10 +317,11 @@ export default function LandingPage({ onLogin, onShowTerms, onGuestLogin, onOpen
             <div className="flex justify-center">
               <button
                 onClick={handleMainAction}
+                disabled={isEntering}
                 className="w-full sm:w-auto px-8 py-4 bg-sky-500 text-white rounded-2xl font-bold text-lg shadow-lg shadow-sky-500/30 hover:bg-sky-600 transition-all active:scale-95 flex items-center justify-center gap-2"
               >
-                {t('landing.hero.cta')}
-                <ArrowRight size={20} />
+                {isEntering ? (i18n.language === 'en' ? 'Entering...' : 'Entrando...') : t('landing.hero.cta')}
+                {!isEntering && <ArrowRight size={20} />}
               </button>
             </div>
           </div>
@@ -402,10 +408,11 @@ export default function LandingPage({ onLogin, onShowTerms, onGuestLogin, onOpen
           
           <button
             onClick={handleMainAction}
+            disabled={isEntering}
             className="w-full sm:w-auto px-10 py-5 bg-white text-sky-600 rounded-2xl font-bold text-xl shadow-xl hover:bg-sky-50 hover:-translate-y-1 transition-all active:scale-95 flex items-center justify-center gap-2 mx-auto"
           >
-            {t('landing.hero.cta')}
-            <ArrowRight size={20} />
+            {isEntering ? (i18n.language === 'en' ? 'Entering...' : 'Entrando...') : t('landing.hero.cta')}
+            {!isEntering && <ArrowRight size={20} />}
           </button>
         </div>
       </section>
@@ -464,10 +471,11 @@ export default function LandingPage({ onLogin, onShowTerms, onGuestLogin, onOpen
             animate={{ boxShadow: ["0px 0px 0px rgba(14, 165, 233, 0)", "0px 0px 20px rgba(14, 165, 233, 0.5)", "0px 0px 0px rgba(14, 165, 233, 0)"] }}
             transition={{ duration: 2, repeat: Infinity }}
             onClick={handleMainAction}
+            disabled={isEntering}
             className="w-full sm:w-auto px-10 py-5 bg-sky-500 text-white rounded-2xl font-bold text-xl shadow-lg shadow-sky-500/30 flex items-center justify-center gap-2 mx-auto"
           >
-            {t('landing.hero.cta')}
-            <ArrowRight size={20} />
+            {isEntering ? (i18n.language === 'en' ? 'Entering...' : 'Entrando...') : t('landing.hero.cta')}
+            {!isEntering && <ArrowRight size={20} />}
           </motion.button>
         </div>
       </section>
