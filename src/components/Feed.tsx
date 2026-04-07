@@ -685,10 +685,12 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
           ) : posts.length > 0 ? (
             <>
               <AnimatePresence mode="popLayout">
-                {posts.map((post, index) => (
-                  <React.Fragment key={post.id}>
-                    {index === 2 && (
+                {posts.flatMap((post, index) => {
+                  const items = [];
+                  if (index === 2) {
+                    items.push(
                       <motion.div
+                        key={`support-banner-${post.id}`}
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         className="bg-gradient-to-r from-sky-50 to-indigo-50 rounded-[2rem] p-6 mb-6 border border-sky-100 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm"
@@ -706,8 +708,12 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
                           {i18n.language === 'en' ? 'Support now' : 'Apoiar agora'}
                         </button>
                       </motion.div>
-                    )}
+                    );
+                  }
+                  
+                  items.push(
                   <motion.div
+                    key={post.id}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, scale: 0.95 }}
@@ -835,8 +841,9 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
                       </AnimatePresence>
                     </div>
                   </motion.div>
-                  </React.Fragment>
-                ))}
+                  );
+                  return items;
+                })}
               </AnimatePresence>
 
               {/* Infinite Scroll Trigger / Load More Button */}
