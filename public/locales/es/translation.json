@@ -12,7 +12,8 @@
     "contato": "Contacto",
     "videos": "Videos",
     "triagem": "Triaje IA",
-    "createAccount": "Crear Cuenta"
+    "createAccount": "Crear Cuenta",
+    "gallery": "Galería"
   },
   "auth": {
     "login": "Entrar",
@@ -478,7 +479,8 @@
     "successSave": "Configuración guardada con éxito.",
     "successGenerate": "¡{{count}} publicaciones generadas y publicadas con éxito!",
     "errorTimeout": "La generación tardó más de lo esperado. Inténtalo de nuevo.",
-    "errorGenerate": "Error en la generación. Inténtalo de nuevo."
+    "errorGenerate": "Error en la generación. Inténtalo de nuevo.",
+    "errorSave": "Error al guardar la configuración."
   },
   "common": {
     "user": "Usuario",

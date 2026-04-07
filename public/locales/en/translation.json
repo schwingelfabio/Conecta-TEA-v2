@@ -2,7 +2,7 @@
   "nav": {
     "feed": "Feed",
     "communities": "Communities",
-    "map": "Autism Map",
+    "map": "Autism Map of Brazil",
     "profile": "Profile",
     "settings": "Settings",
     "sos": "Digital ID",
@@ -12,7 +12,51 @@
     "contato": "Contact",
     "videos": "Videos",
     "triagem": "AI Triage",
-    "createAccount": "Create Account"
+    "createAccount": "Create Account",
+    "gallery": "Gallery"
+  },
+  "auth": {
+    "login": "Login",
+    "logout": "Logout",
+    "guestLogin": "Login as guest",
+    "welcome": "Welcome to Conecta TEA",
+    "google": "Login with Google",
+    "apple": "Login with Apple",
+    "anonymous": "Login as Guest",
+    "emailPlaceholder": "your@email.com",
+    "orContinue": "or continue with",
+    "phone": "Mobile",
+    "email": "E-mail",
+    "phoneLabel": "Mobile Number (with area code)",
+    "phonePlaceholder": "(11) 99999-9999",
+    "sendSms": "Send SMS",
+    "codeLabel": "6-digit code",
+    "codePlaceholder": "000000",
+    "verifyCode": "Verify Code",
+    "passwordLabel": "Password",
+    "passwordPlaceholder": "••••••••",
+    "createAccount": "Create Account",
+    "alreadyHaveAccount": "Already have an account? Login.",
+    "noAccount": "Don't have an account? Create now.",
+    "readAndAccept": "I have read and accept the",
+    "termsNotice": "By continuing, you agree to the",
+    "termsLink": "Terms of Use and Privacy",
+    "errors": {
+      "popupClosed": "Google login was closed before completion.",
+      "popupBlocked": "The browser blocked the login window. Try again.",
+      "invalidEmail": "The provided email is invalid.",
+      "userNotFound": "No account found with this email.",
+      "wrongPassword": "Incorrect email or password.",
+      "emailAlreadyInUse": "This email is already in use.",
+      "weakPassword": "The password is too weak. Use at least 6 characters.",
+      "tooManyRequests": "Too many attempts. Wait a while and try again.",
+      "missingPhone": "Provide a valid mobile number.",
+      "invalidPhone": "The provided mobile number is invalid.",
+      "codeExpired": "The code has expired. Request a new SMS.",
+      "invalidCode": "Invalid code. Check and try again.",
+      "default": "Could not complete authentication. Try again.",
+      "authError": "AUTHENTICATION ERROR"
+    }
   },
   "feed": {
     "placeholder": "What are you thinking?",
@@ -24,33 +68,277 @@
     "delete": "Delete Post",
     "pinPost": "Pin Post",
     "unpinPost": "Unpin Post",
-    "noNews": "No news available at the moment.",
-    "emptyStateTitle": "Silence here...",
-    "emptyStateSubtitle": "It seems there are no posts in this topic yet. Be the first to break the ice!"
+    "noNews": "No news available at the moment."
   },
-  "videos": {
-    "galleryTitle": "Video Gallery",
-    "gallerySubtitle": "Educational and informative content about autism.",
-    "exclusiveVideos": "Exclusive Videos",
-    "noVideos": "No videos found.",
-    "noTitle": "No title",
-    "loadMore": "Load more videos",
-    "cta": {
-      "emotionalMessage": "If this helped you, support this project so we can help more families.",
-      "supportButton": "❤️ Support this project",
-      "vipButton": "⭐ Become VIP",
-      "shareButton": "🔗 Share with another parent",
-      "microEmotional": "This project exists because of people like you.",
-      "trustElement": "Supporting families globally",
-      "vipHighlight": "VIP members help us keep everything running and get early access to new features."
+  "settings": {
+    "title": "Profile Settings",
+    "name": "Name",
+    "state": "State",
+    "city": "City",
+    "save": "Save Changes",
+    "profileSaved": "Profile updated successfully!",
+    "saveError": "Error saving profile. Try again.",
+    "photoTooLarge": "The photo must be less than 1MB.",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "firstNamePlaceholder": "First Name",
+    "lastNamePlaceholder": "Last Name",
+    "address": "Address",
+    "phone": "Phone",
+    "recoverPassword": "Recover Password",
+    "digitalId": "Digital ID",
+    "digitalIdDesc": "Access your digital professional identification for support and emergencies.",
+    "viewId": "View My Digital ID",
+    "roles": {
+      "parent": "Parent",
+      "professional": "Professional",
+      "autistic": "Autistic",
+      "other": "Other"
+    },
+    "iAm": "I am...",
+    "bio": "Bio / About me",
+    "bioPlaceholder": "Tell us a little about yourself...",
+    "rolePlaceholder": "Select your role",
+    "vipStatus": "Account Status",
+    "freePlan": "Free Plan",
+    "vipMember": "VIP Member",
+    "accessFull": "Full access unlocked",
+    "accessLimited": "Limited access to feed"
+  },
+  "communities": {
+    "title": "Active Communities",
+    "loading": "Loading active communities...",
+    "empty": "Communities will start to appear as new users connect.",
+    "families": "families"
+  },
+  "externalNews": {
+    "title": "Web News",
+    "subtitle": "Latest news about autism",
+    "readMore": "Read article",
+    "noNews": "No news found for this topic.",
+    "topics": {
+      "geral": "General",
+      "educacao": "Education",
+      "saude": "Health",
+      "direitos": "Rights",
+      "tecnologia": "Technology",
+      "pesquisa": "Research"
     }
   },
-  "admin": {
-    "errorInvalidPosts": "Invalid number of posts per day.",
-    "successSave": "Settings saved successfully.",
-    "successGenerate": "{{count}} posts generated and published successfully!",
-    "errorTimeout": "Generation took longer than expected. Please try again.",
-    "errorGenerate": "Generation error. Please try again."
+  "vip": {
+    "title": "VIP Area",
+    "subtitle": "Content Library",
+    "welcomeVip": "Welcome to the VIP Community!",
+    "welcomeLibrary": "Welcome to the Library!",
+    "thanksVip": "Thank you very much for being part of our VIP community! Your help is fundamental to transforming the journey of TEA families.",
+    "exploreLibrary": "Explore our materials and e-books. Become VIP to unlock downloads and support the Conecta TEA project.",
+    "sosSensorial": "SENSORY SOS",
+    "officialPartner": "Official Partner",
+    "triagemTitle": "TEA IA Triage: Technology for early diagnosis.",
+    "triagemSubtitle": "Use our artificial intelligence to assist in triage and development monitoring.",
+    "goToSite": "Go to Site",
+    "downloadApp": "Download App",
+    "appSoon": "App coming soon",
+    "materialsTitle": "Materials and E-books",
+    "ebookVip": "VIP E-book",
+    "downloadGuide": "Download Guide",
+    "subscribeToDownload": "Subscribe to VIP to unlock e-book downloads.",
+    "vipOnly": "Available for VIP users",
+    "viewingLibrary": "You are viewing the library.",
+    "becomeVipToUnlock": "Become VIP to unlock downloads and access all exclusive features.",
+    "suggestionTitle": "Do you have a content suggestion?",
+    "suggestionSubtitle": "As a VIP member, your voice is a priority. Tell us what topic you would like to see here!",
+    "suggestionPlaceholder": "Write your suggestion here...",
+    "sendSuggestion": "Send Suggestion",
+    "sending": "Sending...",
+    "suggestionSuccess": "Suggestion sent successfully! Thank you for your support.",
+    "suggestionError": "Error sending suggestion. Try again.",
+    "verifyingAccess": "Verifying exclusive access...",
+    "restrictedAccess": "Restricted Access",
+    "loginToAccess": "Login to access this area.",
+    "loginToSubscribe": "Please login to subscribe.",
+    "activePlan": "Active Plan",
+    "monthlyPlan": "Monthly Plan",
+    "annualPlan": "Annual Plan",
+    "bestValue": "Best Value",
+    "save2Months": "Save 2 months",
+    "earlyAccess": "Early access",
+    "allMonthlyFeatures": "Everything in the monthly plan",
+    "vipBadge": "VIP badge on profile",
+    "exclusiveVideos": "Exclusive videos",
+    "internationalPayment": "International Payment (PayPal)",
+    "supportText": "Support our community and get access to exclusive resources to help with development and well-being.",
+    "plans": "Our Plans",
+    "subscribeMonthly": "Subscribe Monthly",
+    "subscribeAnnual": "Subscribe Annual",
+    "subscribePayPal": "Subscribe with PayPal",
+    "subscriptionSuccess": "Subscription created successfully",
+    "perMonth": "/month",
+    "perYear": "/year",
+    "errors": {
+      "saveSubscription": "Error saving subscription details.",
+      "paypalError": "PayPal encountered an error. Try again."
+    },
+    "ebooks": {
+      "crises": {
+        "title": "Crises in Autism",
+        "description": "Learn practical strategies to calm sensory overload and deal with moments of crisis."
+      },
+      "direitos": {
+        "title": "TEA Rights in Brazil",
+        "description": "A complete guide on laws, benefits, and guarantees for people with autism in Brazil."
+      },
+      "seletividade": {
+        "title": "Food Selectivity",
+        "description": "Tips and techniques to deal with common eating difficulties in the autism spectrum."
+      },
+      "higiene": {
+        "title": "Hygiene without Crisis",
+        "description": "How to make personal hygiene moments calmer and more predictable for the child."
+      },
+      "diagnostico": {
+        "title": "The Diagnosis Arrived, Now What?",
+        "description": "The first steps and fundamental guidelines for families who have just received the diagnosis."
+      },
+      "sinais": {
+        "title": "Signs of Autism",
+        "description": "Understand the main signs and behaviors that may indicate autism spectrum disorder."
+      },
+      "guia": {
+        "title": "Initial Guide",
+        "description": "An essential introductory material to understand the basics of TEA and how to start support."
+      }
+    },
+    "videos": {
+      "title": "Exclusive VIP Videos",
+      "badge": "VIP Video",
+      "watchNow": "Watch Now",
+      "v1": {
+        "title": "Advanced Sensory Regulation Strategies",
+        "description": "Learn practical techniques to help with sensory regulation in daily life."
+      },
+      "v2": {
+        "title": "Augmentative and Alternative Communication (AAC)",
+        "description": "How to introduce and use alternative communication systems."
+      },
+      "v3": {
+        "title": "Managing Challenging Behaviors",
+        "description": "Understanding the function of behavior and intervention strategies."
+      }
+    },
+    "sos": {
+      "badge": "Quick Access",
+      "title": "Sensory SOS",
+      "description": "Immediate tools for sensory regulation, alternative communication, and crisis support.",
+      "button": "Access SOS Now"
+    }
+  },
+  "sos": {
+    "title": "Digital ID",
+    "description": "Your identification and support anywhere.",
+    "subtitle": "Conecta TEA Identification and Support",
+    "setupTitle": "Configure ID",
+    "edit": "Edit",
+    "print": "Print",
+    "save": "Save ID",
+    "saving": "Saving...",
+    "cancel": "Cancel",
+    "loginRequired": "You need to login to access the Digital ID.",
+    "loginButton": "Login",
+    "restrictedTitle": "Restricted Access",
+    "connectionError": "Connection Error",
+    "saveError": "Error saving ID",
+    "tryAgain": "Try Again",
+    "officialId": "Official Identification",
+    "immediateSupport": "Immediate Support",
+    "scanInstructions": "Scan to see crisis approach instructions",
+    "officialIdLabel": "Conecta TEA Official ID",
+    "crisisNotice": "In case of crisis: Stay calm, avoid sudden touches and excessive noise.",
+    "presentationNotice": "This ID can be presented in schools, hospitals, and public agencies.",
+    "qrPending": "QR Code available after saving",
+    "downloadQR": "Download QR Code",
+    "sections": {
+      "child": "TEA Person Data",
+      "responsible": "Responsible Data",
+      "additional": "Additional Contacts and Address"
+    },
+    "fields": {
+      "childName": "Full Name",
+      "birthDate": "Date of Birth",
+      "city": "City",
+      "state": "State (UF)",
+      "bloodType": "Blood Type",
+      "allergies": "Allergies / Medication",
+      "observations": "Support Observations",
+      "responsibleName": "Responsible Name",
+      "emergencyPhone": "Emergency WhatsApp",
+      "emergencyNote": "Emergency Note (Displayed in QR Code)",
+      "contact2Name": "Secondary Contact (Name)",
+      "contact2Phone": "Secondary Contact (Phone)",
+      "homeAddress": "Home Address"
+    },
+    "labels": {
+      "childName": "Holder Name",
+      "birthDate": "Birth",
+      "bloodType": "Blood Type",
+      "cityState": "City / UF",
+      "responsible": "Responsible",
+      "observations": "Support Observations",
+      "emergencyContact": "Emergency Contact"
+    },
+    "noObservations": "No observations informed.",
+    "processing": "PROCESSING...",
+    "notInformed": "N/I",
+    "placeholders": {
+      "bloodType": "Ex: O+",
+      "allergies": "Ex: Allergy to dipyrone",
+      "observations": "Ex: Auditory sensitivity, prefers visual communication",
+      "emergencyNote": "Ex: In case of crisis, please speak calmly and do not touch without permission.",
+      "phone": "(00) 00000-0000"
+    }
+  },
+  "emergency": {
+    "loading": "Loading Support Information...",
+    "errorTitle": "Identification Error",
+    "errorDescription": "ID not found. Check if the QR Code or link is correct.",
+    "protocol": "Support and Identification Protocol",
+    "attention": "Attention / Approach",
+    "teaStatement": "This person has Autism Spectrum Disorder (ASD).",
+    "crisisAdvice": "In case of crisis or disorientation, please stay calm, avoid sudden touches and excessive noise.",
+    "specificInstruction": "Specific Instruction",
+    "contactsTitle": "Emergency Contacts",
+    "locationTitle": "Location",
+    "loadError": "Error loading data. Try again.",
+    "noObservations": "No additional observations.",
+    "allergiesMedication": "Allergies / Medication"
+  },
+  "map": {
+    "title": "Autism Map of Brazil",
+    "activeCommunities": "Active Communities",
+    "families": "families",
+    "connectedFamilies": "Connected Families",
+    "activeCities": "Active Cities",
+    "activeStates": "Active States",
+    "postsShared": "Posts Shared",
+    "fastestGrowing": "Fastest growing communities",
+    "thisWeek": "this week",
+    "loading": "Loading map of communities...",
+    "backToMap": "Back to map",
+    "citiesIn": "Cities in",
+    "communityOf": "Community of",
+    "growing": "This community is growing",
+    "shareTitle": "Share Community",
+    "shareText": "Join the TEA community of {{place}} on Conecta TEA and connect with families in our region.",
+    "copyLink": "Copy Link",
+    "linkCopied": "Link copied!",
+    "shareNotSupported": "Your browser does not support native sharing."
+  },
+  "donation": {
+    "title": "Support Conecta TEA",
+    "description": "Help us expand autism support communities and social impact technology.",
+    "button": "Donate with PayPal",
+    "scanToDonate": "Scan to donate",
+    "footerLink": "Support the Mission"
   },
   "common": {
     "user": "User",
@@ -64,5 +352,134 @@
     "next": "Next",
     "finish": "Finish",
     "notInformed": "Not informed"
+  },
+  "videos": {
+    "galleryTitle": "Video Gallery",
+    "gallerySubtitle": "Educational and informative content about autism.",
+    "exclusiveVideos": "Exclusive Videos",
+    "noVideos": "No videos found.",
+    "noTitle": "No title",
+    "loadMore": "Load more videos"
+  },
+  "supportModal": {
+    "title": "Support the Project",
+    "pixLabel": "Pix (Brazil)",
+    "pixDesc": "Your donation helps keep the app free for thousands of families.",
+    "paypalButton": "Donate with PayPal",
+    "footer": "All proceeds are reinvested in app improvements and servers."
+  },
+  "landing": {
+    "hero": {
+      "title": "Do you notice that something might be different about your child... but you don't know what to do?",
+      "badge": "You are not alone. This happens to many families.",
+      "subtitle": "You just need to take the first step. We'll help you with the rest.",
+      "cta": "I want help now",
+      "feature1": "No complicated registration. Start in seconds.",
+      "feature2": "If it's not useful, you can leave at any time.",
+      "socialProof": "Real families are already using it and finding support.",
+      "warning": "Ignoring this can delay the child's development."
+    },
+    "howItWorks": {
+      "title": "How does it work?",
+      "step1": {
+        "title": "Understand the signs",
+        "desc": "Identify important behaviors in a simple way."
+      },
+      "step2": {
+        "title": "Connect",
+        "desc": "Find families and support in your city."
+      },
+      "step3": {
+        "title": "Act safely",
+        "desc": "Receive practical guidance for the next steps."
+      }
+    },
+    "whyUs": {
+      "badge": "If you've made it this far, you're probably looking for answers.",
+      "title": "This app is for you if:",
+      "item1": "You have doubts about your child's development",
+      "item2": "You want to better understand signs of autism",
+      "item3": "You are looking for reliable support and guidance",
+      "item4": "You feel lost and need direction",
+      "highlight": "If you have doubts... it's already a sign that it's worth investigating."
+    },
+    "features": {
+      "title": "What you will find",
+      "item1": {
+        "title": "Local communities",
+        "desc": "Connection with families and professionals"
+      },
+      "item2": {
+        "title": "Digital ID",
+        "desc": "Identification and quick support"
+      },
+      "item3": {
+        "title": "Sensory SOS",
+        "desc": "Immediate help in crisis"
+      },
+      "item4": {
+        "title": "Initial Support",
+        "desc": "Technology to help understand early signs"
+      }
+    },
+    "impact": {
+      "title": "The sooner signs of autism are identified, the greater the chances of the child's development.",
+      "highlight": "Every month makes a difference in development.",
+      "subtitle": "Our technology helps you act at the right time."
+    },
+    "trust": {
+      "title": "Created for real families, by those who understand this journey.",
+      "subtitle": "Building a support network for TEA families in Brazil 🇧🇷",
+      "badge": "Based on best practices used by professionals."
+    },
+    "finalCta": {
+      "title": "You've made it this far for a reason.",
+      "subtitle": "Now you can take the first step.",
+      "warning": "Ignoring this today can become regret tomorrow."
+    },
+    "footer": {
+      "rights": "© 2026 Conecta TEA. All rights reserved.",
+      "support": "Support Project",
+      "terms": "Terms of Use and Privacy"
+    }
+  },
+  "onboarding": {
+    "welcome": "Welcome! To start, where do you live?",
+    "selectCountry": "Select Country",
+    "selectState": "Select State",
+    "selectCity": "Select City",
+    "button": "Start",
+    "saveError": "Error saving location",
+    "stateLabel": "State",
+    "cityLabel": "City"
+  },
+  "donation": {
+    "title": "Support the Project",
+    "description": "Your contribution helps maintain and improve the application.",
+    "button": "Donate with PayPal",
+    "scanToDonate": "Scan to donate",
+    "developer": "Developer of Conecta TEA and TEA IA Triage:",
+    "pixKey": "PIX Key (CPF):",
+    "copyPix": "Copy PIX key"
+  },
+  "triagem": {
+    "title": "TEA IA Triage",
+    "subtitle": "Our artificial intelligence tool was developed to assist in the early identification of signs of autism. A fast, secure, and evidence-based analysis to guide the next steps.",
+    "feature1Title": "Intelligent Analysis",
+    "feature1Desc": "Algorithms trained to identify behavioral patterns sensitively.",
+    "feature2Title": "100% Secure",
+    "feature2Desc": "Your data is protected and the analysis is totally confidential and private.",
+    "feature3Title": "Next Steps",
+    "feature3Desc": "Receive clear guidance on how to seek appropriate professional help.",
+    "cta": "Start Triage Now",
+    "disclaimer": "* This tool does not replace professional medical diagnosis."
+  },
+  "admin": {
+    "errorInvalidPosts": "Invalid number of posts per day.",
+    "successSave": "Settings saved successfully.",
+    "successGenerate": "{{count}} posts generated and published successfully!",
+    "errorTimeout": "Generation took longer than expected. Try again.",
+    "errorGenerate": "Generation error. Try again.",
+    "errorSave": "Error saving settings."
   }
-}
+}',Overwrite=true,TargetFile='/public/locales/en/translation.json')

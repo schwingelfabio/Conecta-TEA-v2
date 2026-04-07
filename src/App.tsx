@@ -20,12 +20,14 @@ import {
   Video,
   Heart,
   Brain,
-  Globe
+  Globe,
+  Camera
 } from 'lucide-react';
 const Feed = lazy(() => import('./components/Feed'));
 const AreaVip = lazy(() => import('./components/AreaVip'));
 const NetworkMap = lazy(() => import('./components/NetworkMap'));
 const Settings = lazy(() => import('./components/Settings'));
+const GalleryPage = lazy(() => import('./components/GalleryPage'));
 const SosPage = lazy(() => import('./components/SosPage'));
 const EmergencyPage = lazy(() => import('./components/EmergencyPage'));
 const LandingPage = lazy(() => import('./components/LandingPage'));
@@ -42,6 +44,7 @@ import FloatingSupportButton from './components/FloatingSupportButton';
 import LanguageSelectorModal from './components/LanguageSelectorModal';
 const MordomoDashboard = lazy(() => import('./components/MordomoDashboard'));
 import AdminEngagementPanel from './components/AdminEngagementPanel';
+import MediaUpload from './components/MediaUpload';
 import { UserProfile } from './types';
 import { auth, db } from './lib/firebase';
 import { signOut, onAuthStateChanged, User as FirebaseUser, signInAnonymously } from 'firebase/auth';
@@ -57,7 +60,7 @@ import { useAiContentEngine } from './hooks/useAiContentEngine';
 
 export default function App() {
   const { t } = useTranslation();
-  const [activeTab, setActiveTab] = useState<'feed' | 'vip' | 'settings' | 'sos' | 'termos' | 'privacidade' | 'contato' | 'map' | 'videos' | 'sofia' | 'carteirinha' | 'triagem' | 'mordomo' | 'doacao' | 'ai-engine' | 'admin-engagement'>('feed');
+  const [activeTab, setActiveTab] = useState<'feed' | 'vip' | 'settings' | 'sos' | 'termos' | 'privacidade' | 'contato' | 'map' | 'videos' | 'sofia' | 'carteirinha' | 'triagem' | 'mordomo' | 'doacao' | 'ai-engine' | 'admin-engagement' | 'gallery'>('feed');
   const [user, setUser] = useState<FirebaseUser | null>(null);
   const [showLanguageModal, setShowLanguageModal] = useState(false);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
@@ -385,6 +388,14 @@ export default function App() {
             {isAdmin ? <AiContentAdmin /> : <Feed userProfile={userProfile} isAdmin={isAdmin} isVip={isVip} isGuest={isGuest} />}
           </div>
         );
+      case 'gallery':
+        return (
+          <div className="space-y-4">
+            <BackButton onClick={() => setActiveTab('feed')} />
+            <MediaUpload onUploadComplete={() => {}} />
+            <Suspense fallback={<div className="flex justify-center p-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-500"></div></div>}><GalleryPage /></Suspense>
+          </div>
+        );
       default:
         return <Suspense fallback={<div className="flex justify-center p-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-500"></div></div>}><Feed userProfile={userProfile} isAdmin={isAdmin} isVip={isVip} isGuest={isGuest} /></Suspense>;
     }
@@ -457,6 +468,10 @@ export default function App() {
                   <button data-tab="triagem" onClick={() => setActiveTab('triagem')} className={`p-2 sm:px-4 sm:py-2 rounded-full flex items-center gap-2 transition-all shrink-0 ${(activeTab as string) === 'triagem' ? 'bg-sky-100 text-sky-700 font-bold' : 'hover:bg-gray-100 text-gray-600'}`}>
                     <Brain size={20} />
                     <span className="hidden sm:inline">{t('nav.triagem')}</span>
+                  </button>
+                  <button data-tab="gallery" onClick={() => setActiveTab('gallery')} className={`p-2 sm:px-4 sm:py-2 rounded-full flex items-center gap-2 transition-all shrink-0 ${(activeTab as string) === 'gallery' ? 'bg-sky-100 text-sky-700 font-bold' : 'hover:bg-gray-100 text-gray-600'}`}>
+                    <Camera size={20} />
+                    <span className="hidden sm:inline">{t('nav.gallery')}</span>
                   </button>
                   <button data-tab="vip" onClick={() => setActiveTab('vip')} className={`p-2 sm:px-4 sm:py-2 rounded-full flex items-center gap-2 transition-all shrink-0 ${(activeTab as string) === 'vip' ? 'bg-amber-100 text-amber-700 font-bold' : 'hover:bg-gray-100 text-gray-600'}`}>
                     <Crown size={20} />
