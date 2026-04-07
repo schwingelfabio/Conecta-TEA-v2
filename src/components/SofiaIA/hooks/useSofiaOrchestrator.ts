@@ -69,7 +69,12 @@ export const useSofiaOrchestrator = () => {
         setState('speaking');
       }
       
-      return { response: result.text, grounding: result.grounding };
+      return { 
+        response: result.text, 
+        grounding: result.grounding, 
+        suggestSupport: result.suggestSupport,
+        suggestedAction: triage.intent 
+      };
     } catch (error) {
       console.error('Error processing turn:', error);
       setState('idle');

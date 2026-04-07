@@ -8,7 +8,7 @@ export const SofiaCallScreen = ({ onEndCall }: { onEndCall: () => void }) => {
   const { processTurn, state: orchestratorState } = useSofiaOrchestrator();
   const [sofiaState, setSofiaState] = useState<SofiaState>('idle');
   const [textInput, setTextInput] = useState('');
-  const [messages, setMessages] = useState<{sender: 'user' | 'sofia', text: string}[]>([]);
+  const [messages, setMessages] = useState<{sender: 'user' | 'sofia', text: string, suggestSupport?: boolean, suggestedAction?: string}[]>([]);
   const hasInitialized = useRef(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -54,7 +54,12 @@ export const SofiaCallScreen = ({ onEndCall }: { onEndCall: () => void }) => {
       console.log('[SofiaCallScreen] processTurn returned:', res);
       setMessages(prev => {
         console.log('[SofiaCallScreen] Adding sofia message to state:', res.response);
-        return [...prev, {sender: 'sofia', text: res.response}];
+        return [...prev, {
+          sender: 'sofia', 
+          text: res.response, 
+          suggestSupport: res.suggestSupport, 
+          suggestedAction: res.suggestedAction
+        }];
       });
       setSofiaState('ready');
     } catch (err) {
@@ -123,6 +128,16 @@ export const SofiaCallScreen = ({ onEndCall }: { onEndCall: () => void }) => {
                       ) : (
                         <div className="markdown-body text-slate-100 prose prose-invert prose-sm max-w-none">
                           <Markdown>{m.text}</Markdown>
+                          {m.suggestSupport && (
+                            <div className="mt-4 flex flex-wrap gap-2">
+                              <button className="px-4 py-2 bg-rose-500 hover:bg-rose-600 text-white rounded-full text-xs font-bold transition-all">
+                                ❤️ Support Project
+                              </button>
+                              <button className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-full text-xs font-bold transition-all">
+                                ⭐ Become VIP
+                              </button>
+                            </div>
+                          )}
                         </div>
                       )}
                       <div className={`absolute top-0 ${m.sender === 'user' ? '-right-1 border-l-sky-600' : '-left-1 border-r-slate-800'} w-0 h-0 border-t-[8px] border-t-transparent border-b-[8px] border-b-transparent border-l-[8px]`} />
