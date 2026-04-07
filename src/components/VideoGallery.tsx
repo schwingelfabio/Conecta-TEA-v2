@@ -21,6 +21,10 @@ interface Video {
   title: string;
   thumbnail: string;
   createdAt: any;
+  description: string;
+  duration: string;
+  category: string;
+  tags?: string[];
 }
 
 export default function VideoGallery() {
@@ -101,12 +105,12 @@ export default function VideoGallery() {
         </div>
       ) : (
         <>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {videos.map((video) => (
               <motion.div
                 key={video.id}
                 whileHover={{ y: -5 }}
-                className="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden group cursor-pointer"
+                className="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden group cursor-pointer flex flex-col"
                 onClick={() => setSelectedVideo(video)}
               >
                 <div className="relative aspect-video bg-slate-100">
@@ -121,9 +125,23 @@ export default function VideoGallery() {
                       <Play size={24} fill="currentColor" />
                     </div>
                   </div>
+                  <div className="absolute bottom-2 right-2 bg-black/60 text-white text-xs font-bold px-2 py-1 rounded-md">
+                    {video.duration}
+                  </div>
                 </div>
-                <div className="p-4">
-                  <h3 className="font-bold text-slate-900 line-clamp-2">{video.title || t('videos.noTitle')}</h3>
+                <div className="p-5 flex-grow flex flex-col">
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="bg-brand-primary/10 text-brand-primary text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider">
+                      {video.category}
+                    </span>
+                    {video.tags?.map(tag => (
+                      <span key={tag} className="bg-amber-100 text-amber-700 text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider">
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                  <h3 className="font-bold text-slate-900 line-clamp-2 mb-2">{video.title}</h3>
+                  <p className="text-slate-500 text-sm line-clamp-3">{video.description}</p>
                 </div>
               </motion.div>
             ))}
