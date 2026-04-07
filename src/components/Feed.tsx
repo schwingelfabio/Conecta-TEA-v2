@@ -604,8 +604,42 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
 
   const firstName = userProfile?.displayName?.split(' ')[0] || 'Família';
 
+  const [showScrollModal, setShowScrollModal] = useState(false);
+  const [modalShown, setModalShown] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (modalShown) return;
+      const scrollPercentage = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
+      if (scrollPercentage > 30) {
+        setShowScrollModal(true);
+        setModalShown(true);
+      }
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [modalShown]);
+
   return (
     <div className="max-w-2xl mx-auto py-8 px-4">
+      {showScrollModal && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+          <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="bg-white rounded-3xl p-8 max-w-sm w-full text-center">
+            <Heart className="w-16 h-16 text-sky-500 mx-auto mb-4" />
+            <h3 className="text-xl font-bold text-slate-900 mb-6">
+              {i18n.language === 'en' ? 'If this is helping you, you can help other families too 💙' : 'Se isso está te ajudando, você pode ajudar outras famílias também 💙'}
+            </h3>
+            <div className="flex flex-col gap-3">
+              <button onClick={() => window.open('https://buy.stripe.com/28E9AU1fH3zobvWfdx2wU01', '_blank')} className="w-full py-4 bg-sky-500 text-white rounded-xl font-bold">
+                {i18n.language === 'en' ? 'Support now' : 'Apoiar agora'}
+              </button>
+              <button onClick={() => setShowScrollModal(false)} className="w-full py-4 text-slate-500 font-bold">
+                {i18n.language === 'en' ? 'Continue browsing' : 'Continuar navegando'}
+              </button>
+            </div>
+          </motion.div>
+        </div>
+      )}
       {/* Welcome Block */}
       <div className="bg-gradient-to-br from-sky-500 via-indigo-500 to-purple-600 rounded-[2rem] p-8 mb-8 text-white shadow-xl relative overflow-hidden">
         <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-10 rounded-full blur-3xl -mr-20 -mt-20"></div>
@@ -637,6 +671,11 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
       </div>
 
       <ActiveCommunities />
+
+      <div className="bg-sky-50 text-sky-700 font-bold py-3 px-6 rounded-2xl mb-8 flex items-center justify-center gap-2 border border-sky-100">
+        <span className="text-xl">🔵</span>
+        {i18n.language === 'en' ? '127+ families supported today' : i18n.language === 'es' ? 'Más de 127 familias ayudadas hoy' : '+127 famílias ajudadas hoje'}
+      </div>
 
       {/* Post Creation */}
       <div className="bg-white rounded-[2rem] shadow-sm border border-slate-100 p-6 mb-8 relative overflow-hidden">
@@ -766,20 +805,20 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
                         key={`support-banner-${post.id}`}
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="bg-gradient-to-r from-sky-50 to-indigo-50 rounded-[2rem] p-6 mb-6 border border-sky-100 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm"
+                        className="bg-white rounded-[2rem] p-8 mb-6 border border-sky-100 shadow-sm text-center"
                       >
-                        <div className="flex items-center gap-3">
-                          <Heart className="w-8 h-8 text-rose-500 fill-rose-500 shrink-0" />
-                          <p className="text-slate-800 font-bold text-lg">
-                            {i18n.language === 'en' ? 'Help us keep this free for families ❤️' : 'Ajude a manter isso gratuito ❤️'}
-                          </p>
+                        <Heart className="w-12 h-12 text-sky-500 mx-auto mb-4" />
+                        <h3 className="text-xl font-bold text-slate-900 mb-4">
+                          {i18n.language === 'en' ? 'Help keep this platform free for families 💙' : i18n.language === 'es' ? 'Ayuda a mantener esta plataforma gratuita para familias 💙' : 'Mantenha essa plataforma gratuita para outras famílias 💙'}
+                        </h3>
+                        <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                          <button onClick={() => window.open('https://buy.stripe.com/28E9AU1fH3zobvWfdx2wU01', '_blank')} className="px-6 py-3 bg-sky-500 text-white rounded-xl font-bold hover:bg-sky-600 transition-all">
+                            {i18n.language === 'en' ? 'Donate' : i18n.language === 'es' ? 'Donar' : 'Doar'}
+                          </button>
+                          <button onClick={() => window.open('https://buy.stripe.com/28E9AU1fH3zobvWfdx2wU01', '_blank')} className="px-6 py-3 bg-amber-500 text-white rounded-xl font-bold hover:bg-amber-600 transition-all">
+                            {i18n.language === 'en' ? 'Become VIP' : i18n.language === 'es' ? 'Acceso VIP' : 'VIP acesso completo'}
+                          </button>
                         </div>
-                        <button 
-                          onClick={() => window.open('https://buy.stripe.com/28E9AU1fH3zobvWfdx2wU01', '_blank')}
-                          className="w-full sm:w-auto px-6 py-3 bg-white text-sky-600 font-bold rounded-xl shadow-sm hover:shadow-md transition-all border border-sky-100 whitespace-nowrap"
-                        >
-                          {i18n.language === 'en' ? 'Support now' : 'Apoiar agora'}
-                        </button>
                       </motion.div>
                     );
                   }

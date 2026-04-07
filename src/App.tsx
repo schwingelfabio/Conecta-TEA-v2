@@ -36,6 +36,8 @@ const Privacidade = lazy(() => import('./components/LegalPages').then(module => 
 const Contato = lazy(() => import('./components/LegalPages').then(module => ({ default: module.Contato })));
 const AuthForm = lazy(() => import('./components/AuthForm'));
 import Onboarding from './components/OnboardingModal';
+import EmotionalOverlay from './components/EmotionalOverlay';
+import FloatingSupportButton from './components/FloatingSupportButton';
 const MordomoDashboard = lazy(() => import('./components/MordomoDashboard'));
 import AdminEngagementPanel from './components/AdminEngagementPanel';
 import { UserProfile } from './types';
@@ -64,8 +66,16 @@ export default function App() {
   const [emergencyUserId, setEmergencyUserId] = useState<string | null>(null);
   const [showAuth, setShowAuth] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
+  const [showEmotionalOverlay, setShowEmotionalOverlay] = useState(false);
   const [isGuest, setIsGuest] = useState(false);
   const navRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (isGuest && !localStorage.getItem('emotional_overlay_shown')) {
+      setShowEmotionalOverlay(true);
+      localStorage.setItem('emotional_overlay_shown', 'true');
+    }
+  }, [isGuest]);
 
   useAiContentEngine(isAdmin);
 
@@ -340,85 +350,89 @@ export default function App() {
   return (
     <ErrorBoundary>
       <div className="min-h-screen bg-gradient-to-b from-sky-50 to-white font-sans text-gray-900">
+        {showEmotionalOverlay && <EmotionalOverlay onComplete={() => setShowEmotionalOverlay(false)} />}
         {showOnboarding && <Onboarding onComplete={() => setShowOnboarding(false)} />}
         {(user || isGuest) && (
-          <nav className="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-gray-100">
-            <div className="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
-              <div className="flex items-center gap-2 cursor-pointer" onClick={() => setActiveTab('feed')}>
-                <div className="w-10 h-10 bg-sky-500 rounded-xl flex items-center justify-center text-white shadow-sm">
-                  <Users size={24} />
-                </div>
-                <h1 className="text-xl font-bold tracking-tight hidden sm:block">
-                  Conecta <span className="text-sky-500">TEA</span>
-                </h1>
-              </div>
-
-              <div ref={navRef} className="flex items-center gap-1 sm:gap-4 overflow-x-auto no-scrollbar">
-                <button data-tab="settings" onClick={() => setActiveTab('settings')} className={`p-2 sm:px-4 sm:py-2 rounded-full flex items-center gap-2 transition-all shrink-0 ${activeTab === 'settings' ? 'bg-sky-100 text-sky-700 font-bold' : 'hover:bg-gray-100 text-gray-600'}`}>
-                  <User size={20} />
-                  <span className="hidden sm:inline">{t('nav.profile')}</span>
-                </button>
-                <button data-tab="carteirinha" onClick={() => setActiveTab('carteirinha')} className={`p-2 sm:px-4 sm:py-2 rounded-full flex items-center gap-2 transition-all shrink-0 ${activeTab === 'carteirinha' ? 'bg-blue-100 text-blue-700 font-bold' : 'hover:bg-gray-100 text-gray-600'}`}>
-                  <IdCard size={20} />
-                  <span className="hidden sm:inline">{t('nav.sos')}</span>
-                </button>
-                <button data-tab="sos" onClick={() => setActiveTab('sos')} className={`p-2 sm:px-4 sm:py-2 rounded-full flex items-center gap-2 transition-all shrink-0 ${activeTab === 'sos' ? 'bg-red-100 text-red-700 font-bold' : 'hover:bg-gray-100 text-gray-600'}`}>
-                  <AlertTriangle size={20} />
-                  <span className="hidden sm:inline">SOS</span>
-                </button>
-                <button data-tab="feed" onClick={() => setActiveTab('feed')} className={`p-2 sm:px-4 sm:py-2 rounded-full flex items-center gap-2 transition-all shrink-0 ${activeTab === 'feed' ? 'bg-sky-100 text-sky-700 font-bold' : 'hover:bg-gray-100 text-gray-600'}`}>
-                  <Home size={20} />
-                  <span className="hidden sm:inline">{t('nav.communities')}</span>
-                </button>
-                <button data-tab="doacao" onClick={() => setActiveTab('doacao')} className={`p-2 sm:px-4 sm:py-2 rounded-full flex items-center gap-2 transition-all shrink-0 ${activeTab === 'doacao' ? 'bg-emerald-100 text-emerald-700 font-bold' : 'hover:bg-gray-100 text-gray-600'}`}>
-                  <Heart size={20} />
-                  <span className="hidden sm:inline">Support</span>
-                </button>
-                <button data-tab="sofia" onClick={() => setActiveTab('sofia')} className={`p-2 sm:px-4 sm:py-2 rounded-full flex items-center gap-2 transition-all shrink-0 ${(activeTab as string) === 'sofia' ? 'bg-sky-100 text-sky-700 font-bold' : 'hover:bg-gray-100 text-gray-600'}`}>
-                  <MessageCircle size={20} />
-                  <span className="hidden sm:inline">Sofia IA</span>
-                </button>
-                <button data-tab="videos" onClick={() => setActiveTab('videos')} className={`p-2 sm:px-4 sm:py-2 rounded-full flex items-center gap-2 transition-all shrink-0 ${(activeTab as string) === 'videos' ? 'bg-sky-100 text-sky-700 font-bold' : 'hover:bg-gray-100 text-gray-600'}`}>
-                  <Video size={20} />
-                  <span className="hidden sm:inline">{t('nav.videos')}</span>
-                </button>
-                <button data-tab="triagem" onClick={() => setActiveTab('triagem')} className={`p-2 sm:px-4 sm:py-2 rounded-full flex items-center gap-2 transition-all shrink-0 ${(activeTab as string) === 'triagem' ? 'bg-sky-100 text-sky-700 font-bold' : 'hover:bg-gray-100 text-gray-600'}`}>
-                  <Brain size={20} />
-                  <span className="hidden sm:inline">{t('nav.triagem')}</span>
-                </button>
-                <button data-tab="vip" onClick={() => setActiveTab('vip')} className={`p-2 sm:px-4 sm:py-2 rounded-full flex items-center gap-2 transition-all shrink-0 ${(activeTab as string) === 'vip' ? 'bg-amber-100 text-amber-700 font-bold' : 'hover:bg-gray-100 text-gray-600'}`}>
-                  <Crown size={20} />
-                  <span className="hidden sm:inline">{t('nav.vip')}</span>
-                </button>
-                {isSuperAdmin && (
-                  <button data-tab="mordomo" onClick={() => setActiveTab('mordomo')} className={`p-2 sm:px-4 sm:py-2 rounded-full flex items-center gap-2 transition-all shrink-0 ${(activeTab as string) === 'mordomo' ? 'bg-indigo-100 text-indigo-700 font-bold' : 'hover:bg-gray-100 text-gray-600'}`}>
-                    <ShieldCheck size={20} />
-                    <span className="hidden sm:inline">Mordomo IA</span>
-                  </button>
-                )}
-              </div>
-
-              <div className="flex items-center gap-2 sm:gap-3 shrink-0">
-                {isGuest ? (
-                  <button onClick={() => setIsGuest(false)} className="px-3 py-1.5 sm:px-4 sm:py-2 bg-sky-500 text-white rounded-full font-bold text-xs sm:text-sm hover:bg-sky-600 transition-colors">
-                    {t('nav.createAccount')}
-                  </button>
-                ) : (
-                  <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full border-2 overflow-hidden transition-all ${activeTab === 'settings' ? 'border-sky-500' : 'border-sky-100'}`}>
-                    <Avatar 
-                      src={userProfile?.photoURL || user?.photoURL} 
-                      name={userProfile?.displayName || user?.displayName} 
-                      size="md" 
-                      className="w-full h-full border-none shadow-none"
-                    />
+          <>
+            <FloatingSupportButton onClick={() => setActiveTab('doacao')} />
+            <nav className="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-gray-100">
+              <div className="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
+                <div className="flex items-center gap-2 cursor-pointer" onClick={() => setActiveTab('feed')}>
+                  <div className="w-10 h-10 bg-sky-500 rounded-xl flex items-center justify-center text-white shadow-sm">
+                    <Users size={24} />
                   </div>
-                )}
-                <button onClick={handleLogout} className="p-1.5 sm:p-2 text-gray-400 hover:text-red-500 transition-colors">
-                  <LogOut size={20} />
-                </button>
+                  <h1 className="text-xl font-bold tracking-tight hidden sm:block">
+                    Conecta <span className="text-sky-500">TEA</span>
+                  </h1>
+                </div>
+
+                <div ref={navRef} className="flex items-center gap-1 sm:gap-4 overflow-x-auto no-scrollbar">
+                  <button data-tab="settings" onClick={() => setActiveTab('settings')} className={`p-2 sm:px-4 sm:py-2 rounded-full flex items-center gap-2 transition-all shrink-0 ${activeTab === 'settings' ? 'bg-sky-100 text-sky-700 font-bold' : 'hover:bg-gray-100 text-gray-600'}`}>
+                    <User size={20} />
+                    <span className="hidden sm:inline">{t('nav.profile')}</span>
+                  </button>
+                  <button data-tab="carteirinha" onClick={() => setActiveTab('carteirinha')} className={`p-2 sm:px-4 sm:py-2 rounded-full flex items-center gap-2 transition-all shrink-0 ${activeTab === 'carteirinha' ? 'bg-blue-100 text-blue-700 font-bold' : 'hover:bg-gray-100 text-gray-600'}`}>
+                    <IdCard size={20} />
+                    <span className="hidden sm:inline">{t('nav.sos')}</span>
+                  </button>
+                  <button data-tab="sos" onClick={() => setActiveTab('sos')} className={`p-2 sm:px-4 sm:py-2 rounded-full flex items-center gap-2 transition-all shrink-0 ${activeTab === 'sos' ? 'bg-red-100 text-red-700 font-bold' : 'hover:bg-gray-100 text-gray-600'}`}>
+                    <AlertTriangle size={20} />
+                    <span className="hidden sm:inline">SOS</span>
+                  </button>
+                  <button data-tab="feed" onClick={() => setActiveTab('feed')} className={`p-2 sm:px-4 sm:py-2 rounded-full flex items-center gap-2 transition-all shrink-0 ${activeTab === 'feed' ? 'bg-sky-100 text-sky-700 font-bold' : 'hover:bg-gray-100 text-gray-600'}`}>
+                    <Home size={20} />
+                    <span className="hidden sm:inline">{t('nav.communities')}</span>
+                  </button>
+                  <button data-tab="doacao" onClick={() => setActiveTab('doacao')} className={`p-2 sm:px-4 sm:py-2 rounded-full flex items-center gap-2 transition-all shrink-0 ${activeTab === 'doacao' ? 'bg-emerald-100 text-emerald-700 font-bold' : 'hover:bg-gray-100 text-gray-600'}`}>
+                    <Heart size={20} />
+                    <span className="hidden sm:inline">Support</span>
+                  </button>
+                  <button data-tab="sofia" onClick={() => setActiveTab('sofia')} className={`p-2 sm:px-4 sm:py-2 rounded-full flex items-center gap-2 transition-all shrink-0 ${(activeTab as string) === 'sofia' ? 'bg-sky-100 text-sky-700 font-bold' : 'hover:bg-gray-100 text-gray-600'}`}>
+                    <MessageCircle size={20} />
+                    <span className="hidden sm:inline">Sofia IA</span>
+                  </button>
+                  <button data-tab="videos" onClick={() => setActiveTab('videos')} className={`p-2 sm:px-4 sm:py-2 rounded-full flex items-center gap-2 transition-all shrink-0 ${(activeTab as string) === 'videos' ? 'bg-sky-100 text-sky-700 font-bold' : 'hover:bg-gray-100 text-gray-600'}`}>
+                    <Video size={20} />
+                    <span className="hidden sm:inline">{t('nav.videos')}</span>
+                  </button>
+                  <button data-tab="triagem" onClick={() => setActiveTab('triagem')} className={`p-2 sm:px-4 sm:py-2 rounded-full flex items-center gap-2 transition-all shrink-0 ${(activeTab as string) === 'triagem' ? 'bg-sky-100 text-sky-700 font-bold' : 'hover:bg-gray-100 text-gray-600'}`}>
+                    <Brain size={20} />
+                    <span className="hidden sm:inline">{t('nav.triagem')}</span>
+                  </button>
+                  <button data-tab="vip" onClick={() => setActiveTab('vip')} className={`p-2 sm:px-4 sm:py-2 rounded-full flex items-center gap-2 transition-all shrink-0 ${(activeTab as string) === 'vip' ? 'bg-amber-100 text-amber-700 font-bold' : 'hover:bg-gray-100 text-gray-600'}`}>
+                    <Crown size={20} />
+                    <span className="hidden sm:inline">{t('nav.vip')}</span>
+                  </button>
+                  {isSuperAdmin && (
+                    <button data-tab="mordomo" onClick={() => setActiveTab('mordomo')} className={`p-2 sm:px-4 sm:py-2 rounded-full flex items-center gap-2 transition-all shrink-0 ${(activeTab as string) === 'mordomo' ? 'bg-indigo-100 text-indigo-700 font-bold' : 'hover:bg-gray-100 text-gray-600'}`}>
+                      <ShieldCheck size={20} />
+                      <span className="hidden sm:inline">Mordomo IA</span>
+                    </button>
+                  )}
+                </div>
+
+                <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+                  {isGuest ? (
+                    <button onClick={() => setIsGuest(false)} className="px-3 py-1.5 sm:px-4 sm:py-2 bg-sky-500 text-white rounded-full font-bold text-xs sm:text-sm hover:bg-sky-600 transition-colors">
+                      {t('nav.createAccount')}
+                    </button>
+                  ) : (
+                    <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full border-2 overflow-hidden transition-all ${activeTab === 'settings' ? 'border-sky-500' : 'border-sky-100'}`}>
+                      <Avatar 
+                        src={userProfile?.photoURL || user?.photoURL} 
+                        name={userProfile?.displayName || user?.displayName} 
+                        size="md" 
+                        className="w-full h-full border-none shadow-none"
+                      />
+                    </div>
+                  )}
+                  <button onClick={handleLogout} className="p-1.5 sm:p-2 text-gray-400 hover:text-red-500 transition-colors">
+                    <LogOut size={20} />
+                  </button>
+                </div>
               </div>
-            </div>
-          </nav>
+            </nav>
+          </>
         )}
 
         <main className={(!user && !isGuest) ? '' : 'max-w-5xl mx-auto px-4 py-8'}>
