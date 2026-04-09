@@ -101,8 +101,8 @@ export default function TriagemTeaIa() {
           
           <p className="text-slate-600 mb-8 max-w-md mx-auto">
             {i18n.language === 'en' 
-              ? 'If this helped you, consider supporting this project so we can help more families worldwide.' 
-              : 'Se isso te ajudou, considere apoiar este projeto para ajudar mais famílias.'}
+              ? 'Want Fábio (Victória\'s dad) to personally review your case for $19? Support this project so we can help more families.' 
+              : 'Quer que o Fábio (pai da Victória) revise pessoalmente por R$ 97 via PIX? Apoie este projeto para ajudar mais famílias.'}
           </p>
 
           {i18n.language === 'en' ? (

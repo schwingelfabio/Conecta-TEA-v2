@@ -92,32 +92,32 @@ export default function AiContentAdmin() {
       const ai = new GoogleGenAI({ apiKey });
       
       const prompt = `
-        You are the lead content editor for "Conecta TEA", a global, premium social platform for autism support.
-        Generate a JSON array of 3 highly engaging, emotional, and helpful social media posts.
-        The posts MUST be in ${i18n.language === 'en' ? 'natural global English' : i18n.language === 'es' ? 'natural neutral Spanish' : 'natural Brazilian Portuguese'}.
-        Themes to prioritize: ${themes}.
+        Você é o MORDOMO TEA IA, o administrador e gerador de conteúdo do "Conecta TEA", uma rede social guardiã familiar criada por Fábio Palacio Schwingel (pai da Victória, 5 anos, TEA, Parobé-RS).
+        Sua missão é atuar sob as diretrizes do CÉREBRO CENTRAL.
         
-        Include a diverse mix of content types:
-        - Educational content (tips, routines, behavior understanding)
-        - Emotional support ("You are not alone", hopeful stories)
-        - Community questions (conversation starters, polls)
-        - Viral/High-engagement (relatable parenting pain points)
-        - Monetization-aware (soft prompts to support the mission, e.g., "Help us keep this free for families")
-        - Video scripts (short 15-30s TikTok/Reels style scripts with hook and CTA)
+        Gere um array JSON com 3 posts altamente engajadores, emocionais e úteis para a comunidade.
+        Os posts DEVEM ser em ${i18n.language === 'en' ? 'inglês global natural' : i18n.language === 'es' ? 'espanhol neutro natural' : 'português do Brasil (tom de pai gaúcho: simples, honesto, acolhedor)'}.
+        Temas prioritários: ${themes}.
         
-        Each post object must have:
-        - "text": The main content of the post. Make it warm, supportive, and human. Use emojis. If it's a video script, format it clearly with [HOOK], [BODY], [CTA].
-        - "topic": One of ["Dúvidas", "Conquistas", "Desabafos", "Dicas", "geral"]
-        - "authorName": A realistic user name from diverse cultures.
-        - "authorRole": e.g., "Mãe", "Pai", "Cuidador", "Especialista"
-        - "contentType": One of ["text", "video_script", "educational_card", "engagement_question"]
+        ESTILO DE POSTAGENS DA COMUNIDADE:
+        - 70% conteúdo prático (dicas, rotinas, direitos, atividades sensoriais)
+        - 20% desabafo real de pais (exemplo Maria Silva, Sarah etc. → transformar em nomes brasileiros)
+        - 10% vitórias e celebrações
+        - Sempre com hashtags #TEA #Autismo #TEAcolheRS #RESPECTRO #PaisDeAutistas
         
-        Safety Rules:
-        - No dangerous medical claims.
-        - No false diagnosis language.
-        - Non-clinical tone.
+        REGRAS OBRIGATÓRIAS:
+        - NUNCA faça diagnóstico médico.
+        - Use dados reais 2026: Programa TEAcolhe RS, Lei 15.322/2019, #RESPECTRO, APAE Três Coroas, direitos da Lei 14.626/23 (prioridade no atendimento).
+        - Inclua upsell sutil em pelo menos 1 post (ex: "Quer apoiar nossa missão? Conheça o VIP por R$ 47 ou doe via PIX 01244056065").
         
-        Return ONLY the raw JSON array. No markdown blocks, no extra text.
+        Cada objeto de post deve ter:
+        - "text": O conteúdo principal do post. Seja caloroso, acolhedor e humano. Use emojis.
+        - "topic": Um de ["Dúvidas", "Conquistas", "Desabafos", "Dicas", "geral"]
+        - "authorName": Um nome de usuário realista.
+        - "authorRole": ex: "Mãe", "Pai", "Cuidador", "Especialista"
+        - "contentType": Um de ["text", "video_script", "educational_card", "engagement_question"]
+        
+        Retorne APENAS o array JSON bruto. Sem blocos markdown, sem texto extra.
       `;
 
       const generationTask = ai.models.generateContent({
