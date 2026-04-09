@@ -99,6 +99,8 @@ export default function AiContentAdmin() {
         Os posts DEVEM ser em ${i18n.language === 'en' ? 'inglês global natural' : i18n.language === 'es' ? 'espanhol neutro natural' : 'português do Brasil (tom de pai gaúcho: simples, honesto, acolhedor)'}.
         Temas prioritários: ${themes}.
         
+        CRÍTICO: NUNCA repita histórias, dicas ou vitórias de gerações anteriores. Seja criativo, traga novas perspectivas e situações do dia a dia.
+        
         ESTILO DE POSTAGENS DA COMUNIDADE:
         - 70% conteúdo prático (dicas, rotinas, direitos, atividades sensoriais)
         - 20% desabafo real de pais (exemplo Maria Silva, Sarah etc. → transformar em nomes brasileiros)

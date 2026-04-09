@@ -1,17 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { PlayCircle, Loader2, X, Play } from 'lucide-react';
+import { PlayCircle, Loader2, X, Play, Search } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { db } from '../lib/firebase';
 import { 
   collection, 
   query, 
   orderBy, 
-  limit, 
-  getDocs, 
-  startAfter, 
-  QueryDocumentSnapshot, 
-  DocumentData 
+  getDocs
 } from 'firebase/firestore';
 
 interface Video {
@@ -31,12 +27,11 @@ export default function VideoGallery() {
   const { t } = useTranslation();
   const [videos, setVideos] = useState<Video[]>([]);
   const [loading, setLoading] = useState(true);
-  const [loadingMore, setLoadingMore] = useState(false);
-  const [lastVisible, setLastVisible] = useState<QueryDocumentSnapshot<DocumentData> | null>(null);
-  const [hasMore, setHasMore] = useState(true);
   const [selectedVideo, setSelectedVideo] = useState<Video | null>(null);
   const [videosWatched, setVideosWatched] = useState(0);
   const [showCTA, setShowCTA] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [visibleCount, setVisibleCount] = useState(6);
 
   const fallbackVideos: Video[] = [
     { id: 'fallback-1', videoId: 'TW2Y33Tqja8', url: 'https://youtube.com/watch?v=TW2Y33Tqja8', title: 'Sinais de Autismo em Bebês', thumbnail: 'https://img.youtube.com/vi/TW2Y33Tqja8/hqdefault.jpg', createdAt: new Date(), description: 'Entenda os primeiros sinais.', duration: '2:30', category: 'Dicas' },
@@ -44,27 +39,17 @@ export default function VideoGallery() {
     { id: 'fallback-3', videoId: 'bQ9HwhO9voc', url: 'https://youtube.com/watch?v=bQ9HwhO9voc', title: 'A importância da rotina', thumbnail: 'https://img.youtube.com/vi/bQ9HwhO9voc/hqdefault.jpg', createdAt: new Date(), description: 'Por que a rotina importa no TEA.', duration: '1:45', category: 'Dicas' },
   ];
 
-  const fetchVideos = async (isLoadMore = false) => {
-    if (isLoadMore) {
-      setLoadingMore(true);
-    } else {
-      setLoading(true);
-    }
-
+  const fetchVideos = async () => {
+    setLoading(true);
     const timeoutPromise = new Promise((_, reject) => 
       setTimeout(() => reject(new Error('Timeout fetching videos')), 5000)
     );
 
     try {
-      let q = query(
+      const q = query(
         collection(db, 'videos'),
-        orderBy('createdAt', 'desc'),
-        limit(6)
+        orderBy('createdAt', 'desc')
       );
-
-      if (isLoadMore && lastVisible) {
-        q = query(q, startAfter(lastVisible));
-      }
 
       const snapshot = await Promise.race([getDocs(q), timeoutPromise]) as any;
       const fetchedVideos = snapshot.docs.map((doc: any) => ({
@@ -72,23 +57,15 @@ export default function VideoGallery() {
         ...doc.data()
       })) as Video[];
 
-      if (isLoadMore) {
-        setVideos(prev => [...prev, ...fetchedVideos]);
-      } else {
-        setVideos(fetchedVideos.length > 0 ? fetchedVideos : fallbackVideos);
-      }
+      // Filter out duplicates by videoId just in case seed ran multiple times
+      const uniqueVideos = Array.from(new Map(fetchedVideos.map(item => [item.videoId, item])).values());
 
-      setLastVisible(snapshot.docs[snapshot.docs.length - 1] || null);
-      setHasMore(snapshot.docs.length === 6);
+      setVideos(uniqueVideos.length > 0 ? uniqueVideos : fallbackVideos);
     } catch (error) {
       console.error('Erro ao buscar vídeos:', error);
-      if (!isLoadMore) {
-        setVideos(fallbackVideos);
-      }
-      setHasMore(false);
+      setVideos(fallbackVideos);
     } finally {
       setLoading(false);
-      setLoadingMore(false);
     }
   };
 
@@ -109,6 +86,19 @@ export default function VideoGallery() {
     return `https://www.youtube.com/embed/${videoId}?autoplay=1`;
   }
 
+  const filteredVideos = useMemo(() => {
+    if (!searchTerm.trim()) return videos;
+    const lowerSearch = searchTerm.toLowerCase();
+    return videos.filter(v => 
+      v.title.toLowerCase().includes(lowerSearch) || 
+      v.description.toLowerCase().includes(lowerSearch) ||
+      v.category.toLowerCase().includes(lowerSearch)
+    );
+  }, [videos, searchTerm]);
+
+  const displayedVideos = filteredVideos.slice(0, visibleCount);
+  const hasMore = visibleCount < filteredVideos.length;
+
   if (loading) {
     return (
       <div className="flex justify-center py-12">
@@ -119,19 +109,37 @@ export default function VideoGallery() {
 
   return (
     <section className="px-4">
-      <div className="flex items-center space-x-3 mb-8">
-        <PlayCircle className="text-brand-secondary" size={32} />
-        <h2 className="text-2xl font-bold text-slate-900">{t('videos.exclusiveVideos')}</h2>
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+        <div className="flex items-center space-x-3">
+          <PlayCircle className="text-brand-secondary" size={32} />
+          <h2 className="text-2xl font-bold text-slate-900">{t('videos.exclusiveVideos')}</h2>
+        </div>
+        
+        <div className="relative w-full md:w-72">
+          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <Search size={18} className="text-slate-400" />
+          </div>
+          <input
+            type="text"
+            placeholder="Buscar vídeos, dicas, temas..."
+            value={searchTerm}
+            onChange={(e) => {
+              setSearchTerm(e.target.value);
+              setVisibleCount(6); // Reset pagination on search
+            }}
+            className="w-full pl-10 pr-4 py-3 bg-white border border-slate-200 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all shadow-sm"
+          />
+        </div>
       </div>
 
-      {videos.length === 0 ? (
+      {displayedVideos.length === 0 ? (
         <div className="text-center py-12 bg-white rounded-3xl border border-dashed border-slate-200">
-          <p className="text-slate-500">{t('videos.noVideos')}</p>
+          <p className="text-slate-500">Nenhum vídeo encontrado para "{searchTerm}".</p>
         </div>
       ) : (
         <>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {videos.map((video) => (
+            {displayedVideos.map((video) => (
               <motion.div
                 key={video.id}
                 whileHover={{ y: -5 }}
@@ -175,15 +183,10 @@ export default function VideoGallery() {
           {hasMore && (
             <div className="flex justify-center mt-12">
               <button
-                onClick={() => fetchVideos(true)}
-                disabled={loadingMore}
-                className="px-8 py-3 bg-white border border-slate-200 rounded-full font-bold text-slate-600 hover:bg-slate-50 transition-all flex items-center gap-2 disabled:opacity-50"
+                onClick={() => setVisibleCount(prev => prev + 6)}
+                className="px-8 py-3 bg-white border border-slate-200 rounded-full font-bold text-slate-600 hover:bg-slate-50 transition-all flex items-center gap-2"
               >
-                {loadingMore ? (
-                  <Loader2 className="animate-spin" size={20} />
-                ) : (
-                  t('videos.loadMore')
-                )}
+                {t('videos.loadMore')}
               </button>
             </div>
           )}

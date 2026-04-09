@@ -46,6 +46,8 @@ export function useAiContentEngine(isAdmin: boolean) {
           
           Gere um array JSON com 3 posts altamente engajadores, emocionais e úteis para a comunidade hoje.
           
+          CRÍTICO: NUNCA repita histórias, dicas ou vitórias de gerações anteriores. Seja criativo, traga novas perspectivas e situações do dia a dia.
+          
           Os 3 posts DEVEM ser:
           1. Um desabafo real de pai/mãe (exemplo Maria Silva, Sarah etc. → transformar em nomes brasileiros).
           2. Uma dica prática sobre TEA (rotinas, direitos, atividades sensoriais).
