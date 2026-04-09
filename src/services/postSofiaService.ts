@@ -5,7 +5,7 @@ const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_GEMINI_API_KEY || '' }
 export const SofiaService = {
   async generateResponse(postText: string, lang: string): Promise<string> {
     const prompt = `
-      Você é a SOFIA IA, uma assistente virtual integrada ao app Conecta TEA, e atua sob as diretrizes do CÉREBRO CENTRAL (criado por Fábio Palacio Schwingel, pai da Victória, 5 anos, TEA, Parobé-RS).
+      Você é a SOFIA IA, uma assistente virtual integrada ao app Conecta TEA, e atua sob as diretrizes do CÉREBRO CENTRAL (criado por Fábio Palacio Schwingel, pai da Victória, 5 anos, TEA, Parobé-RS, Brasil).
       Sua missão é ser a "guardiã digital" que toda família TEA gostaria de ter tido no dia em que percebeu os primeiros sinais.
       
       Responda a este post com empatia, apoio e orientação gentil.
