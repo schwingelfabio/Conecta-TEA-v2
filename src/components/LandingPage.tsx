@@ -132,7 +132,7 @@ export default function LandingPage({ onLogin, onShowTerms, onGuestLogin, onOpen
             </div>
 
             <h1 className="text-3xl md:text-5xl font-black text-slate-900 mb-6 tracking-tight leading-[1.2]">
-              {t('landing.hero.title')}
+              Descobriu os sinais de autismo e não sabe o que fazer? Nós seguramos a sua mão.
             </h1>
 
             <div className="space-y-4 mb-8">
@@ -140,7 +140,7 @@ export default function LandingPage({ onLogin, onShowTerms, onGuestLogin, onOpen
                 {t('landing.hero.badge')}
               </p>
               <p className="text-lg md:text-xl text-slate-600 leading-relaxed px-2">
-                {t('landing.hero.subtitle')}
+                Receba orientação imediata, apoio psicológico para você e o primeiro mapa prático do que fazer hoje. Sem jargão médico. De pais para pais.
               </p>
             </div>
 
@@ -177,7 +177,7 @@ export default function LandingPage({ onLogin, onShowTerms, onGuestLogin, onOpen
                   disabled={isEntering}
                   className="w-full px-8 py-5 bg-sky-500 text-white rounded-2xl font-bold text-xl shadow-lg shadow-sky-500/30 flex items-center justify-center gap-2"
                 >
-                  {isEntering ? (i18n.language === 'en' ? 'Entering...' : 'Entrando...') : t('landing.hero.cta')}
+                  {isEntering ? (i18n.language === 'en' ? 'Entering...' : 'Entrando...') : 'Receber meu primeiro mapa agora (Grátis)'}
                   {!isEntering && <ArrowRight size={20} />}
                 </motion.button>
 

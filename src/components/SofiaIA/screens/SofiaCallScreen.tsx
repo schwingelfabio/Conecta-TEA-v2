@@ -1,14 +1,16 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { PhoneOff, Send, MessageSquare, Loader2, AlertCircle } from 'lucide-react';
+import { PhoneOff, Send, MessageSquare, Loader2, AlertCircle, Lock } from 'lucide-react';
 import { useSofiaOrchestrator } from '../hooks/useSofiaOrchestrator';
 import { SofiaState } from '../types';
 import Markdown from 'react-markdown';
 
-export const SofiaCallScreen = ({ onEndCall }: { onEndCall: () => void }) => {
+export const SofiaCallScreen = ({ onEndCall, isVip }: { onEndCall: () => void, isVip: boolean }) => {
   const { processTurn, state: orchestratorState } = useSofiaOrchestrator();
   const [sofiaState, setSofiaState] = useState<SofiaState>('idle');
   const [textInput, setTextInput] = useState('');
   const [messages, setMessages] = useState<{sender: 'user' | 'sofia', text: string, suggestSupport?: boolean, suggestedAction?: string}[]>([]);
+  const [messageCount, setMessageCount] = useState(0);
+  const [showPaywall, setShowPaywall] = useState(false);
   const hasInitialized = useRef(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -18,7 +20,7 @@ export const SofiaCallScreen = ({ onEndCall }: { onEndCall: () => void }) => {
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages, sofiaState]);
+  }, [messages, sofiaState, showPaywall]);
 
   const initConversation = useCallback(async () => {
     if (hasInitialized.current) return;
@@ -34,36 +36,29 @@ export const SofiaCallScreen = ({ onEndCall }: { onEndCall: () => void }) => {
   }, [initConversation]);
 
   const handleTextSubmit = async () => {
-    console.log('[SofiaCallScreen] handleTextSubmit called with text:', textInput);
-    if (!textInput.trim() || sofiaState === 'processing') {
-      console.log('[SofiaCallScreen] Ignoring submit. textInput empty or already processing.');
+    if (!textInput.trim() || sofiaState === 'processing') return;
+
+    if (!isVip && messageCount >= 3) {
+      setShowPaywall(true);
       return;
     }
     
     const userText = textInput;
-    setMessages(prev => {
-      console.log('[SofiaCallScreen] Adding user message to state:', userText);
-      return [...prev, {sender: 'user', text: userText}];
-    });
+    setMessages(prev => [...prev, {sender: 'user', text: userText}]);
     setTextInput('');
     setSofiaState('processing');
 
     try {
-      console.log('[SofiaCallScreen] Calling processTurn...');
       const res = await processTurn(userText);
-      console.log('[SofiaCallScreen] processTurn returned:', res);
-      setMessages(prev => {
-        console.log('[SofiaCallScreen] Adding sofia message to state:', res.response);
-        return [...prev, {
-          sender: 'sofia', 
-          text: res.response, 
-          suggestSupport: res.suggestSupport, 
-          suggestedAction: res.suggestedAction
-        }];
-      });
+      setMessages(prev => [...prev, {
+        sender: 'sofia', 
+        text: res.response, 
+        suggestSupport: res.suggestSupport, 
+        suggestedAction: res.suggestedAction
+      }]);
+      setMessageCount(prev => prev + 1);
       setSofiaState('ready');
     } catch (err) {
-      console.error("[SofiaCallScreen] Error in Sofia response:", err);
       setMessages(prev => [...prev, {
         sender: 'sofia', 
         text: "Estamos com instabilidade no momento. Tente novamente em instantes." 
@@ -194,6 +189,35 @@ export const SofiaCallScreen = ({ onEndCall }: { onEndCall: () => void }) => {
           )}
         </div>
       </div>
+
+      {showPaywall && (
+        <div className="absolute inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-slate-900 border border-slate-700 p-8 rounded-3xl max-w-md w-full text-center shadow-2xl relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-full h-1 bg-amber-500" />
+            <div className="w-16 h-16 bg-amber-500/10 rounded-full flex items-center justify-center mx-auto mb-6 text-amber-500">
+              <Lock className="w-8 h-8" />
+            </div>
+            <h2 className="text-2xl font-black text-white mb-4">Seu limite gratuito acabou hoje.</h2>
+            <p className="text-slate-300 mb-8 leading-relaxed">
+              Não pague por um aplicativo. Invista na sua paz de espírito. Ter o Conecta VIP é como ter um especialista e um ombro amigo no seu bolso de madrugada por menos do que você gasta em um lanche. Liberte-se da solidão e saiba exatamente o que fazer na próxima crise. Assine agora.
+            </p>
+            <a 
+              href="https://buy.stripe.com/" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="block w-full bg-amber-500 hover:bg-amber-600 text-slate-900 py-4 rounded-xl font-black text-lg mb-4"
+            >
+              Liberar Chat Ilimitado (US$ 9,99/mês)
+            </a>
+            <button 
+              onClick={() => setShowPaywall(false)}
+              className="text-sm text-slate-500 hover:text-slate-400"
+            >
+              Voltar depois
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

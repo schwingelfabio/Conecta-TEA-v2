@@ -3,7 +3,7 @@ import { MessageCircle } from 'lucide-react';
 import { SofiaCallScreen } from './screens/SofiaCallScreen';
 import { trackEvent } from '../../lib/monitoring';
 
-export const SofiaIA = () => {
+export const SofiaIA = ({ isVip }: { isVip?: boolean }) => {
   const [screen, setScreen] = useState<'call' | 'landing'>('call');
 
   React.useEffect(() => {
@@ -12,7 +12,7 @@ export const SofiaIA = () => {
 
   return (
     <div className="w-full h-full min-h-[calc(100vh-64px)] bg-slate-950">
-      {screen === 'call' && <SofiaCallScreen onEndCall={() => setScreen('landing')} />}
+      {screen === 'call' && <SofiaCallScreen onEndCall={() => setScreen('landing')} isVip={isVip || false} />}
       {screen === 'landing' && (
         <div className="flex flex-col items-center justify-center h-full p-8 text-center">
           <div className="w-24 h-24 bg-sky-500/10 rounded-full flex items-center justify-center mb-6 border border-sky-500/20">

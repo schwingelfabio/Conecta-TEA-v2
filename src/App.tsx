@@ -60,7 +60,7 @@ import { useAiContentEngine } from './hooks/useAiContentEngine';
 
 export default function App() {
   const { t } = useTranslation();
-  const [activeTab, setActiveTab] = useState<'feed' | 'vip' | 'settings' | 'sos' | 'termos' | 'privacidade' | 'contato' | 'map' | 'videos' | 'sofia' | 'carteirinha' | 'triagem' | 'mordomo' | 'doacao' | 'ai-engine' | 'admin-engagement' | 'gallery'>('feed');
+  const [activeTab, setActiveTab] = useState<'feed' | 'vip' | 'settings' | 'sos' | 'termos' | 'privacidade' | 'contato' | 'map' | 'videos' | 'sofia' | 'carteirinha' | 'triagem' | 'mordomo' | 'doacao' | 'ai-engine' | 'admin-engagement' | 'gallery'>('triagem');
   const [user, setUser] = useState<FirebaseUser | null>(null);
   const [showLanguageModal, setShowLanguageModal] = useState(false);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
@@ -341,7 +341,7 @@ export default function App() {
         return (
           <div className="space-y-4">
             <BackButton onClick={() => setActiveTab('feed')} />
-            <Suspense fallback={<div className="flex justify-center p-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-500"></div></div>}><SofiaIA /></Suspense>
+            <Suspense fallback={<div className="flex justify-center p-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-500"></div></div>}><SofiaIA isVip={isVip} /></Suspense>
           </div>
         );
       case 'videos':
