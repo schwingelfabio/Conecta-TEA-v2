@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Users, ShieldCheck, Crown, Heart, Zap, ExternalLink, X, Copy, Check, ArrowRight, MapPin, Activity, BookOpen, Search, Shield, Smartphone, HeartHandshake } from 'lucide-react';
 import AuthForm from './AuthForm';
 import LanguageSelector from './LanguageSelector';
+import Logo from './Logo';
 import { useTranslation } from 'react-i18next';
 
 interface LandingPageProps {
@@ -120,13 +121,8 @@ export default function LandingPage({ onLogin, onShowTerms, onGuestLogin }: Land
             transition={{ duration: 0.6 }}
           >
             <div className="mb-8 flex justify-center">
-              <div className="relative w-40 h-40 md:w-48 md:h-48 rounded-[2rem] overflow-hidden shadow-2xl bg-white flex items-center justify-center p-3 border border-slate-100 transform hover:scale-105 transition-transform duration-300">
-                <img 
-                  src="https://storage.googleapis.com/a1aa/image/U_dZ2L8M3N6K0pX81zO1oWd3xQ47I234E4r6p5J8F9w.jpg" 
-                  alt="Conecta TEA Triagem TEA IA Logo" 
-                  className="w-full h-full object-contain rounded-xl"
-                  referrerPolicy="no-referrer"
-                />
+              <div className="relative w-48 h-48 md:w-56 md:h-56 rounded-[2.5rem] shadow-2xl bg-white border border-slate-100 flex items-center justify-center p-4 transform hover:scale-105 transition-transform duration-300">
+                <Logo size="xl" showText={false} />
               </div>
             </div>
 

@@ -56,6 +56,7 @@ import { useTranslation } from 'react-i18next';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import Avatar from './components/Avatar';
 import BackButton from './components/BackButton';
+import Logo from './components/Logo';
 import { useAiContentEngine } from './hooks/useAiContentEngine';
 
 export default function App() {
@@ -460,9 +461,7 @@ export default function App() {
             <nav className="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-gray-100">
               <div className="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
                 <div className="flex items-center gap-2 cursor-pointer" onClick={() => setActiveTab('feed')}>
-                  <div className="w-10 h-10 bg-white rounded-xl shadow-sm border border-slate-100 flex items-center justify-center p-1">
-                    <img src="https://storage.googleapis.com/a1aa/image/U_dZ2L8M3N6K0pX81zO1oWd3xQ47I234E4r6p5J8F9w.jpg" alt="Conecta TEA" className="w-full h-full object-contain rounded-lg" referrerPolicy="no-referrer" />
-                  </div>
+                  <Logo size="sm" showText={false} className="w-10 h-10 border border-slate-100 rounded-xl" />
                   <h1 className="text-xl font-black tracking-tight hidden sm:block text-brand-dark">
                     Conecta <span className="text-brand-primary">TEA</span>
                   </h1>
