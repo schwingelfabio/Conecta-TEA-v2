@@ -287,19 +287,32 @@ export default function PostCall({ summary, onRestart, onRequireLogin }: PostCal
               <p className="text-sm text-slate-500 font-medium">Cancel anytime. No risk.</p>
             </div>
           ) : (
-            <div className="max-w-sm mx-auto bg-white p-6 rounded-2xl border border-rose-100 shadow-sm">
-              <h3 className="font-bold text-slate-800 mb-4">Pagamento via PIX</h3>
-              <div className="space-y-2 mb-6 text-left">
-                <p className="text-sm text-slate-600"><span className="font-semibold">CPF:</span> 01244056065</p>
-                <p className="text-sm text-slate-600"><span className="font-semibold">Nome:</span> Fábio Palacio Schwingel</p>
-              </div>
-              <button 
-                onClick={handleCopyPix}
-                className="w-full py-3 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl font-bold transition-all flex items-center justify-center gap-2 shadow-md shadow-emerald-200"
+            <div className="space-y-4">
+              <a 
+                href="https://buy.stripe.com/cNi9AU4rT5HwfMc3uP2wU05"
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => analytics.trackEvent('donate_stripe_click')}
+                className="inline-flex items-center justify-center gap-2 w-full max-w-sm py-4 bg-slate-900 text-white rounded-2xl font-bold text-lg hover:bg-slate-800 transition-all shadow-lg shadow-slate-900/20"
               >
-                {pixCopied ? <Check className="w-5 h-5" /> : <Copy className="w-5 h-5" />}
-                {pixCopied ? 'Chave copiada!' : 'Copiar chave PIX'}
-              </button>
+                <CreditCard className="w-5 h-5" />
+                Apoiar com Cartão / VIP
+              </a>
+
+              <div className="max-w-sm mx-auto bg-white p-6 rounded-2xl border border-rose-100 shadow-sm mt-4">
+                <h3 className="font-bold text-slate-800 mb-4">Pagamento via PIX</h3>
+                <div className="space-y-2 mb-6 text-left">
+                  <p className="text-sm text-slate-600"><span className="font-semibold">CPF:</span> 01244056065</p>
+                  <p className="text-sm text-slate-600"><span className="font-semibold">Nome:</span> Fábio Palacio Schwingel</p>
+                </div>
+                <button 
+                  onClick={handleCopyPix}
+                  className="w-full py-3 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl font-bold transition-all flex items-center justify-center gap-2 shadow-md shadow-emerald-200"
+                >
+                  {pixCopied ? <Check className="w-5 h-5" /> : <Copy className="w-5 h-5" />}
+                  {pixCopied ? 'Chave copiada!' : 'Copiar chave PIX'}
+                </button>
+              </div>
             </div>
           )}
 

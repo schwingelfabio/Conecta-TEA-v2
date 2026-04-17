@@ -99,8 +99,11 @@ const DonationPage = () => {
 
       {/* Sticky CTA */}
       <div className="fixed bottom-0 left-0 right-0 p-4 bg-sky-50/80 backdrop-blur-sm">
-        <button className="w-full rounded-full bg-sky-600 py-4 font-bold text-white shadow-lg shadow-sky-200 transition-transform active:scale-95">
-          Support Now
+        <button 
+          onClick={() => window.open(i18n.language === 'en' ? 'https://buy.stripe.com/28E9AU1fH3zobvWfdx2wU01' : 'https://buy.stripe.com/cNi9AU4rT5HwfMc3uP2wU05', '_blank')}
+          className="w-full rounded-full bg-sky-600 py-4 font-bold text-white shadow-lg shadow-sky-200 transition-transform active:scale-95"
+        >
+          {i18n.language === 'en' ? 'Support Now' : 'Apoiar Agora'}
         </button>
       </div>
     </div>

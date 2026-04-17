@@ -76,11 +76,11 @@ export default function PlanosVip({ isVip }: { isVip?: boolean }) {
               {i18n.language === 'en' ? 'Support Monthly' : 'Apoio Mensal'}
             </h4>
             <div className="flex items-baseline gap-1 mb-2">
-              <span className="text-4xl font-black text-white">$3.99</span>
+              <span className="text-4xl font-black text-white">{i18n.language === 'en' ? 'US$ 9.99' : 'R$ 49,90'}</span>
               <span className="text-slate-500 font-medium">/ {i18n.language === 'en' ? 'month' : 'mês'}</span>
             </div>
             <p className="text-sky-400 font-medium mb-8">
-              {i18n.language === 'en' ? 'Less than a coffee. Real impact.' : 'Menos que um café. Impacto real.'}
+              {i18n.language === 'en' ? 'Less than a coffee. Real impact.' : 'Liberte-se da solidão e saiba o que fazer.'}
             </p>
 
             <ul className="space-y-4 mb-8 flex-grow">
@@ -90,18 +90,18 @@ export default function PlanosVip({ isVip }: { isVip?: boolean }) {
               </li>
               <li className="flex items-start gap-3 text-slate-300">
                 <Check className="text-sky-500 shrink-0 mt-0.5" size={20} />
-                <span>{i18n.language === 'en' ? 'Keep the platform alive' : 'Mantenha a plataforma viva'}</span>
+                <span>{i18n.language === 'en' ? 'Keep the platform alive' : 'Chat 24h sem limites com Sofia IA'}</span>
               </li>
               <li className="flex items-start gap-3 text-slate-300">
                 <Check className="text-sky-500 shrink-0 mt-0.5" size={20} />
-                <span>{i18n.language === 'en' ? 'Early access' : 'Acesso antecipado'}</span>
+                <span>{i18n.language === 'en' ? 'Early access' : 'Acesso total a relatórios de Triagem'}</span>
               </li>
             </ul>
 
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              onClick={() => handleCheckout('https://buy.stripe.com/cNifZigaB9XM8jK9Td2wU02', 'monthly')}
+              onClick={() => handleCheckout(i18n.language === 'en' ? 'https://buy.stripe.com/28E9AU1fH3zobvWfdx2wU01' : 'https://buy.stripe.com/cNi9AU4rT5HwfMc3uP2wU05', 'monthly')}
               disabled={isVip}
               className={`w-full font-bold py-4 rounded-xl transition-all shadow-lg flex items-center justify-center gap-2 ${
                 isVip
@@ -109,7 +109,7 @@ export default function PlanosVip({ isVip }: { isVip?: boolean }) {
                   : 'bg-slate-800 hover:bg-slate-700 text-white border border-slate-700 hover:border-slate-600'
               }`}
             >
-              {isVip ? t('vip.activePlan') : (i18n.language === 'en' ? 'Help a Family Now' : 'Ajudar uma Família Agora')}
+              {isVip ? t('vip.activePlan') : (i18n.language === 'en' ? 'Help a Family Now' : 'Liberar meu VIP Agora')}
             </motion.button>
           </div>
 

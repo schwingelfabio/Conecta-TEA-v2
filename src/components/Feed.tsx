@@ -663,7 +663,10 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
               {i18n.language === 'en' ? 'If this is helping you, you can help other families too 💙' : 'Se isso está te ajudando, você pode ajudar outras famílias também 💙'}
             </h3>
             <div className="flex flex-col gap-3">
-              <button onClick={() => window.open('https://buy.stripe.com/28E9AU1fH3zobvWfdx2wU01', '_blank')} className="w-full py-4 bg-sky-500 text-white rounded-xl font-bold">
+              <button 
+                onClick={() => window.open(i18n.language === 'en' ? 'https://buy.stripe.com/28E9AU1fH3zobvWfdx2wU01' : 'https://buy.stripe.com/cNi9AU4rT5HwfMc3uP2wU05', '_blank')} 
+                className="w-full py-4 bg-sky-500 text-white rounded-xl font-bold"
+              >
                 {i18n.language === 'en' ? 'Support now' : 'Apoiar agora'}
               </button>
               <button onClick={() => setShowScrollModal(false)} className="w-full py-4 text-slate-500 font-bold">
@@ -850,7 +853,10 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
                           {i18n.language === 'en' ? 'This platform helps families every day. If this helped you, you can help another family too 💙' : i18n.language === 'es' ? 'Esta plataforma ayuda a las familias todos los días. Si esto te ayudó, puedes ayudar a otra familia también 💙' : 'Esse espaço ajuda famílias todos os dias. Se isso te ajudou, você pode ajudar outra família também 💙'}
                         </h3>
                         <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                          <button onClick={() => window.open('https://buy.stripe.com/28E9AU1fH3zobvWfdx2wU01', '_blank')} className="px-6 py-3 bg-sky-500 text-white rounded-xl font-bold hover:bg-sky-600 transition-all">
+                          <button 
+                            onClick={() => window.open(i18n.language === 'en' ? 'https://buy.stripe.com/28E9AU1fH3zobvWfdx2wU01' : 'https://buy.stripe.com/cNi9AU4rT5HwfMc3uP2wU05', '_blank')} 
+                            className="px-6 py-3 bg-sky-500 text-white rounded-xl font-bold hover:bg-sky-600 transition-all"
+                          >
                             {i18n.language === 'en' ? 'Support now' : i18n.language === 'es' ? 'Apoyar ahora' : 'Apoiar agora'}
                           </button>
                           <button onClick={() => {}} className="px-6 py-3 bg-slate-100 text-slate-600 rounded-xl font-bold hover:bg-slate-200 transition-all">
@@ -1005,8 +1011,14 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
                             <h3 className="text-xl font-bold text-slate-900 mb-6">
                               {i18n.language === 'en' ? 'Get full access and help even more families.' : 'Tenha acesso completo e ajude ainda mais famílias.'}
                             </h3>
-                            <button onClick={() => { setShowVipModal(false); window.open('https://buy.stripe.com/28E9AU1fH3zobvWfdx2wU01', '_blank'); }} className="w-full py-4 bg-amber-500 text-white rounded-xl font-bold mb-3">
-                              {i18n.language === 'en' ? 'Become VIP' : 'Tornar-se VIP'}
+                            <button 
+                              onClick={() => { 
+                                setShowVipModal(false); 
+                                window.open(i18n.language === 'en' ? 'https://buy.stripe.com/28E9AU1fH3zobvWfdx2wU01' : 'https://buy.stripe.com/cNi9AU4rT5HwfMc3uP2wU05', '_blank'); 
+                              }} 
+                              className="w-full py-4 bg-amber-500 text-white rounded-xl font-bold mb-3"
+                            >
+                              {i18n.language === 'en' ? 'Become VIP (US$ 9.99/mo)' : 'Tornar-se VIP (R$ 49,90/mês)'}
                             </button>
                             <button onClick={() => setShowVipModal(false)} className="w-full py-4 text-slate-500 font-bold">
                               {i18n.language === 'en' ? 'Maybe later' : 'Talvez mais tarde'}

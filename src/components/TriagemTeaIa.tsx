@@ -108,12 +108,23 @@ export default function TriagemTeaIa() {
                 <div className="absolute inset-0 bg-gradient-to-t from-white via-white/90 to-transparent z-10 flex flex-col items-center justify-end pb-8">
                   <div className="bg-slate-900 text-white p-6 rounded-3xl shadow-2xl max-w-sm text-center transform group-hover:scale-105 transition-transform">
                     <Lock className="w-8 h-8 mx-auto mb-3 text-amber-400" />
-                    <h3 className="text-xl font-bold mb-2">Desbloquear Mapa Completo</h3>
-                    <p className="text-sm text-slate-300 mb-4">Tenha acesso a todos os passos, chat 24h com a Sofia IA e ferramentas SOS.</p>
-                    <a href="https://buy.stripe.com/" target="_blank" rel="noopener noreferrer" className="block w-full bg-amber-500 hover:bg-amber-600 text-slate-900 py-3 rounded-xl font-black text-lg">
-                      Tornar-se VIP (US$ 9,99/mês)
+                    <h3 className="text-xl font-bold mb-2">
+                      {i18n.language === 'en' ? 'Unlock Full Map' : 'Desbloquear Mapa Completo'}
+                    </h3>
+                    <p className="text-sm text-slate-300 mb-4">
+                      {i18n.language === 'en' ? 'Get all steps, 24/7 chat with Sofia AI and SOS tools.' : 'Tenha acesso a todos os passos, chat 24h com a Sofia IA e ferramentas SOS.'}
+                    </p>
+                    <a 
+                      href={i18n.language === 'en' ? 'https://buy.stripe.com/28E9AU1fH3zobvWfdx2wU01' : 'https://buy.stripe.com/cNi9AU4rT5HwfMc3uP2wU05'} 
+                      target="_blank" 
+                      rel="noopener noreferrer" 
+                      className="block w-full bg-amber-500 hover:bg-amber-600 text-slate-900 py-3 rounded-xl font-black text-lg"
+                    >
+                      {i18n.language === 'en' ? 'Become VIP (US$ 9.99/mo)' : 'Tornar-se VIP (R$ 49,90/mês)'}
                     </a>
-                    <p className="text-xs text-slate-400 mt-3">Cancele quando quiser. Doações também aceitas.</p>
+                    <p className="text-xs text-slate-400 mt-3">
+                      {i18n.language === 'en' ? 'Cancel anytime. Donations accepted.' : 'Cancele quando quiser. Doações também aceitas.'}
+                    </p>
                   </div>
                 </div>
                 

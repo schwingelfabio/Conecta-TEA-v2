@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { PhoneOff, Send, MessageSquare, Loader2, AlertCircle, Lock } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useSofiaOrchestrator } from '../hooks/useSofiaOrchestrator';
 import { SofiaState } from '../types';
 import Markdown from 'react-markdown';
 
 export const SofiaCallScreen = ({ onEndCall, isVip }: { onEndCall: () => void, isVip: boolean }) => {
+  const { t, i18n } = useTranslation();
   const { processTurn, state: orchestratorState } = useSofiaOrchestrator();
   const [sofiaState, setSofiaState] = useState<SofiaState>('idle');
   const [textInput, setTextInput] = useState('');
@@ -202,12 +204,12 @@ export const SofiaCallScreen = ({ onEndCall, isVip }: { onEndCall: () => void, i
               Não pague por um aplicativo. Invista na sua paz de espírito. Ter o Conecta VIP é como ter um especialista e um ombro amigo no seu bolso de madrugada por menos do que você gasta em um lanche. Liberte-se da solidão e saiba exatamente o que fazer na próxima crise. Assine agora.
             </p>
             <a 
-              href="https://buy.stripe.com/" 
+              href={i18n.language === 'en' ? 'https://buy.stripe.com/28E9AU1fH3zobvWfdx2wU01' : 'https://buy.stripe.com/cNi9AU4rT5HwfMc3uP2wU05'}
               target="_blank" 
               rel="noopener noreferrer"
               className="block w-full bg-amber-500 hover:bg-amber-600 text-slate-900 py-4 rounded-xl font-black text-lg mb-4"
             >
-              Liberar Chat Ilimitado (US$ 9,99/mês)
+              {i18n.language === 'en' ? 'Unlock Unlimited Chat (US$ 9.99/mo)' : 'Liberar Chat Ilimitado (R$ 49,90/mês)'}
             </a>
             <button 
               onClick={() => setShowPaywall(false)}
