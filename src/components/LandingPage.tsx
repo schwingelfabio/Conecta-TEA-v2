@@ -9,7 +9,6 @@ interface LandingPageProps {
   onLogin: () => void;
   onShowTerms: () => void;
   onGuestLogin: () => void;
-  onOpenAcolhe: (urgent: boolean) => void;
 }
 
 function SupportModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
@@ -80,7 +79,7 @@ function SupportModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => voi
   );
 }
 
-export default function LandingPage({ onLogin, onShowTerms, onGuestLogin, onOpenAcolhe }: LandingPageProps) {
+export default function LandingPage({ onLogin, onShowTerms, onGuestLogin }: LandingPageProps) {
   const { t, i18n } = useTranslation();
   const [showAuthForm, setShowAuthForm] = useState(false);
   const [isSupportModalOpen, setIsSupportModalOpen] = useState(false);
@@ -109,9 +108,9 @@ export default function LandingPage({ onLogin, onShowTerms, onGuestLogin, onOpen
 
       {/* HERO SECTION */}
       <section className="relative pt-20 pb-16 overflow-hidden px-4">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full -z-10 opacity-30">
-          <div className="absolute top-[-10%] left-[-10%] w-[300px] h-[300px] bg-sky-200 rounded-full blur-[80px] mix-blend-multiply"></div>
-          <div className="absolute bottom-[-10%] right-[-10%] w-[300px] h-[300px] bg-purple-200 rounded-full blur-[80px] mix-blend-multiply"></div>
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full -z-10 opacity-40">
+          <div className="absolute top-[-10%] left-[-10%] w-[400px] h-[400px] bg-brand-primary/20 rounded-full blur-[80px] mix-blend-multiply"></div>
+          <div className="absolute bottom-[-10%] right-[-10%] w-[400px] h-[400px] bg-brand-secondary/20 rounded-full blur-[80px] mix-blend-multiply"></div>
         </div>
 
         <div className="max-w-3xl mx-auto text-center">
@@ -121,25 +120,25 @@ export default function LandingPage({ onLogin, onShowTerms, onGuestLogin, onOpen
             transition={{ duration: 0.6 }}
           >
             <div className="mb-8 flex justify-center">
-              <div className="relative w-40 h-40 md:w-48 md:h-48 rounded-full overflow-hidden border-4 border-white shadow-xl">
+              <div className="relative w-40 h-40 md:w-48 md:h-48 rounded-[2rem] overflow-hidden shadow-2xl bg-white flex items-center justify-center p-3 border border-slate-100 transform hover:scale-105 transition-transform duration-300">
                 <img 
-                  src="https://images.unsplash.com/photo-1602030028438-4cf153cbae9e?auto=format&fit=crop&w=800&q=80" 
-                  alt="Mãe e filho em um momento acolhedor" 
-                  className="w-full h-full object-cover"
+                  src="https://storage.googleapis.com/a1aa/image/U_dZ2L8M3N6K0pX81zO1oWd3xQ47I234E4r6p5J8F9w.jpg" 
+                  alt="Conecta TEA Triagem TEA IA Logo" 
+                  className="w-full h-full object-contain rounded-xl"
                   referrerPolicy="no-referrer"
                 />
               </div>
             </div>
 
-            <h1 className="text-3xl md:text-5xl font-black text-slate-900 mb-6 tracking-tight leading-[1.2]">
+            <h1 className="text-3xl md:text-5xl font-black text-brand-dark mb-6 tracking-tight leading-[1.2]">
               Descobriu os sinais de autismo e não sabe o que fazer? Nós seguramos a sua mão.
             </h1>
 
             <div className="space-y-4 mb-8">
-              <p className="text-lg md:text-xl font-bold text-sky-700 bg-sky-50 inline-block px-6 py-2 rounded-full">
+              <p className="text-lg md:text-xl font-bold font-sans text-brand-primary bg-brand-primary/10 inline-block px-6 py-2 rounded-full border border-brand-primary/20">
                 {t('landing.hero.badge')}
               </p>
-              <p className="text-lg md:text-xl text-slate-600 leading-relaxed px-2">
+              <p className="text-lg md:text-xl text-slate-600 leading-relaxed px-2 font-medium">
                 Receba orientação imediata, apoio psicológico para você e o primeiro mapa prático do que fazer hoje. Sem jargão médico. De pais para pais.
               </p>
             </div>
@@ -148,7 +147,7 @@ export default function LandingPage({ onLogin, onShowTerms, onGuestLogin, onOpen
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="mt-8 max-w-md mx-auto bg-white p-2 rounded-[2.5rem] shadow-2xl border border-slate-100"
+                className="mt-8 max-w-md mx-auto bg-white p-4 rounded-[2.5rem] shadow-2xl border border-slate-100"
               >
                 <AuthForm onSuccess={onLogin} onShowTerms={onShowTerms} />
                 <button
@@ -162,20 +161,20 @@ export default function LandingPage({ onLogin, onShowTerms, onGuestLogin, onOpen
               <div className="flex flex-col items-center justify-center gap-4 w-full max-w-md mx-auto">
                 <button
                   onClick={() => setIsSupportModalOpen(true)}
-                  className="w-full px-8 py-4 bg-rose-500 text-white rounded-2xl font-bold text-lg shadow-lg shadow-rose-500/30 flex items-center justify-center gap-2 hover:bg-rose-600 transition-colors"
+                  className="w-full px-8 py-4 bg-[#FEA6CC] text-[#0F2F4A] rounded-2xl font-bold text-lg shadow-lg shadow-[#FEA6CC]/30 flex items-center justify-center gap-2 hover:bg-pink-400 transition-colors"
                 >
-                  <Heart size={20} className="fill-white" />
+                  <Heart size={20} className="fill-[#0F2F4A] text-[#0F2F4A]" />
                   {i18n.language === 'en' ? 'Support this project ❤️' : 'Apoie este projeto ❤️'}
                 </button>
 
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  animate={{ boxShadow: ["0px 0px 0px rgba(14, 165, 233, 0)", "0px 0px 20px rgba(14, 165, 233, 0.5)", "0px 0px 0px rgba(14, 165, 233, 0)"] }}
+                  animate={{ boxShadow: ["0px 0px 0px rgba(19, 131, 164, 0)", "0px 0px 20px rgba(19, 131, 164, 0.4)", "0px 0px 0px rgba(19, 131, 164, 0)"] }}
                   transition={{ duration: 2, repeat: Infinity }}
                   onClick={handleMainAction}
                   disabled={isEntering}
-                  className="w-full px-8 py-5 bg-sky-500 text-white rounded-2xl font-bold text-xl shadow-lg shadow-sky-500/30 flex items-center justify-center gap-2"
+                  className="w-full px-8 py-5 bg-brand-primary text-white rounded-2xl font-bold text-xl shadow-lg shadow-brand-primary/30 flex items-center justify-center gap-2 hover:bg-opacity-90"
                 >
                   {isEntering ? (i18n.language === 'en' ? 'Entering...' : 'Entrando...') : 'Receber meu primeiro mapa agora (Grátis)'}
                   {!isEntering && <ArrowRight size={20} />}
@@ -186,27 +185,27 @@ export default function LandingPage({ onLogin, onShowTerms, onGuestLogin, onOpen
                     setShowAuthForm(true);
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                   }}
-                  className="text-sky-600 font-bold text-sm hover:underline"
+                  className="text-brand-primary font-bold text-base hover:underline mt-2"
                 >
                   {i18n.language === 'en' ? 'Already have an account? Log in' : 'Já tem uma conta? Entrar'}
                 </button>
 
-                <div className="flex flex-col items-center gap-2 mt-2 w-full">
-                  <div className="flex items-center gap-2 text-slate-600 font-medium text-sm bg-slate-50 px-4 py-3 rounded-xl w-full justify-center border border-slate-100">
-                    <Zap size={18} className="text-amber-500" />
+                <div className="flex flex-col items-center gap-3 mt-4 w-full">
+                  <div className="flex items-center gap-3 text-brand-dark font-medium text-sm bg-white shadow-sm px-5 py-4 rounded-xl w-full justify-center border border-slate-100">
+                    <Zap size={20} className="text-amber-500 drop-shadow-sm" />
                     {t('landing.hero.feature1')}
                   </div>
-                  <div className="flex items-center gap-2 text-slate-600 font-medium text-sm bg-slate-50 px-4 py-3 rounded-xl w-full justify-center text-center border border-slate-100">
-                    <ShieldCheck size={18} className="text-emerald-500 shrink-0" />
+                  <div className="flex items-center gap-3 text-brand-dark font-medium text-sm bg-white shadow-sm px-5 py-4 rounded-xl w-full justify-center text-center border border-slate-100">
+                    <ShieldCheck size={20} className="text-emerald-500 shrink-0 drop-shadow-sm" />
                     {t('landing.hero.feature2')}
                   </div>
                 </div>
 
-                <div className="mt-4 flex flex-col items-center gap-1">
-                  <p className="text-sm text-slate-500 font-medium">
+                <div className="mt-6 flex flex-col items-center gap-2">
+                  <p className="text-sm text-slate-500 font-semibold bg-slate-100 px-4 py-1 rounded-full">
                     {t('landing.hero.socialProof')}
                   </p>
-                  <p className="text-sm text-slate-400 font-medium italic border-b border-slate-200 pb-1 mt-2">
+                  <p className="text-xs text-slate-400 font-medium italic border-b border-slate-200 pb-1 pt-1">
                     {t('landing.hero.warning')}
                   </p>
                 </div>
@@ -224,9 +223,9 @@ export default function LandingPage({ onLogin, onShowTerms, onGuestLogin, onOpen
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-            <div className="bg-white p-8 rounded-[2rem] shadow-sm border border-slate-100 flex flex-col items-center text-center">
-              <div className="w-16 h-16 bg-sky-100 text-sky-600 rounded-2xl flex items-center justify-center mb-4">
-                <Search size={32} />
+            <div className="bg-white p-8 rounded-[2rem] shadow-sm border border-slate-100 flex flex-col items-center text-center hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+              <div className="w-24 h-24 rounded-full overflow-hidden mb-6 shadow-md border-4 border-sky-50">
+                <img src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&w=400&q=80" alt="Triagem" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
               </div>
               <h3 className="text-xl font-bold text-slate-900 mb-2">{t('landing.howItWorks.step1.title')}</h3>
               <p className="text-slate-600 text-sm leading-relaxed">
@@ -234,9 +233,9 @@ export default function LandingPage({ onLogin, onShowTerms, onGuestLogin, onOpen
               </p>
             </div>
 
-            <div className="bg-white p-8 rounded-[2rem] shadow-sm border border-slate-100 flex flex-col items-center text-center">
-              <div className="w-16 h-16 bg-purple-100 text-purple-600 rounded-2xl flex items-center justify-center mb-4">
-                <Users size={32} />
+            <div className="bg-white p-8 rounded-[2rem] shadow-sm border border-slate-100 flex flex-col items-center text-center hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+              <div className="w-24 h-24 rounded-full overflow-hidden mb-6 shadow-md border-4 border-purple-50">
+                <img src="https://images.unsplash.com/photo-1511895426328-dc8714191300?auto=format&fit=crop&w=400&q=80" alt="Comunidade" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
               </div>
               <h3 className="text-xl font-bold text-slate-900 mb-2">{t('landing.howItWorks.step2.title')}</h3>
               <p className="text-slate-600 text-sm leading-relaxed">
@@ -244,9 +243,9 @@ export default function LandingPage({ onLogin, onShowTerms, onGuestLogin, onOpen
               </p>
             </div>
 
-            <div className="bg-white p-8 rounded-[2rem] shadow-sm border border-slate-100 flex flex-col items-center text-center">
-              <div className="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center mb-4">
-                <Shield size={32} />
+            <div className="bg-white p-8 rounded-[2rem] shadow-sm border border-slate-100 flex flex-col items-center text-center hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+              <div className="w-24 h-24 rounded-full overflow-hidden mb-6 shadow-md border-4 border-emerald-50">
+                <img src="https://images.unsplash.com/photo-1606092195730-5d7b9af1efc5?auto=format&fit=crop&w=400&q=80" alt="Segurança" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
               </div>
               <h3 className="text-xl font-bold text-slate-900 mb-2">{t('landing.howItWorks.step3.title')}</h3>
               <p className="text-slate-600 text-sm leading-relaxed">
@@ -255,11 +254,11 @@ export default function LandingPage({ onLogin, onShowTerms, onGuestLogin, onOpen
             </div>
           </div>
           
-          <div className="flex justify-center">
+          <div className="flex justify-center mt-12">
             <button
               onClick={handleMainAction}
               disabled={isEntering}
-              className="px-8 py-4 bg-sky-100 text-sky-700 rounded-2xl font-bold text-lg hover:bg-sky-200 transition-all active:scale-95 flex items-center justify-center gap-2"
+              className="px-8 py-5 bg-brand-primary/10 text-brand-primary rounded-2xl font-bold text-lg hover:bg-brand-primary hover:text-white transition-all active:scale-95 flex items-center justify-center gap-2"
             >
               {isEntering ? (i18n.language === 'en' ? 'Entering...' : 'Entrando...') : t('landing.hero.cta')}
               {!isEntering && <ArrowRight size={20} />}
@@ -336,9 +335,9 @@ export default function LandingPage({ onLogin, onShowTerms, onGuestLogin, onOpen
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10">
-            <div className="bg-white p-5 rounded-3xl shadow-sm border border-slate-100 flex items-center gap-4">
-              <div className="w-14 h-14 bg-sky-100 text-sky-600 rounded-2xl flex items-center justify-center shrink-0">
-                <MapPin size={24} />
+            <div className="bg-white p-5 rounded-3xl shadow-sm border border-slate-100 flex items-center gap-4 hover:shadow-md transition-shadow">
+              <div className="w-16 h-16 rounded-2xl flex items-center justify-center shrink-0 overflow-hidden">
+                <img src="https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&w=400&q=80" alt="Map" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
               </div>
               <div>
                 <h3 className="font-bold text-slate-900 text-lg">{t('landing.features.item1.title')}</h3>
@@ -346,9 +345,9 @@ export default function LandingPage({ onLogin, onShowTerms, onGuestLogin, onOpen
               </div>
             </div>
 
-            <div className="bg-white p-5 rounded-3xl shadow-sm border border-slate-100 flex items-center gap-4">
-              <div className="w-14 h-14 bg-indigo-100 text-indigo-600 rounded-2xl flex items-center justify-center shrink-0">
-                <Smartphone size={24} />
+            <div className="bg-white p-5 rounded-3xl shadow-sm border border-slate-100 flex items-center gap-4 hover:shadow-md transition-shadow">
+              <div className="w-16 h-16 rounded-2xl flex items-center justify-center shrink-0 overflow-hidden">
+                <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&w=400&q=80" alt="Book" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
               </div>
               <div>
                 <h3 className="font-bold text-slate-900 text-lg">{t('landing.features.item2.title')}</h3>
@@ -356,9 +355,9 @@ export default function LandingPage({ onLogin, onShowTerms, onGuestLogin, onOpen
               </div>
             </div>
 
-            <div className="bg-white p-5 rounded-3xl shadow-sm border border-slate-100 flex items-center gap-4">
-              <div className="w-14 h-14 bg-red-100 text-red-600 rounded-2xl flex items-center justify-center shrink-0">
-                <Activity size={24} />
+            <div className="bg-white p-5 rounded-3xl shadow-sm border border-slate-100 flex items-center gap-4 hover:shadow-md transition-shadow">
+              <div className="w-16 h-16 rounded-2xl flex items-center justify-center shrink-0 overflow-hidden">
+                <img src="https://images.unsplash.com/photo-1505751172876-fa1923c5c528?auto=format&fit=crop&w=400&q=80" alt="Activity" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
               </div>
               <div>
                 <h3 className="font-bold text-slate-900 text-lg">{t('landing.features.item3.title')}</h3>
@@ -366,9 +365,9 @@ export default function LandingPage({ onLogin, onShowTerms, onGuestLogin, onOpen
               </div>
             </div>
 
-            <div className="bg-white p-5 rounded-3xl shadow-sm border border-slate-100 flex items-center gap-4">
-              <div className="w-14 h-14 bg-purple-100 text-purple-600 rounded-2xl flex items-center justify-center shrink-0">
-                <Zap size={24} />
+            <div className="bg-white p-5 rounded-3xl shadow-sm border border-slate-100 flex items-center gap-4 hover:shadow-md transition-shadow">
+              <div className="w-16 h-16 rounded-2xl flex items-center justify-center shrink-0 overflow-hidden">
+                <img src="https://images.unsplash.com/photo-1531746790731-6c087fecd65a?auto=format&fit=crop&w=400&q=80" alt="AI Robot" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
               </div>
               <div>
                 <h3 className="font-bold text-slate-900 text-lg">{t('landing.features.item4.title')}</h3>

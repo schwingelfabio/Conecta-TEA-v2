@@ -125,16 +125,6 @@ export const SofiaCallScreen = ({ onEndCall, isVip }: { onEndCall: () => void, i
                       ) : (
                         <div className="markdown-body text-slate-100 prose prose-invert prose-sm max-w-none">
                           <Markdown>{m.text}</Markdown>
-                          {m.suggestSupport && (
-                            <div className="mt-4 flex flex-wrap gap-2">
-                              <button className="px-4 py-2 bg-rose-500 hover:bg-rose-600 text-white rounded-full text-xs font-bold transition-all">
-                                ❤️ Support Project
-                              </button>
-                              <button className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-full text-xs font-bold transition-all">
-                                ⭐ Become VIP
-                              </button>
-                            </div>
-                          )}
                         </div>
                       )}
                       <div className={`absolute top-0 ${m.sender === 'user' ? '-right-1 border-l-sky-600' : '-left-1 border-r-slate-800'} w-0 h-0 border-t-[8px] border-t-transparent border-b-[8px] border-b-transparent border-l-[8px]`} />

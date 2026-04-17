@@ -460,11 +460,11 @@ export default function App() {
             <nav className="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-gray-100">
               <div className="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
                 <div className="flex items-center gap-2 cursor-pointer" onClick={() => setActiveTab('feed')}>
-                  <div className="w-10 h-10 bg-sky-500 rounded-xl flex items-center justify-center text-white shadow-sm">
-                    <Users size={24} />
+                  <div className="w-10 h-10 bg-white rounded-xl shadow-sm border border-slate-100 flex items-center justify-center p-1">
+                    <img src="https://storage.googleapis.com/a1aa/image/U_dZ2L8M3N6K0pX81zO1oWd3xQ47I234E4r6p5J8F9w.jpg" alt="Conecta TEA" className="w-full h-full object-contain rounded-lg" referrerPolicy="no-referrer" />
                   </div>
-                  <h1 className="text-xl font-bold tracking-tight hidden sm:block">
-                    Conecta <span className="text-sky-500">TEA</span>
+                  <h1 className="text-xl font-black tracking-tight hidden sm:block text-brand-dark">
+                    Conecta <span className="text-brand-primary">TEA</span>
                   </h1>
                 </div>
 
@@ -561,7 +561,6 @@ export default function App() {
                     onLogin={handleLoginSuccess} 
                     onShowTerms={() => setActiveTab('termos')} 
                     onGuestLogin={handleGuestLogin} 
-                    onOpenAcolhe={() => setActiveTab('sofia')} 
                   />
                 ) : (
                   renderContent()

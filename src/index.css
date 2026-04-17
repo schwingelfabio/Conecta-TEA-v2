@@ -7,9 +7,10 @@
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
   --font-serif: "Cormorant Garamond", serif;
   
-  --color-brand-primary: #0ea5e9;
-  --color-brand-secondary: #f43f5e;
+  --color-brand-primary: #1383A4;
+  --color-brand-secondary: #FEA6CC;
   --color-brand-accent: #10b981;
+  --color-brand-dark: #0F2F4A;
 
   --animate-breath: breath 4s ease-in-out infinite;
 
