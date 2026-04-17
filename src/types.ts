@@ -58,6 +58,7 @@ export interface Post {
   authorPhoto?: string;
   mediaType: 'text' | 'image' | 'video';
   mediaUrl?: string;
+  imageUrl?: string;
   topic: 'geral' | 'noticias' | 'duvidas' | 'conquistas' | 'eventos';
   state: string;
   city: string;

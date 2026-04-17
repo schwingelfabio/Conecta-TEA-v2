@@ -34,9 +34,10 @@ export default function VideoGallery() {
   const [visibleCount, setVisibleCount] = useState(6);
 
   const fallbackVideos: Video[] = [
-    { id: 'fallback-1', videoId: 'TW2Y33Tqja8', url: 'https://youtube.com/watch?v=TW2Y33Tqja8', title: 'Sinais de Autismo em Bebês', thumbnail: 'https://img.youtube.com/vi/TW2Y33Tqja8/hqdefault.jpg', createdAt: new Date(), description: 'Entenda os primeiros sinais.', duration: '2:30', category: 'Dicas' },
-    { id: 'fallback-2', videoId: 'tNuM5SI_UxE', url: 'https://youtube.com/watch?v=tNuM5SI_UxE', title: 'Como lidar com crises de autismo', thumbnail: 'https://img.youtube.com/vi/tNuM5SI_UxE/hqdefault.jpg', createdAt: new Date(), description: 'Estratégias práticas para acalmar.', duration: '3:00', category: 'Cenários Reais' },
-    { id: 'fallback-3', videoId: 'bQ9HwhO9voc', url: 'https://youtube.com/watch?v=bQ9HwhO9voc', title: 'A importância da rotina', thumbnail: 'https://img.youtube.com/vi/bQ9HwhO9voc/hqdefault.jpg', createdAt: new Date(), description: 'Por que a rotina importa no TEA.', duration: '1:45', category: 'Dicas' },
+    { id: 'fallback-1', videoId: 'TW2Y33Tqja8', url: 'https://youtube.com/watch?v=TW2Y33Tqja8', title: 'Sinais de Autismo em Bebês', thumbnail: 'https://img.youtube.com/vi/TW2Y33Tqja8/hqdefault.jpg', createdAt: new Date(), description: 'Mayra Gaiato explica os primeiros sinais de autismo.', duration: '12:30', category: 'Dicas' },
+    { id: 'fallback-2', videoId: 'vUKW020q8N8', url: 'https://youtube.com/watch?v=vUKW020q8N8', title: 'Dicas para Crise de Autismo', thumbnail: 'https://img.youtube.com/vi/vUKW020q8N8/hqdefault.jpg', createdAt: new Date(), description: 'Estratégias para acalmar a criança durante uma crise sensorial.', duration: '15:00', category: 'Cenários Reais' },
+    { id: 'fallback-3', videoId: 'H_pW6T6r3B0', url: 'https://youtube.com/watch?v=H_pW6T6r3B0', title: 'Rotina visual e autismo', thumbnail: 'https://img.youtube.com/vi/H_pW6T6r3B0/hqdefault.jpg', createdAt: new Date(), description: 'Como organizar uma rotina visual funciona no dia a dia.', duration: '10:45', category: 'Dicas' },
+    { id: 'fallback-4', videoId: 'p2QyV4j-X_U', url: 'https://youtube.com/watch?v=p2QyV4j-X_U', title: 'O que não dizer para mães de autistas', thumbnail: 'https://img.youtube.com/vi/p2QyV4j-X_U/hqdefault.jpg', createdAt: new Date(), description: 'Dicas sobre comunicação empática com pais atípicos.', duration: '8:20', category: 'Apoio Emocional' }
   ];
 
   const fetchVideos = async () => {

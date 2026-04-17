@@ -49,23 +49,23 @@ export function useAiContentEngine(isAdmin: boolean) {
           CRÍTICO: NUNCA repita histórias, dicas ou vitórias de gerações anteriores. Seja criativo, traga novas perspectivas e situações do dia a dia.
           
           Os 3 posts DEVEM ser:
-          1. Um desabafo real de pai/mãe (exemplo Maria Silva, Sarah etc. → transformar em nomes brasileiros).
+          1. Um desabafo real de pai/mãe muito cru e natural (ex: mães cansadas, culpa capacitista, vitórias pequenas).
           2. Uma dica prática sobre TEA (rotinas, direitos, atividades sensoriais).
-          3. Uma vitória/celebração inspiradora.
+          3. Um questionamento ou momento de apoio direto (ex: "Quem mais aqui sente que...").
           
           Os posts DEVEM ser em ${i18n.language === 'en' ? 'inglês global natural' : i18n.language === 'es' ? 'espanhol neutro natural' : 'português do Brasil (tom de pai gaúcho: simples, honesto, acolhedor)'}.
-          Sempre com hashtags #TEA #Autismo #ConectaTEA
           
           REGRAS INQUEBRÁVEIS:
           - NUNCA faça diagnóstico médico. Toda resposta começa ou termina com: "Isso NÃO substitui avaliação médica multidisciplinar nem laudo profissional."
-          - Use dados reais 2026: Programa TEAcolhe RS (Lei 16.427/2025), APAE Três Coroas, direitos da Lei Brasileira de Inclusão.
-          - Inclua upsell sutil em pelo menos 1 post (ex: "Quer apoiar nossa missão? Conheça o VIP por US$ 9,99 ou doe via Stripe").
+          - VOCÊ, MORDOMO IA, tem a liberdade de espalhar a palavra do Conecta TEA! Pelo menos 1 post deve ser uma propaganda aberta e honesta pedindo doações ou para assinar o VIP: "Gente, a IA da Sofia tá ajudando muito mas custa caro manter. Apoie o VIP ou mande um PIX no 01244056065 para mantermos viva a plataforma".
+          - Gere sempre uma URL de imagem gerada de forma dinâmica usando \`https://picsum.photos/seed/\${Math.random().toString(36).substring(7)}/800/600\` misturado com a keyword do assunto (ex: \`https://picsum.photos/seed/autismLove/800/600\`).
           
           Cada objeto de post deve ter:
           - "text": O conteúdo principal do post. Seja caloroso, acolhedor e humano. Use emojis.
+          - "imageUrl": Uma url gerada aleatoriamente no formato picsum.photos.
           - "topic": Um de ["Dúvidas", "Conquistas", "Desabafos", "Dicas", "geral"]
           - "authorName": Um nome de usuário realista.
-          - "authorRole": ex: "Mãe", "Pai", "Cuidador", "Especialista"
+          - "authorRole": ex: "Mãe", "Pai", "Cuidador", "Guardião IA"
           - "contentType": "text"
           
           Retorne APENAS o array JSON bruto. Sem blocos markdown, sem texto extra.
@@ -91,6 +91,7 @@ export function useAiContentEngine(isAdmin: boolean) {
         for (const post of posts) {
           await addDoc(postsRef, {
             text: post.text,
+            imageUrl: post.imageUrl || null,
             topic: post.topic || 'geral',
             authorName: post.authorName,
             authorRole: post.authorRole,

@@ -957,6 +957,17 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
                         </div>
                       )}
 
+                      {post.imageUrl && (
+                        <div className="mb-6 rounded-2xl overflow-hidden border border-slate-50 mt-4">
+                          <img 
+                            src={post.imageUrl} 
+                            alt="AI Generated" 
+                            className="w-full h-auto object-cover max-h-[400px]"
+                            referrerPolicy="no-referrer"
+                          />
+                        </div>
+                      )}
+
                         <div className="flex items-center justify-between pt-4 border-t border-slate-100">
                           <div className="flex items-center space-x-6">
                             <button 
