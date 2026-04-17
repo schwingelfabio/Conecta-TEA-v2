@@ -120,7 +120,7 @@ export default function TriagemTeaIa() {
                       rel="noopener noreferrer" 
                       className="block w-full bg-amber-500 hover:bg-amber-600 text-slate-900 py-3 rounded-xl font-black text-lg"
                     >
-                      {i18n.language === 'en' ? 'Become VIP (US$ 9.99/mo)' : 'Tornar-se VIP (R$ 49,90/mês)'}
+                      {i18n.language === 'en' ? 'Become VIP (US$ 9.99/mo)' : 'Tornar-se VIP (R$ 9,99/mês)'}
                     </a>
                     <p className="text-xs text-slate-400 mt-3">
                       {i18n.language === 'en' ? 'Cancel anytime. Donations accepted.' : 'Cancele quando quiser. Doações também aceitas.'}

@@ -1018,7 +1018,7 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
                               }} 
                               className="w-full py-4 bg-amber-500 text-white rounded-xl font-bold mb-3"
                             >
-                              {i18n.language === 'en' ? 'Become VIP (US$ 9.99/mo)' : 'Tornar-se VIP (R$ 49,90/mês)'}
+                              {i18n.language === 'en' ? 'Become VIP (US$ 9.99/mo)' : 'Tornar-se VIP (R$ 9,99/mês)'}
                             </button>
                             <button onClick={() => setShowVipModal(false)} className="w-full py-4 text-slate-500 font-bold">
                               {i18n.language === 'en' ? 'Maybe later' : 'Talvez mais tarde'}

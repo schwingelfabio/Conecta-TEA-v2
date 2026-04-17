@@ -76,11 +76,11 @@ export default function PlanosVip({ isVip }: { isVip?: boolean }) {
               {i18n.language === 'en' ? 'Support Monthly' : 'Apoio Mensal'}
             </h4>
             <div className="flex items-baseline gap-1 mb-2">
-              <span className="text-4xl font-black text-white">{i18n.language === 'en' ? 'US$ 9.99' : 'R$ 49,90'}</span>
+              <span className="text-4xl font-black text-white">{i18n.language === 'en' ? 'US$ 3.99' : 'R$ 19,90'}</span>
               <span className="text-slate-500 font-medium">/ {i18n.language === 'en' ? 'month' : 'mês'}</span>
             </div>
             <p className="text-sky-400 font-medium mb-8">
-              {i18n.language === 'en' ? 'Less than a coffee. Real impact.' : 'Liberte-se da solidão e saiba o que fazer.'}
+              {i18n.language === 'en' ? 'Less than a coffee. Real impact.' : 'Menos que um café. Impacto real.'}
             </p>
 
             <ul className="space-y-4 mb-8 flex-grow">
@@ -90,18 +90,18 @@ export default function PlanosVip({ isVip }: { isVip?: boolean }) {
               </li>
               <li className="flex items-start gap-3 text-slate-300">
                 <Check className="text-sky-500 shrink-0 mt-0.5" size={20} />
-                <span>{i18n.language === 'en' ? 'Keep the platform alive' : 'Chat 24h sem limites com Sofia IA'}</span>
+                <span>{i18n.language === 'en' ? 'Keep the platform alive' : 'Mantenha a plataforma viva'}</span>
               </li>
               <li className="flex items-start gap-3 text-slate-300">
                 <Check className="text-sky-500 shrink-0 mt-0.5" size={20} />
-                <span>{i18n.language === 'en' ? 'Early access' : 'Acesso total a relatórios de Triagem'}</span>
+                <span>{i18n.language === 'en' ? 'Early access' : 'Acesso antecipado'}</span>
               </li>
             </ul>
 
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              onClick={() => handleCheckout(i18n.language === 'en' ? 'https://buy.stripe.com/28E9AU1fH3zobvWfdx2wU01' : 'https://buy.stripe.com/cNi9AU4rT5HwfMc3uP2wU05', 'monthly')}
+              onClick={() => handleCheckout(i18n.language === 'en' ? 'https://buy.stripe.com/cNifZigaB9XM8jK9Td2wU02' : 'https://pag.ae/81AiqTpHL', 'monthly')}
               disabled={isVip}
               className={`w-full font-bold py-4 rounded-xl transition-all shadow-lg flex items-center justify-center gap-2 ${
                 isVip
@@ -109,7 +109,7 @@ export default function PlanosVip({ isVip }: { isVip?: boolean }) {
                   : 'bg-slate-800 hover:bg-slate-700 text-white border border-slate-700 hover:border-slate-600'
               }`}
             >
-              {isVip ? t('vip.activePlan') : (i18n.language === 'en' ? 'Help a Family Now' : 'Liberar meu VIP Agora')}
+              {isVip ? t('vip.activePlan') : (i18n.language === 'en' ? 'Help a Family Now' : 'Ajudar uma Família Agora')}
             </motion.button>
           </div>
 
@@ -190,10 +190,10 @@ export default function PlanosVip({ isVip }: { isVip?: boolean }) {
               {/* PRICE SECTION */}
               <div className="mb-6 mt-auto">
                 <div className="text-4xl font-black text-white drop-shadow-lg mb-1">
-                  $39.99 <span className="text-lg text-amber-200/80 font-medium">/ {i18n.language === 'en' ? 'year' : 'ano'}</span>
+                  {i18n.language === 'en' ? '$39.99' : 'R$ 199,00'} <span className="text-lg text-amber-200/80 font-medium">/ {i18n.language === 'en' ? 'year' : 'ano'}</span>
                 </div>
                 <p className="text-amber-400 text-xs font-bold tracking-wide drop-shadow-md">
-                  {i18n.language === 'en' ? "Less than $0.11 per day to change lives" : "Menos de R$0,60 por dia para mudar vidas"}
+                  {i18n.language === 'en' ? "Less than $0.11 per day to change lives" : "Menos de R$0,55 por dia para mudar vidas"}
                 </p>
               </div>
 
@@ -203,7 +203,7 @@ export default function PlanosVip({ isVip }: { isVip?: boolean }) {
                 whileTap={{ scale: 0.98 }}
                 animate={{ boxShadow: ["0px 0px 0px rgba(245, 158, 11, 0)", "0px 0px 30px rgba(245, 158, 11, 0.5)", "0px 0px 0px rgba(245, 158, 11, 0)"] }}
                 transition={{ duration: 2, repeat: Infinity }}
-                onClick={() => handleCheckout('https://buy.stripe.com/cNibJ2bUlfi643u5CX2wU03', 'annual')}
+                onClick={() => handleCheckout(i18n.language === 'en' ? 'https://buy.stripe.com/cNibJ2bUlfi643u5CX2wU03' : 'https://pag.ae/81AirzxhL', 'annual')}
                 disabled={isVip}
                 className={`w-full font-black text-base py-4 rounded-xl transition-all flex items-center justify-center gap-2 mb-6 ${
                   isVip

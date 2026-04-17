@@ -209,7 +209,7 @@ export const SofiaCallScreen = ({ onEndCall, isVip }: { onEndCall: () => void, i
               rel="noopener noreferrer"
               className="block w-full bg-amber-500 hover:bg-amber-600 text-slate-900 py-4 rounded-xl font-black text-lg mb-4"
             >
-              {i18n.language === 'en' ? 'Unlock Unlimited Chat (US$ 9.99/mo)' : 'Liberar Chat Ilimitado (R$ 49,90/mês)'}
+              {i18n.language === 'en' ? 'Unlock Unlimited Chat (US$ 9.99/mo)' : 'Liberar Chat Ilimitado (R$ 9,99/mês)'}
             </a>
             <button 
               onClick={() => setShowPaywall(false)}
