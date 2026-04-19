@@ -108,7 +108,7 @@ export default function LandingPage({ onLogin, onShowTerms, onGuestLogin }: Land
       </div>
 
       {/* HERO SECTION */}
-      <section className="relative pt-12 pb-16 overflow-hidden px-4 bg-gradient-to-b from-brand-primary/10 to-transparent">
+      <section className="relative pt-12 pb-16 overflow-hidden px-4 bg-gradient-to-b from-brand-primary/20 via-[#a78bfa]/10 to-transparent">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full -z-10 opacity-60">
           <div className="absolute top-[-20%] left-[-10%] w-[300px] h-[300px] bg-brand-primary/30 rounded-full blur-[80px] mix-blend-multiply"></div>
           <div className="absolute top-[20%] right-[-10%] w-[250px] h-[250px] bg-brand-secondary/20 rounded-full blur-[80px] mix-blend-multiply"></div>
@@ -120,27 +120,36 @@ export default function LandingPage({ onLogin, onShowTerms, onGuestLogin }: Land
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <div className="mb-8 flex flex-col items-center justify-center">
-              <Logo size="md" showText={true} />
+            {/* Fake NavBar just for aesthetic visualization */}
+            <div className="flex items-center justify-between bg-white/80 backdrop-blur-md p-3 rounded-2xl shadow-sm mb-6 border border-slate-100">
+              <Logo size="sm" showText={false} className="w-8 h-8 focus:outline-none" />
+              <div className="flex gap-4 text-slate-400">
+                 <Home size={20} />
+                 <Heart size={20} />
+                 <MessageCircle size={20} />
+              </div>
+              <div className="w-8 h-8 bg-slate-200 rounded-full overflow-hidden border border-slate-300">
+                <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=100&q=80" alt="Avatar" className="w-full h-full object-cover" />
+              </div>
             </div>
-            
+
             <div className="w-full relative rounded-3xl overflow-hidden shadow-2xl mb-8 aspect-[4/5] border-4 border-white">
               <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-transparent z-10" />
               <img 
-                src="https://images.unsplash.com/photo-1544126592-807ade215a0b?auto=format&fit=crop&w=800&q=80" 
-                alt="Mãe abraçando filho sorrindo em casa com luz natural" 
+                src="https://images.unsplash.com/photo-1516627145497-ae6968895b74?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" 
+                alt="Mãe brasileira abraçando filho no RS com alívio" 
                 className="w-full h-full object-cover"
                 referrerPolicy="no-referrer"
               />
             </div>
 
             <h1 className="text-[28px] leading-tight font-black text-brand-dark mb-4 tracking-tight">
-              Descobriu os sinais de autismo no seu filho?
+              Descobriu os sinais de autismo e não sabe por onde começar?
               <span className="block mt-2 text-brand-primary">Nós seguramos a sua mão desde o primeiro dia.</span>
             </h1>
 
-            <p className="text-base text-slate-600 mb-8 font-medium px-4">
-              Mapa prático grátis + comunidade de famílias TEA no Brasil
+            <p className="text-sm text-slate-600 mb-8 font-medium px-2 leading-relaxed">
+              Mapa prático grátis • Sofia IA • Comunidade de famílias reais no Brasil • Robô de apoio
             </p>
 
             {showAuthForm ? (
@@ -173,12 +182,12 @@ export default function LandingPage({ onLogin, onShowTerms, onGuestLogin }: Land
                     setShowAuthForm(true);
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                   }}
-                  className="w-full px-6 py-4 bg-white text-brand-dark rounded-2xl font-bold text-lg border-2 border-slate-200 shadow-sm flex items-center justify-center hover:bg-slate-50 transition-all"
+                  className="w-full px-6 py-4 bg-white text-brand-dark rounded-2xl font-bold text-[17px] border-2 border-slate-200 shadow-sm flex items-center justify-center hover:bg-slate-50 transition-all"
                 >
                   Já tenho conta → Entrar
                 </button>
 
-                <p className="text-[11px] text-slate-400 font-medium mt-4 max-w-[280px] leading-relaxed mx-auto">
+                <p className="text-[11px] text-slate-400 font-medium mt-3 max-w-[280px] leading-relaxed mx-auto">
                   Sem cadastro complicado • Sem jargão médico • De pais para pais • 100% gratuito para começar
                 </p>
               </div>
@@ -190,23 +199,23 @@ export default function LandingPage({ onLogin, onShowTerms, onGuestLogin }: Land
       {/* BLOCO VOCÊ NÃO ESTÁ SOZINHO */}
       <section className="py-12 bg-white px-6 border-y border-slate-100">
         <div className="max-w-md mx-auto">
-          <h2 className="text-2xl font-black text-brand-dark mb-3">Você não está sozinho</h2>
+          <h2 className="text-2xl font-black text-brand-dark mb-3">Você não está sozinho(a)</h2>
           <p className="text-slate-600 text-sm leading-relaxed mb-6 font-medium">
-            Todo mês que passa sem orientação pode atrasar o desenvolvimento da criança. Aqui você age no momento certo.
+            Todo mês que passa sem orientação pode atrasar o desenvolvimento da criança. Aqui você age no momento certo com Sofia IA e famílias reais.
           </p>
 
           <div className="space-y-4">
             <div className="flex items-start gap-3 bg-slate-50 p-3 rounded-xl border border-slate-100">
               <div className="w-6 h-6 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center shrink-0 mt-0.5"><Check size={14} strokeWidth={3} /></div>
-              <p className="text-slate-700 text-sm font-semibold">Mais de 2.000 famílias já estão conectadas</p>
+              <p className="text-slate-700 text-sm font-semibold">+152 famílias ajudadas hoje</p>
             </div>
             <div className="flex items-start gap-3 bg-slate-50 p-3 rounded-xl border border-slate-100">
               <div className="w-6 h-6 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center shrink-0 mt-0.5"><Check size={14} strokeWidth={3} /></div>
-              <p className="text-slate-700 text-sm font-semibold">Baseado em boas práticas de profissionais</p>
+              <p className="text-slate-700 text-sm font-semibold">Comunidades ativas em RS, SP, AC e mais</p>
             </div>
             <div className="flex items-start gap-3 bg-slate-50 p-3 rounded-xl border border-slate-100">
               <div className="w-6 h-6 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center shrink-0 mt-0.5"><Check size={14} strokeWidth={3} /></div>
-              <p className="text-slate-700 text-sm font-semibold">Você pode sair a qualquer momento</p>
+              <p className="text-slate-700 text-sm font-semibold">Sofia IA online 24h para te ouvir</p>
             </div>
           </div>
         </div>
@@ -223,8 +232,18 @@ export default function LandingPage({ onLogin, onShowTerms, onGuestLogin }: Land
                 <MapPin size={24} />
               </div>
               <div>
-                <h3 className="font-bold text-slate-800 text-base">Comunidades locais</h3>
-                <p className="text-slate-500 text-xs mt-1 leading-snug">Conexão com famílias e profissionais da sua cidade</p>
+                <h3 className="font-bold text-slate-800 text-base">Comunidades Locais</h3>
+                <p className="text-slate-500 text-xs mt-1 leading-snug">Famílias da sua cidade</p>
+              </div>
+            </div>
+
+            <div className="bg-white p-5 rounded-3xl shadow-sm border border-slate-100 flex items-center gap-4">
+              <div className="w-14 h-14 bg-purple-100 text-purple-600 rounded-2xl flex items-center justify-center shrink-0">
+                <Brain size={24} />
+              </div>
+              <div>
+                <h3 className="font-bold text-slate-800 text-base">Sofia IA</h3>
+                <p className="text-slate-500 text-xs mt-1 leading-snug">Conversa imediata de apoio</p>
               </div>
             </div>
 
@@ -233,8 +252,8 @@ export default function LandingPage({ onLogin, onShowTerms, onGuestLogin }: Land
                 <IdCard size={24} />
               </div>
               <div>
-                <h3 className="font-bold text-slate-800 text-base">Carteirinha digital</h3>
-                <p className="text-slate-500 text-xs mt-1 leading-snug">Identificação inteligente e suporte rápido em público</p>
+                <h3 className="font-bold text-slate-800 text-base">Carteirinha Digital</h3>
+                <p className="text-slate-500 text-xs mt-1 leading-snug">Suporte rápido em qualquer lugar</p>
               </div>
             </div>
 
@@ -244,60 +263,32 @@ export default function LandingPage({ onLogin, onShowTerms, onGuestLogin }: Land
               </div>
               <div>
                 <h3 className="font-bold text-slate-800 text-base">SOS Sensorial</h3>
-                <p className="text-slate-500 text-xs mt-1 leading-snug">Ajuda imediata com um toque durante crises no dia a dia</p>
-              </div>
-            </div>
-
-            <div className="bg-white p-5 rounded-3xl shadow-sm border border-slate-100 flex items-center gap-4">
-              <div className="w-14 h-14 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center shrink-0">
-                <Brain size={24} />
-              </div>
-              <div>
-                <h3 className="font-bold text-slate-800 text-base">Apoio Inicial com IA</h3>
-                <p className="text-slate-500 text-xs mt-1 leading-snug">Tecnologia acolhedora que entende os sinais precoces</p>
+                <p className="text-slate-500 text-xs mt-1 leading-snug">Ferramentas para crises agora</p>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* COMO FUNCIONA */}
+      {/* GALERIA E MATERIAIS */}
       <section className="py-12 bg-white px-6 border-y border-slate-100">
-        <div className="max-w-md mx-auto">
-          <h2 className="text-2xl font-black text-brand-dark mb-8">Como funciona</h2>
-          
-          <div className="space-y-6 relative before:absolute before:inset-0 before:ml-[1.15rem] before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-brand-primary before:via-brand-primary/50 before:to-transparent">
-            {/* Step 1 */}
-            <div className="relative flex items-start justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
-              <div className="flex items-center justify-center w-10 h-10 rounded-full border-4 border-white bg-brand-primary text-white font-bold shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 shadow-md">
-                1
-              </div>
-              <div className="w-[calc(100%-3rem)] md:w-[calc(50%-2.5rem)] p-4 rounded-2xl bg-slate-50 border border-slate-100 shadow-sm ml-4 border-l-4 border-l-brand-primary">
-                <h3 className="font-bold text-slate-800 mb-1">Responda 8 perguntas rápidas sobre seu filho</h3>
-              </div>
+         <div className="max-w-md mx-auto">
+            <h2 className="text-2xl font-black text-brand-dark mb-6">Galeria de Vídeos e Materiais</h2>
+            <div className="bg-slate-50 p-4 rounded-3xl border border-slate-100 shadow-sm flex items-center gap-4 cursor-pointer hover:bg-slate-100 transition-colors">
+               <div className="w-20 h-20 bg-brand-primary/10 rounded-2xl overflow-hidden shrink-0 relative">
+                  <img src="https://images.unsplash.com/photo-1610892955519-940026e6ef1a?auto=format&fit=crop&w=200&q=80" alt="Robô interativo" className="w-full h-full object-cover" />
+                  <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
+                    <div className="w-8 h-8 rounded-full bg-white/90 flex items-center justify-center">
+                      <div className="w-0 h-0 border-t-4 border-b-4 border-l-[6px] border-transparent border-l-brand-primary ml-1" />
+                    </div>
+                  </div>
+               </div>
+               <div>
+                  <h3 className="font-bold text-slate-800 text-sm">Biblioteca Desbloqueada</h3>
+                  <p className="text-slate-500 text-xs mt-1">E-books VIPs e vídeos curtos práticos para te guiar nesta jornada.</p>
+               </div>
             </div>
-
-            {/* Step 2 */}
-            <div className="relative flex items-start justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
-              <div className="flex items-center justify-center w-10 h-10 rounded-full border-4 border-white bg-brand-primary text-white font-bold shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 shadow-md">
-                2
-              </div>
-              <div className="w-[calc(100%-3rem)] md:w-[calc(50%-2.5rem)] p-4 rounded-2xl bg-slate-50 border border-slate-100 shadow-sm ml-4 border-l-4 border-l-brand-primary">
-                <h3 className="font-bold text-slate-800 mb-1">Receba seu mapa personalizado + orientação imediata</h3>
-              </div>
-            </div>
-
-            {/* Step 3 */}
-            <div className="relative flex items-start justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
-              <div className="flex items-center justify-center w-10 h-10 rounded-full border-4 border-white bg-brand-primary text-white font-bold shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 shadow-md">
-                3
-              </div>
-              <div className="w-[calc(100%-3rem)] md:w-[calc(50%-2.5rem)] p-4 rounded-2xl bg-slate-50 border border-slate-100 shadow-sm ml-4 border-l-4 border-l-brand-primary">
-                <h3 className="font-bold text-slate-800 mb-1">Conecte-se com famílias e profissionais da sua região</h3>
-              </div>
-            </div>
-          </div>
-        </div>
+         </div>
       </section>
 
       {/* DEPOIMENTOS */}
@@ -305,50 +296,54 @@ export default function LandingPage({ onLogin, onShowTerms, onGuestLogin }: Land
         <div className="max-w-md mx-auto">
           <div className="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 mb-4 relative">
             <div className="text-amber-400 mb-3 text-2xl">★★★★★</div>
-            <p className="text-slate-700 italic font-medium mb-4 text-sm leading-relaxed">
-              "O mapa me ajudou a entender meu filho em 1 semana. Algo que eu passei meses no Google sem conseguir. Obrigada!"
+            <p className="text-slate-800 font-bold text-sm mb-1">Primeiro contato visual!</p>
+            <p className="text-slate-600 font-medium mb-4 text-sm leading-relaxed">
+              "Hoje meu filho olhou nos meus olhos pela primeira vez. Chorei de alegria!"
             </p>
             <div className="flex items-center gap-3">
               <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=100&q=80" alt="Mãe avaliando" className="w-10 h-10 rounded-full object-cover" referrerPolicy="no-referrer" />
               <div>
-                <p className="text-sm font-bold text-slate-800">Juliana M.</p>
-                <p className="text-xs text-slate-500">Mãe de Porto Alegre - RS</p>
+                <p className="text-xs text-slate-500 font-medium">Mãe do RS</p>
               </div>
             </div>
           </div>
 
           <div className="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 relative">
             <div className="text-amber-400 mb-3 text-2xl">★★★★★</div>
-            <p className="text-slate-700 italic font-medium mb-4 text-sm leading-relaxed">
-              "Pela primeira vez não me senti julgada. A Sofia me escutou de madrugada quando eu estava chorando."
+            <p className="text-slate-600 font-medium mb-4 text-sm leading-relaxed">
+              "Sofia IA me ajudou quando eu estava exausta"
             </p>
             <div className="flex items-center gap-3">
               <img src="https://images.unsplash.com/photo-1531123897727-8f129e1eb1ef?auto=format&fit=crop&w=100&q=80" alt="Mãe avaliando" className="w-10 h-10 rounded-full object-cover" referrerPolicy="no-referrer" />
               <div>
-                <p className="text-sm font-bold text-slate-800">Camila R.</p>
-                <p className="text-xs text-slate-500">Mãe de Caxias do Sul - RS</p>
+                <p className="text-xs text-slate-500 font-medium">Mãe de Porto Alegre</p>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* FINAL FORTE CTA */}
-      <section className="py-16 bg-brand-primary px-6 text-center shadow-inner relative overflow-hidden">
+      {/* FINAL FORTE CTA - DOAÇÃO */}
+      <section className="py-16 bg-gradient-to-r from-brand-primary to-brand-dark px-6 text-center shadow-inner relative overflow-hidden">
         <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-5 rounded-full blur-[60px]"></div>
-        <div className="max-w-md mx-auto relative z-10">
-          <h2 className="text-[26px] font-black text-white mb-4 leading-tight drop-shadow-md">
-            Quer ajudar milhares de famílias brasileiras?
+        <div className="max-w-md mx-auto relative z-10 flex flex-col items-center">
+          
+          <div className="w-32 h-32 rounded-3xl bg-white p-2 mb-6 shadow-2xl rotate-[-3deg]">
+             <img src="https://images.unsplash.com/photo-1610892955519-940026e6ef1a?auto=format&fit=crop&w=300&q=80" alt="Robô" className="w-full h-full object-cover rounded-2xl" />
+          </div>
+
+          <h2 className="text-[24px] font-black text-white mb-2 leading-tight drop-shadow-md">
+            Support families with autism – Conecta TEA
           </h2>
           <p className="text-sky-100 text-sm mb-8 font-medium">
-            Doação única ou mensal • Seja investidor • Impacto direto no Brasil
+            Even R$ 5 makes a difference
           </p>
           
           <button
             onClick={() => setIsSupportModalOpen(true)}
-            className="w-full px-8 py-5 bg-[#FEA6CC] text-[#0F2F4A] rounded-2xl font-black text-lg shadow-xl shadow-[#FEA6CC]/20 hover:bg-pink-400 transition-all flex items-center justify-center gap-2"
+            className="w-full px-8 py-5 bg-gradient-to-r from-[#FEA6CC] to-pink-400 text-[#0F2F4A] rounded-2xl font-black text-lg shadow-xl shadow-[#FEA6CC]/20 hover:scale-[1.02] transition-all flex items-center justify-center gap-2"
           >
-            Apoiar o projeto agora <Heart size={20} className="fill-[#0F2F4A]" />
+            Apoiar famílias agora ❤️
           </button>
         </div>
       </section>
@@ -359,10 +354,7 @@ export default function LandingPage({ onLogin, onShowTerms, onGuestLogin }: Land
           onClose={() => setIsSupportModalOpen(false)} 
         />
         <div className="flex flex-col items-center gap-2 text-slate-400">
-          <p className="text-sm font-bold text-slate-500">© 2026 Conecta TEA</p>
-          <button onClick={onShowTerms} className="text-xs hover:text-brand-primary transition-colors underline">
-            Termos de Uso e Privacidade
-          </button>
+          <p className="text-xs font-bold text-slate-500">© 2026 Conecta TEA • Termos • Privacidade • Feito com ❤️ no Brasil</p>
         </div>
       </footer>
     </div>
