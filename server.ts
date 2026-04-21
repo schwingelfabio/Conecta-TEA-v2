@@ -13,7 +13,6 @@ import multer from "multer";
 import OpenAI from "openai";
 import { ElevenLabsClient } from "elevenlabs";
 import fs from "fs";
-import { startMordomoIA, logSystemError, runAnalysisAndReport } from "./mordomoIA.ts";
 import { trackMonetizationEvent, startMonetizationEngine } from "./monetizationEngine.ts";
 
 const firebaseConfig = JSON.parse(fs.readFileSync(new URL("./firebase-applet-config.json", import.meta.url), "utf-8"));
@@ -180,32 +179,6 @@ async function startServer() {
 
   app.use('/uploads', express.static('uploads'));
 
-  // API Route: Mordomo IA Error Logging
-  app.post("/api/mordomo/log", async (req, res) => {
-    try {
-      await logSystemError(db, req.body);
-      res.status(200).json({ success: true });
-    } catch (err) {
-      res.status(500).json({ error: "Failed to log error" });
-    }
-  });
-
-  // API Route: Trigger Mordomo IA Analysis Manually (for testing)
-  app.post("/api/mordomo/trigger", async (req, res) => {
-    try {
-      const logsData = req.body.logsData;
-      const result = await runAnalysisAndReport(db, logsData);
-      if (result && result.status === 'no_logs') {
-        res.status(200).json({ success: true, message: "Nenhum log pendente para análise. Sistema saudável!" });
-      } else {
-        res.status(200).json({ success: true, message: "Análise concluída. Verifique seu e-mail e o painel." });
-      }
-    } catch (err) {
-      console.error("Error triggering analysis:", err);
-      res.status(500).json({ error: "Failed to trigger analysis" });
-    }
-  });
-
   // API Route: Monetization Engine Logging
   app.post("/api/monetization/log", async (req, res) => {
     try {
@@ -330,8 +303,7 @@ async function startServer() {
     });
   }
 
-  // Start Mordomo IA background tasks
-  startMordomoIA(db);
+  // Start background tasks
   startMonetizationEngine(db);
 
   app.listen(PORT, "0.0.0.0", () => {

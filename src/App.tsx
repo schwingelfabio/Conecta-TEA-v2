@@ -61,7 +61,7 @@ import { useAiContentEngine } from './hooks/useAiContentEngine';
 
 export default function App() {
   const { t } = useTranslation();
-  const [activeTab, setActiveTab] = useState<'feed' | 'vip' | 'settings' | 'sos' | 'termos' | 'privacidade' | 'contato' | 'map' | 'videos' | 'sofia' | 'carteirinha' | 'triagem' | 'mordomo' | 'doacao' | 'ai-engine' | 'admin-engagement' | 'gallery' | 'rotina'>('triagem');
+  const [activeTab, setActiveTab] = useState<'feed' | 'vip' | 'settings' | 'sos' | 'termos' | 'privacidade' | 'contato' | 'map' | 'videos' | 'carteirinha' | 'triagem' | 'gallery' | 'rotina'>('triagem');
   const [user, setUser] = useState<FirebaseUser | null>(null);
   const [showLanguageModal, setShowLanguageModal] = useState(false);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
@@ -85,8 +85,6 @@ export default function App() {
     }
   }, [isGuest]);
 
-  useAiContentEngine(isAdmin);
-
   useEffect(() => {
     if (navRef.current) {
       const activeElement = navRef.current.querySelector(`[data-tab="${activeTab}"]`);
@@ -101,7 +99,7 @@ export default function App() {
     const urlParams = new URLSearchParams(window.location.search);
     const tabParam = urlParams.get('tab');
     
-    if (tabParam && ['feed', 'sofia', 'videos', 'triagem', 'vip', 'settings', 'carteirinha', 'sos', 'gallery', 'rotina'].includes(tabParam)) {
+    if (tabParam && ['feed', 'videos', 'triagem', 'vip', 'settings', 'carteirinha', 'sos', 'gallery', 'rotina'].includes(tabParam)) {
       setActiveTab(tabParam as any);
     }
 
@@ -345,13 +343,6 @@ export default function App() {
     switch (activeTab) {
       case 'feed':
         return <Suspense fallback={<div className="flex justify-center p-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-500"></div></div>}><Feed userProfile={userProfile} isAdmin={isAdmin} isVip={isVip} authReady={authReady} isGuest={isGuest} /></Suspense>;
-      case 'sofia':
-        return (
-          <div className="space-y-4">
-            <BackButton onClick={() => setActiveTab('feed')} />
-            <Suspense fallback={<div className="flex justify-center p-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-500"></div></div>}><SofiaIA isVip={isVip} /></Suspense>
-          </div>
-        );
       case 'videos':
         return (
           <div className="space-y-4">
@@ -400,34 +391,6 @@ export default function App() {
         return <Suspense fallback={<div className="flex justify-center p-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-500"></div></div>}><Privacidade onBack={() => setActiveTab('settings')} /></Suspense>;
       case 'contato':
         return <Suspense fallback={<div className="flex justify-center p-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-500"></div></div>}><Contato onBack={() => setActiveTab('settings')} /></Suspense>;
-      case 'mordomo':
-        return (
-          <div className="space-y-4">
-            <BackButton onClick={() => setActiveTab('feed')} />
-            {isSuperAdmin ? <Suspense fallback={<div className="flex justify-center p-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-500"></div></div>}><MordomoDashboard /></Suspense> : <Feed userProfile={userProfile} isAdmin={isAdmin} isVip={isVip} isGuest={isGuest} />}
-          </div>
-        );
-      case 'admin-engagement':
-        return (
-          <div className="space-y-4">
-            <BackButton onClick={() => setActiveTab('feed')} />
-            {isAdmin ? <AdminEngagementPanel /> : <Feed userProfile={userProfile} isAdmin={isAdmin} isVip={isVip} isGuest={isGuest} />}
-          </div>
-        );
-      case 'doacao':
-        return (
-          <div className="space-y-4">
-            <BackButton onClick={() => setActiveTab('feed')} />
-            <DonationPage />
-          </div>
-        );
-      case 'ai-engine':
-        return (
-          <div className="space-y-4">
-            <BackButton onClick={() => setActiveTab('feed')} />
-            {isAdmin ? <AiContentAdmin /> : <Feed userProfile={userProfile} isAdmin={isAdmin} isVip={isVip} isGuest={isGuest} />}
-          </div>
-        );
       case 'gallery':
         return (
           <div className="space-y-4">
@@ -475,7 +438,6 @@ export default function App() {
         {showOnboarding && <Onboarding onComplete={() => setShowOnboarding(false)} />}
         {(user || isGuest) && (
           <>
-            <FloatingSupportButton onClick={() => setActiveTab('doacao')} />
             <nav className="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-gray-100">
               <div className="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
                 <div className="flex items-center gap-2 cursor-pointer" onClick={() => setActiveTab('feed')}>
@@ -502,14 +464,6 @@ export default function App() {
                     <Home size={20} />
                     <span className="hidden sm:inline">{t('nav.communities')}</span>
                   </button>
-                  <button data-tab="doacao" onClick={() => setActiveTab('doacao')} className={`p-2 sm:px-4 sm:py-2 rounded-full flex items-center gap-2 transition-all shrink-0 ${activeTab === 'doacao' ? 'bg-emerald-100 text-emerald-700 font-bold' : 'hover:bg-gray-100 text-gray-600'}`}>
-                    <Heart size={20} />
-                    <span className="hidden sm:inline">Support</span>
-                  </button>
-                  <button data-tab="sofia" onClick={() => setActiveTab('sofia')} className={`p-2 sm:px-4 sm:py-2 rounded-full flex items-center gap-2 transition-all shrink-0 ${(activeTab as string) === 'sofia' ? 'bg-sky-100 text-sky-700 font-bold' : 'hover:bg-gray-100 text-gray-600'}`}>
-                    <MessageCircle size={20} />
-                    <span className="hidden sm:inline">Sofia IA</span>
-                  </button>
                   <button data-tab="videos" onClick={() => setActiveTab('videos')} className={`p-2 sm:px-4 sm:py-2 rounded-full flex items-center gap-2 transition-all shrink-0 ${(activeTab as string) === 'videos' ? 'bg-sky-100 text-sky-700 font-bold' : 'hover:bg-gray-100 text-gray-600'}`}>
                     <Video size={20} />
                     <span className="hidden sm:inline">{t('nav.videos')}</span>
@@ -530,12 +484,6 @@ export default function App() {
                     <Crown size={20} />
                     <span className="hidden sm:inline">{t('nav.vip')}</span>
                   </button>
-                  {isSuperAdmin && (
-                    <button data-tab="mordomo" onClick={() => setActiveTab('mordomo')} className={`p-2 sm:px-4 sm:py-2 rounded-full flex items-center gap-2 transition-all shrink-0 ${(activeTab as string) === 'mordomo' ? 'bg-indigo-100 text-indigo-700 font-bold' : 'hover:bg-gray-100 text-gray-600'}`}>
-                      <ShieldCheck size={20} />
-                      <span className="hidden sm:inline">Mordomo IA</span>
-                    </button>
-                  )}
                 </div>
 
                 <div className="flex items-center gap-2 sm:gap-3 shrink-0">
@@ -562,8 +510,6 @@ export default function App() {
                 </div>
               </div>
             </nav>
-
-            {showLanguageModal && <LanguageSelectorModal onClose={() => setShowLanguageModal(false)} />}
           </>
         )}
 

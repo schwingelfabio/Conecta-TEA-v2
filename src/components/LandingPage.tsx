@@ -124,13 +124,6 @@ export default function LandingPage({ onLogin, onShowTerms, onGuestLogin }: Land
             <div className="flex items-center justify-between bg-white/80 backdrop-blur-md p-3 rounded-2xl shadow-sm mb-6 border border-slate-100">
               <Logo size="sm" showText={false} className="w-8 h-8 focus:outline-none" />
               <div className="flex gap-4 text-slate-400">
-                 <Home size={20} />
-                 <Heart size={20} />
-                 <MessageCircle size={20} />
-                 <AlertTriangle size={20} className="text-rose-400" />
-              </div>
-              <div className="w-8 h-8 bg-slate-200 rounded-full overflow-hidden border border-slate-300">
-                <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=100&q=80" alt="Avatar" className="w-full h-full object-cover" />
               </div>
             </div>
 
@@ -208,7 +201,7 @@ export default function LandingPage({ onLogin, onShowTerms, onGuestLogin }: Land
           <div className="space-y-4">
             <div className="flex items-start gap-3 bg-slate-50 p-3 rounded-xl border border-slate-100">
               <div className="w-6 h-6 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center shrink-0 mt-0.5"><Check size={14} strokeWidth={3} /></div>
-              <p className="text-slate-700 text-sm font-semibold">Carteirinha Digital Oficial (exemplo da Victoria de Paula Ferreira Schwingel, Parobé/RS)</p>
+              <p className="text-slate-700 text-sm font-semibold">Carteirinha Digital Oficial (exemplo da Vic, Parobé/RS)</p>
             </div>
             <div className="flex items-start gap-3 bg-slate-50 p-3 rounded-xl border border-slate-100">
               <div className="w-6 h-6 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center shrink-0 mt-0.5"><Check size={14} strokeWidth={3} /></div>
@@ -236,7 +229,7 @@ export default function LandingPage({ onLogin, onShowTerms, onGuestLogin }: Land
                    <img src="https://images.unsplash.com/photo-1517672651691-24622a91b550?auto=format&fit=crop&w=100&q=80" alt="Criança" className="w-full h-full object-cover" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-brand-dark text-sm leading-tight">Victoria de Paula Ferreira Schwingel</h3>
+                  <h3 className="font-bold text-brand-dark text-sm leading-tight">Vic</h3>
                   <p className="text-slate-500 text-[11px] leading-snug">Parobé/RS</p>
                 </div>
                 <div className="ml-auto w-10 h-10 bg-slate-100 rounded-lg flex items-center justify-center shrink-0">
