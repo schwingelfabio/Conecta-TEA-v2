@@ -226,7 +226,7 @@ export default function LandingPage({ onLogin, onShowTerms, onGuestLogin }: Land
             <div className="bg-white p-5 rounded-3xl shadow-sm border border-slate-100 flex flex-col gap-4">
               <div className="flex items-center gap-3">
                 <div className="w-12 h-12 rounded-full overflow-hidden shrink-0 border-2 border-brand-primary">
-                   <img src="https://images.unsplash.com/photo-1517672651691-24622a91b550?auto=format&fit=crop&w=100&q=80" alt="Criança" className="w-full h-full object-cover" />
+                   <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=Vic&backgroundColor=b3e5fc" alt="Criança" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                 </div>
                 <div>
                   <h3 className="font-bold text-brand-dark text-sm leading-tight">Vic</h3>
@@ -248,7 +248,7 @@ export default function LandingPage({ onLogin, onShowTerms, onGuestLogin }: Land
               <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100">
                  <div className="flex items-center gap-2 mb-2">
                     <div className="w-8 h-8 rounded-full overflow-hidden shrink-0">
-                       <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=100&q=80" alt="User avatar" className="w-full h-full object-cover"/>
+                       <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=MaeRS&backgroundColor=f8bbd0" alt="User avatar" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                     </div>
                     <div>
                       <p className="text-xs font-bold text-slate-800">Mãe do RS</p>
@@ -289,7 +289,7 @@ export default function LandingPage({ onLogin, onShowTerms, onGuestLogin }: Land
               </h3>
               <div className="flex items-end gap-3 mt-1">
                  <div className="w-8 h-8 rounded-full overflow-hidden shrink-0 border border-slate-200">
-                    <img src="https://images.unsplash.com/photo-1610892955519-940026e6ef1a?auto=format&fit=crop&w=100&q=80" alt="Sofia Avatar" className="w-full h-full object-cover" />
+                    <img src="https://api.dicebear.com/7.x/bottts/svg?seed=Sofia&backgroundColor=f8bbd0" alt="Sofia Avatar" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                  </div>
                  <div className="bg-brand-primary text-white p-3 rounded-2xl rounded-bl-sm shadow-sm text-xs leading-relaxed max-w-[85%]">
                     Oi, eu sou a Sofia. Como você está se sentindo hoje?
@@ -311,7 +311,7 @@ export default function LandingPage({ onLogin, onShowTerms, onGuestLogin }: Land
               "Sofia IA me ouviu quando eu estava exausta às 3h da manhã."
             </p>
             <div className="flex items-center gap-3">
-              <img src="https://images.unsplash.com/photo-1531123897727-8f129e1eb1ef?auto=format&fit=crop&w=100&q=80" alt="Mãe avaliando" className="w-10 h-10 rounded-full object-cover" referrerPolicy="no-referrer" />
+              <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Elena&backgroundColor=b3e5fc" alt="Mãe avaliando" className="w-10 h-10 rounded-full object-cover" referrerPolicy="no-referrer" />
               <div>
                 <p className="text-xs text-slate-500 font-medium">Elena Rodriguez</p>
               </div>
