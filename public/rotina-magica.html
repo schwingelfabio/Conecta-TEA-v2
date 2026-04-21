@@ -255,6 +255,75 @@
             background-color: #ff4d6d;
         }
 
+        /* Animações de Gamificação */
+        .floating-text {
+            position: fixed;
+            color: #ff9f1c;
+            font-weight: 900;
+            font-size: 2rem;
+            pointer-events: none;
+            animation: floatUp 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            z-index: 200;
+            text-shadow: 0 4px 0px rgba(0,0,0,0.1), 0px 4px 15px rgba(255, 159, 28, 0.5);
+        }
+        @keyframes floatUp {
+            0% { transform: translateY(0) scale(0.5); opacity: 0; }
+            20% { transform: translateY(-30px) scale(1.2); opacity: 1; }
+            100% { transform: translateY(-100px) scale(0.8); opacity: 0; }
+        }
+
+        .particle {
+            position: fixed;
+            pointer-events: none;
+            animation: popOut 0.7s ease-out forwards;
+            z-index: 150;
+            font-size: 1.5rem;
+        }
+        @keyframes popOut {
+            0% { transform: translate(0, 0) scale(0) rotate(0deg); opacity: 1; }
+            100% { transform: translate(var(--tx), var(--ty)) scale(1.2) rotate(var(--rot)); opacity: 0; }
+        }
+
+        .action-btn {
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 0px #70a6d4; /* Efeito botão 3D de jogo */
+        }
+
+        .action-btn:active {
+            transform: translateY(4px);
+            box-shadow: 0 0px 0px #70a6d4;
+        }
+
+        .action-btn.completed {
+            background-color: #2ecc71 !important;
+            transform: scale(0.98) translateY(4px) !important;
+            box-shadow: 0 0px 0px #27ae60 !important;
+            color: #fff;
+            animation: pulse-green 0.5s;
+        }
+        
+        @keyframes pulse-green {
+            0% { box-shadow: 0 0 0 0 rgba(46, 204, 113, 0.7); }
+            70% { box-shadow: 0 0 0 15px rgba(46, 204, 113, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(46, 204, 113, 0); }
+        }
+
+        .progress-bar {
+            position: relative;
+        }
+        .progress-bar::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transform: translateX(-100%);
+            animation: progress-shine 2s infinite;
+        }
+        @keyframes progress-shine {
+            100% { transform: translateX(100%); }
+        }
+
         @media (max-width: 480px) {
             .container {
                 padding: 20px;
@@ -307,13 +376,13 @@
         <div id="feedback-msg"></div>
 
         <div class="actions">
-            <button class="action-btn" onclick="completeTask(this)">
+            <button class="action-btn" data-label="Escovar os dentes" onclick="completeTask(this, event)">
                 <span>🏠</span> Escovar os dentes
             </button>
-            <button class="action-btn" onclick="completeTask(this)">
+            <button class="action-btn" data-label="Ir para escola" onclick="completeTask(this, event)">
                 <span>🏫</span> Ir para escola
             </button>
-            <button class="action-btn" onclick="completeTask(this)">
+            <button class="action-btn" data-label="Brincar no parquinho" onclick="completeTask(this, event)">
                 <span>🎠</span> Brincar no parquinho
             </button>
         </div>
@@ -340,22 +409,79 @@
         const totalTasks = 3;
         let feedbackTimeout;
 
-        function completeTask(btn) {
-            if (points < totalTasks) {
-                btn.disabled = true;
-                btn.style.opacity = '0.7';
-                
-                points += 1;
-                
-                triggerCheer();
-                updateUI();
-                showFeedback("Muito bem! Rotina concluída");
+        function completeTask(btn, event) {
+            if (btn.classList.contains('completed')) return;
+            
+            // Haptic feedback (vibração tátil mobile) - Adultos amam isso!
+            if (navigator.vibrate) navigator.vibrate(50); 
 
-                if (points >= totalTasks) {
-                    setTimeout(() => {
-                        document.getElementById('success-overlay').classList.add('active');
-                    }, 800);
-                }
+            btn.classList.add('completed');
+            const originalLabel = btn.getAttribute('data-label');
+            btn.innerHTML = `<span>✅</span> ${originalLabel} (Feito!)`;
+            
+            points += 1;
+            
+            let rect = btn.getBoundingClientRect();
+            let x = event ? event.clientX : rect.left + rect.width / 2;
+            let y = event ? event.clientY : rect.top + rect.height / 2;
+            
+            createParticleBurst(x, y);
+            showFloatingText(x, y, "+1 ⭐");
+            
+            triggerCheer();
+            updateUI();
+            
+            const randomFeedbacks = ["Muito bem!", "Excelente!", "Que incrível!", "Continue assim! ✨"];
+            showFeedback(randomFeedbacks[Math.floor(Math.random() * randomFeedbacks.length)]);
+
+            if (points >= totalTasks) {
+                setTimeout(() => {
+                    document.getElementById('success-overlay').classList.add('active');
+                    celebrationConfetti();
+                }, 800);
+            }
+        }
+
+        function createParticleBurst(x, y) {
+            const emojis = ['✨', '⭐', '🌟', '🎉', '💙'];
+            for(let i=0; i<8; i++) {
+                let p = document.createElement('div');
+                p.innerText = emojis[Math.floor(Math.random() * emojis.length)];
+                p.className = 'particle';
+                p.style.left = x + 'px';
+                p.style.top = y + 'px';
+                
+                let tx = (Math.random() - 0.5) * 150;
+                let ty = (Math.random() - 0.5) * 150;
+                let rot = (Math.random() - 0.5) * 360;
+                
+                p.style.setProperty('--tx', `${tx}px`);
+                p.style.setProperty('--ty', `${ty}px`);
+                p.style.setProperty('--rot', `${rot}deg`);
+                
+                document.body.appendChild(p);
+                setTimeout(() => p.remove(), 700);
+            }
+        }
+
+        function showFloatingText(x, y, text) {
+            let el = document.createElement('div');
+            el.className = 'floating-text';
+            el.innerText = text;
+            el.style.left = (x - 40) + 'px';
+            el.style.top = (y - 20) + 'px';
+            document.body.appendChild(el);
+            setTimeout(() => el.remove(), 1000);
+        }
+
+        function celebrationConfetti() {
+            if (navigator.vibrate) navigator.vibrate([100, 50, 100, 50, 300]);
+            let w = window.innerWidth;
+            let h = window.innerHeight;
+            for(let i=0; i<30; i++) {
+               setTimeout(() => {
+                   createParticleBurst(Math.random() * w, Math.random() * h);
+               }, i * 60);
             }
         }
 
@@ -363,11 +489,9 @@
             const imgSofia = document.getElementById('img-sofia');
             const imgTheo = document.getElementById('img-theo');
             
-            // Retrigger animation
             imgSofia.classList.remove('cheer');
             imgTheo.classList.remove('cheer');
             
-            // Small delay to ensure CSS re-registers the class addition
             setTimeout(() => {
                 imgSofia.classList.add('cheer');
                 imgTheo.classList.add('cheer');
@@ -379,6 +503,7 @@
             const displayProgress = Math.round((points / totalTasks) * 100);
             document.getElementById('percent').innerText = displayProgress + "%";
             document.getElementById('progress-bar').style.width = displayProgress + "%";
+            document.getElementById('progress-bar').style.backgroundColor = displayProgress === 100 ? '#2ecc71' : 'var(--progress-fill)';
         }
 
         function showFeedback(msg) {
@@ -399,6 +524,7 @@
         function resetGame() {
             points = 0;
             updateUI();
+            document.getElementById('progress-bar').style.backgroundColor = 'var(--progress-fill)';
             document.getElementById('success-overlay').classList.remove('active');
             
             const feedback = document.getElementById('feedback-msg');
@@ -407,9 +533,14 @@
             
             const buttons = document.querySelectorAll('.action-btn');
             buttons.forEach(btn => {
+                btn.classList.remove('completed');
                 btn.disabled = false;
-                btn.style.opacity = '1';
-                btn.style.transform = 'none';
+                // Restaurar texto original:
+                const originalLabel = btn.getAttribute('data-label');
+                let icon = '🏠';
+                if(originalLabel === 'Ir para escola') icon = '🏫';
+                if(originalLabel === 'Brincar no parquinho') icon = '🎠';
+                btn.innerHTML = `<span>${icon}</span> ${originalLabel}`;
             });
             
             const imgSofia = document.getElementById('img-sofia');
