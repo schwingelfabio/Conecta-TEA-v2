@@ -61,7 +61,7 @@ import { useAiContentEngine } from './hooks/useAiContentEngine';
 
 export default function App() {
   const { t } = useTranslation();
-  const [activeTab, setActiveTab] = useState<'feed' | 'vip' | 'settings' | 'sos' | 'termos' | 'privacidade' | 'contato' | 'map' | 'videos' | 'sofia' | 'carteirinha' | 'triagem' | 'mordomo' | 'doacao' | 'ai-engine' | 'admin-engagement' | 'gallery'>('triagem');
+  const [activeTab, setActiveTab] = useState<'feed' | 'vip' | 'settings' | 'sos' | 'termos' | 'privacidade' | 'contato' | 'map' | 'videos' | 'sofia' | 'carteirinha' | 'triagem' | 'mordomo' | 'doacao' | 'ai-engine' | 'admin-engagement' | 'gallery' | 'rotina'>('triagem');
   const [user, setUser] = useState<FirebaseUser | null>(null);
   const [showLanguageModal, setShowLanguageModal] = useState(false);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
@@ -98,6 +98,13 @@ export default function App() {
 
   useEffect(() => {
     const path = window.location.pathname;
+    const urlParams = new URLSearchParams(window.location.search);
+    const tabParam = urlParams.get('tab');
+    
+    if (tabParam && ['feed', 'sofia', 'videos', 'triagem', 'vip', 'settings', 'carteirinha', 'sos', 'gallery', 'rotina'].includes(tabParam)) {
+      setActiveTab(tabParam as any);
+    }
+
     if (path.startsWith('/emergencia/')) {
       const userId = path.split('/emergencia/')[1];
       if (userId) {
@@ -429,6 +436,17 @@ export default function App() {
             <Suspense fallback={<div className="flex justify-center p-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-500"></div></div>}><GalleryPage /></Suspense>
           </div>
         );
+      case 'rotina':
+        return (
+          <div className="space-y-4 h-[80vh]">
+            <BackButton onClick={() => setActiveTab('feed')} />
+            <iframe 
+              src="/rotina-magica.html" 
+              className="w-full h-full border-0 rounded-3xl shadow-sm" 
+              title="Sofia & Theo - Rotina Mágica"
+            />
+          </div>
+        );
       default:
         return <Suspense fallback={<div className="flex justify-center p-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-500"></div></div>}><Feed userProfile={userProfile} isAdmin={isAdmin} isVip={isVip} isGuest={isGuest} /></Suspense>;
     }
@@ -503,6 +521,10 @@ export default function App() {
                   <button data-tab="gallery" onClick={() => setActiveTab('gallery')} className={`p-2 sm:px-4 sm:py-2 rounded-full flex items-center gap-2 transition-all shrink-0 ${(activeTab as string) === 'gallery' ? 'bg-sky-100 text-sky-700 font-bold' : 'hover:bg-gray-100 text-gray-600'}`}>
                     <Camera size={20} />
                     <span className="hidden sm:inline">{t('nav.gallery')}</span>
+                  </button>
+                  <button data-tab="rotina" onClick={() => setActiveTab('rotina')} className={`p-2 sm:px-4 sm:py-2 rounded-full flex items-center gap-2 transition-all shrink-0 ${(activeTab as string) === 'rotina' ? 'bg-purple-100 text-purple-700 font-bold' : 'hover:bg-gray-100 text-gray-600'}`}>
+                    <PlayCircle size={20} />
+                    <span className="hidden sm:inline">Rotina Mágica</span>
                   </button>
                   <button data-tab="vip" onClick={() => setActiveTab('vip')} className={`p-2 sm:px-4 sm:py-2 rounded-full flex items-center gap-2 transition-all shrink-0 ${(activeTab as string) === 'vip' ? 'bg-amber-100 text-amber-700 font-bold' : 'hover:bg-gray-100 text-gray-600'}`}>
                     <Crown size={20} />
