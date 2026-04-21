@@ -441,10 +441,15 @@ export default function App() {
             <nav className="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-gray-100">
               <div className="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
                 <div className="flex items-center gap-2 cursor-pointer" onClick={() => setActiveTab('feed')}>
-                  <Logo size="sm" showText={false} className="w-10 h-10 border border-slate-100 rounded-xl" />
-                  <h1 className="text-xl font-black tracking-tight hidden sm:block text-brand-dark">
-                    Conecta <span className="text-brand-primary">TEA</span>
-                  </h1>
+                  <Logo size="sm" showText={false} className="w-10 h-10 border border-slate-100 rounded-xl shrink-0" />
+                  <div className="hidden sm:flex flex-col items-start justify-center">
+                    <h1 className="text-xl font-black tracking-tight text-[#0F2F4A] leading-none">
+                      Conecta TEA <span className="text-[#0EA5E9]">IA</span>
+                    </h1>
+                    <span className="text-[10px] uppercase tracking-wider font-bold text-slate-400 mt-0.5">
+                      Guardião Familiar
+                    </span>
+                  </div>
                 </div>
 
                 <div ref={navRef} className="flex items-center gap-1 sm:gap-4 overflow-x-auto no-scrollbar">

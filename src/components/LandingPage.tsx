@@ -121,9 +121,15 @@ export default function LandingPage({ onLogin, onShowTerms, onGuestLogin }: Land
             transition={{ duration: 0.5 }}
           >
             {/* Fake NavBar just for aesthetic visualization */}
-            <div className="flex items-center justify-between bg-white/80 backdrop-blur-md p-3 rounded-2xl shadow-sm mb-6 border border-slate-100">
-              <Logo size="sm" showText={false} className="w-8 h-8 focus:outline-none" />
-              <div className="flex gap-4 text-slate-400">
+            <div className="flex items-center bg-white/90 backdrop-blur-md px-4 py-3 rounded-2xl shadow-sm mb-6 border border-slate-100/80">
+              <Logo size="sm" showText={false} className="w-8 h-8 focus:outline-none shrink-0" />
+              <div className="ml-3 flex flex-col items-start justify-center">
+                <span className="text-lg font-black tracking-tight text-[#0F2F4A] leading-none">
+                  Conecta TEA <span className="text-[#0EA5E9]">IA</span>
+                </span>
+                <span className="text-[10px] uppercase tracking-wider font-bold text-slate-400 mt-0.5">
+                  Guardião Familiar
+                </span>
               </div>
             </div>
 
@@ -226,7 +232,7 @@ export default function LandingPage({ onLogin, onShowTerms, onGuestLogin }: Land
             <div className="bg-white p-5 rounded-3xl shadow-sm border border-slate-100 flex flex-col gap-4">
               <div className="flex items-center gap-3">
                 <div className="w-12 h-12 rounded-full overflow-hidden shrink-0 border-2 border-brand-primary">
-                   <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=Vic&backgroundColor=b3e5fc" alt="Criança" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                   <img src="https://api.dicebear.com/7.x/lorelei/svg?seed=Victoria&backgroundColor=f8bbd0" alt="Criança" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                 </div>
                 <div>
                   <h3 className="font-bold text-brand-dark text-sm leading-tight">Vic</h3>
@@ -288,8 +294,8 @@ export default function LandingPage({ onLogin, onShowTerms, onGuestLogin }: Land
                  Sofia IA
               </h3>
               <div className="flex items-end gap-3 mt-1">
-                 <div className="w-8 h-8 rounded-full overflow-hidden shrink-0 border border-slate-200">
-                    <img src="https://api.dicebear.com/7.x/bottts/svg?seed=Sofia&backgroundColor=f8bbd0" alt="Sofia Avatar" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                 <div className="w-8 h-8 rounded-full overflow-hidden shrink-0 border border-slate-200 bg-purple-100">
+                    <img src="https://api.dicebear.com/7.x/micah/svg?seed=SofiaVirtualAI&backgroundColor=e879f9&baseColor=fbcfe8" alt="Sofia Avatar" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                  </div>
                  <div className="bg-brand-primary text-white p-3 rounded-2xl rounded-bl-sm shadow-sm text-xs leading-relaxed max-w-[85%]">
                     Oi, eu sou a Sofia. Como você está se sentindo hoje?
@@ -311,7 +317,7 @@ export default function LandingPage({ onLogin, onShowTerms, onGuestLogin }: Land
               "Sofia IA me ouviu quando eu estava exausta às 3h da manhã."
             </p>
             <div className="flex items-center gap-3">
-              <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Elena&backgroundColor=b3e5fc" alt="Mãe avaliando" className="w-10 h-10 rounded-full object-cover" referrerPolicy="no-referrer" />
+              <img src="https://api.dicebear.com/7.x/personas/svg?seed=ElenaMommy&backgroundColor=b3e5fc" alt="Mãe avaliando" className="w-10 h-10 rounded-full object-cover" referrerPolicy="no-referrer" />
               <div>
                 <p className="text-xs text-slate-500 font-medium">Elena Rodriguez</p>
               </div>

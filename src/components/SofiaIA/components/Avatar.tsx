@@ -44,7 +44,7 @@ export const Avatar = ({ state }: AvatarProps) => {
         transition={{ duration: 0.5 }}
       >
         <img
-          src="https://picsum.photos/seed/sofia/500/500"
+          src="https://api.dicebear.com/7.x/micah/svg?seed=SofiaVirtualAI&backgroundColor=e879f9&baseColor=fbcfe8"
           alt="Sofia IA Avatar"
           className="w-full h-full object-cover"
           referrerPolicy="no-referrer"

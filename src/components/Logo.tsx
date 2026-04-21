@@ -45,12 +45,12 @@ export default function Logo({ className = '', size = 'md', showText = true }: L
       
       {/* Logo Text */}
       {showText && (
-        <div className="text-center mt-3 flex flex-col items-center">
-          <span className={`font-black text-brand-dark tracking-tight leading-none ${d.text}`}>
-            Conecta TEA
+        <div className="text-center mt-3 flex flex-col items-center justify-center">
+          <span className={`font-black tracking-tight text-[#0F2F4A] leading-none ${d.text}`}>
+            Conecta TEA <span className="text-[#0EA5E9]">IA</span>
           </span>
-          <span className={`font-medium text-brand-primary tracking-wide mt-1 ${d.subtext}`}>
-            Triagem TEA IA
+          <span className={`uppercase tracking-wider font-bold text-slate-400 mt-1 ${d.subtext}`}>
+            Guardião Familiar
           </span>
         </div>
       )}
