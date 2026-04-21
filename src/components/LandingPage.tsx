@@ -238,8 +238,8 @@ export default function LandingPage({ onLogin, onShowTerms, onGuestLogin }: Land
                   <h3 className="font-bold text-brand-dark text-sm leading-tight">Vic</h3>
                   <p className="text-slate-500 text-[11px] leading-snug">Parobé/RS</p>
                 </div>
-                <div className="ml-auto w-10 h-10 bg-slate-100 rounded-lg flex items-center justify-center shrink-0">
-                  <div className="w-6 h-6 border-2 border-slate-400 border-dashed rounded-sm"></div>
+                <div className="ml-auto w-10 h-10 bg-slate-100 rounded-lg flex items-center justify-center shrink-0 p-1 border border-slate-200">
+                  <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://conectatea.app/vic" alt="QR Code" className="w-full h-full mix-blend-multiply" referrerPolicy="no-referrer" />
                 </div>
               </div>
               <div className="bg-sky-50 text-sky-700 text-[11px] font-bold px-3 py-2 rounded-xl text-center">Carteirinha Digital Oficial</div>
@@ -335,8 +335,11 @@ export default function LandingPage({ onLogin, onShowTerms, onGuestLogin }: Land
              <Puzzle size={48} className="fill-pink-500" />
           </div>
 
-          <p className="text-slate-800 text-[18px] mb-8 font-black leading-tight max-w-[250px]">
-             Even R$ 5 faz diferença para outra família brasileira
+          <p 
+            className="text-slate-800 text-[18px] mb-8 font-black leading-tight max-w-[280px] cursor-pointer hover:text-pink-600 transition-colors"
+            onClick={() => setIsSupportModalOpen(true)}
+          >
+             Qualquer valor pode fazer a diferença. Clique aqui para doar.
           </p>
           
           <button

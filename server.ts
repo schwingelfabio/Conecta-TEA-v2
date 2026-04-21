@@ -24,15 +24,27 @@ const databaseId = firebaseConfig.firestoreDatabaseId || '(default)';
 async function initAdmin() {
   if (!admin.apps.length) {
     try {
-      // Initialize with explicit project ID if available, otherwise use ADC
       const options: admin.AppOptions = {};
-      if (projectId) {
+      
+      const saKeyStr = process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
+      if (saKeyStr) {
+        try {
+          const serviceAccount = JSON.parse(saKeyStr);
+          options.credential = admin.credential.cert(serviceAccount);
+          console.log('[Server] Using explicit FIREBASE_SERVICE_ACCOUNT_KEY for Admin SDK.');
+        } catch (e) {
+          console.error('[Server] Failed to parse FIREBASE_SERVICE_ACCOUNT_KEY. Is it valid JSON?', e);
+        }
+      } else {
+        console.warn('[Server] WARNING: FIREBASE_SERVICE_ACCOUNT_KEY is not set. Falling back to Application Default Credentials (ADC). If you are using a custom Firebase project, you will likely get PERMISSION_DENIED errors.');
+      }
+
+      if (projectId && !options.credential) {
         options.projectId = projectId;
       }
       
       admin.initializeApp(options);
       console.log(`[Server] Firebase Admin initialized. Project: ${admin.app().options.projectId || 'ADC'}`);
-      console.log(`[Server] Admin app options:`, JSON.stringify(admin.app().options));
     } catch (error) {
       console.error('[Server] Firebase Admin initialization failed:', error);
     }
@@ -54,6 +66,11 @@ try {
 
 // Test connection and provide helpful error message for PERMISSION_DENIED
 async function testFirestoreConnection() {
+  if (!process.env.FIREBASE_SERVICE_ACCOUNT_KEY) {
+    console.warn('[Server] Skipping Firestore connection test because FIREBASE_SERVICE_ACCOUNT_KEY is missing. Admin features (like Stripe webhooks) may fail with PERMISSION_DENIED until configured.');
+    return;
+  }
+
   try {
     console.log(`[Server] Testing Firestore connection for project: ${admin.app().options.projectId}, database: ${databaseId}...`);
     // Use a simple write/read test
@@ -88,7 +105,10 @@ async function testFirestoreConnection() {
 await testFirestoreConnection();
 
 async function initializeSystemData() {
-  if (!projectId) return;
+  if (!projectId || !process.env.FIREBASE_SERVICE_ACCOUNT_KEY) {
+    console.warn('[Server] Skipping system data initialization because FIREBASE_SERVICE_ACCOUNT_KEY is missing.');
+    return;
+  }
 
   try {
     const ADMIN_EMAILS = [

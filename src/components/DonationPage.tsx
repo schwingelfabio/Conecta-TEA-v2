@@ -48,7 +48,12 @@ const DonationPage = () => {
             'buy-button-id': "buy_btn_1TGRepJoBWafcL0qbT2pOLpH",
             'publishable-key': "pk_live_51TFiJBJoBWafcL0qGp8gLIvB2t0wN8G4RsIXhxOfQurbrfGJqQmVOrve2bljMVwfLUP17WV1o5xAfNU3UUaiO09M00rjKTixzM"
           } as any)}
-          <p className="mt-4 text-center text-sm text-sky-600">Even $5 makes a difference</p>
+          <p 
+            className="mt-4 text-center text-sm text-sky-600 font-medium cursor-pointer hover:underline"
+            onClick={() => window.open(i18n.language === 'en' ? 'https://buy.stripe.com/28E9AU1fH3zobvWfdx2wU01' : 'https://buy.stripe.com/cNi9AU4rT5HwfMc3uP2wU05', '_blank')}
+          >
+            {i18n.language === 'en' ? 'Any amount makes a difference. Click here to donate.' : i18n.language === 'es' ? 'Cualquier cantidad hace la diferencia. Haga clic aquí para donar.' : 'Qualquer valor pode fazer a diferença. Clique aqui para doar.'}
+          </p>
         </div>
       </motion.div>
 
