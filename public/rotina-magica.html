@@ -309,6 +309,18 @@
             100% { box-shadow: 0 0 0 0 rgba(46, 204, 113, 0); }
         }
 
+        @keyframes popCheck {
+            0% { transform: scale(0) rotate(-45deg); opacity: 0; }
+            70% { transform: scale(1.5) rotate(10deg); opacity: 1; }
+            100% { transform: scale(1) rotate(0deg); opacity: 1; }
+        }
+        
+        .check-anim {
+            display: inline-block;
+            animation: popCheck 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            margin-right: 5px;
+        }
+
         .progress-bar {
             position: relative;
         }
@@ -408,16 +420,74 @@
         let points = 0;
         const totalTasks = 3;
         let feedbackTimeout;
+        let audioCtx;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+
+        function playSuccessChime() {
+            try {
+                initAudio();
+                const oscillator = audioCtx.createOscillator();
+                const gainNode = audioCtx.createGain();
+                
+                oscillator.type = 'sine';
+                oscillator.frequency.setValueAtTime(587.33, audioCtx.currentTime); // D5
+                oscillator.frequency.exponentialRampToValueAtTime(1174.66, audioCtx.currentTime + 0.1); // D6
+                
+                gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
+                gainNode.gain.linearRampToValueAtTime(0.2, audioCtx.currentTime + 0.05);
+                gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.5);
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+                
+                oscillator.start();
+                oscillator.stop(audioCtx.currentTime + 0.5);
+            } catch (e) { console.log('Audio not supported', e); }
+        }
+
+        function playVictoryMelody() {
+             try {
+                 initAudio();
+                 const notes = [523.25, 659.25, 783.99, 1046.50]; // Acorde C maior
+                 notes.forEach((freq, i) => {
+                     setTimeout(() => {
+                        const osc = audioCtx.createOscillator();
+                        const gain = audioCtx.createGain();
+                        osc.type = 'sine';
+                        osc.frequency.value = freq;
+                        
+                        gain.gain.setValueAtTime(0, audioCtx.currentTime);
+                        gain.gain.linearRampToValueAtTime(0.2, audioCtx.currentTime + 0.05);
+                        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.4);
+                        
+                        osc.connect(gain);
+                        gain.connect(audioCtx.destination);
+                        osc.start();
+                        osc.stop(audioCtx.currentTime + 0.4);
+                     }, i * 120);
+                 });
+             } catch (e) { console.log('Audio not supported', e); }
+        }
 
         function completeTask(btn, event) {
             if (btn.classList.contains('completed')) return;
             
             // Haptic feedback (vibração tátil mobile) - Adultos amam isso!
             if (navigator.vibrate) navigator.vibrate(50); 
+            
+            playSuccessChime();
 
             btn.classList.add('completed');
             const originalLabel = btn.getAttribute('data-label');
-            btn.innerHTML = `<span>✅</span> ${originalLabel} (Feito!)`;
+            btn.innerHTML = `<span class="check-anim">✅</span> ${originalLabel} <span class="check-anim" style="font-size: 0.8em; margin-left: 5px;">(Feito!)</span>`;
             
             points += 1;
             
@@ -475,6 +545,7 @@
         }
 
         function celebrationConfetti() {
+            playVictoryMelody();
             if (navigator.vibrate) navigator.vibrate([100, 50, 100, 50, 300]);
             let w = window.innerWidth;
             let h = window.innerHeight;
