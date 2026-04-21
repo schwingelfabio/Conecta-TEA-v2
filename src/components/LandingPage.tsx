@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Users, ShieldCheck, Crown, Heart, Zap, ExternalLink, X, Copy, Check, ArrowRight, MapPin, Activity, BookOpen, Search, Shield, Smartphone, HeartHandshake, Home, MessageCircle, AlertTriangle, Brain, IdCard } from 'lucide-react';
+import { Check, Copy, ExternalLink, X, Users, Heart, Brain, Puzzle } from 'lucide-react';
 import AuthForm from './AuthForm';
 import LanguageSelector from './LanguageSelector';
 import Logo from './Logo';
@@ -307,20 +307,6 @@ export default function LandingPage({ onLogin, onShowTerms, onGuestLogin }: Land
           <h2 className="text-2xl font-black text-brand-dark mb-8">Famílias reais já estão aqui</h2>
           <div className="bg-slate-50 p-6 rounded-3xl shadow-sm border border-slate-100 mb-4 relative">
             <div className="text-amber-400 mb-3 text-2xl">★★★★★</div>
-            <p className="text-slate-800 font-bold text-sm mb-1">Primeiro contato visual!</p>
-            <p className="text-slate-600 font-medium mb-4 text-sm leading-relaxed">
-              "Hoje meu filho olhou nos meus olhos pela primeira vez."
-            </p>
-            <div className="flex items-center gap-3">
-              <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=100&q=80" alt="Mãe avaliando" className="w-10 h-10 rounded-full object-cover" referrerPolicy="no-referrer" />
-              <div>
-                <p className="text-xs text-slate-500 font-medium">Mãe do RS</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-slate-50 p-6 rounded-3xl shadow-sm border border-slate-100 relative">
-            <div className="text-amber-400 mb-3 text-2xl">★★★★★</div>
             <p className="text-slate-600 font-medium mb-4 text-sm leading-relaxed">
               "Sofia IA me ouviu quando eu estava exausta às 3h da manhã."
             </p>
@@ -339,8 +325,8 @@ export default function LandingPage({ onLogin, onShowTerms, onGuestLogin }: Land
         <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-40 rounded-full blur-[60px]"></div>
         <div className="max-w-md mx-auto relative z-10 flex flex-col items-center">
           
-          <div className="w-24 h-24 rounded-3xl bg-white p-1 mb-4 shadow-lg rotate-[3deg]">
-             <img src="https://images.unsplash.com/photo-1610892955519-940026e6ef1a?auto=format&fit=crop&w=200&q=80" alt="Robô" className="w-full h-full object-cover rounded-2xl" />
+          <div className="w-24 h-24 rounded-3xl bg-white p-4 mb-4 shadow-lg rotate-[3deg] flex items-center justify-center text-pink-500 border-4 border-[#FEA6CC]/30">
+             <Puzzle size={48} className="fill-pink-500" />
           </div>
 
           <p className="text-slate-800 text-[18px] mb-8 font-black leading-tight max-w-[250px]">

@@ -356,7 +356,10 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
           });
         });
       } else {
-        setPosts(combinedPosts);
+        const uniqueCombined = combinedPosts.filter((post, index, self) => 
+            index === self.findIndex((p) => p.id === post.id)
+        );
+        setPosts(uniqueCombined);
       }
       
       if (validPosts.length === 0 && !isLoadMore) {
