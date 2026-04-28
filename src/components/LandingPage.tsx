@@ -85,7 +85,6 @@ export default function LandingPage({ onLogin, onShowTerms, onGuestLogin }: Land
   const [showAuthForm, setShowAuthForm] = useState(false);
   const [isSupportModalOpen, setIsSupportModalOpen] = useState(false);
   const [showSticky, setShowSticky] = useState(false);
-
   const [isEntering, setIsEntering] = useState(false);
 
   useEffect(() => {
@@ -94,6 +93,17 @@ export default function LandingPage({ onLogin, onShowTerms, onGuestLogin }: Land
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  useEffect(() => {
+    try {
+      if (typeof window !== 'undefined') {
+        const adsbygoogle = (window as any).adsbygoogle || [];
+        adsbygoogle.push({});
+      }
+    } catch (e) {
+      console.error("AdSense error:", e);
+    }
   }, []);
 
   const handleMainAction = async () => {
@@ -239,7 +249,7 @@ export default function LandingPage({ onLogin, onShowTerms, onGuestLogin }: Land
                   <p className="text-slate-500 text-[11px] leading-snug">Parobé/RS</p>
                 </div>
                 <div className="ml-auto w-10 h-10 bg-slate-100 rounded-lg flex items-center justify-center shrink-0 p-1 border border-slate-200">
-                  <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://conectatea.app/vic" alt="QR Code" className="w-full h-full mix-blend-multiply" referrerPolicy="no-referrer" />
+                  <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://conectateaia.com.br/vic" alt="QR Code" className="w-full h-full mix-blend-multiply" referrerPolicy="no-referrer" />
                 </div>
               </div>
               <div className="bg-sky-50 text-sky-700 text-[11px] font-bold px-3 py-2 rounded-xl text-center">Carteirinha Digital Oficial</div>
@@ -350,6 +360,15 @@ export default function LandingPage({ onLogin, onShowTerms, onGuestLogin }: Land
           </button>
         </div>
       </section>
+
+      {/* Bloco de Anúncios Google Ads Inferior */}
+      <div className="w-full flex justify-center py-6 bg-slate-50 border-t border-slate-100">
+        <ins className="adsbygoogle"
+             style={{ display: 'block', width: '100%', maxWidth: '728px', minHeight: '90px', textAlign: 'center' }}
+             data-ad-client="ca-pub-6367623066928336"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+      </div>
 
       <footer className="py-8 bg-white text-center pb-28 md:pb-8 border-t border-slate-100">
         <SupportModal 
