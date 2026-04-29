@@ -1,0 +1,476 @@
+{
+  "nav": {
+    "feed": "フィード",
+    "communities": "コミュニティ",
+    "map": "自閉症サポートマップ",
+    "profile": "プロフィール",
+    "settings": "設定",
+    "sos": "デジタルID",
+    "vip": "VIPエリア",
+    "termos": "利用規約",
+    "privacidade": "プライバシー",
+    "contato": "お問い合わせ",
+    "videos": "動画",
+    "triagem": "AIチェック",
+    "createAccount": "新規登録",
+    "gallery": "ギャラリー"
+  },
+  "auth": {
+    "login": "ログイン",
+    "logout": "ログアウト",
+    "guestLogin": "ゲストとしてログイン",
+    "welcome": "Conecta TEAへようこそ",
+    "google": "Googleでログイン",
+    "apple": "Appleでログイン",
+    "anonymous": "ゲストとしてログイン",
+    "emailPlaceholder": "your@email.com",
+    "orContinue": "または以下で続ける",
+    "phone": "携帯電話",
+    "email": "メールアドレス",
+    "phoneLabel": "携帯電話番号",
+    "phonePlaceholder": "080-1234-5678",
+    "sendSms": "SMSを送信",
+    "codeLabel": "6桁のコード",
+    "codePlaceholder": "000000",
+    "verifyCode": "コードを確認",
+    "passwordLabel": "パスワード",
+    "passwordPlaceholder": "••••••••",
+    "createAccount": "新規登録",
+    "alreadyHaveAccount": "すでにアカウントをお持ちですか？ ログイン",
+    "noAccount": "アカウントをお持ちでないですか？ 新規登録",
+    "readAndAccept": "以下を読み、同意します",
+    "termsNotice": "続けることで以下に同意したものとみなされます",
+    "termsLink": "利用規約およびプライバシーポリシー",
+    "errors": {
+      "popupClosed": "完了前にGoogleログインが閉じられました。",
+      "popupBlocked": "ブラウザがログインウィンドウをブロックしました。もう一度お試しください。",
+      "invalidEmail": "メールアドレスが無効です。",
+      "userNotFound": "このメールアドレスを持つアカウントが見つかりません。",
+      "wrongPassword": "メールアドレスまたはパスワードが正しくありません。",
+      "emailAlreadyInUse": "このメールアドレスは既に使用されています。",
+      "weakPassword": "パスワードが脆弱です。6文字以上にしてください。",
+      "tooManyRequests": "試行回数が多すぎます。しばらく時間をおいて再度お試しください。",
+      "missingPhone": "有効な携帯電話番号を入力してください。",
+      "invalidPhone": "提供された携帯電話番号は無効です。",
+      "codeExpired": "コードの有効期限が切れました。新しいSMSをリクエストしてください。",
+      "invalidCode": "コードが無効です。確認してもう一度お試しください。",
+      "default": "ログインを完了できませんでした。もう一度お試しください。",
+      "authError": "認証エラー"
+    }
+  },
+  "feed": {
+    "placeholder": "今どんなお気持ちですか？",
+    "post": "投稿する",
+    "loadMore": "さらに読み込む",
+    "endOfFeed": "最後まで読み込みました。",
+    "loading": "フィードを読み込んでいます...",
+    "pin": "固定された投稿",
+    "delete": "投稿を削除",
+    "pinPost": "投稿を固定",
+    "unpinPost": "固定を解除",
+    "noNews": "現在利用可能なニュースはありません。"
+  },
+  "settings": {
+    "title": "プロフィール設定",
+    "name": "名前",
+    "state": "都道府県",
+    "city": "市区町村",
+    "save": "変更を保存",
+    "profileSaved": "プロフィールが更新されました。",
+    "saveError": "プロフィールの保存中にエラーが発生しました。もう一度お試しください。",
+    "photoTooLarge": "写真は1MB未満にしてください。",
+    "firstName": "名",
+    "lastName": "姓",
+    "firstNamePlaceholder": "名",
+    "lastNamePlaceholder": "姓",
+    "address": "住所",
+    "phone": "電話番号",
+    "recoverPassword": "パスワードをリセット",
+    "digitalId": "デジタルID",
+    "digitalIdDesc": "サポートや緊急時のためにデジタルIDにアクセスします。",
+    "viewId": "マイデジタルIDを表示",
+    "roles": {
+      "parent": "保護者",
+      "professional": "専門家",
+      "autistic": "当事者",
+      "other": "その他"
+    },
+    "iAm": "私は...",
+    "bio": "自己紹介",
+    "bioPlaceholder": "少しだけあなたのことを教えてください...",
+    "rolePlaceholder": "役割を選択してください",
+    "vipStatus": "アカウント状態",
+    "freePlan": "無料プラン",
+    "vipMember": "VIP メンバー",
+    "accessFull": "すべての機能が解放されています",
+    "accessLimited": "一部機能のみ利用可能"
+  },
+  "communities": {
+    "title": "活動中のコミュニティ",
+    "loading": "活動中のコミュニティを読み込んでいます...",
+    "empty": "新しいユーザーが参加すると、コミュニティが表示されます。",
+    "families": "家族"
+  },
+  "externalNews": {
+    "title": "Web ニュース",
+    "subtitle": "自閉症に関する最新のニュース",
+    "readMore": "記事を読む",
+    "noNews": "このトピックのニュースは見つかりませんでした。",
+    "topics": {
+      "geral": "全般",
+      "educacao": "教育",
+      "saude": "健康",
+      "direitos": "権利",
+      "tecnologia": "テクノロジー",
+      "pesquisa": "研究"
+    }
+  },
+  "vip": {
+    "title": "VIPエリア",
+    "subtitle": "コンテンツライブラリ",
+    "welcomeVip": "VIP コミュニティへようこそ！",
+    "welcomeLibrary": "ライブラリへようこそ！",
+    "thanksVip": "VIPコミュニティにご参加いただき誠にありがとうございます。皆様のサポートが、TEAの家族の歩みを変える大きな力になります。",
+    "exploreLibrary": "資料や電子書籍をご覧ください。VIP登録でダウンロードが可能になり、Conecta TEAプロジェクトをサポートできます。",
+    "sosSensorial": "感覚 SOS",
+    "officialPartner": "公式パートナー",
+    "triagemTitle": "TEA AI チェック：早期発見のための技術",
+    "triagemSubtitle": "AI技術を活用して、お子様の発達確認と早期サポートをお手伝いします。安心してご利用ください。",
+    "goToSite": "サイトへ移動",
+    "downloadApp": "アプリをダウンロード",
+    "appSoon": "アプリ準備中",
+    "materialsTitle": "資料と電子書籍",
+    "ebookVip": "VIP e-book",
+    "downloadGuide": "ガイドをダウンロード",
+    "subscribeToDownload": "VIPに登録して電子書籍のダウンロードを解除してください。",
+    "vipOnly": "VIP ユーザー限定",
+    "viewingLibrary": "ライブラリを表示中。",
+    "becomeVipToUnlock": "VIPに登録してダウンロードを解除し、すべての特別機能にアクセスしましょう。",
+    "suggestionTitle": "コンテンツの提案はありますか？",
+    "suggestionSubtitle": "VIPメンバーの声は私たちの優先事項です。どんなテーマを見たいか教えてください！",
+    "suggestionPlaceholder": "ここに提案を書いてください...",
+    "sendSuggestion": "提案を送信",
+    "sending": "送信中...",
+    "suggestionSuccess": "提案が正常に送信されました！ ご支援ありがとうございます。",
+    "suggestionError": "提案の送信中にエラーが発生しました。もう一度お試しください。",
+    "verifyingAccess": "アクセス権を確認しています...",
+    "restrictedAccess": "アクセス制限",
+    "loginToAccess": "このエリアにアクセスするにはログインしてください。",
+    "loginToSubscribe": "登録するにはログインしてください。",
+    "activePlan": "現在のプラン",
+    "monthlyPlan": "月額プラン",
+    "annualPlan": "年間プラン",
+    "bestValue": "お買い得",
+    "save2Months": "2ヶ月分お得",
+    "earlyAccess": "早期アクセス権",
+    "allMonthlyFeatures": "月額プランのすべて",
+    "vipBadge": "プロフィールにVIPバッジ",
+    "exclusiveVideos": "限定動画",
+    "internationalPayment": "PayPalでのお支払い",
+    "supportText": "私たちのコミュニティをご支援いただき、発達と心の安定に役立つ特別リソースへアクセスしてください。",
+    "plans": "プランのご案内",
+    "subscribeMonthly": "月額 登録",
+    "subscribeAnnual": "年間 登録",
+    "subscribePayPal": "PayPalで登録 ($9.99/月)",
+    "subscriptionSuccess": "登録が完了しました。ありがとうございます。",
+    "perMonth": "/月",
+    "perYear": "/年",
+    "errors": {
+      "saveSubscription": "サブスクリプションの詳細の保存中にエラーが発生しました。",
+      "paypalError": "PayPalでエラーが発生しました。もう一度お試しください。"
+    },
+    "ebooks": {
+      "crises": {
+        "title": "パニック時の対応",
+        "description": "感覚過負荷を落ち着かせ、パニック時に対応するための実践的な戦略。"
+      },
+      "direitos": {
+        "title": "TEAの権利とサポート",
+        "description": "自閉症に関する理解、サポート、保証に関する完全ガイド。"
+      },
+      "seletividade": {
+        "title": "食事の偏食について",
+        "description": "自閉症スペクトラムによく見られる食事の困難に対処するためのヒントと技術。"
+      },
+      "higiene": {
+        "title": "落ち着いた衛生管理",
+        "description": "お子様にとって個人の衛生の時間をより穏やかで予測可能なものにする方法。"
+      },
+      "diagnostico": {
+        "title": "診断が下りたら",
+        "description": "診断を受けたばかりの家族のための最初のステップと基本的な指針。"
+      },
+      "sinais": {
+        "title": "自閉症のサイン",
+        "description": "自閉症スペクトラム障害を示す可能性のある主な兆候と行動を理解します。"
+      },
+      "guia": {
+        "title": "初期ガイド",
+        "description": "TEAの基本とサポートの開始方法を理解するための必須の入門資料。"
+      }
+    },
+    "videos": {
+      "title": "VIP専用動画",
+      "badge": "VIP動画",
+      "watchNow": "今すぐ見る",
+      "v1": {
+        "title": "高度な感覚調整戦略",
+        "description": "日常生活で感覚の調整を助けるための実践的な技術を学びます。"
+      },
+      "v2": {
+        "title": "拡大代替コミュニケーション（AAC）",
+        "description": "代替コミュニケーションシステムを導入し使用する方法。"
+      },
+      "v3": {
+        "title": "困難な行動の管理",
+        "description": "行動の機能と介入戦略を理解する。"
+      }
+    },
+    "sos": {
+      "badge": "クイックアクセス",
+      "title": "感覚 SOS",
+      "description": "感覚調整、代替コミュニケーション、危機対応のための緊急ツールです。",
+      "button": "今すぐ SOS にアクセス"
+    }
+  },
+  "sos": {
+    "title": "デジタル ID",
+    "description": "いつでもどこでもあなたの身分証明とサポートツールになります。",
+    "subtitle": "Conecta TEA 識別とサポート",
+    "setupTitle": "IDを構成",
+    "edit": "編集",
+    "print": "印刷",
+    "save": "保存",
+    "saving": "保存中...",
+    "cancel": "キャンセル",
+    "loginRequired": "デジタルIDにアクセスするにはログインが必要です。",
+    "loginButton": "ログイン",
+    "restrictedTitle": "アクセス制限",
+    "connectionError": "接続エラー",
+    "saveError": "IDの保存中にエラーが発生しました",
+    "tryAgain": "もう一度試す",
+    "officialId": "公式証明書",
+    "immediateSupport": "緊急サポート",
+    "scanInstructions": "スキャンして対応方法の指示を確認します",
+    "officialIdLabel": "Conecta TEA 公式 ID",
+    "crisisNotice": "パニック時の場合： 落ち着いて、急な接触や過度な騒音を避けてください。",
+    "presentationNotice": "このIDは、学校、病院、公的機関で提示できます。",
+    "qrPending": "保存後に QR コードが利用可能になります",
+    "downloadQR": "QRコードをダウンロード",
+    "sections": {
+      "child": "本人のデータ",
+      "responsible": "保護者のデータ",
+      "additional": "追加の連絡先と住所"
+    },
+    "fields": {
+      "childName": "氏名",
+      "birthDate": "生年月日",
+      "city": "市区町村",
+      "state": "都道府県",
+      "bloodType": "血液型",
+      "allergies": "アレルギー/薬",
+      "observations": "サポートの注意事項",
+      "responsibleName": "保護者の氏名",
+      "emergencyPhone": "緊急時の連絡先",
+      "emergencyNote": "緊急メモ (QRコードに表示)",
+      "contact2Name": "第二連絡先 (氏名)",
+      "contact2Phone": "第二連絡先 (電話)",
+      "homeAddress": "自宅住所"
+    },
+    "labels": {
+      "childName": "所有者名",
+      "birthDate": "生年月日",
+      "bloodType": "血液型",
+      "cityState": "市区町村 / 県",
+      "responsible": "保護者",
+      "observations": "サポートの注意事項",
+      "emergencyContact": "緊急連絡先"
+    },
+    "noObservations": "注意事項がない。",
+    "processing": "処理中...",
+    "notInformed": "情報なし",
+    "placeholders": {
+      "bloodType": "例: O+",
+      "allergies": "例: 薬物アレルギー",
+      "observations": "例: 聴覚過敏、視覚的なコミュニケーションを好みます",
+      "emergencyNote": "例: パニックの際は、落ち着いて話し、許可なく触れないでください。",
+      "phone": "080-1234-5678"
+    }
+  },
+  "emergency": {
+    "loading": "サポート情報を読み込んでいます...",
+    "errorTitle": "識別エラー",
+    "errorDescription": "IDが見つかりませんでした。QRコードまたはリンクが正しいか確認してください。",
+    "protocol": "サポートおよび識別プロトコル",
+    "attention": "注意 / アプローチ",
+    "teaStatement": "この方は自閉症スペクトラム障害 (ASD) を持っています。",
+    "crisisAdvice": "パニックや混乱の際は、落ち着いて、急な接触や過度な騒音を避けてください。",
+    "specificInstruction": "具体的な指示",
+    "contactsTitle": "緊急連絡先",
+    "locationTitle": "場所",
+    "loadError": "データの読み込みエラー。もう一度お試しください。",
+    "noObservations": "追加の注意事項はありません。",
+    "allergiesMedication": "アレルギー / 薬"
+  },
+  "map": {
+    "title": "全国の自閉症サポートマップ",
+    "activeCommunities": "活動中のコミュニティ",
+    "families": "家族",
+    "connectedFamilies": "つながっている家族",
+    "activeCities": "活動中の市区町村",
+    "activeStates": "活動中の都道府県",
+    "postsShared": "共有された投稿",
+    "fastestGrowing": "急成長中のコミュニティ",
+    "thisWeek": "今週",
+    "loading": "コミュニティマップを読み込んでいます...",
+    "backToMap": "マップに戻る",
+    "citiesIn": "の市区町村",
+    "communityOf": "コミュニティ：",
+    "growing": "このコミュニティは成長しています",
+    "shareTitle": "コミュニティを共有",
+    "shareText": "Conecta TEA で {{place}} の TEA コミュニティに参加し、地域の家族と繋がりましょう。",
+    "copyLink": "リンクをコピー",
+    "linkCopied": "リンクをコピーしました！",
+    "shareNotSupported": "ブラウザがネイティブ共有をサポートしていません。"
+  },
+  "donation": {
+    "title": "Conecta TEAを支援する",
+    "description": "自閉症サポートコミュニティと社会的テクノロジーの発展のために、少額からのご支援をお願いいたします。",
+    "button": "PayPal で寄付する",
+    "scanToDonate": "スキャンして寄付する",
+    "footerLink": "支援する"
+  },
+  "common": {
+    "user": "ユーザー",
+    "loading": "読み込み中...",
+    "error": "エラーが発生しました",
+    "save": "保存",
+    "cancel": "キャンセル",
+    "delete": "削除",
+    "edit": "編集",
+    "back": "戻る",
+    "next": "次へ",
+    "finish": "完了",
+    "notInformed": "情報提供なし"
+  },
+  "videos": {
+    "galleryTitle": "動画ギャラリー",
+    "gallerySubtitle": "自閉症に関する教育と情報コンテンツです。",
+    "exclusiveVideos": "限定動画",
+    "noVideos": "動画が見つかりませんでした。",
+    "noTitle": "タイトルなし",
+    "loadMore": "さらに動画を読み込む"
+  },
+  "supportModal": {
+    "title": "プロジェクトを支援する",
+    "pixLabel": "Pix (ブラジル国内)",
+    "pixDesc": "皆様からの任意のご支援が、何千もの家族の歩みを変える大きな力になります。心より感謝申し上げます。",
+    "paypalButton": "PayPal で寄付する",
+    "footer": "すべての寄付は、アプリの改善とサーバーの運用に還元されます。"
+  },
+  "landing": {
+    "hero": {
+      "title": "安全な場所を見つけました。私たちはあなたのそばにいます。",
+      "badge": "安全な場所を見つけました。私たちはあなたのそばにいます。",
+      "subtitle": "あなたは一人ではありません。私たちが一つずつサポートしますので、安心してご利用ください。",
+      "cta": "今すぐ始める（無料）",
+      "feature1": "プライバシーは厳重に守られます",
+      "feature2": "複雑な登録なしで安心",
+      "socialProof": "世界中のご家族がここを安全な場所として利用しています。",
+      "warning": "あなたに寄り添う、穏やかなコミュニティです。"
+    },
+    "howItWorks": {
+      "title": "ご利用の流れ",
+      "step1": {
+        "title": "サインを理解する",
+        "desc": "重要な行動を簡単な方法で確認できます。"
+      },
+      "step2": {
+        "title": "安心のつながり",
+        "desc": "同じ境遇のご家族やサポートを見つけられます。"
+      },
+      "step3": {
+        "title": "安全に行動する",
+        "desc": "次のステップに向けた実践的なご案内を受け取れます。"
+      }
+    },
+    "whyUs": {
+      "badge": "安全、かつプライベートな環境です。",
+      "title": "このような方に適したアプリです：",
+      "item1": "お子様の発達について少し気がかりなことがある",
+      "item2": "自閉症の兆候についてより深く穏やかに理解したい",
+      "item3": "信頼できるサポートと導きを探している",
+      "item4": "どうすればいいか分からず、方向性が必要だと感じる",
+      "highlight": "どんな小さな疑問でも、私たちにお話しください。"
+    },
+    "features": {
+      "title": "ご提供するサポート",
+      "item1": {
+        "title": "地域のコミュニティ",
+        "desc": "ご家族や専門家との穏やかな繋がり"
+      },
+      "item2": {
+        "title": "デジタルID",
+        "desc": "迅速なサポートのための身分証明"
+      },
+      "item3": {
+        "title": "感覚 SOS",
+        "desc": "パニック時の即時ヘルプと安心"
+      },
+      "item4": {
+        "title": "初期サポート",
+        "desc": "初期の兆候を理解するのを助けるテクノロジー"
+      }
+    },
+    "impact": {
+      "title": "自閉症の兆候が早く特定されるほど、お子様の発達の可能性は広がります。",
+      "highlight": "ご自身のペースで一歩ずつ進みましょう。",
+      "subtitle": "私たちの技術は、適切なタイミングでの行動をお手伝いします。"
+    },
+    "trust": {
+      "title": "この旅路を理解しているご家族によって、ご家族のために作られました。",
+      "subtitle": "世界中のご家族のためのサポートネットワークを構築しています",
+      "badge": "専門家が利用するベストプラクティスに基づいています。"
+    },
+    "finalCta": {
+      "title": "あなたは安全な場所を見つけました。",
+      "subtitle": "安心して、最初のステップを踏み出してみてください。",
+      "warning": "あなたのプライバシーと安心が私たちの最優先事項です。"
+    },
+    "footer": {
+      "rights": "© 2026 Conecta TEA. All rights reserved.",
+      "support": "プロジェクトを支援する",
+      "terms": "利用規約とプライバシー"
+    }
+  },
+  "onboarding": {
+    "welcome": "ようこそ！ まずは、どちらにお住まいか教えてください。",
+    "selectCountry": "国を選択",
+    "selectState": "都道府県を選択",
+    "selectCity": "市区町村を選択",
+    "button": "始める",
+    "saveError": "場所の保存中にエラーが発生しました",
+    "stateLabel": "都道府県",
+    "cityLabel": "市区町村"
+  },
+  "triagem": {
+    "title": "TEA AI チェック",
+    "subtitle": "当社のソフィア AI (Sofia AI) は、自閉症の兆候の早期発見を支援するために開発されました。次のステップをご案内するための、迅速で安全な分析です。",
+    "feature1Title": "穏やかな分析",
+    "feature1Desc": "行動パターンを感情的に敏感に識別するように訓練されたAIです。",
+    "feature2Title": "100% プライバシー保護",
+    "feature2Desc": "データは保護され、分析は完全に機密であり非公開です。",
+    "feature3Title": "次のステップ",
+    "feature3Desc": "適切な専門家のサポートを求める方法に関する明確なガイダンスを受け取れます。",
+    "cta": "今すぐチェックを始める",
+    "disclaimer": "※本ツールは医療機関の診断に代わるものではありません。ご安心のうえご参考ください。"
+  },
+  "admin": {
+    "errorInvalidPosts": "1日あたりの投稿数が無効です。",
+    "successSave": "設定が正常に保存されました。",
+    "successGenerate": "{{count}} 件の投稿が生成され、正常に公開されました！",
+    "errorTimeout": "生成に予想以上の時間がかかりました。もう一度お試しください。",
+    "errorGenerate": "生成エラー。もう一度お試しください。",
+    "errorSave": "設定の保存中にエラーが発生しました。"
+  }
+}

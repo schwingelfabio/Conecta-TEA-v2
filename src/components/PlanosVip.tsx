@@ -27,26 +27,20 @@ export default function PlanosVip({ isVip }: { isVip?: boolean }) {
         {/* 1. HERO EMOTIONAL BLOCK */}
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-5xl font-black text-white mb-6 tracking-tight leading-tight">
-            {i18n.language === 'en' 
-              ? 'What if your child needed help… and you couldn’t afford it?' 
-              : 'E se seu filho precisasse de ajuda... e você não pudesse pagar?'}
+            {(i18n.language === 'pt' ? 'E se seu filho precisasse de ajuda... e você não pudesse pagar?' : i18n.language === 'ja' ? 'What if your child needed help… and you couldn’t afford it?' : 'What if your child needed help… and you couldn’t afford it?')}
           </h2>
           <p className="text-slate-400 text-xl md:text-2xl max-w-3xl mx-auto font-medium">
-            {i18n.language === 'en' 
-              ? 'Thousands of families face this reality every day.' 
-              : 'Milhares de famílias enfrentam essa realidade todos os dias.'}
+            {(i18n.language === 'pt' ? 'Milhares de famílias enfrentam essa realidade todos os dias.' : i18n.language === 'ja' ? 'Thousands of families face this reality every day.' : 'Thousands of families face this reality every day.')}
           </p>
         </div>
 
         {/* 2. IMPACT STATEMENT */}
         <div className="bg-slate-900/50 border border-slate-800 rounded-3xl p-8 text-center max-w-3xl mx-auto mb-12 backdrop-blur-sm">
           <p className="text-slate-300 text-lg md:text-xl leading-relaxed mb-4">
-            {i18n.language === 'en' 
-              ? 'This platform exists to help families who feel lost, scared, and without support.' 
-              : 'Esta plataforma existe para ajudar famílias que se sentem perdidas, com medo e sem apoio.'}
+            {(i18n.language === 'pt' ? 'Esta plataforma existe para ajudar famílias que se sentem perdidas, com medo e sem apoio.' : i18n.language === 'ja' ? 'This platform exists to help families who feel lost, scared, and without support.' : 'This platform exists to help families who feel lost, scared, and without support.')}
           </p>
           <p className="text-sky-400 font-bold text-2xl">
-            {i18n.language === 'en' ? 'You can change that.' : 'Você pode mudar isso.'}
+            {(i18n.language === 'pt' ? 'Você pode mudar isso.' : i18n.language === 'ja' ? 'You can change that.' : 'You can change that.')}
           </p>
         </div>
 
@@ -54,17 +48,17 @@ export default function PlanosVip({ isVip }: { isVip?: boolean }) {
         <div className="flex flex-col items-center justify-center gap-3 mb-16 text-center">
           <div className="inline-flex items-center gap-2 bg-rose-500/10 text-rose-400 px-4 py-2 rounded-full font-bold border border-rose-500/20">
             <AlertCircle size={20} />
-            {i18n.language === 'en' ? 'Right now, families are waiting for help.' : 'Neste momento, famílias esperam por ajuda.'}
+            {(i18n.language === 'pt' ? 'Neste momento, famílias esperam por ajuda.' : i18n.language === 'ja' ? 'Right now, families are waiting for help.' : 'Right now, families are waiting for help.')}
           </div>
           <p className="text-slate-300 font-medium">
-            {i18n.language === 'en' ? 'Your support today can reach them immediately.' : 'Seu apoio hoje pode alcançá-las imediatamente.'}
+            {(i18n.language === 'pt' ? 'Seu apoio hoje pode alcançá-las imediatamente.' : i18n.language === 'ja' ? 'Your support today can reach them immediately.' : 'Your support today can reach them immediately.')}
           </p>
         </div>
 
         {/* 4. VIP OFFER SECTION */}
         <div className="text-center mb-12">
           <h3 className="text-3xl font-black text-white">
-            {i18n.language === 'en' ? 'Become a VIP. Change Lives Today.' : 'Seja VIP. Mude Vidas Hoje.'}
+            {(i18n.language === 'pt' ? 'Seja VIP. Mude Vidas Hoje.' : i18n.language === 'ja' ? 'Become a VIP. Change Lives Today.' : 'Become a VIP. Change Lives Today.')}
           </h3>
         </div>
 
@@ -73,35 +67,35 @@ export default function PlanosVip({ isVip }: { isVip?: boolean }) {
           {/* PLAN 1 - MONTHLY */}
           <div className="bg-slate-900 rounded-[2rem] p-8 border border-slate-800 flex flex-col relative">
             <h4 className="text-2xl font-bold text-white mb-2">
-              {i18n.language === 'en' ? 'Support Monthly' : 'Apoio Mensal'}
+              {(i18n.language === 'pt' ? 'Apoio Mensal' : i18n.language === 'ja' ? 'Support Monthly' : 'Support Monthly')}
             </h4>
             <div className="flex items-baseline gap-1 mb-2">
-              <span className="text-4xl font-black text-white">{i18n.language === 'en' ? 'US$ 3.99' : 'R$ 19,90'}</span>
-              <span className="text-slate-500 font-medium">/ {i18n.language === 'en' ? 'month' : 'mês'}</span>
+              <span className="text-4xl font-black text-white">{(i18n.language === 'pt' ? 'R$ 19,90' : i18n.language === 'ja' ? 'US$ 3.99' : 'US$ 3.99')}</span>
+              <span className="text-slate-500 font-medium">/ {(i18n.language === 'pt' ? 'mês' : i18n.language === 'ja' ? 'month' : 'month')}</span>
             </div>
             <p className="text-sky-400 font-medium mb-8">
-              {i18n.language === 'en' ? 'Less than a coffee. Real impact.' : 'Menos que um café. Impacto real.'}
+              {(i18n.language === 'pt' ? 'Menos que um café. Impacto real.' : i18n.language === 'ja' ? 'Less than a coffee. Real impact.' : 'Less than a coffee. Real impact.')}
             </p>
 
             <ul className="space-y-4 mb-8 flex-grow">
               <li className="flex items-start gap-3 text-slate-300">
                 <Check className="text-sky-500 shrink-0 mt-0.5" size={20} />
-                <span>{i18n.language === 'en' ? 'Help families immediately' : 'Ajude famílias imediatamente'}</span>
+                <span>{(i18n.language === 'pt' ? 'Ajude famílias imediatamente' : i18n.language === 'ja' ? 'Help families immediately' : 'Help families immediately')}</span>
               </li>
               <li className="flex items-start gap-3 text-slate-300">
                 <Check className="text-sky-500 shrink-0 mt-0.5" size={20} />
-                <span>{i18n.language === 'en' ? 'Keep the platform alive' : 'Mantenha a plataforma viva'}</span>
+                <span>{(i18n.language === 'pt' ? 'Mantenha a plataforma viva' : i18n.language === 'ja' ? 'Keep the platform alive' : 'Keep the platform alive')}</span>
               </li>
               <li className="flex items-start gap-3 text-slate-300">
                 <Check className="text-sky-500 shrink-0 mt-0.5" size={20} />
-                <span>{i18n.language === 'en' ? 'Early access' : 'Acesso antecipado'}</span>
+                <span>{(i18n.language === 'pt' ? 'Acesso antecipado' : i18n.language === 'ja' ? 'Early access' : 'Early access')}</span>
               </li>
             </ul>
 
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              onClick={() => handleCheckout(i18n.language === 'en' ? 'https://buy.stripe.com/cNifZigaB9XM8jK9Td2wU02' : 'https://pag.ae/81AiqTpHL', 'monthly')}
+              onClick={() => handleCheckout((i18n.language === 'pt' ? 'https://pag.ae/81AiqTpHL' : i18n.language === 'ja' ? 'https://buy.stripe.com/cNifZigaB9XM8jK9Td2wU02' : 'https://buy.stripe.com/cNifZigaB9XM8jK9Td2wU02'), 'monthly')}
               disabled={isVip}
               className={`w-full font-bold py-4 rounded-xl transition-all shadow-lg flex items-center justify-center gap-2 ${
                 isVip
@@ -109,7 +103,7 @@ export default function PlanosVip({ isVip }: { isVip?: boolean }) {
                   : 'bg-slate-800 hover:bg-slate-700 text-white border border-slate-700 hover:border-slate-600'
               }`}
             >
-              {isVip ? t('vip.activePlan') : (i18n.language === 'en' ? 'Help a Family Now' : 'Ajudar uma Família Agora')}
+              {isVip ? t('vip.activePlan') : ((i18n.language === 'pt' ? 'Ajudar uma Família Agora' : i18n.language === 'ja' ? 'Help a Family Now' : 'Help a Family Now'))}
             </motion.button>
           </div>
 
@@ -190,7 +184,7 @@ export default function PlanosVip({ isVip }: { isVip?: boolean }) {
               {/* PRICE SECTION */}
               <div className="mb-6 mt-auto">
                 <div className="text-4xl font-black text-white drop-shadow-lg mb-1">
-                  {i18n.language === 'en' ? '$39.99' : 'R$ 199,00'} <span className="text-lg text-amber-200/80 font-medium">/ {i18n.language === 'en' ? 'year' : 'ano'}</span>
+                  {(i18n.language === 'pt' ? 'R$ 199,00' : i18n.language === 'ja' ? '$39.99' : '$39.99')} <span className="text-lg text-amber-200/80 font-medium">/ {(i18n.language === 'pt' ? 'ano' : i18n.language === 'ja' ? 'year' : 'year')}</span>
                 </div>
                 <p className="text-amber-400 text-xs font-bold tracking-wide drop-shadow-md">
                   {i18n.language === 'en' ? "Less than $0.11 per day to change lives" : "Menos de R$0,55 por dia para mudar vidas"}
@@ -203,7 +197,7 @@ export default function PlanosVip({ isVip }: { isVip?: boolean }) {
                 whileTap={{ scale: 0.98 }}
                 animate={{ boxShadow: ["0px 0px 0px rgba(245, 158, 11, 0)", "0px 0px 30px rgba(245, 158, 11, 0.5)", "0px 0px 0px rgba(245, 158, 11, 0)"] }}
                 transition={{ duration: 2, repeat: Infinity }}
-                onClick={() => handleCheckout(i18n.language === 'en' ? 'https://buy.stripe.com/cNibJ2bUlfi643u5CX2wU03' : 'https://pag.ae/81AirzxhL', 'annual')}
+                onClick={() => handleCheckout((i18n.language === 'pt' ? 'https://pag.ae/81AirzxhL' : i18n.language === 'ja' ? 'https://buy.stripe.com/cNibJ2bUlfi643u5CX2wU03' : 'https://buy.stripe.com/cNibJ2bUlfi643u5CX2wU03'), 'annual')}
                 disabled={isVip}
                 className={`w-full font-black text-base py-4 rounded-xl transition-all flex items-center justify-center gap-2 mb-6 ${
                   isVip
@@ -211,7 +205,7 @@ export default function PlanosVip({ isVip }: { isVip?: boolean }) {
                     : 'bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600 hover:from-amber-300 hover:via-amber-400 hover:to-amber-500 text-slate-950 shadow-[0_0_20px_rgba(245,158,11,0.4)]'
                 }`}
               >
-                {isVip ? t('vip.activePlan') : (i18n.language === 'en' ? 'HELP A FAMILY NOW' : 'AJUDAR UMA FAMÍLIA AGORA')}
+                {isVip ? t('vip.activePlan') : ((i18n.language === 'pt' ? 'AJUDAR UMA FAMÍLIA AGORA' : i18n.language === 'ja' ? 'HELP A FAMILY NOW' : 'HELP A FAMILY NOW'))}
               </motion.button>
 
               {/* BOTTOM TEXT */}
@@ -226,10 +220,10 @@ export default function PlanosVip({ isVip }: { isVip?: boolean }) {
         {/* 5. EMOTIONAL TRIGGER BLOCK */}
         <div className="text-center mb-12">
           <p className="text-slate-400 text-xl italic mb-2">
-            {i18n.language === 'en' ? '"If nobody helps… nothing changes."' : '"Se ninguém ajudar... nada muda."'}
+            {(i18n.language === 'pt' ? '"Se ninguém ajudar... nada muda."' : i18n.language === 'ja' ? '"If nobody helps… nothing changes."' : '"If nobody helps… nothing changes."')}
           </p>
           <p className="text-white text-2xl font-bold">
-            {i18n.language === 'en' ? '"But if you do… everything can."' : '"Mas se você ajudar... tudo pode mudar."'}
+            {(i18n.language === 'pt' ? '"Mas se você ajudar... tudo pode mudar."' : i18n.language === 'ja' ? '"But if you do… everything can."' : '"But if you do… everything can."')}
           </p>
         </div>
 
@@ -237,12 +231,12 @@ export default function PlanosVip({ isVip }: { isVip?: boolean }) {
         <div className="flex flex-col md:flex-row items-center justify-center gap-6 text-slate-400 font-medium border-t border-slate-800 pt-8">
           <div className="flex items-center gap-2">
             <ShieldCheck size={20} className="text-emerald-500" />
-            <span>{i18n.language === 'en' ? 'Cancel anytime. No risk.' : 'Cancele a qualquer momento. Sem risco.'}</span>
+            <span>{(i18n.language === 'pt' ? 'Cancele a qualquer momento. Sem risco.' : i18n.language === 'ja' ? 'Cancel anytime. No risk.' : 'Cancel anytime. No risk.')}</span>
           </div>
           <div className="hidden md:block w-1 h-1 bg-slate-700 rounded-full"></div>
           <div className="flex items-center gap-2">
             <Heart size={20} className="text-rose-500" />
-            <span>{i18n.language === 'en' ? 'This is not a donation. It’s a mission.' : 'Isso não é uma doação. É uma missão.'}</span>
+            <span>{(i18n.language === 'pt' ? 'Isso não é uma doação. É uma missão.' : i18n.language === 'ja' ? 'This is not a donation. It’s a mission.' : 'This is not a donation. It’s a mission.')}</span>
           </div>
         </div>
 

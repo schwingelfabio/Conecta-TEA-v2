@@ -194,12 +194,12 @@ export const SofiaCallScreen = ({ onEndCall, isVip }: { onEndCall: () => void, i
               Não pague por um aplicativo. Invista na sua paz de espírito. Ter o Conecta VIP é como ter um especialista e um ombro amigo no seu bolso de madrugada por menos do que você gasta em um lanche. Liberte-se da solidão e saiba exatamente o que fazer na próxima crise. Assine agora.
             </p>
             <a 
-              href={i18n.language === 'en' ? 'https://buy.stripe.com/28E9AU1fH3zobvWfdx2wU01' : 'https://buy.stripe.com/cNi9AU4rT5HwfMc3uP2wU05'}
+              href={(i18n.language === 'pt' ? 'https://buy.stripe.com/cNi9AU4rT5HwfMc3uP2wU05' : i18n.language === 'ja' ? 'https://buy.stripe.com/28E9AU1fH3zobvWfdx2wU01' : 'https://buy.stripe.com/28E9AU1fH3zobvWfdx2wU01')}
               target="_blank" 
               rel="noopener noreferrer"
               className="block w-full bg-amber-500 hover:bg-amber-600 text-slate-900 py-4 rounded-xl font-black text-lg mb-4"
             >
-              {i18n.language === 'en' ? 'Unlock Unlimited Chat (US$ 9.99/mo)' : 'Liberar Chat Ilimitado (R$ 9,99/mês)'}
+              {(i18n.language === 'pt' ? 'Liberar Chat Ilimitado (R$ 9,99/mês)' : i18n.language === 'ja' ? 'Unlock Unlimited Chat (US$ 9.99/mo)' : 'Unlock Unlimited Chat (US$ 9.99/mo)')}
             </a>
             <button 
               onClick={() => setShowPaywall(false)}

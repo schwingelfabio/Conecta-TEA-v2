@@ -403,17 +403,17 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
       }
 
       if (now - lastPostTime < 120000) {
-        alert(i18n.language === 'en' ? 'Please wait 2 minutes before posting again.' : 'Aguarde 2 minutos antes de publicar novamente.');
+        alert((i18n.language === 'pt' ? 'Aguarde 2 minutos antes de publicar novamente.' : i18n.language === 'ja' ? 'Please wait 2 minutes before posting again.' : 'Please wait 2 minutes before posting again.'));
         return;
       }
 
       if (dailyPostsDate === today && dailyPosts >= 10) {
-        alert(i18n.language === 'en' ? 'Daily post limit reached.' : 'Limite diário de publicações atingido.');
+        alert((i18n.language === 'pt' ? 'Limite diário de publicações atingido.' : i18n.language === 'ja' ? 'Daily post limit reached.' : 'Daily post limit reached.'));
         return;
       }
 
       if (!isHuman) {
-        alert(i18n.language === 'en' ? 'Please confirm you are human.' : 'Por favor, confirme que você é humano.');
+        alert((i18n.language === 'pt' ? 'Por favor, confirme que você é humano.' : i18n.language === 'ja' ? 'Please confirm you are human.' : 'Please confirm you are human.'));
         return;
       }
     } else {
@@ -663,17 +663,17 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
           <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="bg-white rounded-3xl p-8 max-w-sm w-full text-center">
             <Heart className="w-16 h-16 text-sky-500 mx-auto mb-4" />
             <h3 className="text-xl font-bold text-slate-900 mb-6">
-              {i18n.language === 'en' ? 'If this is helping you, you can help other families too 💙' : 'Se isso está te ajudando, você pode ajudar outras famílias também 💙'}
+              {(i18n.language === 'pt' ? 'Se isso está te ajudando, você pode ajudar outras famílias também 💙' : i18n.language === 'ja' ? 'If this is helping you, you can help other families too 💙' : 'If this is helping you, you can help other families too 💙')}
             </h3>
             <div className="flex flex-col gap-3">
               <button 
-                onClick={() => window.open(i18n.language === 'en' ? 'https://buy.stripe.com/28E9AU1fH3zobvWfdx2wU01' : 'https://buy.stripe.com/cNi9AU4rT5HwfMc3uP2wU05', '_blank')} 
+                onClick={() => window.open((i18n.language === 'pt' ? 'https://buy.stripe.com/cNi9AU4rT5HwfMc3uP2wU05' : i18n.language === 'ja' ? 'https://buy.stripe.com/28E9AU1fH3zobvWfdx2wU01' : 'https://buy.stripe.com/28E9AU1fH3zobvWfdx2wU01'), '_blank')} 
                 className="w-full py-4 bg-sky-500 text-white rounded-xl font-bold"
               >
-                {i18n.language === 'en' ? 'Support now' : 'Apoiar agora'}
+                {(i18n.language === 'pt' ? 'Apoiar agora' : i18n.language === 'ja' ? 'Support now' : 'Support now')}
               </button>
               <button onClick={() => setShowScrollModal(false)} className="w-full py-4 text-slate-500 font-bold">
-                {i18n.language === 'en' ? 'Continue browsing' : 'Continuar navegando'}
+                {(i18n.language === 'pt' ? 'Continuar navegando' : i18n.language === 'ja' ? 'Continue browsing' : 'Continue browsing')}
               </button>
             </div>
           </motion.div>
@@ -763,7 +763,7 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
                   className="w-4 h-4 text-sky-500 rounded border-slate-300 focus:ring-sky-500"
                 />
                 <label htmlFor="human-check" className="text-sm text-slate-600 font-medium">
-                  {i18n.language === 'en' ? 'I am human' : 'Sou humano'}
+                  {(i18n.language === 'pt' ? 'Sou humano' : i18n.language === 'ja' ? 'I am human' : 'I am human')}
                 </label>
               </div>
             )}
@@ -857,7 +857,7 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
                         </h3>
                         <div className="flex flex-col sm:flex-row gap-3 justify-center">
                           <button 
-                            onClick={() => window.open(i18n.language === 'en' ? 'https://buy.stripe.com/28E9AU1fH3zobvWfdx2wU01' : 'https://buy.stripe.com/cNi9AU4rT5HwfMc3uP2wU05', '_blank')} 
+                            onClick={() => window.open((i18n.language === 'pt' ? 'https://buy.stripe.com/cNi9AU4rT5HwfMc3uP2wU05' : i18n.language === 'ja' ? 'https://buy.stripe.com/28E9AU1fH3zobvWfdx2wU01' : 'https://buy.stripe.com/28E9AU1fH3zobvWfdx2wU01'), '_blank')} 
                             className="px-6 py-3 bg-sky-500 text-white rounded-xl font-bold hover:bg-sky-600 transition-all"
                           >
                             {i18n.language === 'en' ? 'Support now' : i18n.language === 'es' ? 'Apoyar ahora' : 'Apoiar agora'}
@@ -1012,19 +1012,19 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
                           <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="bg-white rounded-3xl p-8 max-w-sm w-full text-center">
                             <Crown className="w-16 h-16 text-amber-500 mx-auto mb-4" />
                             <h3 className="text-xl font-bold text-slate-900 mb-6">
-                              {i18n.language === 'en' ? 'Get full access and help even more families.' : 'Tenha acesso completo e ajude ainda mais famílias.'}
+                              {(i18n.language === 'pt' ? 'Tenha acesso completo e ajude ainda mais famílias.' : i18n.language === 'ja' ? 'Get full access and help even more families.' : 'Get full access and help even more families.')}
                             </h3>
                             <button 
                               onClick={() => { 
                                 setShowVipModal(false); 
-                                window.open(i18n.language === 'en' ? 'https://buy.stripe.com/28E9AU1fH3zobvWfdx2wU01' : 'https://buy.stripe.com/cNi9AU4rT5HwfMc3uP2wU05', '_blank'); 
+                                window.open((i18n.language === 'pt' ? 'https://buy.stripe.com/cNi9AU4rT5HwfMc3uP2wU05' : i18n.language === 'ja' ? 'https://buy.stripe.com/28E9AU1fH3zobvWfdx2wU01' : 'https://buy.stripe.com/28E9AU1fH3zobvWfdx2wU01'), '_blank'); 
                               }} 
                               className="w-full py-4 bg-amber-500 text-white rounded-xl font-bold mb-3"
                             >
-                              {i18n.language === 'en' ? 'Become VIP (US$ 9.99/mo)' : 'Tornar-se VIP (R$ 9,99/mês)'}
+                              {(i18n.language === 'pt' ? 'Tornar-se VIP (R$ 9,99/mês)' : i18n.language === 'ja' ? 'Become VIP (US$ 9.99/mo)' : 'Become VIP (US$ 9.99/mo)')}
                             </button>
                             <button onClick={() => setShowVipModal(false)} className="w-full py-4 text-slate-500 font-bold">
-                              {i18n.language === 'en' ? 'Maybe later' : 'Talvez mais tarde'}
+                              {(i18n.language === 'pt' ? 'Talvez mais tarde' : i18n.language === 'ja' ? 'Maybe later' : 'Maybe later')}
                             </button>
                           </motion.div>
                         </div>

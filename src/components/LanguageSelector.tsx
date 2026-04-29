@@ -33,6 +33,13 @@ const LanguageSelector: React.FC = () => {
       >
         ES
       </button>
+      <span className="text-slate-300">|</span>
+      <button
+        onClick={() => changeLanguage('ja')}
+        className={`text-sm font-medium ${i18n.language?.startsWith('ja') ? 'text-sky-500' : 'text-slate-500'}`}
+      >
+        日本語
+      </button>
     </div>
   );
 };

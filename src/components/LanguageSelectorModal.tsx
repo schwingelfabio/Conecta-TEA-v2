@@ -9,6 +9,7 @@ export default function LanguageSelectorModal({ onClose }: { onClose: () => void
     { code: 'pt', name: 'Português' },
     { code: 'en', name: 'English' },
     { code: 'es', name: 'Español' },
+    { code: 'ja', name: '日本語 (Japanese)' },
   ];
 
   const changeLanguage = (lng: string) => {
