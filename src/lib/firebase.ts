@@ -4,7 +4,10 @@ import { getFirestore } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
 
 // Import the Firebase configuration
-import firebaseConfig from '../../firebase-applet-config.json' with { type: 'json' };
+import firebaseConfigData from '../../firebase-applet-config.json';
+
+const firebaseConfig = firebaseConfigData as any;
+console.log('[Firebase] Initializing with project:', firebaseConfig.projectId);
 
 // Initialize Firebase SDK
 const app = initializeApp(firebaseConfig);

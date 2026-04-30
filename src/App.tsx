@@ -83,7 +83,7 @@ export default function App() {
     async function testConnection() {
       try {
         console.log('[App] Testing Firebase connection...');
-        await getDocFromServer(doc(db, 'system', 'ping'));
+        await getDocFromServer(doc(db, 'test_connection', 'ping'));
         console.log('[App] Firebase connection SUCCESS');
       } catch (error) {
         if (error instanceof Error && error.message.includes('the client is offline')) {
