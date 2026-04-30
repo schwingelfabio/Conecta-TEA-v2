@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Heart, ArrowRight, CheckCircle2, Lock, Unlock, Zap, Shield } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { trackEvent } from '../lib/monitoring';

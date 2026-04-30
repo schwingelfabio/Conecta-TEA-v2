@@ -1,5 +1,5 @@
 import React, { useState, useEffect, Suspense, lazy, useRef } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   Home,
   User,

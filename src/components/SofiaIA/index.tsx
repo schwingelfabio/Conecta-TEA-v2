@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { MessageCircle } from 'lucide-react';
 import { SofiaCallScreen } from './screens/SofiaCallScreen';
 import { trackEvent } from '../../lib/monitoring';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export const SofiaIA = ({ isVip }: { isVip?: boolean }) => {
   const [screen, setScreen] = useState<'call' | 'landing'>('call');

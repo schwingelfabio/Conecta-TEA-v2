@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { PlayCircle, Loader2, X, Play, Search } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { db } from '../lib/firebase';

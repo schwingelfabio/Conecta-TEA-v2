@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { db } from '../lib/firebase';
 import { collection, query, where, getDocs, addDoc, updateDoc, doc, serverTimestamp, runTransaction, getDocFromServer } from 'firebase/firestore';
 import { UserProfile, SosCard } from '../types';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Activity, Printer, Save, Edit2, Phone, MapPin, AlertTriangle, HeartPulse, ShieldAlert, ShieldCheck, IdCard, Crown, Download, MessageCircle, X, Camera } from 'lucide-react';
 import QRCode from 'react-qr-code';
 import { useTranslation } from 'react-i18next';

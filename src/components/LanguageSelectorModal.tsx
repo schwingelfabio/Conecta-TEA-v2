@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { X, Globe } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export default function LanguageSelectorModal({ onClose }: { onClose: () => void }) {
   const { i18n } = useTranslation();

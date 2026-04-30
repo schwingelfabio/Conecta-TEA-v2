@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { db } from '../lib/firebase';
 import { collection, query, orderBy, onSnapshot } from 'firebase/firestore';
-import { motion } from 'motion/react';
+import { motion } from 'framer-motion';
 import AdBanner from './AdBanner';
 
 export default function GalleryPage() {

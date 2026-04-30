@@ -24,7 +24,7 @@ import {
 } from 'firebase/firestore';
 import { Post, UserProfile } from '../types';
 import { generateSimulatedPosts } from '../lib/simulatedPosts';
-import { motion, AnimatePresence, LayoutGroup } from 'motion/react';
+import { motion, AnimatePresence, LayoutGroup } from 'framer-motion';
 import ReactMarkdown from 'react-markdown';
 import { useTranslation } from 'react-i18next';
 import PostComments from './PostComments';
