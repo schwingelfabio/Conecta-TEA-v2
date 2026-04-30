@@ -16,6 +16,72 @@ export const SofiaCallScreen = ({ onEndCall, isVip }: { onEndCall: () => void, i
   const hasInitialized = useRef(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
+  const txt = {
+    pt: {
+      initialGreeting: "Oi, eu sou a Sofia. Estou aqui para te ouvir e apoiar. Como você está se sentindo hoje?",
+      errorMsg: "Estamos com instabilidade no momento. Tente novamente em instantes.",
+      thinking: "Pensando...",
+      online: "Online",
+      titleMsg: "Estou aqui para te ouvir e apoiar em sua jornada. Sinta-se à vontade para compartilhar o que estiver sentindo.",
+      connecting: "Iniciando conversa segura...",
+      clearError: "Limpar erro e continuar",
+      placeholder: "Escreva sua mensagem...",
+      limitOver: "Seu limite gratuito acabou hoje.",
+      limitDesc: "Não pague por um aplicativo. Invista na sua paz de espírito. Ter o Conecta VIP é como ter um especialista e um ombro amigo no seu bolso de madrugada por menos do que você gasta em um lanche. Liberte-se da solidão e saiba exatamente o que fazer na próxima crise. Assine agora.",
+      unlockBtn: "Liberar Chat Ilimitado (R$ 9,99/mês)",
+      paywallHref: "https://buy.stripe.com/cNi9AU4rT5HwfMc3uP2wU05",
+      comeBackLater: "Voltar depois"
+    },
+    en: {
+      initialGreeting: "Hi, I'm Sofia. I'm here to listen and support you. How are you feeling today?",
+      errorMsg: "We are experiencing instability at the moment. Please try again soon.",
+      thinking: "Thinking...",
+      online: "Online",
+      titleMsg: "I'm here to listen and support you on your journey. Feel free to share whatever you're feeling.",
+      connecting: "Starting secure conversation...",
+      clearError: "Clear error and continue",
+      placeholder: "Type your message...",
+      limitOver: "Your free limit is over for today.",
+      limitDesc: "Don't pay for an app. Invest in your peace of mind. Having Conecta VIP is like having an expert and a friendly shoulder in your pocket at dawn for less than you spend on a snack. Free yourself from loneliness and know exactly what to do in the next meltdown. Subscribe now.",
+      unlockBtn: "Unlock Unlimited Chat (US$ 9.99/mo)",
+      paywallHref: "https://buy.stripe.com/28E9AU1fH3zobvWfdx2wU01",
+      comeBackLater: "Come back later"
+    },
+    es: {
+      initialGreeting: "Hola, soy Sofía. Estoy aquí para escucharte y apoyarte. ¿Cómo te sientes hoy?",
+      errorMsg: "Estamos experimentando inestabilidad en este momento. Por favor, inténtalo de nuevo pronto.",
+      thinking: "Pensando...",
+      online: "En línea",
+      titleMsg: "Estoy aquí para escucharte y apoyarte en tu viaje. Siéntete libre de compartir lo que estés sintiendo.",
+      connecting: "Iniciando conversación segura...",
+      clearError: "Borrar error y continuar",
+      placeholder: "Escribe tu mensaje...",
+      limitOver: "Tu límite gratuito ha terminado por hoy.",
+      limitDesc: "No pagues por una aplicación. Invierte en tu tranquilidad. Tener Conecta VIP es como tener a un experto y un hombro amigable en tu bolsillo de madrugada por menos de lo que gastas en un refrigerio. Libérate de la soledad y sabe exactamente qué hacer en la próxima crisis. Suscríbete ahora.",
+      unlockBtn: "Desbloquear Chat Ilimitado (US$ 9.99/mes)",
+      paywallHref: "https://buy.stripe.com/28E9AU1fH3zobvWfdx2wU01",
+      comeBackLater: "Volver más tarde"
+    },
+    ja: {
+      initialGreeting: "こんにちは、ソフィアです。あなたのお話を聴き、サポートするためにここにいます。今日の気分はどうですか？",
+      errorMsg: "現在不安定な状況です。しばらくしてからもう一度お試しください。",
+      thinking: "考え中...",
+      online: "オンライン",
+      titleMsg: "あなたの旅に寄り添い、サポートするためにここにいます。感じていることを何でも自由に共有してください。",
+      connecting: "安全な会話を開始しています...",
+      clearError: "エラーをクリアして続行",
+      placeholder: "メッセージを入力してください...",
+      limitOver: "今日の無料上限に達しました。",
+      limitDesc: "アプリにお金を払うのではなく、心の平安に投資してください。Conecta VIPを持つことは、夜明けにおやつ代以下の費用で、ポケットに専門家と優しい友人がいるようなものです。孤独から解放され、次のパニック時に何をすべきかを正確に知ることができます。今すぐ登録してください。",
+      unlockBtn: "無制限チャットをロック解除 (US$ 9.99/月)",
+      paywallHref: "https://buy.stripe.com/28E9AU1fH3zobvWfdx2wU01",
+      comeBackLater: "後で戻る"
+    }
+  };
+
+  const langMatch = i18n.language && i18n.language.substring(0, 2) || 'pt';
+  const c = txt[langMatch as keyof typeof txt] || txt['pt'];
+
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
@@ -29,9 +95,8 @@ export const SofiaCallScreen = ({ onEndCall, isVip }: { onEndCall: () => void, i
     hasInitialized.current = true;
     
     setSofiaState('ready');
-    const initialGreeting = "Oi, eu sou a Sofia. Estou aqui para te ouvir e apoiar. Como você está se sentindo hoje?";
-    setMessages([{sender: 'sofia', text: initialGreeting}]);
-  }, []);
+    setMessages([{sender: 'sofia', text: c.initialGreeting}]);
+  }, [c.initialGreeting]);
 
   useEffect(() => {
     initConversation();
@@ -63,7 +128,7 @@ export const SofiaCallScreen = ({ onEndCall, isVip }: { onEndCall: () => void, i
     } catch (err) {
       setMessages(prev => [...prev, {
         sender: 'sofia', 
-        text: "Estamos com instabilidade no momento. Tente novamente em instantes." 
+        text: c.errorMsg 
       }]);
       setSofiaState('error');
     }
@@ -78,7 +143,7 @@ export const SofiaCallScreen = ({ onEndCall, isVip }: { onEndCall: () => void, i
           <div>
             <h2 className="text-base font-bold text-white tracking-tight">Sofia IA</h2>
             <p className="text-[10px] text-slate-400 uppercase tracking-[0.2em] font-semibold">
-              {sofiaState === 'processing' ? 'Pensando...' : 'Online'}
+              {sofiaState === 'processing' ? c.thinking : c.online}
             </p>
           </div>
         </div>
@@ -98,14 +163,14 @@ export const SofiaCallScreen = ({ onEndCall, isVip }: { onEndCall: () => void, i
           <div className="mb-8 text-center">
             <h1 className="text-3xl font-black text-white mb-2 tracking-tight">Sofia IA</h1>
             <p className="text-slate-400 text-sm md:text-base max-w-md mx-auto">
-              Estou aqui para te ouvir e apoiar em sua jornada. Sinta-se à vontade para compartilhar o que estiver sentindo.
+              {c.titleMsg}
             </p>
           </div>
 
           {sofiaState === 'connecting' ? (
             <div className="flex-1 flex flex-col items-center justify-center space-y-4">
               <Loader2 className="w-8 h-8 text-sky-500 animate-spin" />
-              <p className="text-slate-400 text-sm animate-pulse">Iniciando conversa segura...</p>
+              <p className="text-slate-400 text-sm animate-pulse">{c.connecting}</p>
             </div>
           ) : (
             <>
@@ -154,7 +219,7 @@ export const SofiaCallScreen = ({ onEndCall, isVip }: { onEndCall: () => void, i
                       className="flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-full text-xs text-slate-400 transition-all border border-white/5"
                     >
                       <AlertCircle size={14} />
-                      Limpar erro e continuar
+                      {c.clearError}
                     </button>
                   </div>
                 )}
@@ -165,7 +230,7 @@ export const SofiaCallScreen = ({ onEndCall, isVip }: { onEndCall: () => void, i
                     onChange={(e) => setTextInput(e.target.value)}
                     onKeyPress={(e) => e.key === 'Enter' && handleTextSubmit()}
                     className="flex-1 bg-transparent px-4 py-4 text-sm md:text-base text-white outline-none placeholder:text-slate-500"
-                    placeholder="Escreva sua mensagem..."
+                    placeholder={c.placeholder}
                     autoFocus
                   />
                   <button 
@@ -189,23 +254,23 @@ export const SofiaCallScreen = ({ onEndCall, isVip }: { onEndCall: () => void, i
             <div className="w-16 h-16 bg-amber-500/10 rounded-full flex items-center justify-center mx-auto mb-6 text-amber-500">
               <Lock className="w-8 h-8" />
             </div>
-            <h2 className="text-2xl font-black text-white mb-4">Seu limite gratuito acabou hoje.</h2>
+            <h2 className="text-2xl font-black text-white mb-4">{c.limitOver}</h2>
             <p className="text-slate-300 mb-8 leading-relaxed">
-              Não pague por um aplicativo. Invista na sua paz de espírito. Ter o Conecta VIP é como ter um especialista e um ombro amigo no seu bolso de madrugada por menos do que você gasta em um lanche. Liberte-se da solidão e saiba exatamente o que fazer na próxima crise. Assine agora.
+              {c.limitDesc}
             </p>
             <a 
-              href={(i18n.language === 'pt' ? 'https://buy.stripe.com/cNi9AU4rT5HwfMc3uP2wU05' : i18n.language === 'ja' ? 'https://buy.stripe.com/28E9AU1fH3zobvWfdx2wU01' : 'https://buy.stripe.com/28E9AU1fH3zobvWfdx2wU01')}
+              href={c.paywallHref}
               target="_blank" 
               rel="noopener noreferrer"
               className="block w-full bg-amber-500 hover:bg-amber-600 text-slate-900 py-4 rounded-xl font-black text-lg mb-4"
             >
-              {(i18n.language === 'pt' ? 'Liberar Chat Ilimitado (R$ 9,99/mês)' : i18n.language === 'ja' ? 'Unlock Unlimited Chat (US$ 9.99/mo)' : 'Unlock Unlimited Chat (US$ 9.99/mo)')}
+              {c.unlockBtn}
             </a>
             <button 
               onClick={() => setShowPaywall(false)}
               className="text-sm text-slate-500 hover:text-slate-400"
             >
-              Voltar depois
+              {c.comeBackLater}
             </button>
           </div>
         </div>

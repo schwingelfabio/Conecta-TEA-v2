@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import VideoGallery from './VideoGallery';
+import AdBanner from './AdBanner';
 import { PlayCircle, Sparkles, Video } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { db } from '../lib/firebase';
@@ -158,6 +159,7 @@ export default function VideosPage() {
       </div>
       
       <VideoGallery />
+      <AdBanner className="mt-8" />
     </div>
   );
 }

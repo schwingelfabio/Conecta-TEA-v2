@@ -32,6 +32,7 @@ import ActiveCommunities from './ActiveCommunities';
 import { useInView } from 'react-intersection-observer';
 import Avatar from './Avatar';
 import { trackEvent } from '../lib/monitoring';
+import AdBanner from './AdBanner';
 
 const getRelativeTime = (date: Date | any, lang: string) => {
   if (!date) return lang === 'en' ? 'Now' : lang === 'es' ? 'Ahora' : 'Agora';
@@ -718,7 +719,9 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
           ? `${127 + Math.floor(Date.now() / 1000000 % 50)} families supported today` 
           : i18n.language === 'es' 
             ? `Más de ${127 + Math.floor(Date.now() / 1000000 % 50)} familias ayudadas hoy` 
-            : `+${127 + Math.floor(Date.now() / 1000000 % 50)} famílias ajudadas hoje`}
+            : i18n.language === 'ja'
+              ? `本日、${127 + Math.floor(Date.now() / 1000000 % 50)}以上の家族が支援を受けました`
+              : `+${127 + Math.floor(Date.now() / 1000000 % 50)} famílias ajudadas hoje`}
       </div>
 
       {/* Post Creation */}
@@ -843,7 +846,14 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
               <AnimatePresence mode="popLayout">
                 {posts.flatMap((post, index) => {
                   const items = [];
-                  if ((index + 1) % 3 === 0) {
+                  if ((index + 1) % 4 === 0) {
+                    items.push(
+                      <div key={`ad-${post.id}`} className="mb-6">
+                        <AdBanner format="fluid" />
+                      </div>
+                    );
+                  }
+                  if ((index + 1) % 5 === 0) {
                     items.push(
                       <motion.div
                         key={`support-banner-${post.id}`}
@@ -853,17 +863,17 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
                       >
                         <Heart className="w-12 h-12 text-sky-500 mx-auto mb-4" />
                         <h3 className="text-xl font-bold text-slate-900 mb-4">
-                          {i18n.language === 'en' ? 'This platform helps families every day. If this helped you, you can help another family too 💙' : i18n.language === 'es' ? 'Esta plataforma ayuda a las familias todos los días. Si esto te ayudó, puedes ayudar a otra familia también 💙' : 'Esse espaço ajuda famílias todos os dias. Se isso te ajudou, você pode ajudar outra família também 💙'}
+                          {i18n.language === 'en' ? 'This platform helps families every day. If this helped you, you can help another family too 💙' : i18n.language === 'es' ? 'Esta plataforma ayuda a las familias todos los días. Si esto te ayudó, puedes ayudar a otra familia también 💙' : i18n.language === 'ja' ? 'このプラットフォームは毎日家族を支援しています。これがあなたの役に立ったなら、あなたも別の家族を支援することができます 💙' : 'Esse espaço ajuda famílias todos os dias. Se isso te ajudou, você pode ajudar outra família também 💙'}
                         </h3>
                         <div className="flex flex-col sm:flex-row gap-3 justify-center">
                           <button 
                             onClick={() => window.open((i18n.language === 'pt' ? 'https://buy.stripe.com/cNi9AU4rT5HwfMc3uP2wU05' : i18n.language === 'ja' ? 'https://buy.stripe.com/28E9AU1fH3zobvWfdx2wU01' : 'https://buy.stripe.com/28E9AU1fH3zobvWfdx2wU01'), '_blank')} 
                             className="px-6 py-3 bg-sky-500 text-white rounded-xl font-bold hover:bg-sky-600 transition-all"
                           >
-                            {i18n.language === 'en' ? 'Support now' : i18n.language === 'es' ? 'Apoyar ahora' : 'Apoiar agora'}
+                            {i18n.language === 'en' ? 'Support now' : i18n.language === 'es' ? 'Apoyar ahora' : i18n.language === 'ja' ? '今すぐ支援する' : 'Apoiar agora'}
                           </button>
                           <button onClick={() => {}} className="px-6 py-3 bg-slate-100 text-slate-600 rounded-xl font-bold hover:bg-slate-200 transition-all">
-                            {i18n.language === 'en' ? 'Continue' : i18n.language === 'es' ? 'Continuar' : 'Continuar'}
+                            {i18n.language === 'en' ? 'Continue' : i18n.language === 'es' ? 'Continuar' : i18n.language === 'ja' ? '続ける' : 'Continuar'}
                           </button>
                         </div>
                       </motion.div>
@@ -951,6 +961,7 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
                         <ReactMarkdown>
                           {i18n.language === 'en' ? (post.text_en || post.text || '') : 
                            i18n.language === 'es' ? (post.text_es || post.text || '') : 
+                           i18n.language === 'ja' ? (post.text_ja || post.text || '') : 
                            (post.text_pt || post.text || '')}
                         </ReactMarkdown>
                       </div>
@@ -1021,10 +1032,10 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
                               }} 
                               className="w-full py-4 bg-amber-500 text-white rounded-xl font-bold mb-3"
                             >
-                              {(i18n.language === 'pt' ? 'Tornar-se VIP (R$ 9,99/mês)' : i18n.language === 'ja' ? 'Become VIP (US$ 9.99/mo)' : 'Become VIP (US$ 9.99/mo)')}
+                              {(i18n.language === 'pt' ? 'Tornar-se VIP (R$ 9,99/mês)' : i18n.language === 'ja' ? 'VIPになる (US$ 9.99/月)' : 'Become VIP (US$ 9.99/mo)')}
                             </button>
                             <button onClick={() => setShowVipModal(false)} className="w-full py-4 text-slate-500 font-bold">
-                              {(i18n.language === 'pt' ? 'Talvez mais tarde' : i18n.language === 'ja' ? 'Maybe later' : 'Maybe later')}
+                              {(i18n.language === 'pt' ? 'Talvez mais tarde' : i18n.language === 'ja' ? 'また後で' : 'Maybe later')}
                             </button>
                           </motion.div>
                         </div>

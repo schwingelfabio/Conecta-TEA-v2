@@ -53,7 +53,7 @@ export function useAiContentEngine(isAdmin: boolean) {
           2. Uma dica prática sobre TEA (rotinas, direitos, atividades sensoriais).
           3. Um questionamento ou momento de apoio direto (ex: "Quem mais aqui sente que...").
           
-          Os posts DEVEM ser em ${i18n.language === 'en' ? 'inglês global natural' : i18n.language === 'es' ? 'espanhol neutro natural' : 'português do Brasil (tom de pai gaúcho: simples, honesto, acolhedor)'}.
+          Os posts DEVEM ser em ${i18n.language === 'en' ? 'inglês global natural' : i18n.language === 'es' ? 'espanhol neutro natural' : i18n.language === 'ja' ? '自然な日本語' : 'português do Brasil (tom de pai gaúcho: simples, honesto, acolhedor)'}.
           
           REGRAS INQUEBRÁVEIS:
           - NUNCA faça diagnóstico médico. Toda resposta começa ou termina com: "Isso NÃO substitui avaliação médica multidisciplinar nem laudo profissional."

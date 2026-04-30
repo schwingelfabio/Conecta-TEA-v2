@@ -51,6 +51,7 @@ export default function AiContentAdmin() {
     if (!themes) {
       themes = i18n.language === 'pt' ? 'Primeiros sinais, Comunicação, Sensorial' :
                i18n.language === 'es' ? 'Signos tempranos, Comunicación, Sensorial' :
+               i18n.language === 'ja' ? '初期の兆候、コミュニケーション、感覚' :
                'Early signs, Communication, Sensory';
       setConfig(prev => ({ ...prev, priorityThemes: themes }));
     }
@@ -77,6 +78,7 @@ export default function AiContentAdmin() {
     if (!themes) {
       themes = i18n.language === 'pt' ? 'Primeiros sinais, Comunicação, Sensorial' :
                i18n.language === 'es' ? 'Signos tempranos, Comunicación, Sensorial' :
+               i18n.language === 'ja' ? '初期の兆候、コミュニケーション、感覚' :
                'Early signs, Communication, Sensory';
       setConfig(prev => ({ ...prev, priorityThemes: themes }));
     }
@@ -96,7 +98,7 @@ export default function AiContentAdmin() {
         Sua missão é atuar sob as diretrizes do CÉREBRO CENTRAL. Máxima verdade. Máxima ajuda. Máxima privacidade. IA + humanidade real.
         
         Gere um array JSON com 3 posts altamente engajadores, emocionais e úteis para a comunidade.
-        Os posts DEVEM ser em ${i18n.language === 'en' ? 'inglês global natural' : i18n.language === 'es' ? 'espanhol neutro natural' : 'português do Brasil (tom de pai gaúcho: simples, honesto, acolhedor)'}.
+        Os posts DEVEM ser em ${i18n.language === 'en' ? 'inglês global natural' : i18n.language === 'es' ? 'espanhol neutro natural' : i18n.language === 'ja' ? '自然な日本語' : 'português do Brasil (tom de pai gaúcho: simples, honesto, acolhedor)'}.
         Temas prioritários: ${themes}.
         
         CRÍTICO: NUNCA repita histórias, dicas ou vitórias de gerações anteriores. Seja criativo, traga novas perspectivas e situações do dia a dia.
@@ -166,9 +168,9 @@ export default function AiContentAdmin() {
       try {
         const postsRef = collection(db, 'posts');
         const fallbackPosts = [
-          { text: i18n.language === 'pt' ? 'Dica do dia: Pequenas vitórias contam muito!' : i18n.language === 'es' ? 'Consejo del día: ¡Las pequeñas victorias cuentan mucho!' : 'Tip of the day: Small wins count a lot!', topic: 'conquistas', authorName: 'Sofia', authorRole: 'Assistente' },
-          { text: i18n.language === 'pt' ? 'Alguém mais sente que o dia foi longo?' : i18n.language === 'es' ? '¿Alguien más siente que el día fue largo?' : 'Does anyone else feel like the day was long?', topic: 'geral', authorName: 'Mãe', authorRole: 'Mãe' },
-          { text: i18n.language === 'pt' ? 'Dica de comunicação: Use cartões visuais.' : i18n.language === 'es' ? 'Consejo de comunicación: Use tarjetas visuales.' : 'Communication tip: Use visual cards.', topic: 'dicas', authorName: 'Especialista', authorRole: 'Especialista' }
+          { text: i18n.language === 'pt' ? 'Dica do dia: Pequenas vitórias contam muito!' : i18n.language === 'es' ? 'Consejo del día: ¡Las pequeñas victorias cuentan mucho!' : i18n.language === 'ja' ? '今日のヒント: 小さな勝利が大きな意味を持ちます！' : 'Tip of the day: Small wins count a lot!', topic: 'conquistas', authorName: 'Sofia', authorRole: 'Assistente' },
+          { text: i18n.language === 'pt' ? 'Alguém mais sente que o dia foi longo?' : i18n.language === 'es' ? '¿Alguien más siente que el día fue largo?' : i18n.language === 'ja' ? '今日が長かったと感じる人は他にいますか？' : 'Does anyone else feel like the day was long?', topic: 'geral', authorName: 'Mãe', authorRole: 'Mãe' },
+          { text: i18n.language === 'pt' ? 'Dica de comunicação: Use cartões visuais.' : i18n.language === 'es' ? 'Consejo de comunicación: Use tarjetas visuales.' : i18n.language === 'ja' ? 'コミュニケーションのヒント: 視覚カードを使用してください。' : 'Communication tip: Use visual cards.', topic: 'dicas', authorName: 'Especialista', authorRole: 'Especialista' }
         ];
         for (const post of fallbackPosts) {
           await addDoc(postsRef, {

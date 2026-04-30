@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { db } from '../lib/firebase';
 import { collection, query, orderBy, onSnapshot } from 'firebase/firestore';
 import { motion } from 'framer-motion';
+import AdBanner from './AdBanner';
 
 export default function GalleryPage() {
   const { t } = useTranslation();
@@ -59,6 +60,7 @@ export default function GalleryPage() {
           </motion.div>
         ))}
       </div>
+      <AdBanner className="mt-8" />
     </div>
   );
 }

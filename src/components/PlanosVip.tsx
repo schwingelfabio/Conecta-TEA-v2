@@ -131,25 +131,25 @@ export default function PlanosVip({ isVip }: { isVip?: boolean }) {
               {/* TOP TEXT */}
               <div className="mt-2 mb-6">
                 <p className="text-amber-200/80 text-xs font-bold tracking-widest uppercase mb-2 drop-shadow-md">
-                  {i18n.language === 'en' ? "Some families can't afford help…" : "Algumas famílias não podem pagar..."}
+                  {i18n.language === 'en' ? "Some families can't afford help…" : i18n.language === 'ja' ? "一部の家族は助けを得る余裕がありません…" : "Algumas famílias não podem pagar..."}
                 </p>
                 <p className="text-white text-base font-bold drop-shadow-lg">
-                  {i18n.language === 'en' ? "You can change that today." : "Você pode mudar isso hoje."}
+                  {i18n.language === 'en' ? "You can change that today." : i18n.language === 'ja' ? "あなたは今日それを変えることができます。" : "Você pode mudar isso hoje."}
                 </p>
               </div>
 
               {/* MAIN TITLE */}
               <div className="mb-6">
                 <h2 className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-100 via-amber-300 to-amber-100 leading-tight drop-shadow-[0_2px_10px_rgba(245,158,11,0.5)]">
-                  {i18n.language === 'en' ? "Become the reason" : "Seja o motivo pelo qual"}<br/>
-                  {i18n.language === 'en' ? "a family gets help" : "uma família recebe ajuda"}
+                  {i18n.language === 'en' ? "Become the reason" : i18n.language === 'ja' ? "理由になる" : "Seja o motivo pelo qual"}<br/>
+                  {i18n.language === 'en' ? "a family gets help" : i18n.language === 'ja' ? "ある家族が助けを得る" : "uma família recebe ajuda"}
                 </h2>
               </div>
 
               {/* CENTER BADGE */}
               <div className="flex justify-center mb-6">
                 <div className="bg-amber-500/10 border border-amber-400/40 backdrop-blur-md text-amber-300 px-4 py-1 rounded-full text-xs font-black uppercase tracking-widest shadow-[0_0_20px_rgba(245,158,11,0.2)]">
-                  {i18n.language === 'en' ? "1 YEAR MEMBERSHIP" : "ASSINATURA DE 1 ANO"}
+                  {i18n.language === 'en' ? "1 YEAR MEMBERSHIP" : i18n.language === 'ja' ? "1年間のメンバーシップ" : "ASSINATURA DE 1 ANO"}
                 </div>
               </div>
 
@@ -166,10 +166,10 @@ export default function PlanosVip({ isVip }: { isVip?: boolean }) {
               <div className="mb-8 text-left max-w-[260px] mx-auto w-full">
                 <ul className="space-y-3">
                   {[
-                    i18n.language === 'en' ? "Help families in real need" : "Ajude famílias que realmente precisam",
-                    i18n.language === 'en' ? "Keep this platform alive" : "Mantenha esta plataforma viva",
-                    i18n.language === 'en' ? "Get early access to new tools" : "Acesso antecipado a novas ferramentas",
-                    i18n.language === 'en' ? "Be part of something bigger" : "Faça parte de algo maior"
+                    i18n.language === 'en' ? "Help families in real need" : i18n.language === 'ja' ? "本当に困っている家族を助ける" : "Ajude famílias que realmente precisam",
+                    i18n.language === 'en' ? "Keep this platform alive" : i18n.language === 'ja' ? "このプラットフォームを維持する" : "Mantenha esta plataforma viva",
+                    i18n.language === 'en' ? "Get early access to new tools" : i18n.language === 'ja' ? "新しいツールへの早期アクセス" : "Acesso antecipado a novas ferramentas",
+                    i18n.language === 'en' ? "Be part of something bigger" : i18n.language === 'ja' ? "もっと大きな何かの一部になる" : "Faça parte de algo maior"
                   ].map((benefit, i) => (
                     <li key={i} className="flex items-center gap-3 text-slate-100 text-sm font-medium">
                       <div className="bg-amber-500/20 p-1 rounded-full">
@@ -187,7 +187,7 @@ export default function PlanosVip({ isVip }: { isVip?: boolean }) {
                   {(i18n.language === 'pt' ? 'R$ 199,00' : i18n.language === 'ja' ? '$39.99' : '$39.99')} <span className="text-lg text-amber-200/80 font-medium">/ {(i18n.language === 'pt' ? 'ano' : i18n.language === 'ja' ? 'year' : 'year')}</span>
                 </div>
                 <p className="text-amber-400 text-xs font-bold tracking-wide drop-shadow-md">
-                  {i18n.language === 'en' ? "Less than $0.11 per day to change lives" : "Menos de R$0,55 por dia para mudar vidas"}
+                  {i18n.language === 'en' ? "Less than $0.11 per day to change lives" : i18n.language === 'ja' ? "人生を変えるのに1日あたり約15円" : "Menos de R$0,55 por dia para mudar vidas"}
                 </p>
               </div>
 
@@ -205,13 +205,13 @@ export default function PlanosVip({ isVip }: { isVip?: boolean }) {
                     : 'bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600 hover:from-amber-300 hover:via-amber-400 hover:to-amber-500 text-slate-950 shadow-[0_0_20px_rgba(245,158,11,0.4)]'
                 }`}
               >
-                {isVip ? t('vip.activePlan') : ((i18n.language === 'pt' ? 'AJUDAR UMA FAMÍLIA AGORA' : i18n.language === 'ja' ? 'HELP A FAMILY NOW' : 'HELP A FAMILY NOW'))}
+                {isVip ? t('vip.activePlan') : ((i18n.language === 'pt' ? 'AJUDAR UMA FAMÍLIA AGORA' : i18n.language === 'ja' ? '今すぐ家族を助ける' : 'HELP A FAMILY NOW'))}
               </motion.button>
 
               {/* BOTTOM TEXT */}
               <div className="text-xs font-medium text-slate-300/80 space-y-1">
-                <p>{i18n.language === 'en' ? "If you don’t help… nothing changes." : "Se você não ajudar... nada muda."}</p>
-                <p className="text-white font-bold">{i18n.language === 'en' ? "If you do… everything can." : "Se você ajudar... tudo pode mudar."}</p>
+                <p>{i18n.language === 'en' ? "If you don’t help… nothing changes." : i18n.language === 'ja' ? "あなたが助けなければ… 何も変わりません。" : "Se você não ajudar... nada muda."}</p>
+                <p className="text-white font-bold">{i18n.language === 'en' ? "If you do… everything can." : i18n.language === 'ja' ? "もし助ければ… すべてが変わる可能性があります。" : "Se você ajudar... tudo pode mudar."}</p>
               </div>
             </div>
           </div>
@@ -220,10 +220,10 @@ export default function PlanosVip({ isVip }: { isVip?: boolean }) {
         {/* 5. EMOTIONAL TRIGGER BLOCK */}
         <div className="text-center mb-12">
           <p className="text-slate-400 text-xl italic mb-2">
-            {(i18n.language === 'pt' ? '"Se ninguém ajudar... nada muda."' : i18n.language === 'ja' ? '"If nobody helps… nothing changes."' : '"If nobody helps… nothing changes."')}
+            {(i18n.language === 'pt' ? '"Se ninguém ajudar... nada muda."' : i18n.language === 'ja' ? '"誰も助けなければ… 何も変わりません。"' : '"If nobody helps… nothing changes."')}
           </p>
           <p className="text-white text-2xl font-bold">
-            {(i18n.language === 'pt' ? '"Mas se você ajudar... tudo pode mudar."' : i18n.language === 'ja' ? '"But if you do… everything can."' : '"But if you do… everything can."')}
+            {(i18n.language === 'pt' ? '"Mas se você ajudar... tudo pode mudar."' : i18n.language === 'ja' ? '"もしあなたが助ければ… すべてが変わる可能性があります。"' : '"But if you do… everything can."')}
           </p>
         </div>
 
@@ -231,12 +231,12 @@ export default function PlanosVip({ isVip }: { isVip?: boolean }) {
         <div className="flex flex-col md:flex-row items-center justify-center gap-6 text-slate-400 font-medium border-t border-slate-800 pt-8">
           <div className="flex items-center gap-2">
             <ShieldCheck size={20} className="text-emerald-500" />
-            <span>{(i18n.language === 'pt' ? 'Cancele a qualquer momento. Sem risco.' : i18n.language === 'ja' ? 'Cancel anytime. No risk.' : 'Cancel anytime. No risk.')}</span>
+            <span>{(i18n.language === 'pt' ? 'Cancele a qualquer momento. Sem risco.' : i18n.language === 'ja' ? 'いつでもキャンセル可能。リスクはありません。' : 'Cancel anytime. No risk.')}</span>
           </div>
           <div className="hidden md:block w-1 h-1 bg-slate-700 rounded-full"></div>
           <div className="flex items-center gap-2">
             <Heart size={20} className="text-rose-500" />
-            <span>{(i18n.language === 'pt' ? 'Isso não é uma doação. É uma missão.' : i18n.language === 'ja' ? 'This is not a donation. It’s a mission.' : 'This is not a donation. It’s a mission.')}</span>
+            <span>{(i18n.language === 'pt' ? 'Isso não é uma doação. É uma missão.' : i18n.language === 'ja' ? 'これは寄付ではありません。使命です。' : 'This is not a donation. It’s a mission.')}</span>
           </div>
         </div>
 

@@ -214,7 +214,7 @@ export default function AreaVip({
                 </p>
                 {!effectiveVip && (
                   <p className="text-amber-600 font-bold text-lg">
-                    {i18n.language === 'en' ? 'Support the mission + get early access' : 'Apoie o projeto + acesso antecipado'}
+                    {i18n.language === 'en' ? 'Support the mission + get early access' : i18n.language === 'ja' ? 'ミッションをサポートして早期アクセスを得る' : 'Apoie o projeto + acesso antecipado'}
                   </p>
                 )}
               </div>

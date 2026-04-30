@@ -4,6 +4,7 @@ import { Check, Copy, ExternalLink, X, Users, Heart, Brain, Puzzle } from 'lucid
 import AuthForm from './AuthForm';
 import LanguageSelector from './LanguageSelector';
 import Logo from './Logo';
+import AdBanner from './AdBanner';
 import { useTranslation } from 'react-i18next';
 
 interface LandingPageProps {
@@ -95,16 +96,6 @@ export default function LandingPage({ onLogin, onShowTerms, onGuestLogin }: Land
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  useEffect(() => {
-    try {
-      if (typeof window !== 'undefined') {
-        const adsbygoogle = (window as any).adsbygoogle || [];
-        adsbygoogle.push({});
-      }
-    } catch (e) {
-      console.error("AdSense error:", e);
-    }
-  }, []);
 
   const handleMainAction = async () => {
     setIsEntering(true);
@@ -362,13 +353,7 @@ export default function LandingPage({ onLogin, onShowTerms, onGuestLogin }: Land
       </section>
 
       {/* Bloco de Anúncios Google Ads Inferior */}
-      <div className="w-full flex justify-center py-6 bg-slate-50 border-t border-slate-100">
-        <ins className="adsbygoogle"
-             style={{ display: 'block', width: '100%', maxWidth: '728px', minHeight: '90px', textAlign: 'center' }}
-             data-ad-client="ca-pub-6367623066928336"
-             data-ad-format="auto"
-             data-full-width-responsive="true"></ins>
-      </div>
+      <AdBanner className="bg-slate-50 border-t border-slate-100 py-6" />
 
       <footer className="py-8 bg-white text-center pb-28 md:pb-8 border-t border-slate-100">
         <SupportModal 

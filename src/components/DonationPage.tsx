@@ -50,15 +50,15 @@ const DonationPage = () => {
           } as any)}
           <p 
             className="mt-4 text-center text-sm text-sky-600 font-medium cursor-pointer hover:underline"
-            onClick={() => window.open(i18n.language === 'en' ? 'https://buy.stripe.com/28E9AU1fH3zobvWfdx2wU01' : 'https://buy.stripe.com/cNi9AU4rT5HwfMc3uP2wU05', '_blank')}
+            onClick={() => window.open(i18n.language === 'en' ? 'https://buy.stripe.com/28E9AU1fH3zobvWfdx2wU01' : i18n.language === 'ja' ? 'https://buy.stripe.com/28E9AU1fH3zobvWfdx2wU01' : 'https://buy.stripe.com/cNi9AU4rT5HwfMc3uP2wU05', '_blank')}
           >
-            {i18n.language === 'en' ? 'Any amount makes a difference. Click here to donate.' : i18n.language === 'es' ? 'Cualquier cantidad hace la diferencia. Haga clic aquí para donar.' : 'Qualquer valor pode fazer a diferença. Clique aqui para doar.'}
+            {i18n.language === 'en' ? 'Any amount makes a difference. Click here to donate.' : i18n.language === 'es' ? 'Cualquier cantidad hace la diferencia. Haga clic aquí para donar.' : i18n.language === 'ja' ? 'どんな額でも違いを生みます。ここをクリックして寄付する。' : 'Qualquer valor pode fazer a diferença. Clique aqui para doar.'}
           </p>
         </div>
       </motion.div>
 
       {/* QR Code */}
-      {i18n.language === 'en' && (
+      {i18n.language !== 'pt' && i18n.language !== 'es' && (
         <motion.div 
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
@@ -98,17 +98,17 @@ const DonationPage = () => {
       {/* Impact Message */}
       <div className="mt-12 px-6 text-center">
         <p className="text-lg font-medium text-sky-900">
-          {i18n.language === 'en' ? 'Each contribution helps a family right now.' : i18n.language === 'es' ? 'Cada contribución ayuda a una familia ahora mismo.' : 'Cada contribuição ajuda uma família agora.'}
+          {i18n.language === 'en' ? 'Each contribution helps a family right now.' : i18n.language === 'es' ? 'Cada contribución ayuda a una familia ahora mismo.' : i18n.language === 'ja' ? 'それぞれの貢献が、今すぐ家族を助けます。' : 'Cada contribuição ajuda uma família agora.'}
         </p>
       </div>
 
       {/* Sticky CTA */}
       <div className="fixed bottom-0 left-0 right-0 p-4 bg-sky-50/80 backdrop-blur-sm">
         <button 
-          onClick={() => window.open(i18n.language === 'en' ? 'https://buy.stripe.com/28E9AU1fH3zobvWfdx2wU01' : 'https://buy.stripe.com/cNi9AU4rT5HwfMc3uP2wU05', '_blank')}
+          onClick={() => window.open(i18n.language === 'en' ? 'https://buy.stripe.com/28E9AU1fH3zobvWfdx2wU01' : i18n.language === 'ja' ? 'https://buy.stripe.com/28E9AU1fH3zobvWfdx2wU01' : 'https://buy.stripe.com/cNi9AU4rT5HwfMc3uP2wU05', '_blank')}
           className="w-full rounded-full bg-sky-600 py-4 font-bold text-white shadow-lg shadow-sky-200 transition-transform active:scale-95"
         >
-          {i18n.language === 'en' ? 'Support Now' : 'Apoiar Agora'}
+          {i18n.language === 'en' ? 'Support Now' : i18n.language === 'es' ? 'Apoyar Ahora' : i18n.language === 'ja' ? '今すぐ支援する' : 'Apoiar Agora'}
         </button>
       </div>
     </div>

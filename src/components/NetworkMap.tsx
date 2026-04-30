@@ -7,6 +7,7 @@ import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import { Users, MapPin, Map as MapIcon, MessageCircle, TrendingUp, ChevronRight, Share2 } from 'lucide-react';
 import CityPage from './CityPage';
+import AdBanner from './AdBanner';
 
 const geoUrl = "https://raw.githubusercontent.com/codeforamerica/click_that_hood/master/public/data/brazil-states.geojson";
 
@@ -374,6 +375,8 @@ export default function NetworkMap() {
           </div>
         </div>
       </div>
+
+      <AdBanner className="mt-8" />
     </motion.div>
   );
 }

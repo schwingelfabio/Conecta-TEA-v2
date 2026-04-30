@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import { Users, MapPin, MessageCircle, ArrowLeft, Share2, Copy, Check, TrendingUp } from 'lucide-react';
+import AdBanner from './AdBanner';
 
 interface CityPageProps {
   city: string;
@@ -191,6 +192,8 @@ export default function CityPage({ city, state, onBack }: CityPageProps) {
           </button>
         </div>
       </div>
+
+      <AdBanner className="mt-8" />
     </motion.div>
   );
 }
