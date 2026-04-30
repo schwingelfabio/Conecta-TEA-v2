@@ -48,7 +48,7 @@ import MediaUpload from './components/MediaUpload';
 import { UserProfile } from './types';
 import { auth, db } from './lib/firebase';
 import { signOut, onAuthStateChanged, User as FirebaseUser, signInAnonymously } from 'firebase/auth';
-import { doc, getDoc, setDoc, collection, query, where, getDocs, serverTimestamp } from 'firebase/firestore';
+import { doc, getDoc, setDoc, collection, query, where, getDocs, serverTimestamp, getDocFromServer } from 'firebase/firestore';
 import { checkIsAdmin } from './lib/admin';
 import DonationPage from './components/DonationPage';
 import AiContentAdmin from './components/AiContentAdmin';
@@ -76,7 +76,26 @@ export default function App() {
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [showEmotionalOverlay, setShowEmotionalOverlay] = useState(false);
   const [isGuest, setIsGuest] = useState(false);
+  const [connError, setConnError] = useState<string | null>(null);
   const navRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    async function testConnection() {
+      try {
+        console.log('[App] Testing Firebase connection...');
+        await getDocFromServer(doc(db, 'system', 'ping'));
+        console.log('[App] Firebase connection SUCCESS');
+      } catch (error) {
+        if (error instanceof Error && error.message.includes('the client is offline')) {
+          console.error("Please check your Firebase configuration or internet connection.");
+          setConnError("Sem conexão com o servidor. Verifique sua internet.");
+        } else {
+          console.error("Firebase connection test error:", error);
+        }
+      }
+    }
+    testConnection();
+  }, []);
 
   useEffect(() => {
     if (isGuest && !localStorage.getItem('emotional_overlay_shown')) {
@@ -418,6 +437,26 @@ export default function App() {
         return <Suspense fallback={<div className="flex justify-center p-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-500"></div></div>}><Feed userProfile={userProfile} isAdmin={isAdmin} isVip={isVip} isGuest={isGuest} /></Suspense>;
     }
   };
+
+  if (connError) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center p-6 text-center">
+        <div className="max-w-md">
+          <div className="w-20 h-20 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto mb-6">
+            <AlertTriangle size={40} />
+          </div>
+          <h2 className="text-2xl font-bold text-slate-900 mb-2">Erro de Conexão</h2>
+          <p className="text-slate-600 mb-6">{connError}</p>
+          <button 
+            onClick={() => window.location.reload()} 
+            className="px-6 py-3 bg-sky-500 text-white rounded-2xl font-bold hover:bg-sky-600 transition-all"
+          >
+            Tentar Novamente
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   if (loading) {
     return (
