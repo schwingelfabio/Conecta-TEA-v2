@@ -299,39 +299,64 @@ export default function LandingPage({ onLogin, onShowTerms, onGuestLogin }: Land
               <div className="relative z-10">
                 <h3 className="font-bold text-brand-dark text-sm flex items-center gap-2 mb-2">
                   <FileText size={16} className="text-purple-500" />
-                  Material Gratuito
+                  {i18n.language === 'en' ? 'Free Material' : i18n.language === 'ja' ? '無料資料' : 'Material Gratuito'}
                 </h3>
-                <div className="flex gap-4 items-center">
+                
+                {/* Main Language E-book */}
+                <div className="flex gap-4 items-center mb-4">
                   <div className="w-20 h-28 rounded-xl bg-purple-50 flex-shrink-0 flex items-center justify-center border border-purple-100 overflow-hidden shadow-sm">
                      <div className="relative w-full h-full">
                         <div className="absolute inset-0 bg-gradient-to-t from-purple-900/40 to-transparent" />
-                        {/* 
-                          Using a stylized placeholder that represents the book 
-                          as we don't have the definitive local path for the uploaded image yet.
-                          The user can easily swap this for the definitive image path.
-                        */}
                         <div className="w-full h-full flex flex-col items-center justify-center p-2 text-center">
                           <p className="text-[8px] font-black leading-tight text-white drop-shadow-sm uppercase">Sofia & Theo</p>
                           <div className="w-8 h-8 rounded-full border-2 border-white/80 my-1 bg-white/20 backdrop-blur-sm flex items-center justify-center">
                             <Heart size={12} className="text-white fill-white" />
                           </div>
-                          <p className="text-[7px] font-bold text-white/90 leading-[8px]">Rotina Mágica</p>
+                          <p className="text-[7px] font-bold text-white/90 leading-[8px]">
+                            {i18n.language === 'en' ? 'Magic Routine' : i18n.language === 'ja' ? '魔法のルーチン' : 'Rotina Mágica'}
+                          </p>
                         </div>
                      </div>
                   </div>
                   <div className="flex flex-col gap-2">
-                    <p className="text-xs font-bold text-slate-800 leading-tight">E-book: Sofia e Theo - Rotina Mágica</p>
-                    <p className="text-[10px] text-slate-500 leading-tight">Guia prático ilustrado para organizar o dia a dia da criança com TEA.</p>
+                    <p className="text-xs font-bold text-slate-800 leading-tight">
+                      {i18n.language === 'en' ? 'E-book: Sofia and Theo - Magic Routine' : 
+                       i18n.language === 'ja' ? '無料電子書籍: ソフィアとテオ' : 
+                       'E-book: Sofia e Theo - Rotina Mágica'}
+                    </p>
+                    <p className="text-[10px] text-slate-500 leading-tight">
+                      {i18n.language === 'en' ? 'Practical illustrated guide to organize the daily routine.' : 
+                       i18n.language === 'ja' ? '日常を整理するための実践的なイラスト付きガイド。' : 
+                       'Guia prático ilustrado para organizar o dia a dia.'}
+                    </p>
                     <a 
-                      href="https://drive.google.com/file/d/14O2iN1mQHhiQePn0WBsoZJewATb4LzHk/view?usp=drivesdk" 
+                      href={i18n.language === 'en' ? "https://drive.google.com/file/d/1Ns_vcwuSFWcCHh7WzzE366Zq5hLT_6H_/view?usp=drivesdk" : 
+                            i18n.language === 'ja' ? "https://drive.google.com/file/d/1MF1T7QvBiTj_wDZYYN_eskV8XjIX-tg2/view?usp=drivesdk" : 
+                            "https://drive.google.com/file/d/14O2iN1mQHhiQePn0WBsoZJewATb4LzHk/view?usp=drivesdk"} 
                       target="_blank" 
                       rel="noopener noreferrer"
                       className="mt-1 self-start px-4 py-2 bg-purple-500 text-white rounded-xl text-[10px] font-black hover:bg-purple-600 transition-all flex items-center gap-2 shadow-sm shadow-purple-100"
                     >
                       <PlayCircle size={12} />
-                      BAIXAR AGORA
+                      {i18n.language === 'en' ? 'DOWNLOAD NOW' : i18n.language === 'ja' ? 'ダウンロード' : 'BAIXAR AGORA'}
                     </a>
                   </div>
+                </div>
+
+                {/* Trilingual E-book (Discreet) */}
+                <div className="pt-3 border-t border-slate-100 flex flex-col items-start gap-1">
+                  <p className="text-[10px] text-slate-400 leading-tight">
+                    Material extra (PT/EN/JA) • Extra material (PT/EN/JA) • 追加資料 (PT/EN/JA)
+                  </p>
+                  <a 
+                    href="https://drive.google.com/file/d/1u6J16RPld5MVaAksIwbBpjxEU2KY1Rg8/view?usp=drivesdk" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-50 text-slate-500 rounded-lg text-[9px] font-bold hover:bg-slate-100 transition-all border border-slate-200"
+                  >
+                    <PlayCircle size={10} />
+                    BAIXAR / DOWNLOAD / ダウンロード
+                  </a>
                 </div>
               </div>
             </motion.div>

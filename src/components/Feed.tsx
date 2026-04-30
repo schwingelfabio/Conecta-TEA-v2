@@ -903,7 +903,7 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
                         className="bg-gradient-to-br from-purple-50 to-white rounded-[2rem] p-6 mb-6 border border-purple-100 shadow-sm overflow-hidden relative group"
                       >
                         <div className="absolute top-[-20%] right-[-10%] w-32 h-32 bg-purple-200 rounded-full blur-3xl opacity-30 group-hover:opacity-50 transition-opacity" />
-                        <div className="flex gap-4 items-center relative z-10">
+                        <div className="flex gap-4 items-center relative z-10 mb-4">
                           <div className="w-16 h-24 rounded-lg bg-white shadow-md border border-purple-100 overflow-hidden shrink-0 transform -rotate-3 group-hover:rotate-0 transition-transform">
                              <div className="relative w-full h-full">
                                 <div className="absolute inset-0 bg-gradient-to-t from-purple-900/20 to-transparent" />
@@ -912,23 +912,51 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
                                   <div className="w-6 h-6 rounded-full border border-purple-300 my-1 bg-white flex items-center justify-center">
                                     <Heart size={10} className="text-purple-500 fill-purple-500" />
                                   </div>
-                                  <p className="text-[6px] font-bold text-purple-700 leading-tight">Rotina Mágica</p>
+                                  <p className="text-[6px] font-bold text-purple-700 leading-tight">
+                                    {i18n.language === 'en' ? 'Magic Routine' : i18n.language === 'ja' ? '魔法のルーチン' : 'Rotina Mágica'}
+                                  </p>
                                 </div>
                              </div>
                           </div>
                           <div className="flex-1">
-                            <h3 className="text-sm font-bold text-slate-900 mb-1">E-book Gratuito: Sofia e Theo</h3>
-                            <p className="text-[11px] text-slate-500 mb-3 leading-tight">Organize a rotina da sua criança de forma lúdica e eficaz.</p>
+                            <h3 className="text-sm font-bold text-slate-900 mb-1">
+                              {i18n.language === 'en' ? 'Free E-book: Sofia and Theo' : 
+                               i18n.language === 'ja' ? '無料電子書籍: ソフィアとテオ' : 
+                               'E-book Gratuito: Sofia e Theo'}
+                            </h3>
+                            <p className="text-[11px] text-slate-500 mb-3 leading-tight">
+                              {i18n.language === 'en' ? 'Organize your child\'s routine in a playful and effective way.' : 
+                               i18n.language === 'ja' ? '遊び心と効果的な方法で子供の日常生活を整理しましょう。' : 
+                               'Organize a rotina da sua criança de forma lúdica e eficaz.'}
+                            </p>
                             <a 
-                              href="https://drive.google.com/file/d/14O2iN1mQHhiQePn0WBsoZJewATb4LzHk/view?usp=drivesdk" 
+                              href={i18n.language === 'en' ? "https://drive.google.com/file/d/1Ns_vcwuSFWcCHh7WzzE366Zq5hLT_6H_/view?usp=drivesdk" : 
+                                    i18n.language === 'ja' ? "https://drive.google.com/file/d/1MF1T7QvBiTj_wDZYYN_eskV8XjIX-tg2/view?usp=drivesdk" : 
+                                    "https://drive.google.com/file/d/14O2iN1mQHhiQePn0WBsoZJewATb4LzHk/view?usp=drivesdk"} 
                               target="_blank" 
                               rel="noopener noreferrer"
                               className="inline-flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-xl text-[10px] font-black hover:bg-purple-700 transition-all shadow-sm"
                             >
                               <PlayCircle size={14} />
-                              DOWNLOAD DO E-BOOK
+                              {i18n.language === 'en' ? 'DOWNLOAD E-BOOK' : i18n.language === 'ja' ? 'ダウンロード' : 'DOWNLOAD DO E-BOOK'}
                             </a>
                           </div>
+                        </div>
+
+                        {/* Trilingual E-book (Discreet) */}
+                        <div className="pt-3 border-t border-purple-100/50 flex flex-col items-start gap-1 relative z-10">
+                          <p className="text-[10px] text-slate-500 leading-tight">
+                            Material extra (PT/EN/JA) • Extra material (PT/EN/JA) • 追加資料 (PT/EN/JA)
+                          </p>
+                          <a 
+                            href="https://drive.google.com/file/d/1u6J16RPld5MVaAksIwbBpjxEU2KY1Rg8/view?usp=drivesdk" 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white text-slate-500 rounded-lg text-[9px] font-bold hover:bg-slate-50 transition-all border border-purple-100 shadow-sm"
+                          >
+                            <PlayCircle size={10} />
+                            BAIXAR / DOWNLOAD / ダウンロード
+                          </a>
                         </div>
                       </motion.div>
                     );
