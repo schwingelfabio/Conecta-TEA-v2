@@ -185,7 +185,7 @@ export default function App() {
               developerStatus = false;
             }
 
-            if (!data.state || !data.city) {
+            if (!u.isAnonymous && (!data.state || !data.city || !data.region)) {
               console.log('[App/Auth] User missing state/city, showing onboarding');
               setShowOnboarding(true);
             } else {
@@ -205,7 +205,9 @@ export default function App() {
             setDoc(doc(db, 'public_profiles', u.uid), publicData, { merge: true }).catch(e => console.error(e));
           } else {
             console.log('[App/Auth] New user, creating profile and showing onboarding');
-            setShowOnboarding(true);
+            if (!u.isAnonymous) {
+              setShowOnboarding(true);
+            }
             const initialData = {
               uid: u.uid,
               email: normalizedEmail,
@@ -236,7 +238,9 @@ export default function App() {
           }
         } catch (err) {
           console.error('[App/Auth] Error fetching user profile, using fallback:', err);
-          setShowOnboarding(true);
+          if (!u.isAnonymous) {
+            setShowOnboarding(true);
+          }
           const fallbackData = {
             uid: u.uid,
             email: normalizedEmail,

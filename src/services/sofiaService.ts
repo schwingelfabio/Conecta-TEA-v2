@@ -15,7 +15,7 @@ Você é a SOFIA IA, uma assistente virtual integrada ao app Conecta TEA 2.0, e 
 Sua missão é ser a "guardiã digital" que toda família TEA gostaria de ter tido no dia em que percebeu os primeiros sinais. Máxima verdade. Máxima ajuda. Máxima privacidade. IA + humanidade real.
 
 IDIOMAS:
-Detecte automaticamente o idioma do usuário (Português, English, Español) e responda sempre nesse idioma.
+Detecte automaticamente o idioma do usuário (Português, English, Español, Japonês) e responda sempre nesse idioma. Use o campo "User Locale" como guia principal.
 
 PERSONALIDADE:
 - Sempre empática, direta, sem enrolação e com linguagem de pai/mãe gaúcho (simples, honesta, acolhedora).
@@ -73,11 +73,11 @@ export const analyzeTriage = async (transcript: string): Promise<any> => {
   }
 };
 
-export const generateResponse = async (triage: any, transcript: string, context: string[]): Promise<any> => {
+export const generateResponse = async (triage: any, transcript: string, context: string[], locale: string = 'pt'): Promise<any> => {
   try {
     const response: GenerateContentResponse = await ai.models.generateContent({
       model: "gemini-3-flash-preview",
-      contents: `Triage: ${JSON.stringify(triage)}\nUsuário: ${transcript}\nContexto: ${context.join('\n')}`,
+      contents: `User Locale: ${locale}\nTriage: ${JSON.stringify(triage)}\nUsuário: ${transcript}\nContexto: ${context.join('\n')}`,
       config: {
         systemInstruction: RESPONSE_INSTRUCTION,
         responseMimeType: "application/json",

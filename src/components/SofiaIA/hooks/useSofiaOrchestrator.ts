@@ -30,12 +30,12 @@ export const useSofiaOrchestrator = () => {
     initSession();
   }, [sessionId]);
 
-  const processTurn = useCallback(async (transcript: string) => {
+  const processTurn = useCallback(async (transcript: string, locale: string = 'pt') => {
     setState('processing');
     
     try {
       const triage = await analyzeTriage(transcript);
-      const result = await generateResponse(triage, transcript, history);
+      const result = await generateResponse(triage, transcript, history, locale);
       
       // Update history
       setHistory(prev => [...prev, `User: ${transcript}`, `Sofia: ${result.text}`]);
@@ -78,7 +78,14 @@ export const useSofiaOrchestrator = () => {
     } catch (error) {
       console.error('Error processing turn:', error);
       setState('idle');
-      return { response: "Desculpe, tive um pequeno problema de conexão. Podemos tentar de novo?" };
+      const fallbackMsg = {
+        pt: "Desculpe, tive um pequeno problema de conexão. Podemos tentar de novo?",
+        en: "Sorry, I had a small connection problem. Can we try again?",
+        es: "Lo siento, tuve um pequeno problema de conexión. ¿Podemos intentarlo de nuevo?",
+        ja: "申し訳ありません。接続に問題が発生しました。もう一度お試しいただけますか？"
+      };
+      const lang = locale.substring(0, 2) as keyof typeof fallbackMsg;
+      return { response: fallbackMsg[lang] || fallbackMsg.pt };
     }
   }, [history, sessionId]);
 

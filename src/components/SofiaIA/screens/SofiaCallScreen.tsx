@@ -116,7 +116,7 @@ export const SofiaCallScreen = ({ onEndCall, isVip }: { onEndCall: () => void, i
     setSofiaState('processing');
 
     try {
-      const res = await processTurn(userText);
+      const res = await processTurn(userText, i18n.language);
       setMessages(prev => [...prev, {
         sender: 'sofia', 
         text: res.response, 

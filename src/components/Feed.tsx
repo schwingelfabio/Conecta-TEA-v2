@@ -176,6 +176,16 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
   const [expandedComments, setExpandedComments] = useState<string | null>(null);
   const [isHuman, setIsHuman] = useState(false);
   const [guestDeviceId, setGuestDeviceId] = useState('');
+  
+  const [postCountry, setPostCountry] = useState('');
+  const [postState, setPostState] = useState('');
+  const [postCity, setPostCity] = useState('');
+
+  useEffect(() => {
+    if (userProfile?.region) setPostCountry(userProfile.region);
+    if (userProfile?.state) setPostState(userProfile.state);
+    if (userProfile?.city) setPostCity(userProfile.city);
+  }, [userProfile]);
 
   const getLocalizedPost = (post: Post) => {
     const lang = i18n.language;
@@ -435,6 +445,11 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
       return;
     }
 
+    if (!postCountry.trim() || !postState.trim() || !postCity.trim()) {
+      alert(i18n.language === 'en' ? 'Please provide your country, state, and city before posting.' : i18n.language === 'es' ? 'Por favor, proporcione su país, estado y ciudad antes de publicar.' : i18n.language === 'ja' ? '投稿する前に、国、州、都市を入力してください。' : 'Por favor, informe seu país, estado e cidade antes de publicar.');
+      return;
+    }
+
     const postText = newPost;
     setNewPost(''); // Clear immediately for better UX
     if (isGuest) setIsHuman(false);
@@ -506,9 +521,10 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
       authorPhoto: authorPhoto,
       mediaType: 'text',
       topic: topic === 'geral' ? 'geral' : topic,
-      state: isGuest ? 'Geral' : (userProfile?.state || 'Geral'),
-      city: isGuest ? 'Geral' : (userProfile?.city || 'Geral'),
-      location: isGuest ? 'Brasil' : (userProfile?.city ? `${userProfile?.city}, ${userProfile?.state}` : 'Brasil'),
+      state: postState,
+      city: postCity,
+      location: `${postCity}, ${postState}`,
+      region: postCountry,
       timestamp: serverTimestamp(),
       createdAt: serverTimestamp(),
       isVip: isGuest ? false : (userProfile?.isVip || isAdmin || isVip),
@@ -768,6 +784,35 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
                 <label htmlFor="human-check" className="text-sm text-slate-600 font-medium">
                   {(i18n.language === 'pt' ? 'Sou humano' : i18n.language === 'ja' ? 'I am human' : 'I am human')}
                 </label>
+              </div>
+            )}
+
+            {(!userProfile?.state || !userProfile?.city) && (
+              <div className="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <input 
+                  type="text" 
+                  placeholder={i18n.language === 'pt' ? 'País (ex: Brasil)' : 'Country'} 
+                  value={postCountry} 
+                  onChange={(e) => setPostCountry(e.target.value)} 
+                  className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 outline-none transition-all text-slate-700"
+                  required
+                />
+                <input 
+                  type="text" 
+                  placeholder={i18n.language === 'pt' ? 'Estado (ex: SP)' : 'State'} 
+                  value={postState} 
+                  onChange={(e) => setPostState(e.target.value)} 
+                  className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 outline-none transition-all text-slate-700"
+                  required
+                />
+                <input 
+                  type="text" 
+                  placeholder={i18n.language === 'pt' ? 'Cidade (ex: São Paulo)' : 'City'} 
+                  value={postCity} 
+                  onChange={(e) => setPostCity(e.target.value)} 
+                  className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 outline-none transition-all text-slate-700"
+                  required
+                />
               </div>
             )}
 
