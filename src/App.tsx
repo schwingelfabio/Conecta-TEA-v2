@@ -86,12 +86,7 @@ export default function App() {
         await getDocFromServer(doc(db, 'test_connection', 'ping'));
         console.log('[App] Firebase connection SUCCESS');
       } catch (error) {
-        if (error instanceof Error && error.message.includes('the client is offline')) {
-          console.error("Please check your Firebase configuration or internet connection.");
-          setConnError("Sem conexão com o servidor. Verifique sua internet.");
-        } else {
-          console.error("Firebase connection test error:", error);
-        }
+        console.warn("Firebase connection test warning:", error);
       }
     }
     testConnection();
@@ -438,25 +433,7 @@ export default function App() {
     }
   };
 
-  if (connError) {
-    return (
-      <div className="min-h-screen bg-white flex items-center justify-center p-6 text-center">
-        <div className="max-w-md">
-          <div className="w-20 h-20 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto mb-6">
-            <AlertTriangle size={40} />
-          </div>
-          <h2 className="text-2xl font-bold text-slate-900 mb-2">Erro de Conexão</h2>
-          <p className="text-slate-600 mb-6">{connError}</p>
-          <button 
-            onClick={() => window.location.reload()} 
-            className="px-6 py-3 bg-sky-500 text-white rounded-2xl font-bold hover:bg-sky-600 transition-all"
-          >
-            Tentar Novamente
-          </button>
-        </div>
-      </div>
-    );
-  }
+  // connError checking removed
 
   if (loading) {
     return (
