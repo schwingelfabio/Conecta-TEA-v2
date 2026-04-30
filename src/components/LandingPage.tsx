@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Check, Copy, ExternalLink, X, Users, Heart, Brain, Puzzle } from 'lucide-react';
+import { Check, Copy, ExternalLink, X, Users, Heart, Brain, Puzzle, FileText, PlayCircle } from 'lucide-react';
 import AuthForm from './AuthForm';
 import LanguageSelector from './LanguageSelector';
 import Logo from './Logo';
@@ -288,21 +288,53 @@ export default function LandingPage({ onLogin, onShowTerms, onGuestLogin }: Land
               </div>
             </div>
 
-            {/* MOCK: Sofia IA */}
-            <div className="bg-white p-5 rounded-3xl shadow-sm border border-slate-100 flex flex-col gap-4">
-               <h3 className="font-bold text-brand-dark text-sm flex items-center gap-2">
-                 <Brain size={16} className="text-purple-500" />
-                 Sofia IA
-              </h3>
-              <div className="flex items-end gap-3 mt-1">
-                 <div className="w-8 h-8 rounded-full overflow-hidden shrink-0 border border-slate-200 bg-purple-100">
-                    <img src="https://api.dicebear.com/7.x/micah/svg?seed=SofiaVirtualAI&backgroundColor=e879f9&baseColor=fbcfe8" alt="Sofia Avatar" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
-                 </div>
-                 <div className="bg-brand-primary text-white p-3 rounded-2xl rounded-bl-sm shadow-sm text-xs leading-relaxed max-w-[85%]">
-                    Oi, eu sou a Sofia. Como você está se sentindo hoje?
-                 </div>
+            {/* Sofia e Theo - Rotina Mágica E-book */}
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              className="bg-white p-5 rounded-3xl shadow-sm border border-slate-100 flex flex-col gap-4 relative overflow-hidden"
+            >
+              <div className="absolute top-[-20%] right-[-10%] w-32 h-32 bg-purple-100 rounded-full blur-3xl -z-0 opacity-50" />
+              <div className="relative z-10">
+                <h3 className="font-bold text-brand-dark text-sm flex items-center gap-2 mb-2">
+                  <FileText size={16} className="text-purple-500" />
+                  Material Gratuito
+                </h3>
+                <div className="flex gap-4 items-center">
+                  <div className="w-20 h-28 rounded-xl bg-purple-50 flex-shrink-0 flex items-center justify-center border border-purple-100 overflow-hidden shadow-sm">
+                     <div className="relative w-full h-full">
+                        <div className="absolute inset-0 bg-gradient-to-t from-purple-900/40 to-transparent" />
+                        {/* 
+                          Using a stylized placeholder that represents the book 
+                          as we don't have the definitive local path for the uploaded image yet.
+                          The user can easily swap this for the definitive image path.
+                        */}
+                        <div className="w-full h-full flex flex-col items-center justify-center p-2 text-center">
+                          <p className="text-[8px] font-black leading-tight text-white drop-shadow-sm uppercase">Sofia & Theo</p>
+                          <div className="w-8 h-8 rounded-full border-2 border-white/80 my-1 bg-white/20 backdrop-blur-sm flex items-center justify-center">
+                            <Heart size={12} className="text-white fill-white" />
+                          </div>
+                          <p className="text-[7px] font-bold text-white/90 leading-[8px]">Rotina Mágica</p>
+                        </div>
+                     </div>
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <p className="text-xs font-bold text-slate-800 leading-tight">E-book: Sofia e Theo - Rotina Mágica</p>
+                    <p className="text-[10px] text-slate-500 leading-tight">Guia prático ilustrado para organizar o dia a dia da criança com TEA.</p>
+                    <a 
+                      href="https://drive.google.com/file/d/14O2iN1mQHhiQePn0WBsoZJewATb4LzHk/view?usp=drivesdk" 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="mt-1 self-start px-4 py-2 bg-purple-500 text-white rounded-xl text-[10px] font-black hover:bg-purple-600 transition-all flex items-center gap-2 shadow-sm shadow-purple-100"
+                    >
+                      <PlayCircle size={12} />
+                      BAIXAR AGORA
+                    </a>
+                  </div>
+                </div>
               </div>
-            </div>
+            </motion.div>
 
           </div>
         </div>

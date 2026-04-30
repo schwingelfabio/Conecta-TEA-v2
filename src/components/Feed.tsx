@@ -24,7 +24,7 @@ import {
 } from 'firebase/firestore';
 import { Post, UserProfile } from '../types';
 import { generateSimulatedPosts } from '../lib/simulatedPosts';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, LayoutGroup } from 'motion/react';
 import ReactMarkdown from 'react-markdown';
 import { useTranslation } from 'react-i18next';
 import PostComments from './PostComments';
@@ -92,7 +92,9 @@ import {
   MessageSquare,
   LogIn,
   Bot,
-  Video
+  Video,
+  PlayCircle,
+  FileText
 } from 'lucide-react';
 
 const LogoLoader = () => (
@@ -891,6 +893,46 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
               <AnimatePresence mode="popLayout">
                 {posts.flatMap((post, index) => {
                   const items = [];
+                  if (index === 1) {
+                    items.push(
+                      <motion.div
+                        key={`ebook-banner-${post.id}`}
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        className="bg-gradient-to-br from-purple-50 to-white rounded-[2rem] p-6 mb-6 border border-purple-100 shadow-sm overflow-hidden relative group"
+                      >
+                        <div className="absolute top-[-20%] right-[-10%] w-32 h-32 bg-purple-200 rounded-full blur-3xl opacity-30 group-hover:opacity-50 transition-opacity" />
+                        <div className="flex gap-4 items-center relative z-10">
+                          <div className="w-16 h-24 rounded-lg bg-white shadow-md border border-purple-100 overflow-hidden shrink-0 transform -rotate-3 group-hover:rotate-0 transition-transform">
+                             <div className="relative w-full h-full">
+                                <div className="absolute inset-0 bg-gradient-to-t from-purple-900/20 to-transparent" />
+                                <div className="w-full h-full flex flex-col items-center justify-center p-1 text-center bg-purple-50">
+                                  <p className="text-[6px] font-black leading-tight text-purple-900 uppercase">Sofia & Theo</p>
+                                  <div className="w-6 h-6 rounded-full border border-purple-300 my-1 bg-white flex items-center justify-center">
+                                    <Heart size={10} className="text-purple-500 fill-purple-500" />
+                                  </div>
+                                  <p className="text-[6px] font-bold text-purple-700 leading-tight">Rotina Mágica</p>
+                                </div>
+                             </div>
+                          </div>
+                          <div className="flex-1">
+                            <h3 className="text-sm font-bold text-slate-900 mb-1">E-book Gratuito: Sofia e Theo</h3>
+                            <p className="text-[11px] text-slate-500 mb-3 leading-tight">Organize a rotina da sua criança de forma lúdica e eficaz.</p>
+                            <a 
+                              href="https://drive.google.com/file/d/14O2iN1mQHhiQePn0WBsoZJewATb4LzHk/view?usp=drivesdk" 
+                              target="_blank" 
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-xl text-[10px] font-black hover:bg-purple-700 transition-all shadow-sm"
+                            >
+                              <PlayCircle size={14} />
+                              DOWNLOAD DO E-BOOK
+                            </a>
+                          </div>
+                        </div>
+                      </motion.div>
+                    );
+                  }
                   if ((index + 1) % 4 === 0) {
                     items.push(
                       <div key={`ad-${post.id}`} className="mb-6">
