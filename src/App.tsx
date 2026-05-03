@@ -33,6 +33,7 @@ const EmergencyPage = lazy(() => import('./components/EmergencyPage'));
 const LandingPage = lazy(() => import('./components/LandingPage'));
 const VideosPage = lazy(() => import('./components/VideosPage'));
 const TriagemTeaIa = lazy(() => import('./components/TriagemTeaIa'));
+const ApoieProjetoPage = lazy(() => import('./components/ApoieProjetoPage'));
 const SofiaIA = lazy(() => import('./components/SofiaIA').then(module => ({ default: module.SofiaIA })));
 const TermosDeUso = lazy(() => import('./components/LegalPages').then(module => ({ default: module.TermosDeUso })));
 const Privacidade = lazy(() => import('./components/LegalPages').then(module => ({ default: module.Privacidade })));
@@ -61,7 +62,7 @@ import { useAiContentEngine } from './hooks/useAiContentEngine';
 
 export default function App() {
   const { t } = useTranslation();
-  const [activeTab, setActiveTab] = useState<'feed' | 'vip' | 'settings' | 'sos' | 'termos' | 'privacidade' | 'contato' | 'map' | 'videos' | 'carteirinha' | 'triagem' | 'gallery' | 'rotina'>('triagem');
+  const [activeTab, setActiveTab] = useState<'feed' | 'vip' | 'settings' | 'sos' | 'termos' | 'privacidade' | 'contato' | 'map' | 'videos' | 'carteirinha' | 'triagem' | 'gallery' | 'rotina' | 'apoie'>('triagem');
   const [user, setUser] = useState<FirebaseUser | null>(null);
   const [showLanguageModal, setShowLanguageModal] = useState(false);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
@@ -113,8 +114,14 @@ export default function App() {
     const urlParams = new URLSearchParams(window.location.search);
     const tabParam = urlParams.get('tab');
     
-    if (tabParam && ['feed', 'videos', 'triagem', 'vip', 'settings', 'carteirinha', 'sos', 'gallery', 'rotina'].includes(tabParam)) {
+    if (tabParam && ['feed', 'videos', 'triagem', 'vip', 'settings', 'carteirinha', 'sos', 'gallery', 'rotina', 'apoie'].includes(tabParam)) {
       setActiveTab(tabParam as any);
+    }
+
+    if (path === '/apoie-o-projeto' || path === '/apoie-o-projeto/') {
+      setActiveTab('apoie');
+      setLoading(false);
+      // Let it continue so auth checks run, but we already set the tab
     }
 
     if (path.startsWith('/emergencia/')) {
@@ -426,6 +433,13 @@ export default function App() {
               className="w-full h-full border-0 rounded-3xl shadow-sm" 
               title="Sofia & Theo - Rotina Mágica"
             />
+          </div>
+        );
+      case 'apoie':
+        return (
+          <div className="space-y-4">
+            <BackButton onClick={() => setActiveTab('feed')} />
+            <Suspense fallback={<div className="flex justify-center p-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-500"></div></div>}><ApoieProjetoPage /></Suspense>
           </div>
         );
       default:
