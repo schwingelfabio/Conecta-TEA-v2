@@ -94,7 +94,8 @@ import {
   Bot,
   Video,
   PlayCircle,
-  FileText
+  FileText,
+  ShoppingCart
 } from 'lucide-react';
 
 const LogoLoader = () => (
@@ -893,6 +894,63 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
               <AnimatePresence mode="popLayout">
                 {posts.flatMap((post, index) => {
                   const items = [];
+                  if (index === 0) {
+                    items.push(
+                      <motion.div
+                        key={`ebook-aventuras-banner-${post.id}`}
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        className="bg-white rounded-[2rem] shadow-sm border-2 border-emerald-500 overflow-hidden mb-6 relative group"
+                      >
+                        <div className="absolute top-0 right-0 bg-emerald-500 text-white text-[10px] font-black px-3 py-1 rounded-bl-xl uppercase tracking-wider z-10">
+                          Recomendação Conecta TEA
+                        </div>
+                        <div className="p-6 md:p-8">
+                           <div className="flex flex-col items-center text-center">
+                             <div className="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mb-4 border-4 border-white shadow-sm">
+                               <span className="text-3xl">📚</span>
+                             </div>
+                             <h3 className="text-2xl md:text-3xl font-black text-slate-900 mb-3 tracking-tight">
+                               Sofia & Theo - Volume 02
+                             </h3>
+                             <h4 className="text-lg md:text-xl font-bold text-emerald-600 mb-4">
+                               Aventuras Fora de Casa
+                             </h4>
+                             <p className="text-slate-600 font-medium mb-6 max-w-lg mx-auto">
+                               Rotinas visuais que acolhem, preparam e trazem segurança para o dia a dia. Mais leveza, menos crises, mais conexão.
+                             </p>
+                             
+                             <div className="bg-emerald-50 rounded-2xl p-4 md:p-6 mb-6 w-full max-w-md">
+                               <ul className="text-slate-700 font-bold space-y-3 text-left">
+                                 <li className="flex items-center gap-3">
+                                   <div className="w-6 h-6 rounded-full bg-emerald-500 text-white flex items-center justify-center text-xs">✔</div> 
+                                   E-book completo
+                                 </li>
+                                 <li className="flex items-center gap-3">
+                                   <div className="w-6 h-6 rounded-full bg-emerald-500 text-white flex items-center justify-center text-xs">✔</div> 
+                                   + bônus visual
+                                 </li>
+                               </ul>
+                             </div>
+                             
+                             <div className="flex flex-col items-center transform transition-transform group-hover:scale-105">
+                               <p className="text-slate-400 font-bold mb-2 text-sm">👇 Acesse agora:</p>
+                               <a 
+                                 href="https://pay.kiwify.com.br/E6Aju2a" 
+                                 target="_blank" 
+                                 rel="noopener noreferrer"
+                                 className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 bg-emerald-600 text-white rounded-2xl text-lg font-black hover:bg-emerald-500 transition-all shadow-lg hover:shadow-emerald-500/30 ring-4 ring-emerald-50"
+                               >
+                                 <ShoppingCart size={22} />
+                                 COMPRAR POR R$ 9,90
+                               </a>
+                             </div>
+                           </div>
+                        </div>
+                      </motion.div>
+                    );
+                  }
                   if (index === 1) {
                     items.push(
                       <motion.div
