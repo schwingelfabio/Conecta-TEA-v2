@@ -38,6 +38,8 @@ const SofiaIA = lazy(() => import('./components/SofiaIA').then(module => ({ defa
 const TermosDeUso = lazy(() => import('./components/LegalPages').then(module => ({ default: module.TermosDeUso })));
 const Privacidade = lazy(() => import('./components/LegalPages').then(module => ({ default: module.Privacidade })));
 const Contato = lazy(() => import('./components/LegalPages').then(module => ({ default: module.Contato })));
+const Sobre = lazy(() => import('./components/LegalPages').then(module => ({ default: module.Sobre })));
+const BlogPage = lazy(() => import('./components/BlogPage'));
 const AuthForm = lazy(() => import('./components/AuthForm'));
 import Onboarding from './components/OnboardingModal';
 import EmotionalOverlay from './components/EmotionalOverlay';
@@ -62,7 +64,8 @@ import { useAiContentEngine } from './hooks/useAiContentEngine';
 
 export default function App() {
   const { t } = useTranslation();
-  const [activeTab, setActiveTab] = useState<'feed' | 'vip' | 'settings' | 'sos' | 'termos' | 'privacidade' | 'contato' | 'map' | 'videos' | 'carteirinha' | 'triagem' | 'gallery' | 'rotina' | 'apoie'>('triagem');
+  const [activeTab, setActiveTab] = useState<'feed' | 'vip' | 'settings' | 'sos' | 'termos' | 'privacidade' | 'contato' | 'sobre' | 'map' | 'videos' | 'carteirinha' | 'triagem' | 'gallery' | 'rotina' | 'apoie'>('triagem');
+  const [blogSlug, setBlogSlug] = useState<string | null>(null);
   const [user, setUser] = useState<FirebaseUser | null>(null);
   const [showLanguageModal, setShowLanguageModal] = useState(false);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
@@ -122,6 +125,31 @@ export default function App() {
       setActiveTab('apoie');
       setLoading(false);
       // Let it continue so auth checks run, but we already set the tab
+    }
+
+    if (path === '/sobre' || path === '/sobre/') {
+      setActiveTab('sobre');
+      setLoading(false);
+    }
+    if (path === '/contato' || path === '/contato/') {
+      setActiveTab('contato');
+      setLoading(false);
+    }
+    if (path === '/politica-de-privacidade' || path === '/politica-de-privacidade/') {
+      setActiveTab('privacidade');
+      setLoading(false);
+    }
+    if (path === '/termos-de-uso' || path === '/termos-de-uso/') {
+      setActiveTab('termos');
+      setLoading(false);
+    }
+
+    if (path.startsWith('/blog/')) {
+      const slug = path.split('/blog/')[1]?.replace(/\/$/, '');
+      if (slug) {
+        setBlogSlug(slug);
+        setLoading(false);
+      }
     }
 
     if (path.startsWith('/emergencia/')) {
@@ -416,6 +444,8 @@ export default function App() {
         return <Suspense fallback={<div className="flex justify-center p-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-500"></div></div>}><Privacidade onBack={() => setActiveTab('settings')} /></Suspense>;
       case 'contato':
         return <Suspense fallback={<div className="flex justify-center p-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-500"></div></div>}><Contato onBack={() => setActiveTab('settings')} /></Suspense>;
+      case 'sobre':
+        return <Suspense fallback={<div className="flex justify-center p-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-500"></div></div>}><Sobre onBack={() => setActiveTab('settings')} /></Suspense>;
       case 'gallery':
         return (
           <div className="space-y-4">
@@ -463,6 +493,18 @@ export default function App() {
 
   if (emergencyUserId) {
     return <EmergencyPage id={emergencyUserId} />;
+  }
+
+  if (blogSlug) {
+    return (
+      <ErrorBoundary fullScreen={true}>
+        <div className="min-h-screen bg-gradient-to-b from-sky-50 to-white font-sans text-gray-900">
+           <Suspense fallback={<div className="flex items-center justify-center min-h-[60vh]"><div className="w-12 h-12 border-4 border-sky-200 border-t-sky-500 rounded-full animate-spin" /></div>}>
+             <BlogPage slug={blogSlug} onBack={() => { setBlogSlug(null); setActiveTab('feed'); window.history.pushState({}, '', '/'); }} />
+           </Suspense>
+        </div>
+      </ErrorBoundary>
+    );
   }
 
   return (
