@@ -145,15 +145,15 @@ export default function LandingPage({ onLogin, onShowTerms, onGuestLogin }: Land
             </div>
 
             <h1 className="text-[28px] leading-tight font-black text-brand-dark mb-4 tracking-tight">
-              Conecta TEA – Apoio integral para famílias que convivem com o autismo
+              Conecta TEA – Apoio para famílias com crianças com autismo
             </h1>
 
             <div className="text-sm text-slate-600 mb-8 font-medium px-2 leading-relaxed text-left space-y-4">
-              <p>Receber o diagnóstico de autismo, ou até mesmo os primeiros sinais de atipicidade, frequentemente desencadeia uma jornada profunda repleta de sentimentos paradoxais, incertezas enormes, uma busca inesgotável por informações e a constatação da necessidade vital de adequar muitos pequenos contornos do mundo para que ele abrace seu filho ou filha. Nós compreendemos cada curva desse caminho, simplesmente porque já estamos caminhando por ele todos os dias.</p>
+              <p>O Conecta TEA é uma plataforma criada para apoiar famílias que convivem com o Transtorno do Espectro Autista (TEA). Sabemos que muitas dúvidas surgem no dia a dia, principalmente no início da jornada. Por isso, reunimos tecnologia, informação e conteúdo prático para ajudar pais e responsáveis a entender melhor cada situação.</p>
               
-              <p>A Conecta TEA foi idealizada e desenhada meticulosamente como o verdadeiro "Guardião Digital" da família e da criança neuroatipica. Nosso objetivo não é só prover aplicativos avulsos de internet, mas sim envolver você em uma estrutura que traga fôlego e estabilidade para a vida real de quem acorda no meio da noite para acalmar choros sensoriais, e luta ativamente perante planos de saúde, burocracias, escolas públicas e desconhecimento da sociedade. Em outras palavras: nós seguramos a sua mão desde aquele primeiro e assustador dia do "eu acho que pode ser".</p>
+              <p>Nosso objetivo é oferecer orientação clara e acessível, ajudando famílias a tomarem decisões com mais segurança. Aqui você encontra recursos que auxiliam na rotina, no comportamento e na adaptação da criança em diferentes ambientes.</p>
               
-              <p>E muito além das simples funções de agenda ou cadernos convencionais, fundimos o que há de mais acolhedor na interação do coração humano — nossa comunidade imensa de mães incansáveis, pais e especialistas — com o alcance das mais recentes formas de Tecnologia por Inteligência Artificial. Oferecemos amparo em tela 24 horas por dia com orientadores digitais treinados em crises atípicas, emissão das requisições para criar legalmente sua carteirinha de identificação com recursos velozes aos seus dados emergenciais. Mais que um site, nós somos a verdadeira rede e elo social para quem tem no cerne da sua família o diagnóstico do Transtorno do Espectro Autista. Porque pais fortalecidos e informados com amor e rigor técnico tendem sempre a transmutar medo puro em empoderamento, promovendo as maiores potências das suas crianças.</p>
+              <p>Acreditamos que informação de qualidade pode transformar vidas. Por isso, todo o conteúdo do Conecta TEA é pensado para ser simples, direto e útil na prática.</p>
             </div>
 
             {showAuthForm ? (
@@ -225,11 +225,9 @@ export default function LandingPage({ onLogin, onShowTerms, onGuestLogin }: Land
             <h2 className="text-3xl font-black text-brand-dark leading-tight">O que é e como funciona nossa Triagem TEA IA?</h2>
             
             <div className="text-slate-600 space-y-4 leading-relaxed">
-              <p>Muitas vezes, as suspeitas mais afiadas sobre uma alteração de desenvolvimento vêm muito antes das avaliações oficiais na cadeira do neuropediatra. Mas, saber como agir ou registrar essas pequenas nuances do dia a dia da criança pode se perder naquele vai e vem angustiante até a data presencial da consulta.</p>
+              <p>A Triagem TEA IA é uma ferramenta desenvolvida para auxiliar na identificação inicial de sinais relacionados ao autismo. Ela não substitui diagnóstico médico, mas ajuda famílias a entender melhor comportamentos e buscar ajuda especializada com mais clareza.</p>
               
-              <p>A Triagem TEA IA foi implementada na plataforma Conecta TEA para resolver a dúvida e ansiedade que habita esse meio-termo de tempo vazio preenchendo as lacunas das famílias recém descobrindo os sintomas vitais. Ela consiste em um meticuloso mapeamento interativo realizado por sistema guiado por algoritmos avançados e treinados. É tão fácil como responder detalhadamente um bate-papo: nossa ferramenta amparará seu depoimento (perguntando sobre fala, se o seu filho aponta, peculiaridades ao balançar as mãos, brincar funcional e sensibilidade dos olhos) com afeto para elaborar não um diagnóstico frio, mas o esqueleto focado sobre os dados vitais.</p>
-              
-              <p><strong>Para quem ela foi desenhada?</strong> Exclusivamente para mães, pais e pessoas do círculo guardião muito íntimo e da família que andam percebendo pequenos atrasos nos marcos vitais dos bebês nos meses cruciais inaugurais de vida, permitindo-lhes emitir um documento PDF (relatório) totalmente pré-montado a partir desse chat. Quando o dia da avaliação oficial médica vier, os pais só precisam botar o papel sobre a mesa médica: farto de coesão, clareza e datas sem os corriqueiros tropeços do branco do estresse, acelerando dramaticamente o acesso veloz da criança nas urgentes pontas terapêuticas corretas (Fonodiálise, TA).</p>
+              <p>Através de perguntas simples, a triagem orienta os responsáveis sobre possíveis sinais e caminhos a seguir. Isso ajuda a reduzir a insegurança e acelera o processo de busca por apoio profissional.</p>
             </div>
           </div>
         </div>
@@ -254,11 +252,9 @@ export default function LandingPage({ onLogin, onShowTerms, onGuestLogin }: Land
             <h2 className="text-3xl font-black text-brand-dark leading-tight">Conheça os guias para rotinas sem estresse: Sofia e Theo</h2>
             
             <div className="text-slate-700 space-y-4 leading-relaxed font-medium">
-              <p>Entendemos visceralmente que os portões para o mundo "fora de casa" de uma pessoa no espectro autista abrigam incertezas assombrosas. Um desvio no roteiro, o som alto de uma obra em construção, ou idas abruptas à padaria configuram a faísca ideal para sobrecarga emocional, muitas vezes confundida por observadores passantes com meras pirraças infantis.</p>
+              <p>O livro Sofia e Theo foi criado para ajudar crianças a compreenderem situações do dia a dia fora de casa, como escola, consultas e passeios.</p>
               
-              <p>Pensando no desafio colossal que é quebrar esses ciclos, trouxemos para o centro do nosso projeto didático a obra magistral em formato E-book, <strong>Sofia e Theo - Aventuras Fora de Casa</strong>. Trata-se de um manual visual belíssimo para que famílias com dependentes autistas estruturem rotinas antecipadas de passeios ou de obrigações de ida ao pediatra.</p>
-              
-              <p>Criado de modo visualmente convidativo com poucas palavras focadas, as rotinas com nossas personagens estimulam e ensinam limites às crianças TEA com imensa naturalidade por meio da repetição ilustrada, acolhendo, ancorando os instintos do estresse e transmutando saídas desgastantes nos parques, escolas e postos da rua, em grandes e lúdicas memórias, assegurando uma qualidade diuturna familiar e leveza sem tamanho.</p>
+              <p>Através de uma abordagem visual e simples, a criança consegue antecipar o que vai acontecer, reduzindo ansiedade e facilitando a adaptação.</p>
             </div>
             
             <a 
@@ -278,39 +274,33 @@ export default function LandingPage({ onLogin, onShowTerms, onGuestLogin }: Land
       <section className="py-16 bg-slate-50 px-6">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-3xl lg:text-4xl font-black text-brand-dark mb-4">5 Principais Benefícios do Conecta TEA</h2>
-            <p className="text-slate-600 max-w-2xl mx-auto font-medium">Muito além de informações curadas, entregamos utilidade verdadeira. Veja os reais diferenciais para estruturar e trazer estabilidade a sua rotina neste ecossistema inigualável.</p>
+            <h2 className="text-3xl lg:text-4xl font-black text-brand-dark mb-4">Principais Benefícios do Conecta TEA</h2>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-slate-100 flex flex-col gap-4">
               <div className="w-12 h-12 bg-sky-100 text-sky-600 rounded-xl flex items-center justify-center font-black text-xl shadow-sm">1</div>
-              <h3 className="font-bold text-lg text-slate-800 leading-tight">Carteirinha Oficial Imediata e Digital</h3>
-              <p className="text-slate-600 text-sm leading-relaxed">Ter acesso agilizado, dentro do seu celular, com selos digitais validados da própria plataforma ajuda imediatamente à comprovação em emergências e no embarque priorizado em supermercados ou bancos para fins de tolerância na exigibilidade dos direitos legislativos (Lei 15.211 e Lei Mion).</p>
+              <h3 className="font-bold text-lg text-slate-800 leading-tight">Mais segurança para famílias</h3>
             </div>
             
             <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-slate-100 flex flex-col gap-4">
-              <div className="w-12 h-12 bg-pink-100 text-pink-600 rounded-xl flex items-center justify-center font-black text-xl shadow-sm">2</div>
-              <h3 className="font-bold text-lg text-slate-800 leading-tight">Ferramentas de Crises de SOS Sensorial</h3>
-              <p className="text-slate-600 text-sm leading-relaxed">Em frações de segundo, mediante toque intuitivo até na neblina emocional, o nosso aplicativo espelha um quadro rápido a ser focado no olho das crianças durante as crises, acalmando colapsos de som através de metodologias e áudios com frequência respiratória correta.</p>
+              <div className="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-xl flex items-center justify-center font-black text-xl shadow-sm">2</div>
+              <h3 className="font-bold text-lg text-slate-800 leading-tight">Melhor compreensão do comportamento</h3>
             </div>
             
             <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-slate-100 flex flex-col gap-4">
-              <div className="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-xl flex items-center justify-center font-black text-xl shadow-sm">3</div>
-              <h3 className="font-bold text-lg text-slate-800 leading-tight">Rede Social Sem Julgamentos Tóxicos</h3>
-              <p className="text-slate-600 text-sm leading-relaxed">Esqueça o massacre do ódio nas velhas redes. A comunidade interna Conecta TEA não premia debates duros, nem algoritmos que propagam ódio contra pais atarefados, o algoritmo serve o diálogo sadio: conectando pessoas com interesses estritamente sobre terapia ocupacional, autismo regressivo a mães e pais, garantindo apoio com moderação pro-ativa para conforto perene e diário.</p>
+              <div className="w-12 h-12 bg-amber-100 text-amber-600 rounded-xl flex items-center justify-center font-black text-xl shadow-sm">3</div>
+              <h3 className="font-bold text-lg text-slate-800 leading-tight">Redução de crises</h3>
             </div>
 
             <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-slate-100 flex flex-col gap-4">
-              <div className="w-12 h-12 bg-amber-100 text-amber-600 rounded-xl flex items-center justify-center font-black text-xl shadow-sm">4</div>
-              <h3 className="font-bold text-lg text-slate-800 leading-tight">Assistência Terapêutica por AI (Sofia TEA)</h3>
-              <p className="text-slate-600 text-sm leading-relaxed">Uma companheira interativa construída pelo framework "Guardião Familiar" de I.A que atua pontualmente sempre nas raras madrugadas que nenhum clínico se acha acordado. A "Sofia" interroga com amparo o limite sensoria e guia por áudios serenos nas rotinas da crise. </p>
+              <div className="w-12 h-12 bg-pink-100 text-pink-600 rounded-xl flex items-center justify-center font-black text-xl shadow-sm">4</div>
+              <h3 className="font-bold text-lg text-slate-800 leading-tight">Apoio na rotina diária</h3>
             </div>
 
             <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-slate-100 flex flex-col gap-4 md:col-span-2">
               <div className="w-12 h-12 bg-purple-100 text-purple-600 rounded-xl flex items-center justify-center font-black text-xl shadow-sm">5</div>
-              <h3 className="font-bold text-lg text-slate-800 leading-tight">Painel de Conteúdo de Extrema Validação Científica</h3>
-              <p className="text-slate-600 text-sm leading-relaxed">Em vez de se submeter a informações falsas ou promessas pseudo-cientificas cruéis da internet sobre curas milagrosas (como medicações indevidas), seu hub interno entrega relatórios, blogs extensos (desde métodos a manuais infantis de escola ou viagens aéreas controladas para as férias) filtradas sobre o crivo moral autêntico de evidências científicas comprovadas pelos manuais do DSM-5 e medicina de excelência.</p>
+              <h3 className="font-bold text-lg text-slate-800 leading-tight">Conteúdo acessível e prático</h3>
             </div>
           </div>
         </div>
@@ -359,7 +349,7 @@ export default function LandingPage({ onLogin, onShowTerms, onGuestLogin }: Land
               }}
               className="w-full px-8 py-5 bg-white text-brand-dark rounded-2xl font-black text-lg shadow-xl hover:scale-[1.02] hover:bg-sky-50 transition-all flex items-center justify-center gap-3"
             >
-              Criar minha conta e testar agora
+              Acesse agora e conheça o Conecta TEA
             </button>
             <p className="text-white/60 text-xs font-semibold mt-4">
               Acesso 100% gratuito inicial. Demora menos de 10 segundos.
