@@ -11,6 +11,7 @@ interface LandingPageProps {
   onLogin: () => void;
   onShowTerms: () => void;
   onGuestLogin: () => void;
+  onNavigate?: (path: string, tab: string) => void;
 }
 
 function SupportModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
@@ -81,7 +82,7 @@ function SupportModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => voi
   );
 }
 
-export default function LandingPage({ onLogin, onShowTerms, onGuestLogin }: LandingPageProps) {
+export default function LandingPage({ onLogin, onShowTerms, onGuestLogin, onNavigate }: LandingPageProps) {
   const { t, i18n } = useTranslation();
   const [showAuthForm, setShowAuthForm] = useState(false);
   const [isSupportModalOpen, setIsSupportModalOpen] = useState(false);
@@ -368,16 +369,93 @@ export default function LandingPage({ onLogin, onShowTerms, onGuestLogin }: Land
         />
         <div className="w-full max-w-5xl mx-auto px-4 flex flex-col items-center gap-6">
           <div className="flex flex-wrap justify-center gap-4 text-sm font-semibold text-slate-600">
-            <a href="/sobre" className="hover:text-brand-primary transition-colors">Sobre Nós</a>
-            <a href="/contato" className="hover:text-brand-primary transition-colors">Contato</a>
-            <a href="/politica-de-privacidade" className="hover:text-brand-primary transition-colors">Política de Privacidade</a>
-            <a href="/termos-de-uso" className="hover:text-brand-primary transition-colors">Termos de Uso</a>
+            <a 
+              href="/sobre" 
+              className="hover:text-brand-primary transition-colors cursor-pointer"
+              onClick={(e) => {
+                if (onNavigate) {
+                  e.preventDefault();
+                  onNavigate('/sobre', 'sobre');
+                }
+              }}
+            >
+              Sobre Nós
+            </a>
+            <a 
+              href="/contato" 
+              className="hover:text-brand-primary transition-colors cursor-pointer"
+              onClick={(e) => {
+                if (onNavigate) {
+                  e.preventDefault();
+                  onNavigate('/contato', 'contato');
+                }
+              }}
+            >
+              Contato
+            </a>
+            <a 
+              href="/politica-de-privacidade" 
+              className="hover:text-brand-primary transition-colors cursor-pointer"
+              onClick={(e) => {
+                if (onNavigate) {
+                  e.preventDefault();
+                  onNavigate('/politica-de-privacidade', 'privacidade');
+                }
+              }}
+            >
+              Política de Privacidade
+            </a>
+            <a 
+              href="/termos-de-uso" 
+              className="hover:text-brand-primary transition-colors cursor-pointer"
+              onClick={(e) => {
+                if (onNavigate) {
+                  e.preventDefault();
+                  onNavigate('/termos-de-uso', 'termos');
+                }
+              }}
+            >
+              Termos de Uso
+            </a>
           </div>
           
           <div className="flex flex-wrap justify-center gap-4 text-sm text-slate-500 font-medium">
-            <a href="/blog/o-que-e-autismo" className="hover:text-brand-primary transition-colors">O que é TEA?</a>
-            <a href="/blog/como-identificar-sinais-de-tea" className="hover:text-brand-primary transition-colors">Sinais do TEA</a>
-            <a href="/blog/rotina-para-criancas-com-tea" className="hover:text-brand-primary transition-colors">Importância da Rotina</a>
+            <a 
+              href="/blog/o-que-e-autismo" 
+              className="hover:text-brand-primary transition-colors cursor-pointer"
+              onClick={(e) => {
+                if (onNavigate) {
+                  e.preventDefault();
+                  onNavigate('/blog/o-que-e-autismo', 'blog');
+                }
+              }}
+            >
+              O que é TEA?
+            </a>
+            <a 
+              href="/blog/como-identificar-sinais-de-tea" 
+              className="hover:text-brand-primary transition-colors cursor-pointer"
+              onClick={(e) => {
+                if (onNavigate) {
+                  e.preventDefault();
+                  onNavigate('/blog/como-identificar-sinais-de-tea', 'blog');
+                }
+              }}
+            >
+              Sinais do TEA
+            </a>
+            <a 
+              href="/blog/rotina-para-criancas-com-tea" 
+              className="hover:text-brand-primary transition-colors cursor-pointer"
+              onClick={(e) => {
+                if (onNavigate) {
+                  e.preventDefault();
+                  onNavigate('/blog/rotina-para-criancas-com-tea', 'blog');
+                }
+              }}
+            >
+              Importância da Rotina
+            </a>
           </div>
           
           <p className="text-xs font-bold text-slate-400 text-center mt-4">

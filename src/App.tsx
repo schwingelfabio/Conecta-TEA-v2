@@ -439,13 +439,13 @@ export default function App() {
           </div>
         );
       case 'termos':
-        return <Suspense fallback={<div className="flex justify-center p-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-500"></div></div>}><TermosDeUso onBack={() => setActiveTab('settings')} /></Suspense>;
+        return <Suspense fallback={<div className="flex justify-center p-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-500"></div></div>}><TermosDeUso onBack={() => { window.history.pushState({}, '', '/'); setActiveTab(user || isGuest ? 'settings' : 'triagem'); }} /></Suspense>;
       case 'privacidade':
-        return <Suspense fallback={<div className="flex justify-center p-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-500"></div></div>}><Privacidade onBack={() => setActiveTab('settings')} /></Suspense>;
+        return <Suspense fallback={<div className="flex justify-center p-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-500"></div></div>}><Privacidade onBack={() => { window.history.pushState({}, '', '/'); setActiveTab(user || isGuest ? 'settings' : 'triagem'); }} /></Suspense>;
       case 'contato':
-        return <Suspense fallback={<div className="flex justify-center p-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-500"></div></div>}><Contato onBack={() => setActiveTab('settings')} /></Suspense>;
+        return <Suspense fallback={<div className="flex justify-center p-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-500"></div></div>}><Contato onBack={() => { window.history.pushState({}, '', '/'); setActiveTab(user || isGuest ? 'settings' : 'triagem'); }} /></Suspense>;
       case 'sobre':
-        return <Suspense fallback={<div className="flex justify-center p-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-500"></div></div>}><Sobre onBack={() => setActiveTab('settings')} /></Suspense>;
+        return <Suspense fallback={<div className="flex justify-center p-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-500"></div></div>}><Sobre onBack={() => { window.history.pushState({}, '', '/'); setActiveTab(user || isGuest ? 'settings' : 'triagem'); }} /></Suspense>;
       case 'gallery':
         return (
           <div className="space-y-4">
@@ -609,6 +609,17 @@ export default function App() {
                     onLogin={handleLoginSuccess} 
                     onShowTerms={() => setActiveTab('termos')} 
                     onGuestLogin={handleGuestLogin} 
+                    onNavigate={(path, tab) => {
+                      window.history.pushState({}, '', path);
+                      if (tab === 'blog') {
+                        const slug = path.split('/blog/')[1]?.replace(/\/$/, '');
+                        if (slug) {
+                          setBlogSlug(slug);
+                        }
+                      } else {
+                        setActiveTab(tab as any);
+                      }
+                    }}
                   />
                 ) : (
                   renderContent()
