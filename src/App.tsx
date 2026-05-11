@@ -604,7 +604,7 @@ export default function App() {
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.2 }}
               >
-                {(!user && !isGuest && !['apoie', 'termos', 'privacidade'].includes(activeTab)) ? (
+                {(!user && !isGuest && !['apoie', 'termos', 'privacidade', 'sobre', 'contato'].includes(activeTab)) ? (
                   <LandingPage 
                     onLogin={handleLoginSuccess} 
                     onShowTerms={() => setActiveTab('termos')} 

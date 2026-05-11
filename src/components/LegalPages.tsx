@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Mail, MapPin, Shield, FileText, Info } from 'lucide-react';
 
@@ -7,7 +7,12 @@ interface LegalPageProps {
 }
 
 export const TermosDeUso: React.FC<LegalPageProps> = ({ onBack }) => (
-  <LegalLayout title="Termos de Uso" icon={<FileText size={32} />} onBack={onBack}>
+  <LegalLayout 
+    title="Termos de Uso" 
+    description="Leia nossos Termos de Uso. Saiba mais sobre as regras, as isenções de responsabilidade médica e a conduta necessária ao utilizar a rede Conecta TEA."
+    icon={<FileText size={32} />} 
+    onBack={onBack}
+  >
     <div className="prose prose-slate max-w-none">
       <p>Ao acessar o Conecta TEA, você concorda em utilizar o conteúdo de forma responsável.</p>
       
@@ -17,7 +22,12 @@ export const TermosDeUso: React.FC<LegalPageProps> = ({ onBack }) => (
 );
 
 export const Privacidade: React.FC<LegalPageProps> = ({ onBack }) => (
-  <LegalLayout title="Política de Privacidade" icon={<Shield size={32} />} onBack={onBack}>
+  <LegalLayout 
+    title="Política de Privacidade" 
+    description="Conheça nossa Política de Privacidade. Explicamos como coletamos e protegemos seus dados e garantimos a segurança da sua família na plataforma Conecta TEA."
+    icon={<Shield size={32} />} 
+    onBack={onBack}
+  >
     <div className="prose prose-slate max-w-none">
       <p>Sua privacidade é importante para nós. Coletamos apenas informações necessárias para melhorar a experiência do usuário.</p>
       
@@ -29,7 +39,12 @@ export const Privacidade: React.FC<LegalPageProps> = ({ onBack }) => (
 );
 
 export const Contato: React.FC<LegalPageProps> = ({ onBack }) => (
-  <LegalLayout title="Fale Conosco" icon={<Mail size={32} />} onBack={onBack}>
+  <LegalLayout 
+    title="Fale Conosco" 
+    description="Entre em contato com a equipe do Conecta TEA. Estamos disponíveis para dúvidas, sugestões e parcerias via e-mail."
+    icon={<Mail size={32} />} 
+    onBack={onBack}
+  >
     <div className="max-w-2xl mx-auto">
       <p className="text-slate-600 mb-8 text-center text-lg leading-relaxed">
         Se você deseja entrar em contato conosco, utilize os canais abaixo:
@@ -63,7 +78,12 @@ export const Contato: React.FC<LegalPageProps> = ({ onBack }) => (
 );
 
 export const Sobre: React.FC<LegalPageProps> = ({ onBack }) => (
-  <LegalLayout title="Sobre Nós" icon={<Info size={32} />} onBack={onBack}>
+  <LegalLayout 
+    title="Sobre Nós" 
+    description="Saiba mais sobre o Conecta TEA, um projeto de apoio e tecnologia pensado para auxiliar famílias de crianças com autismo de maneira prática e acessível."
+    icon={<Info size={32} />} 
+    onBack={onBack}
+  >
     <div className="prose prose-slate max-w-none">
       <p>O Conecta TEA é um projeto criado com o objetivo de apoiar famílias de crianças com autismo através de tecnologia e informação acessível.</p>
       
@@ -74,7 +94,26 @@ export const Sobre: React.FC<LegalPageProps> = ({ onBack }) => (
   </LegalLayout>
 );
 
-const LegalLayout: React.FC<{ title: string; icon: React.ReactNode; children: React.ReactNode; onBack: () => void }> = ({ title, icon, children, onBack }) => (
+const LegalLayout: React.FC<{ title: string; description: string; icon: React.ReactNode; children: React.ReactNode; onBack: () => void }> = ({ title, description, icon, children, onBack }) => {
+  useEffect(() => {
+    const defaultTitle = document.title;
+    const metaDesc = document.querySelector('meta[name="description"]');
+    const defaultDesc = metaDesc?.getAttribute('content') || '';
+
+    document.title = `${title} | Conecta TEA`;
+    if (metaDesc) {
+      metaDesc.setAttribute('content', description);
+    }
+
+    return () => {
+      document.title = defaultTitle;
+      if (metaDesc) {
+        metaDesc.setAttribute('content', defaultDesc);
+      }
+    };
+  }, [title, description]);
+
+  return (
   <motion.div 
     initial={{ opacity: 0, y: 20 }}
     animate={{ opacity: 1, y: 0 }}
@@ -101,4 +140,5 @@ const LegalLayout: React.FC<{ title: string; icon: React.ReactNode; children: Re
       </div>
     </div>
   </motion.div>
-);
+  );
+};
