@@ -112,7 +112,7 @@ export default function AiContentAdmin() {
         REGRAS INQUEBRÁVEIS:
         - NUNCA faça diagnóstico médico. Toda resposta começa ou termina com: "Isso NÃO substitui avaliação médica multidisciplinar nem laudo profissional."
         - Use dados reais 2026: Programa TEAcolhe RS (Lei 16.427/2025), APAE Três Coroas, direitos da Lei Brasileira de Inclusão.
-        - Inclua upsell sutil em pelo menos 1 post (ex: "Quer apoiar nossa missão? Conheça o VIP por US$ 9,99 ou doe via Stripe").
+        - Inclua upsell sutil em pelo menos 1 post (ex: "Quer apoiar nossa missão? Conheça o VIP ou apoie via PagSeguro").
         
         Cada objeto de post deve ter:
         - "text": O conteúdo principal do post. Seja caloroso, acolhedor e humano. Use emojis.

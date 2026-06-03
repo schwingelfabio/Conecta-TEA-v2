@@ -29,7 +29,7 @@ export const SofiaCallScreen = ({ onEndCall, isVip }: { onEndCall: () => void, i
       limitOver: "Seu limite gratuito acabou hoje.",
       limitDesc: "Não pague por um aplicativo. Invista na sua paz de espírito. Ter o Conecta VIP é como ter um especialista e um ombro amigo no seu bolso de madrugada por menos do que você gasta em um lanche. Liberte-se da solidão e saiba exatamente o que fazer na próxima crise. Assine agora.",
       unlockBtn: "Liberar Chat Ilimitado (R$ 9,99/mês)",
-      paywallHref: "https://buy.stripe.com/cNi9AU4rT5HwfMc3uP2wU05",
+      paywallHref: "https://pag.ae/81AiqTpHL",
       comeBackLater: "Voltar depois"
     },
     en: {
@@ -44,7 +44,7 @@ export const SofiaCallScreen = ({ onEndCall, isVip }: { onEndCall: () => void, i
       limitOver: "Your free limit is over for today.",
       limitDesc: "Don't pay for an app. Invest in your peace of mind. Having Conecta VIP is like having an expert and a friendly shoulder in your pocket at dawn for less than you spend on a snack. Free yourself from loneliness and know exactly what to do in the next meltdown. Subscribe now.",
       unlockBtn: "Unlock Unlimited Chat (US$ 9.99/mo)",
-      paywallHref: "https://buy.stripe.com/28E9AU1fH3zobvWfdx2wU01",
+      paywallHref: "https://pag.ae/81AiqTpHL",
       comeBackLater: "Come back later"
     },
     es: {
@@ -59,7 +59,7 @@ export const SofiaCallScreen = ({ onEndCall, isVip }: { onEndCall: () => void, i
       limitOver: "Tu límite gratuito ha terminado por hoy.",
       limitDesc: "No pagues por una aplicación. Invierte en tu tranquilidad. Tener Conecta VIP es como tener a un experto y un hombro amigable en tu bolsillo de madrugada por menos de lo que gastas en un refrigerio. Libérate de la soledad y sabe exactamente qué hacer en la próxima crisis. Suscríbete ahora.",
       unlockBtn: "Desbloquear Chat Ilimitado (US$ 9.99/mes)",
-      paywallHref: "https://buy.stripe.com/28E9AU1fH3zobvWfdx2wU01",
+      paywallHref: "https://pag.ae/81AiqTpHL",
       comeBackLater: "Volver más tarde"
     },
     ja: {
@@ -74,7 +74,7 @@ export const SofiaCallScreen = ({ onEndCall, isVip }: { onEndCall: () => void, i
       limitOver: "今日の無料上限に達しました。",
       limitDesc: "アプリにお金を払うのではなく、心の平安に投資してください。Conecta VIPを持つことは、夜明けにおやつ代以下の費用で、ポケットに専門家と優しい友人がいるようなものです。孤独から解放され、次のパニック時に何をすべきかを正確に知ることができます。今すぐ登録してください。",
       unlockBtn: "無制限チャットをロック解除 (US$ 9.99/月)",
-      paywallHref: "https://buy.stripe.com/28E9AU1fH3zobvWfdx2wU01",
+      paywallHref: "https://pag.ae/81AiqTpHL",
       comeBackLater: "後で戻る"
     }
   };

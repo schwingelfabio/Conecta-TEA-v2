@@ -227,7 +227,7 @@ export default function TriagemTeaIa() {
                       {c.unlockDesc}
                     </p>
                     <a 
-                      href={(langMatch === 'pt' ? 'https://buy.stripe.com/cNi9AU4rT5HwfMc3uP2wU05' : 'https://buy.stripe.com/28E9AU1fH3zobvWfdx2wU01')} 
+                      href="https://pag.ae/81AiqTpHL" 
                       target="_blank" 
                       rel="noopener noreferrer" 
                       className="block w-full bg-amber-500 hover:bg-amber-600 text-slate-900 py-3 rounded-xl font-black text-lg"

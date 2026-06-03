@@ -44,13 +44,15 @@ const DonationPage = () => {
         className="px-6"
       >
         <div className="rounded-2xl bg-white p-6 shadow-xl shadow-sky-100 border border-sky-100">
-          {React.createElement('stripe-buy-button', {
-            'buy-button-id': "buy_btn_1TGRepJoBWafcL0qbT2pOLpH",
-            'publishable-key': "pk_live_51TFiJBJoBWafcL0qGp8gLIvB2t0wN8G4RsIXhxOfQurbrfGJqQmVOrve2bljMVwfLUP17WV1o5xAfNU3UUaiO09M00rjKTixzM"
-          } as any)}
+          <button 
+            onClick={() => window.open('https://pag.ae/81AiqTpHL', '_blank')}
+            className="w-full rounded-2xl bg-sky-600 py-4 font-bold text-white shadow-lg shadow-sky-200 transition-transform active:scale-95"
+          >
+            {i18n.language === 'en' ? 'Support via PagSeguro' : i18n.language === 'es' ? 'Apoyo via PagSeguro' : i18n.language === 'ja' ? 'PagSeguroで支援' : 'Apoiar via PagSeguro'}
+          </button>
           <p 
             className="mt-4 text-center text-sm text-sky-600 font-medium cursor-pointer hover:underline"
-            onClick={() => window.open(i18n.language === 'en' ? 'https://buy.stripe.com/28E9AU1fH3zobvWfdx2wU01' : i18n.language === 'ja' ? 'https://buy.stripe.com/28E9AU1fH3zobvWfdx2wU01' : 'https://buy.stripe.com/cNi9AU4rT5HwfMc3uP2wU05', '_blank')}
+            onClick={() => window.open('https://pag.ae/81AiqTpHL', '_blank')}
           >
             {i18n.language === 'en' ? 'Any amount makes a difference. Click here to donate.' : i18n.language === 'es' ? 'Cualquier cantidad hace la diferencia. Haga clic aquí para donar.' : i18n.language === 'ja' ? 'どんな額でも違いを生みます。ここをクリックして寄付する。' : 'Qualquer valor pode fazer a diferença. Clique aqui para doar.'}
           </p>
@@ -71,7 +73,7 @@ const DonationPage = () => {
               className="absolute inset-0 rounded-2xl border-2 border-emerald-300 opacity-50" 
             />
             <img 
-              src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://donate.stripe.com/cNi00k7E59XMdE47L52wU00" 
+              src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://pag.ae/81AiqTpHL" 
               alt="QR Code" 
               className="h-32 w-32" 
               referrerPolicy="no-referrer" 
@@ -84,7 +86,7 @@ const DonationPage = () => {
       {/* Trust Section */}
       <div className="mt-12 grid grid-cols-1 gap-4 px-6">
         {[
-          { icon: ShieldCheck, text: "Secure payments via Stripe" },
+          { icon: ShieldCheck, text: "Pagamentos seguros via PagSeguro" },
           { icon: Heart, text: "Supporting real families" },
           { icon: Users, text: "100% transparent purpose" },
         ].map((item, i) => (
@@ -105,7 +107,7 @@ const DonationPage = () => {
       {/* Sticky CTA */}
       <div className="fixed bottom-0 left-0 right-0 p-4 bg-sky-50/80 backdrop-blur-sm">
         <button 
-          onClick={() => window.open(i18n.language === 'en' ? 'https://buy.stripe.com/28E9AU1fH3zobvWfdx2wU01' : i18n.language === 'ja' ? 'https://buy.stripe.com/28E9AU1fH3zobvWfdx2wU01' : 'https://buy.stripe.com/cNi9AU4rT5HwfMc3uP2wU05', '_blank')}
+          onClick={() => window.open('https://pag.ae/81AiqTpHL', '_blank')}
           className="w-full rounded-full bg-sky-600 py-4 font-bold text-white shadow-lg shadow-sky-200 transition-transform active:scale-95"
         >
           {i18n.language === 'en' ? 'Support Now' : i18n.language === 'es' ? 'Apoyar Ahora' : i18n.language === 'ja' ? '今すぐ支援する' : 'Apoiar Agora'}

@@ -687,7 +687,7 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
             </h3>
             <div className="flex flex-col gap-3">
               <button 
-                onClick={() => window.open((i18n.language === 'pt' ? 'https://buy.stripe.com/cNi9AU4rT5HwfMc3uP2wU05' : i18n.language === 'ja' ? 'https://buy.stripe.com/28E9AU1fH3zobvWfdx2wU01' : 'https://buy.stripe.com/28E9AU1fH3zobvWfdx2wU01'), '_blank')} 
+                onClick={() => window.open('https://pag.ae/81AiqTpHL', '_blank')} 
                 className="w-full py-4 bg-sky-500 text-white rounded-xl font-bold"
               >
                 {(i18n.language === 'pt' ? 'Apoiar agora' : i18n.language === 'ja' ? 'Support now' : 'Support now')}
@@ -1040,7 +1040,7 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
                         </h3>
                         <div className="flex flex-col sm:flex-row gap-3 justify-center">
                           <button 
-                            onClick={() => window.open((i18n.language === 'pt' ? 'https://buy.stripe.com/cNi9AU4rT5HwfMc3uP2wU05' : i18n.language === 'ja' ? 'https://buy.stripe.com/28E9AU1fH3zobvWfdx2wU01' : 'https://buy.stripe.com/28E9AU1fH3zobvWfdx2wU01'), '_blank')} 
+                            onClick={() => window.open('https://pag.ae/81AiqTpHL', '_blank')} 
                             className="px-6 py-3 bg-sky-500 text-white rounded-xl font-bold hover:bg-sky-600 transition-all"
                           >
                             {i18n.language === 'en' ? 'Support now' : i18n.language === 'es' ? 'Apoyar ahora' : i18n.language === 'ja' ? '今すぐ支援する' : 'Apoiar agora'}
@@ -1201,7 +1201,7 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
                             <button 
                               onClick={() => { 
                                 setShowVipModal(false); 
-                                window.open((i18n.language === 'pt' ? 'https://buy.stripe.com/cNi9AU4rT5HwfMc3uP2wU05' : i18n.language === 'ja' ? 'https://buy.stripe.com/28E9AU1fH3zobvWfdx2wU01' : 'https://buy.stripe.com/28E9AU1fH3zobvWfdx2wU01'), '_blank'); 
+                                window.open('https://pag.ae/81AiqTpHL', '_blank'); 
                               }} 
                               className="w-full py-4 bg-amber-500 text-white rounded-xl font-bold mb-3"
                             >

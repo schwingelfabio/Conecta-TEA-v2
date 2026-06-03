@@ -95,7 +95,7 @@ export default function PlanosVip({ isVip }: { isVip?: boolean }) {
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              onClick={() => handleCheckout((i18n.language === 'pt' ? 'https://pag.ae/81AiqTpHL' : i18n.language === 'ja' ? 'https://buy.stripe.com/cNifZigaB9XM8jK9Td2wU02' : 'https://buy.stripe.com/cNifZigaB9XM8jK9Td2wU02'), 'monthly')}
+              onClick={() => handleCheckout('https://pag.ae/81AiqTpHL', 'monthly')}
               disabled={isVip}
               className={`w-full font-bold py-4 rounded-xl transition-all shadow-lg flex items-center justify-center gap-2 ${
                 isVip
@@ -197,7 +197,7 @@ export default function PlanosVip({ isVip }: { isVip?: boolean }) {
                 whileTap={{ scale: 0.98 }}
                 animate={{ boxShadow: ["0px 0px 0px rgba(245, 158, 11, 0)", "0px 0px 30px rgba(245, 158, 11, 0.5)", "0px 0px 0px rgba(245, 158, 11, 0)"] }}
                 transition={{ duration: 2, repeat: Infinity }}
-                onClick={() => handleCheckout((i18n.language === 'pt' ? 'https://pag.ae/81AirzxhL' : i18n.language === 'ja' ? 'https://buy.stripe.com/cNibJ2bUlfi643u5CX2wU03' : 'https://buy.stripe.com/cNibJ2bUlfi643u5CX2wU03'), 'annual')}
+                onClick={() => handleCheckout('https://pag.ae/81AirzxhL', 'annual')}
                 disabled={isVip}
                 className={`w-full font-black text-base py-4 rounded-xl transition-all flex items-center justify-center gap-2 mb-6 ${
                   isVip
