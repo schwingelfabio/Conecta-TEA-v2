@@ -294,24 +294,7 @@ export default function LandingPage({ onLogin, onShowTerms, onGuestLogin, onNavi
         </div>
       </section>
 
-      {/* DEPOIMENTOS */}
-      <section className="py-12 bg-white border-t border-slate-100 px-6">
-        <div className="max-w-md mx-auto">
-          <h2 className="text-2xl font-black text-brand-dark mb-8">Famílias reais já estão aqui</h2>
-          <div className="bg-slate-50 p-6 rounded-3xl shadow-sm border border-slate-100 mb-4 relative">
-            <div className="text-amber-400 mb-3 text-2xl">★★★★★</div>
-            <p className="text-slate-600 font-medium mb-4 text-sm leading-relaxed">
-              "Sofia IA me ouviu quando eu estava exausta às 3h da manhã."
-            </p>
-            <div className="flex items-center gap-3">
-              <img src="https://api.dicebear.com/7.x/personas/svg?seed=ElenaMommy&backgroundColor=b3e5fc" alt="Mãe avaliando" className="w-10 h-10 rounded-full object-cover" referrerPolicy="no-referrer" />
-              <div>
-                <p className="text-xs text-slate-500 font-medium">Elena Rodriguez</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+
 
       {/* FINAL FORTE CTA - CHAMADA PARA AÇÃO (SEÇÃO 5) */}
       <section className="py-20 bg-brand-primary px-6 text-center border-t border-sky-400 relative overflow-hidden">
