@@ -59,7 +59,6 @@ export default function App() {
   const [activeTab, setActiveTab] = useState<'home' | 'feed' | 'triagem' | 'carteirinha' | 'sofia_theo' | 'termos' | 'privacidade' | 'contato' | 'sobre'>('home');
   const [blogSlug, setBlogSlug] = useState<string | null>(null);
   const [user, setUser] = useState<FirebaseUser | null>(null);
-  const [showLanguageModal, setShowLanguageModal] = useState(false);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [isSuperAdmin, setIsSuperAdmin] = useState(false);

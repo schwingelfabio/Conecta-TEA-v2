@@ -172,13 +172,14 @@ export default function LandingPage({ onLogin, onShowTerms, onGuestLogin, onNavi
                 {isEntering ? 'Entrando...' : 'Entrar Agora'}
               </motion.button>
 
-              <button
-                onClick={handleEnterTriagem}
-                disabled={isEntering}
-                className="w-full px-6 py-4 bg-emerald-500 hover:bg-emerald-600 text-white rounded-2xl font-bold text-lg shadow-lg shadow-emerald-500/20 flex items-center justify-center gap-2 transition-all cursor-pointer"
+              <a
+                href="https://triagem-tea-ia-oficial.vercel.app/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full px-6 py-4 bg-emerald-500 hover:bg-emerald-600 text-white rounded-2xl font-bold text-lg shadow-lg shadow-emerald-500/20 flex items-center justify-center gap-2 transition-all cursor-pointer text-center"
               >
-                {isEntering ? 'Acessando...' : 'Acessar Triagem TEA IA'}
-              </button>
+                Acessar Triagem TEA IA
+              </a>
 
               <p className="text-[11px] text-slate-400 font-medium mt-3 max-w-[300px] leading-relaxed mx-auto">
                 Sem necessidade de login ou cadastro • Sem jargão médico • De pais para pais • 100% gratuito • Feito no RS
@@ -325,16 +326,14 @@ export default function LandingPage({ onLogin, onShowTerms, onGuestLogin, onNavi
                 {isEntering ? 'Entrando...' : 'Entrar Agora'}
               </button>
 
-              <button
-                onClick={() => {
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
-                  handleEnterTriagem();
-                }}
-                disabled={isEntering}
-                className="w-full px-8 py-4 bg-emerald-500 hover:bg-emerald-600 text-white rounded-2xl font-black text-lg shadow-xl hover:scale-[1.02] transition-all flex items-center justify-center gap-3 cursor-pointer"
+              <a
+                href="https://triagem-tea-ia-oficial.vercel.app/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full px-8 py-4 bg-emerald-500 hover:bg-emerald-600 text-white rounded-2xl font-black text-lg shadow-xl hover:scale-[1.02] transition-all flex items-center justify-center gap-3 cursor-pointer text-center"
               >
-                {isEntering ? 'Acessando...' : 'Acessar Triagem TEA IA'}
-              </button>
+                Acessar Triagem TEA IA
+              </a>
             </div>
             <p className="text-white/60 text-xs font-semibold mt-4">
               Acesso instantâneo e 100% gratuito. Sem necessidade de cadastro.

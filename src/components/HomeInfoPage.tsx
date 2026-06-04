@@ -141,13 +141,15 @@ export default function HomeInfoPage({ onNavigate }: HomeInfoPageProps) {
             {txt.exploreBtn}
             <ArrowRight size={18} />
           </button>
-          <button 
-            onClick={() => onNavigate('triagem')}
-            className="px-8 py-4 bg-white hover:bg-slate-50 text-slate-800 border border-slate-200 rounded-2xl font-bold transition-all flex items-center gap-2 shadow-sm"
+          <a 
+            href="https://triagem-tea-ia-oficial.vercel.app/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-8 py-4 bg-white hover:bg-slate-50 text-slate-800 border border-slate-200 rounded-2xl font-bold transition-all flex items-center gap-2 shadow-sm text-center"
           >
             <Brain size={18} className="text-[#0EA5E9]" />
             {txt.startTriageBtn}
-          </button>
+          </a>
         </div>
       </div>
 
@@ -197,13 +199,15 @@ export default function HomeInfoPage({ onNavigate }: HomeInfoPageProps) {
               {txt.triagemDesc}
             </p>
           </div>
-          <button 
-            onClick={() => onNavigate('triagem')}
-            className="w-full py-3.5 bg-slate-50 hover:bg-purple-50 text-purple-700 font-bold rounded-xl transition-all flex items-center justify-center gap-2 group text-sm"
+          <a 
+            href="https://triagem-tea-ia-oficial.vercel.app/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-full py-3.5 bg-slate-50 hover:bg-purple-50 text-purple-700 font-bold rounded-xl transition-all flex items-center justify-center gap-2 group text-sm text-center"
           >
             {txt.startTriageBtn}
             <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
-          </button>
+          </a>
         </div>
       </div>
 
