@@ -1,19 +1,11 @@
 {
   "nav": {
-    "feed": "Feed",
-    "communities": "Comunidades",
-    "map": "Mapa do Brasil do Autismo",
-    "profile": "Perfil",
-    "settings": "Configurações",
-    "sos": "Carteirinha",
-    "vip": "Biblioteca / E-books",
-    "termos": "Termos de Uso",
-    "privacidade": "Privacidade",
-    "contato": "Contato",
-    "videos": "Vídeos",
-    "triagem": "Triagem IA",
-    "createAccount": "Criar Conta",
-    "gallery": "Galeria"
+    "home": "Início",
+    "feed": "Dicas e Publicações",
+    "triagem": "Triagem TEA IA",
+    "carteirinha": "Carteirinha Digital",
+    "sofia_theo": "Sofia & Theo Space",
+    "createAccount": "Criar Conta"
   },
   "auth": {
     "login": "Entrar",

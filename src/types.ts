@@ -43,6 +43,7 @@ export interface SosCard {
   emergencyNote?: string;
   officialId?: string;
   createdAt: any;
+  updatedAt?: string;
 }
 
 export interface Post {

@@ -1,19 +1,11 @@
 {
   "nav": {
-    "feed": "フィード",
-    "communities": "コミュニティ",
-    "map": "自閉症サポートマップ",
-    "profile": "プロフィール",
-    "settings": "設定",
-    "sos": "デジタルID",
-    "vip": "ライブラリ / 電子書籍",
-    "termos": "利用規約",
-    "privacidade": "プライバシー",
-    "contato": "お問い合わせ",
-    "videos": "動画",
-    "triagem": "AIチェック",
-    "createAccount": "新規登録",
-    "gallery": "ギャラリー"
+    "home": "ホーム",
+    "feed": "コラム・ディスカッション",
+    "triagem": "自閉症 AIチェック",
+    "carteirinha": "緊急デマンドカード",
+    "sofia_theo": "ソフィア＆テオ",
+    "createAccount": "新規登録"
   },
   "auth": {
     "login": "ログイン",

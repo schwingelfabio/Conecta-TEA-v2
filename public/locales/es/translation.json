@@ -1,19 +1,11 @@
 {
   "nav": {
-    "feed": "Feed",
-    "communities": "Comunidades",
-    "map": "Mapa de Autismo",
-    "profile": "Perfil",
-    "settings": "Configuraciones",
-    "sos": "ID Digital",
-    "vip": "Biblioteca / Libros",
-    "termos": "Términos de Uso",
-    "privacidade": "Privacidad",
-    "contato": "Contacto",
-    "videos": "Videos",
-    "triagem": "Triaje IA",
-    "createAccount": "Crear Cuenta",
-    "gallery": "Galería"
+    "home": "Inicio",
+    "feed": "Consejos y Publicaciones",
+    "triagem": "Triaje TEA IA",
+    "carteirinha": "Identificación Digital",
+    "sofia_theo": "Espacio Sofia & Theo",
+    "createAccount": "Crear Cuenta"
   },
   "auth": {
     "login": "Entrar",

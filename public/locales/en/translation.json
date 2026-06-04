@@ -1,19 +1,11 @@
 {
   "nav": {
-    "feed": "Feed",
-    "communities": "Communities",
-    "map": "Autism Map of Brazil",
-    "profile": "Profile",
-    "settings": "Settings",
-    "sos": "Digital ID",
-    "vip": "Library / E-books",
-    "termos": "Terms of Use",
-    "privacidade": "Privacy",
-    "contato": "Contact",
-    "videos": "Videos",
-    "triagem": "AI Triage",
-    "createAccount": "Create Account",
-    "gallery": "Gallery"
+    "home": "Home",
+    "feed": "Tips & Publications",
+    "triagem": "Triage TEA AI",
+    "carteirinha": "Digital ID Card",
+    "sofia_theo": "Sofia & Theo Space",
+    "createAccount": "Create Account"
   },
   "auth": {
     "login": "Login",

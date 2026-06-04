@@ -23,17 +23,13 @@ import {
   Globe,
   Camera
 } from 'lucide-react';
+const HomeInfoPage = lazy(() => import('./components/HomeInfoPage'));
+const SofiaTheoSpace = lazy(() => import('./components/SofiaTheoSpace'));
 const Feed = lazy(() => import('./components/Feed'));
-const AreaVip = lazy(() => import('./components/AreaVip'));
-const NetworkMap = lazy(() => import('./components/NetworkMap'));
-const Settings = lazy(() => import('./components/Settings'));
-const GalleryPage = lazy(() => import('./components/GalleryPage'));
 const SosPage = lazy(() => import('./components/SosPage'));
 const EmergencyPage = lazy(() => import('./components/EmergencyPage'));
 const LandingPage = lazy(() => import('./components/LandingPage'));
-const VideosPage = lazy(() => import('./components/VideosPage'));
 const TriagemTeaIa = lazy(() => import('./components/TriagemTeaIa'));
-const ApoieProjetoPage = lazy(() => import('./components/ApoieProjetoPage'));
 const SofiaIA = lazy(() => import('./components/SofiaIA').then(module => ({ default: module.SofiaIA })));
 const TermosDeUso = lazy(() => import('./components/LegalPages').then(module => ({ default: module.TermosDeUso })));
 const Privacidade = lazy(() => import('./components/LegalPages').then(module => ({ default: module.Privacidade })));
@@ -61,7 +57,7 @@ import Logo from './components/Logo';
 
 export default function App() {
   const { t } = useTranslation();
-  const [activeTab, setActiveTab] = useState<'feed' | 'vip' | 'settings' | 'sos' | 'termos' | 'privacidade' | 'contato' | 'sobre' | 'map' | 'videos' | 'carteirinha' | 'triagem' | 'gallery' | 'rotina' | 'apoie'>('triagem');
+  const [activeTab, setActiveTab] = useState<'home' | 'feed' | 'triagem' | 'carteirinha' | 'sofia_theo' | 'termos' | 'privacidade' | 'contato' | 'sobre'>('home');
   const [blogSlug, setBlogSlug] = useState<string | null>(null);
   const [user, setUser] = useState<FirebaseUser | null>(null);
   const [showLanguageModal, setShowLanguageModal] = useState(false);
@@ -114,12 +110,12 @@ export default function App() {
     const urlParams = new URLSearchParams(window.location.search);
     const tabParam = urlParams.get('tab');
     
-    if (tabParam && ['feed', 'videos', 'triagem', 'vip', 'settings', 'carteirinha', 'sos', 'gallery', 'rotina', 'apoie'].includes(tabParam)) {
+    if (tabParam && ['home', 'feed', 'triagem', 'carteirinha', 'sofia_theo'].includes(tabParam)) {
       setActiveTab(tabParam as any);
     }
 
     if (path === '/apoie-o-projeto' || path === '/apoie-o-projeto/') {
-      setActiveTab('apoie');
+      setActiveTab('home');
       setLoading(false);
       // Let it continue so auth checks run, but we already set the tab
     }
@@ -394,86 +390,50 @@ export default function App() {
     }
 
     switch (activeTab) {
-      case 'feed':
-        return <Suspense fallback={<div className="flex justify-center p-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-500"></div></div>}><Feed userProfile={userProfile} isAdmin={isAdmin} isVip={isVip} authReady={authReady} isGuest={isGuest} /></Suspense>;
-      case 'videos':
+      case 'home':
         return (
-          <div className="space-y-4">
-            <BackButton onClick={() => setActiveTab('feed')} />
-            <Suspense fallback={<div className="flex justify-center p-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-500"></div></div>}><VideosPage /></Suspense>
-          </div>
+          <Suspense fallback={<div className="flex justify-center p-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-500"></div></div>}>
+            <HomeInfoPage onNavigate={(tab) => setActiveTab(tab as any)} />
+          </Suspense>
+        );
+      case 'feed':
+        return (
+          <Suspense fallback={<div className="flex justify-center p-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-500"></div></div>}>
+            <Feed userProfile={userProfile} isAdmin={isAdmin} isVip={isVip} authReady={authReady} isGuest={isGuest} />
+          </Suspense>
         );
       case 'triagem':
         return (
-          <div className="space-y-4">
-            <BackButton onClick={() => setActiveTab('feed')} />
-            <Suspense fallback={<div className="flex justify-center p-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-500"></div></div>}><TriagemTeaIa /></Suspense>
-          </div>
-        );
-      case 'vip':
-        return (
-          <div className="space-y-4">
-            <BackButton onClick={() => setActiveTab('feed')} />
-            <Suspense fallback={<div className="flex justify-center p-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-500"></div></div>}><AreaVip isAdmin={isAdmin} isVip={isVip} authReady={authReady} onNavigate={(tab) => setActiveTab(tab as any)} isGuest={isGuest} /></Suspense>
-          </div>
-        );
-      case 'settings':
-        return (
-          <div className="space-y-4">
-            <BackButton onClick={() => setActiveTab('feed')} />
-            <Suspense fallback={<div className="flex justify-center p-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-500"></div></div>}><Settings userProfile={userProfile} isAdmin={isAdmin} isVip={isVip} isDeveloper={isDeveloper} onNavigate={(tab) => setActiveTab(tab as any)} isGuest={isGuest} /></Suspense>
-          </div>
+          <Suspense fallback={<div className="flex justify-center p-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-500"></div></div>}>
+            <TriagemTeaIa />
+          </Suspense>
         );
       case 'carteirinha':
         return (
-          <div className="space-y-4">
-            <BackButton onClick={() => setActiveTab('feed')} />
-            <Suspense fallback={<div className="flex justify-center p-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-500"></div></div>}><SosPage userProfile={userProfile} authReady={authReady} onLoginClick={() => setIsGuest(false)} onNavigate={(tab) => setActiveTab(tab as any)} isGuest={isGuest} isAdmin={isAdmin} isVip={isVip} initialSection="card" /></Suspense>
-          </div>
+          <Suspense fallback={<div className="flex justify-center p-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-500"></div></div>}>
+            <SosPage userProfile={userProfile} authReady={authReady} onLoginClick={() => setIsGuest(false)} onNavigate={(tab) => setActiveTab(tab as any)} isGuest={isGuest} isAdmin={isAdmin} isVip={isVip} initialSection="card" />
+          </Suspense>
         );
-      case 'sos':
+      case 'sofia_theo':
         return (
-          <div className="space-y-4">
-            <BackButton onClick={() => setActiveTab('feed')} />
-            <Suspense fallback={<div className="flex justify-center p-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-500"></div></div>}><SosPage userProfile={userProfile} authReady={authReady} onLoginClick={() => setIsGuest(false)} onNavigate={(tab) => setActiveTab(tab as any)} isGuest={isGuest} isAdmin={isAdmin} isVip={isVip} initialSection="tools" /></Suspense>
-          </div>
+          <Suspense fallback={<div className="flex justify-center p-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-500"></div></div>}>
+            <SofiaTheoSpace />
+          </Suspense>
         );
       case 'termos':
-        return <Suspense fallback={<div className="flex justify-center p-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-500"></div></div>}><TermosDeUso onBack={() => { window.history.pushState({}, '', '/'); setActiveTab(user || isGuest ? 'settings' : 'triagem'); }} /></Suspense>;
+        return <Suspense fallback={<div className="flex justify-center p-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-500"></div></div>}><TermosDeUso onBack={() => { window.history.pushState({}, '', '/'); setActiveTab('home'); }} /></Suspense>;
       case 'privacidade':
-        return <Suspense fallback={<div className="flex justify-center p-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-500"></div></div>}><Privacidade onBack={() => { window.history.pushState({}, '', '/'); setActiveTab(user || isGuest ? 'settings' : 'triagem'); }} /></Suspense>;
+        return <Suspense fallback={<div className="flex justify-center p-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-500"></div></div>}><Privacidade onBack={() => { window.history.pushState({}, '', '/'); setActiveTab('home'); }} /></Suspense>;
       case 'contato':
-        return <Suspense fallback={<div className="flex justify-center p-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-500"></div></div>}><Contato onBack={() => { window.history.pushState({}, '', '/'); setActiveTab(user || isGuest ? 'settings' : 'triagem'); }} /></Suspense>;
+        return <Suspense fallback={<div className="flex justify-center p-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-500"></div></div>}><Contato onBack={() => { window.history.pushState({}, '', '/'); setActiveTab('home'); }} /></Suspense>;
       case 'sobre':
-        return <Suspense fallback={<div className="flex justify-center p-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-500"></div></div>}><Sobre onBack={() => { window.history.pushState({}, '', '/'); setActiveTab(user || isGuest ? 'settings' : 'triagem'); }} /></Suspense>;
-      case 'gallery':
-        return (
-          <div className="space-y-4">
-            <BackButton onClick={() => setActiveTab('feed')} />
-            <MediaUpload onUploadComplete={() => {}} />
-            <Suspense fallback={<div className="flex justify-center p-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-500"></div></div>}><GalleryPage /></Suspense>
-          </div>
-        );
-      case 'rotina':
-        return (
-          <div className="space-y-4 h-[80vh]">
-            <BackButton onClick={() => setActiveTab('feed')} />
-            <iframe 
-              src="/rotina-magica.html" 
-              className="w-full h-full border-0 rounded-3xl shadow-sm" 
-              title="Sofia & Theo - Rotina Mágica"
-            />
-          </div>
-        );
-      case 'apoie':
-        return (
-          <div className="space-y-4">
-            <BackButton onClick={() => setActiveTab('feed')} />
-            <Suspense fallback={<div className="flex justify-center p-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-500"></div></div>}><ApoieProjetoPage /></Suspense>
-          </div>
-        );
+        return <Suspense fallback={<div className="flex justify-center p-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-500"></div></div>}><Sobre onBack={() => { window.history.pushState({}, '', '/'); setActiveTab('home'); }} /></Suspense>;
       default:
-        return <Suspense fallback={<div className="flex justify-center p-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-500"></div></div>}><Feed userProfile={userProfile} isAdmin={isAdmin} isVip={isVip} isGuest={isGuest} /></Suspense>;
+        return (
+          <Suspense fallback={<div className="flex justify-center p-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-500"></div></div>}>
+            <HomeInfoPage onNavigate={(tab) => setActiveTab(tab as any)} />
+          </Suspense>
+        );
     }
   };
 
@@ -529,41 +489,25 @@ export default function App() {
                 </div>
 
                 <div ref={navRef} className="flex items-center gap-1 sm:gap-4 overflow-x-auto no-scrollbar">
-                  <button data-tab="settings" onClick={() => setActiveTab('settings')} className={`p-2 sm:px-4 sm:py-2 rounded-full flex items-center gap-2 transition-all shrink-0 ${activeTab === 'settings' ? 'bg-sky-100 text-sky-700 font-bold' : 'hover:bg-gray-100 text-gray-600'}`}>
-                    <User size={20} />
-                    <span className="hidden sm:inline">{t('nav.profile')}</span>
-                  </button>
-                  <button data-tab="carteirinha" onClick={() => setActiveTab('carteirinha')} className={`p-2 sm:px-4 sm:py-2 rounded-full flex items-center gap-2 transition-all shrink-0 ${activeTab === 'carteirinha' ? 'bg-blue-100 text-blue-700 font-bold' : 'hover:bg-gray-100 text-gray-600'}`}>
-                    <IdCard size={20} />
-                    <span className="hidden sm:inline">{t('nav.sos')}</span>
-                  </button>
-                  <button data-tab="sos" onClick={() => setActiveTab('sos')} className={`p-2 sm:px-4 sm:py-2 rounded-full flex items-center gap-2 transition-all shrink-0 ${activeTab === 'sos' ? 'bg-red-100 text-red-700 font-bold' : 'hover:bg-gray-100 text-gray-600'}`}>
-                    <AlertTriangle size={20} />
-                    <span className="hidden sm:inline">SOS</span>
-                  </button>
-                  <button data-tab="feed" onClick={() => setActiveTab('feed')} className={`p-2 sm:px-4 sm:py-2 rounded-full flex items-center gap-2 transition-all shrink-0 ${activeTab === 'feed' ? 'bg-sky-100 text-sky-700 font-bold' : 'hover:bg-gray-100 text-gray-600'}`}>
+                  <button data-tab="home" onClick={() => setActiveTab('home')} className={`p-2 sm:px-4 sm:py-2 rounded-full flex items-center gap-2 transition-all shrink-0 ${activeTab === 'home' ? 'bg-sky-100 text-[#0EA5E9] font-bold' : 'hover:bg-gray-100 text-gray-650 font-semibold'}`}>
                     <Home size={20} />
-                    <span className="hidden sm:inline">{t('nav.communities')}</span>
+                    <span className="hidden sm:inline">{t('nav.home')}</span>
                   </button>
-                  <button data-tab="videos" onClick={() => setActiveTab('videos')} className={`p-2 sm:px-4 sm:py-2 rounded-full flex items-center gap-2 transition-all shrink-0 ${(activeTab as string) === 'videos' ? 'bg-sky-100 text-sky-700 font-bold' : 'hover:bg-gray-100 text-gray-600'}`}>
-                    <Video size={20} />
-                    <span className="hidden sm:inline">{t('nav.videos')}</span>
+                  <button data-tab="feed" onClick={() => setActiveTab('feed')} className={`p-2 sm:px-4 sm:py-2 rounded-full flex items-center gap-2 transition-all shrink-0 ${activeTab === 'feed' ? 'bg-sky-100 text-sky-700 font-bold' : 'hover:bg-gray-100 text-gray-600 font-medium'}`}>
+                    <Users size={20} />
+                    <span className="hidden sm:inline">{t('nav.feed')}</span>
                   </button>
-                  <button data-tab="triagem" onClick={() => setActiveTab('triagem')} className={`p-2 sm:px-4 sm:py-2 rounded-full flex items-center gap-2 transition-all shrink-0 ${(activeTab as string) === 'triagem' ? 'bg-sky-100 text-sky-700 font-bold' : 'hover:bg-gray-100 text-gray-600'}`}>
+                  <button data-tab="triagem" onClick={() => setActiveTab('triagem')} className={`p-2 sm:px-4 sm:py-2 rounded-full flex items-center gap-2 transition-all shrink-0 ${activeTab === 'triagem' ? 'bg-sky-100 text-sky-700 font-bold' : 'hover:bg-gray-100 text-gray-600 font-medium'}`}>
                     <Brain size={20} />
                     <span className="hidden sm:inline">{t('nav.triagem')}</span>
                   </button>
-                  <button data-tab="gallery" onClick={() => setActiveTab('gallery')} className={`p-2 sm:px-4 sm:py-2 rounded-full flex items-center gap-2 transition-all shrink-0 ${(activeTab as string) === 'gallery' ? 'bg-sky-100 text-sky-700 font-bold' : 'hover:bg-gray-100 text-gray-600'}`}>
-                    <Camera size={20} />
-                    <span className="hidden sm:inline">{t('nav.gallery')}</span>
+                  <button data-tab="carteirinha" onClick={() => setActiveTab('carteirinha')} className={`p-2 sm:px-4 sm:py-2 rounded-full flex items-center gap-2 transition-all shrink-0 ${activeTab === 'carteirinha' ? 'bg-sky-100 text-sky-700 font-bold' : 'hover:bg-gray-100 text-gray-600 font-medium'}`}>
+                    <IdCard size={20} />
+                    <span className="hidden sm:inline">{t('nav.carteirinha')}</span>
                   </button>
-                  <button data-tab="rotina" onClick={() => setActiveTab('rotina')} className={`p-2 sm:px-4 sm:py-2 rounded-full flex items-center gap-2 transition-all shrink-0 ${(activeTab as string) === 'rotina' ? 'bg-purple-100 text-purple-700 font-bold' : 'hover:bg-gray-100 text-gray-600'}`}>
-                    <PlayCircle size={20} />
-                    <span className="hidden sm:inline">Rotina Mágica</span>
-                  </button>
-                  <button data-tab="vip" onClick={() => setActiveTab('vip')} className={`p-2 sm:px-4 sm:py-2 rounded-full flex items-center gap-2 transition-all shrink-0 ${(activeTab as string) === 'vip' ? 'bg-amber-100 text-amber-700 font-bold' : 'hover:bg-gray-100 text-gray-600'}`}>
-                    <Crown size={20} />
-                    <span className="hidden sm:inline">{t('nav.vip')}</span>
+                  <button data-tab="sofia_theo" onClick={() => setActiveTab('sofia_theo')} className={`p-2 sm:px-4 sm:py-2 rounded-full flex items-center gap-2 transition-all shrink-0 ${activeTab === 'sofia_theo' ? 'bg-sky-100 text-sky-700 font-bold' : 'hover:bg-gray-100 text-gray-600 font-medium'}`}>
+                    <MessageCircle size={20} />
+                    <span className="hidden sm:inline">{t('nav.sofia_theo')}</span>
                   </button>
                 </div>
 
@@ -576,7 +520,7 @@ export default function App() {
                       {t('nav.createAccount')}
                     </button>
                   ) : (
-                    <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full border-2 overflow-hidden transition-all ${activeTab === 'settings' ? 'border-sky-500' : 'border-sky-100'}`}>
+                    <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full border-2 border-sky-100 overflow-hidden transition-all hover:border-sky-300">
                       <Avatar 
                         src={userProfile?.photoURL || user?.photoURL} 
                         name={userProfile?.displayName || user?.displayName} 
