@@ -200,13 +200,15 @@ export default function TriagemTeaIa() {
             {c.introSubtitle}
           </p>
 
-          <button 
-            onClick={handleStart}
-            className="mt-8 px-8 py-4 bg-purple-600 hover:bg-purple-700 text-white rounded-2xl font-bold transition-all shadow-lg shadow-purple-600/30 flex items-center gap-2 mx-auto active:scale-95"
+          <a 
+            href="https://triagem-tea-ia-oficial.vercel.app/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-8 px-8 py-4 bg-purple-600 hover:bg-purple-700 text-white rounded-2xl font-bold transition-all shadow-lg shadow-purple-600/30 flex items-center gap-2 mx-auto active:scale-95 text-center inline-flex"
           >
             {c.buttonStart}
             <ArrowRight size={18} />
-          </button>
+          </a>
         </div>
 
         {/* Info Grid */}
