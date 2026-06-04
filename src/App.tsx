@@ -352,7 +352,10 @@ export default function App() {
     // The onAuthStateChanged listener will handle the state update
   };
 
-  const handleGuestLogin = async () => {
+  const handleGuestLogin = async (targetTab?: 'feed' | 'triagem' | any) => {
+    if (targetTab) {
+      setActiveTab(targetTab);
+    }
     try {
       const timeoutPromise = new Promise((_, reject) => 
         setTimeout(() => reject(new Error('Timeout signing in anonymously')), 3000)

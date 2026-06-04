@@ -10,7 +10,7 @@ import { useTranslation } from 'react-i18next';
 interface LandingPageProps {
   onLogin: () => void;
   onShowTerms: () => void;
-  onGuestLogin: () => void;
+  onGuestLogin: (targetTab?: string) => void;
   onNavigate?: (path: string, tab: string) => void;
 }
 
@@ -98,9 +98,14 @@ export default function LandingPage({ onLogin, onShowTerms, onGuestLogin, onNavi
   }, []);
 
 
-  const handleMainAction = async () => {
+  const handleEnterNow = async () => {
     setIsEntering(true);
-    await onGuestLogin();
+    await onGuestLogin('feed');
+  };
+
+  const handleEnterTriagem = async () => {
+    setIsEntering(true);
+    await onGuestLogin('triagem');
   };
 
   return (
@@ -157,46 +162,28 @@ export default function LandingPage({ onLogin, onShowTerms, onGuestLogin, onNavi
               <p>Acreditamos que informação de qualidade pode transformar vidas. Por isso, todo o conteúdo do Conecta TEA é pensado para ser simples, direto e útil na prática.</p>
             </div>
 
-            {showAuthForm ? (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="mt-4 bg-white p-6 rounded-3xl shadow-xl border border-slate-100"
+            <div className="flex flex-col items-center justify-center gap-4 w-full px-2">
+              <motion.button
+                whileTap={{ scale: 0.96 }}
+                onClick={handleEnterNow}
+                disabled={isEntering}
+                className="w-full px-6 py-4 bg-brand-primary text-white rounded-2xl font-bold text-lg shadow-lg shadow-brand-primary/30 flex items-center justify-center gap-2 hover:bg-opacity-90 transition-all cursor-pointer"
               >
-                <AuthForm onSuccess={onLogin} onShowTerms={onShowTerms} />
-                <button
-                  onClick={() => setShowAuthForm(false)}
-                  className="mt-6 text-slate-500 hover:text-slate-700 font-medium transition-colors"
-                >
-                  Voltar
-                </button>
-              </motion.div>
-            ) : (
-              <div className="flex flex-col items-center justify-center gap-4 w-full px-2">
-                <motion.button
-                  whileTap={{ scale: 0.96 }}
-                  onClick={handleMainAction}
-                  disabled={isEntering}
-                  className="w-full px-6 py-4 bg-brand-primary text-white rounded-2xl font-bold text-lg shadow-lg shadow-brand-primary/30 flex items-center justify-center gap-2 hover:bg-opacity-90 transition-all"
-                >
-                  {isEntering ? 'Entrando...' : 'Receber meu primeiro mapa + Carteirinha Grátis agora'}
-                </motion.button>
+                {isEntering ? 'Entrando...' : 'Entrar Agora'}
+              </motion.button>
 
-                <button
-                  onClick={() => {
-                    setShowAuthForm(true);
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                  }}
-                  className="w-full px-6 py-4 bg-white text-brand-dark rounded-2xl font-bold text-[17px] border-2 border-slate-200 shadow-sm flex items-center justify-center hover:bg-slate-50 transition-all"
-                >
-                  Já tenho conta → Entrar
-                </button>
+              <button
+                onClick={handleEnterTriagem}
+                disabled={isEntering}
+                className="w-full px-6 py-4 bg-emerald-500 hover:bg-emerald-600 text-white rounded-2xl font-bold text-lg shadow-lg shadow-emerald-500/20 flex items-center justify-center gap-2 transition-all cursor-pointer"
+              >
+                {isEntering ? 'Acessando...' : 'Acessar Triagem TEA IA'}
+              </button>
 
-                <p className="text-[11px] text-slate-400 font-medium mt-3 max-w-[280px] leading-relaxed mx-auto">
-                  Sem cadastro complicado • Sem jargão médico • De pais para pais • 100% gratuito para começar • Feito no RS
-                </p>
-              </div>
-            )}
+              <p className="text-[11px] text-slate-400 font-medium mt-3 max-w-[300px] leading-relaxed mx-auto">
+                Sem necessidade de login ou cadastro • Sem jargão médico • De pais para pais • 100% gratuito • Feito no RS
+              </p>
+            </div>
           </motion.div>
         </div>
       </section>
@@ -343,17 +330,31 @@ export default function LandingPage({ onLogin, onShowTerms, onGuestLogin, onNavi
 
           <div className="w-full max-w-md bg-white/10 backdrop-blur-sm p-8 rounded-3xl border border-white/20 shadow-2xl mb-8">
             <h3 className="text-white font-black text-xl mb-6">Pronto para transformar a sua rotina?</h3>
-            <button
-              onClick={() => {
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-                handleMainAction();
-              }}
-              className="w-full px-8 py-5 bg-white text-brand-dark rounded-2xl font-black text-lg shadow-xl hover:scale-[1.02] hover:bg-sky-50 transition-all flex items-center justify-center gap-3"
-            >
-              Acesse agora e conheça o Conecta TEA
-            </button>
+            <div className="flex flex-col gap-4">
+              <button
+                onClick={() => {
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                  handleEnterNow();
+                }}
+                disabled={isEntering}
+                className="w-full px-8 py-4 bg-white text-brand-dark rounded-2xl font-black text-lg shadow-xl hover:scale-[1.02] hover:bg-sky-50 transition-all flex items-center justify-center gap-3 cursor-pointer"
+              >
+                {isEntering ? 'Entrando...' : 'Entrar Agora'}
+              </button>
+
+              <button
+                onClick={() => {
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                  handleEnterTriagem();
+                }}
+                disabled={isEntering}
+                className="w-full px-8 py-4 bg-emerald-500 hover:bg-emerald-600 text-white rounded-2xl font-black text-lg shadow-xl hover:scale-[1.02] transition-all flex items-center justify-center gap-3 cursor-pointer"
+              >
+                {isEntering ? 'Acessando...' : 'Acessar Triagem TEA IA'}
+              </button>
+            </div>
             <p className="text-white/60 text-xs font-semibold mt-4">
-              Acesso 100% gratuito inicial. Demora menos de 10 segundos.
+              Acesso instantâneo e 100% gratuito. Sem necessidade de cadastro.
             </p>
           </div>
         </div>
