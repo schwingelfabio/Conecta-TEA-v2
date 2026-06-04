@@ -105,11 +105,7 @@ export const SofiaCallScreen = ({ onEndCall, isVip }: { onEndCall: () => void, i
   const handleTextSubmit = async () => {
     if (!textInput.trim() || sofiaState === 'processing') return;
 
-    if (!isVip && messageCount >= 3) {
-      setShowPaywall(true);
-      return;
-    }
-    
+    // No limit on messages - open for all users
     const userText = textInput;
     setMessages(prev => [...prev, {sender: 'user', text: userText}]);
     setTextInput('');

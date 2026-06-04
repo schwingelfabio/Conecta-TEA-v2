@@ -3,7 +3,6 @@ import { auth, db } from '../lib/firebase';
 import { doc, getDoc, collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { Lock, Crown, Loader2, Download, Heart, BookOpen, ShieldCheck, ExternalLink, ShieldAlert, Video, PlayCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import PlanosVip from './PlanosVip';
 import DonationSupportCard from './DonationSupportCard';
 import { useTranslation } from 'react-i18next';
 import { trackEvent } from '../lib/monitoring';
@@ -31,7 +30,8 @@ export default function AreaVip({
   const [selectedVideo, setSelectedVideo] = useState<string | null>(null);
   const user = auth.currentUser;
   
-  const effectiveVip = Boolean(isVip || isAdmin);
+  // Ebooks are now fully free and open for all users
+  const effectiveVip = true;
 
   useEffect(() => {
     trackEvent('vip_view');
@@ -82,25 +82,8 @@ export default function AreaVip({
     );
   }
 
-  if (!user && isGuest) {
-    return (
-      <div className="min-h-screen bg-lavender-50 py-8 px-4 space-y-8">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="bg-white border border-lavender-200 rounded-[2.5rem] p-10 text-center shadow-xl shadow-lavender-200/50 max-w-3xl mx-auto"
-        >
-          <div className="w-20 h-20 bg-lavender-100 rounded-3xl flex items-center justify-center text-lavender-600 mx-auto mb-6">
-            <Lock size={40} />
-          </div>
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">{t('vip.restrictedAccess')}</h2>
-          <p className="text-gray-600 text-xl leading-relaxed mb-8">
-            {t('vip.loginToAccess')}
-          </p>
-        </motion.div>
-      </div>
-    );
-  }
+  // Unrestricted access for all users, guests included
+
 
   const ebooks = [
     {
@@ -371,64 +354,13 @@ export default function AreaVip({
           </div>
         </div>
 
-        <div className="mt-16">
-          <div className="flex items-center gap-3 mb-8 px-4">
-            <Video className="text-lavender-600" size={32} />
-            <h3 className="text-2xl font-bold text-gray-900">{t('vip.videos.title')}</h3>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {vipVideos.map((video) => (
-              <div
-                key={video.id}
-                className={`flex flex-col p-8 rounded-[2.5rem] border transition-all hover:shadow-xl hover:-translate-y-1 ${video.color}`}
-              >
-                <div className="bg-white p-4 rounded-2xl w-fit mb-6 shadow-sm">
-                  <PlayCircle size={32} className="text-lavender-600" />
-                </div>
-
-                <div className="flex-grow mb-6">
-                  <p className="text-xs font-bold uppercase tracking-wider text-lavender-400 mb-2">{t('vip.videos.badge')}</p>
-                  <h4 className="text-xl font-bold text-gray-900 mb-2 leading-tight">{video.title}</h4>
-                  <p className="text-gray-500 text-sm line-clamp-2">{video.description}</p>
-                </div>
-
-                {effectiveVip ? (
-                  <button
-                    onClick={() => setSelectedVideo(video.videoId)}
-                    className={`flex items-center justify-center gap-2 py-4 rounded-2xl text-white font-bold transition-all shadow-md active:scale-95 ${video.btnColor}`}
-                  >
-                    <PlayCircle size={20} />
-                    {t('vip.videos.watchNow')}
-                  </button>
-                ) : (
-                  <button
-                    onClick={() => {
-                      setErrorMsg(t('vip.subscribeToDownload'));
-                      setTimeout(() => setErrorMsg(''), 5000);
-                    }}
-                    className="flex items-center justify-center gap-2 py-4 rounded-2xl text-gray-400 bg-gray-100 font-bold transition-all cursor-not-allowed"
-                  >
-                    <Lock size={20} />
-                    {t('vip.vipOnly')}
-                  </button>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
+        {/* Videos section removed */}
 
         <div className="mt-12">
           <DonationSupportCard />
         </div>
 
-        {!effectiveVip && (
-          <div className="mt-12 bg-lavender-100/50 border border-lavender-200 rounded-3xl p-8 text-center">
-            <h3 className="text-xl font-bold text-lavender-800 mb-2">{t('vip.viewingLibrary')}</h3>
-            <p className="text-lavender-600 mb-6">{t('vip.becomeVipToUnlock')}</p>
-            <PlanosVip isVip={effectiveVip} />
-          </div>
-        )}
+        {/* Donation and support only */}
 
         <div className="mt-20 p-12 bg-white rounded-[3rem] border-2 border-dashed border-lavender-200 text-center">
           <h3 className="text-2xl font-bold text-gray-900 mb-4">{t('vip.suggestionTitle')}</h3>

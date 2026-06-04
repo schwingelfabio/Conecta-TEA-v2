@@ -45,8 +45,6 @@ import Onboarding from './components/OnboardingModal';
 import EmotionalOverlay from './components/EmotionalOverlay';
 import FloatingSupportButton from './components/FloatingSupportButton';
 import LanguageSelectorModal from './components/LanguageSelectorModal';
-const MordomoDashboard = lazy(() => import('./components/MordomoDashboard'));
-import AdminEngagementPanel from './components/AdminEngagementPanel';
 import MediaUpload from './components/MediaUpload';
 import { UserProfile } from './types';
 import { auth, db } from './lib/firebase';
@@ -54,13 +52,12 @@ import { signOut, onAuthStateChanged, User as FirebaseUser, signInAnonymously } 
 import { doc, getDoc, setDoc, collection, query, where, getDocs, serverTimestamp, getDocFromServer } from 'firebase/firestore';
 import { checkIsAdmin } from './lib/admin';
 import DonationPage from './components/DonationPage';
-import AiContentAdmin from './components/AiContentAdmin';
 import { useTranslation } from 'react-i18next';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import Avatar from './components/Avatar';
 import BackButton from './components/BackButton';
 import Logo from './components/Logo';
-import { useAiContentEngine } from './hooks/useAiContentEngine';
+
 
 export default function App() {
   const { t } = useTranslation();

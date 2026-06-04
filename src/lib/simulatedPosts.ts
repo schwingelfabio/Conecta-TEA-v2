@@ -70,7 +70,7 @@ const generateContent = (type: 'text' | 'image' | 'video', topic: string, lang: 
 
 export const generateSimulatedPosts = (): Post[] => {
   const posts: Post[] = [];
-  for (let i = 0; i < 90; i++) {
+  for (let i = 20; i < 90; i++) {
     const type = i < 50 ? 'text' : (i < 70 ? 'image' : 'video');
     const topic = topics[i % topics.length];
     

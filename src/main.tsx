@@ -5,8 +5,8 @@ import App from './App.tsx';
 import './index.css';
 import { initMonitoring } from './lib/monitoring.ts';
 
-// Initialize Mordomo TEA IA Frontend Monitoring
-initMonitoring();
+// Initialize Frontend Monitoring (Disabled Mordomo)
+// initMonitoring();
 
 // Load Google Maps JS API for Places Autocomplete
 const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || import.meta.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
