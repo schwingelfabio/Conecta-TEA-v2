@@ -1,11 +1,10 @@
 {
   "nav": {
     "home": "ホーム",
-    "feed": "コラム・ディスカッション",
-    "triagem": "自閉症 AIチェック",
-    "carteirinha": "緊急デマンドカード",
-    "sofia_theo": "ソフィア＆テオ",
-    "createAccount": "新規登録"
+    "feed": "フィード",
+    "triagem": "自閉症チェック",
+    "carteirinha": "緊急カード",
+    "sofia_theo": "ソフィア＆テオ"
   },
   "auth": {
     "login": "ログイン",

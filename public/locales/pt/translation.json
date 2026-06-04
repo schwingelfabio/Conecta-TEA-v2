@@ -1,11 +1,10 @@
 {
   "nav": {
-    "home": "Início",
-    "feed": "Dicas e Publicações",
-    "triagem": "Triagem TEA IA",
-    "carteirinha": "Carteirinha Digital",
-    "sofia_theo": "Sofia & Theo Space",
-    "createAccount": "Criar Conta"
+    "home": "Página Inicial",
+    "feed": "Feed",
+    "triagem": "Triagem",
+    "carteirinha": "Carteirinha",
+    "sofia_theo": "Sofia e Theo"
   },
   "auth": {
     "login": "Entrar",
@@ -139,7 +138,7 @@
     "viewingLibrary": "Você está acessando a biblioteca gratuita.",
     "becomeVipToUnlock": "Faça o download dos e-books e utilize todos os nossos recursos livremente.",
     "suggestionTitle": "Tem uma sugestão de conteúdo?",
-    "suggestionSubtitle": "Sua voz é prioridade para nós. Diga-nos qual tema você gostaria de ver aqui!",,
+    "suggestionSubtitle": "Sua voz é prioridade para nós. Diga-nos qual tema você gostaria de ver aqui!",
     "suggestionPlaceholder": "Escreva sua sugestão aqui...",
     "sendSuggestion": "Enviar Sugestão",
     "sending": "A enviar...",

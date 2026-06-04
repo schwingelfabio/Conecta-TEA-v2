@@ -1,11 +1,10 @@
 {
   "nav": {
     "home": "Home",
-    "feed": "Tips & Publications",
-    "triagem": "Triage TEA AI",
-    "carteirinha": "Digital ID Card",
-    "sofia_theo": "Sofia & Theo Space",
-    "createAccount": "Create Account"
+    "feed": "Feed",
+    "triagem": "Triage",
+    "carteirinha": "ID Card",
+    "sofia_theo": "Sofia & Theo"
   },
   "auth": {
     "login": "Login",
@@ -139,7 +138,7 @@
     "viewingLibrary": "You are accessing the free library.",
     "becomeVipToUnlock": "Download e-books and use all of our features freely.",
     "suggestionTitle": "Do you have a content suggestion?",
-    "suggestionSubtitle": "Your voice is a priority for us. Tell us what topic you would like to see here!",,
+    "suggestionSubtitle": "Your voice is a priority for us. Tell us what topic you would like to see here!",
     "suggestionPlaceholder": "Write your suggestion here...",
     "sendSuggestion": "Send Suggestion",
     "sending": "Sending...",

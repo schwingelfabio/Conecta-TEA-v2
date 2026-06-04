@@ -20,7 +20,6 @@ import {
   Video,
   Heart,
   Brain,
-  Globe,
   Camera
 } from 'lucide-react';
 const HomeInfoPage = lazy(() => import('./components/HomeInfoPage'));
@@ -512,23 +511,14 @@ export default function App() {
                 </div>
 
                 <div className="flex items-center gap-2 sm:gap-3 shrink-0">
-                  <button onClick={() => setShowLanguageModal(true)} className="p-2 hover:bg-gray-100 rounded-full text-gray-600">
-                    <Globe size={20} />
-                  </button>
-                  {isGuest ? (
-                    <button onClick={() => setIsGuest(false)} className="px-3 py-1.5 sm:px-4 sm:py-2 bg-sky-500 text-white rounded-full font-bold text-xs sm:text-sm hover:bg-sky-600 transition-colors">
-                      {t('nav.createAccount')}
-                    </button>
-                  ) : (
-                    <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full border-2 border-sky-100 overflow-hidden transition-all hover:border-sky-300">
-                      <Avatar 
-                        src={userProfile?.photoURL || user?.photoURL} 
-                        name={userProfile?.displayName || user?.displayName} 
-                        size="md" 
-                        className="w-full h-full border-none shadow-none"
-                      />
-                    </div>
-                  )}
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full border-2 border-sky-100 overflow-hidden transition-all hover:border-sky-300">
+                    <Avatar 
+                      src={userProfile?.photoURL || user?.photoURL} 
+                      name={userProfile?.displayName || user?.displayName || "Visitante"} 
+                      size="md" 
+                      className="w-full h-full border-none shadow-none"
+                    />
+                  </div>
                   <button onClick={handleLogout} className="p-1.5 sm:p-2 text-gray-400 hover:text-red-500 transition-colors">
                     <LogOut size={20} />
                   </button>

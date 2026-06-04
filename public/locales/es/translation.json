@@ -1,11 +1,10 @@
 {
   "nav": {
     "home": "Inicio",
-    "feed": "Consejos y Publicaciones",
-    "triagem": "Triaje TEA IA",
-    "carteirinha": "Identificación Digital",
-    "sofia_theo": "Espacio Sofia & Theo",
-    "createAccount": "Crear Cuenta"
+    "feed": "Feed",
+    "triagem": "Triaje",
+    "carteirinha": "Identificación",
+    "sofia_theo": "Sofia y Theo"
   },
   "auth": {
     "login": "Entrar",
