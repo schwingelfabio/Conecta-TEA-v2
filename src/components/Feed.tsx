@@ -95,7 +95,8 @@ import {
   Video,
   PlayCircle,
   FileText,
-  ShoppingCart
+  ShoppingCart,
+  Download
 } from 'lucide-react';
 
 const LogoLoader = () => (
@@ -1014,6 +1015,50 @@ const Feed: React.FC<FeedProps> = ({ userProfile, isAdmin, isVip, authReady, isG
                           >
                             <PlayCircle size={10} />
                             BAIXAR / DOWNLOAD / ダウンロード
+                          </a>
+                        </div>
+                      </motion.div>
+                    );
+                  }
+                  if (index === 2) {
+                    items.push(
+                      <motion.div
+                        key={`ebook-vol3-banner-${post.id}`}
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        className="bg-white rounded-[2rem] shadow-sm border-2 border-pink-400 overflow-hidden mb-6 relative group"
+                      >
+                        <div className="absolute top-0 right-0 bg-pink-500 text-white text-[10px] font-black px-4 py-1.5 rounded-bl-[1.5rem] uppercase tracking-widest z-10 shadow-sm">
+                          {i18n.language === 'en' ? 'FREE E-BOOK!' : i18n.language === 'ja' ? '無料電子書籍！' : 'E-BOOK GRATUITO!'}
+                        </div>
+                        <div className="w-full h-auto bg-pink-50 flex items-center justify-center overflow-hidden">
+                           <img 
+                             src="/sofia-theo-vol3.png" 
+                             alt="E-Book Sofia e Theo Volume 03" 
+                             className="w-full h-auto object-cover max-h-[600px]"
+                             onError={(e) => {
+                               (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&q=80&w=800'; 
+                             }}
+                           />
+                        </div>
+                        <div className="p-6 md:p-8 text-center bg-white">
+                          <h3 className="text-2xl font-black text-slate-900 mb-2">
+                            Sofia e Theo - Volume 03
+                          </h3>
+                          <p className="text-slate-600 font-medium mb-6 max-w-lg mx-auto">
+                            {i18n.language === 'en' ? 'Magical Routines that help autistic children and their families. Enchanting stories for moments of connection, inclusion, and learning!' : 
+                             i18n.language === 'ja' ? '自閉症の子供たちとその家族を助ける魔法のルーチン。つながり、包含、学習の瞬間のための魅惑的な物語！' : 
+                             'Aventuras nas Rotinas Mágicas que ajudam crianças autistas e suas famílias. Histórias encantadoras para momentos de conexão, inclusão e aprendizado!'}
+                          </p>
+                          <a 
+                            href="https://drive.google.com/drive/folders/1Qlr009Uu_A5O6fcx-wvk7qxEgx9QH2ph" 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center justify-center gap-2 px-8 py-4 w-full md:w-auto bg-pink-600 text-white rounded-2xl text-lg font-black hover:bg-pink-500 transition-all shadow-lg hover:shadow-pink-500/30 ring-4 ring-pink-50"
+                          >
+                            <Download size={22} className="shrink-0" />
+                            {i18n.language === 'en' ? 'DOWNLOAD NOW' : i18n.language === 'ja' ? '今すぐダウンロード' : 'BAIXAR AGORA'}
                           </a>
                         </div>
                       </motion.div>
